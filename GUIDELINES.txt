@@ -1,0 +1,433 @@
+C++ Programming Style Guidelines
+
+These guidelines are based on the
+"C++ Programming Style Guidelines" by Geotechnical Software Services (http://geosoft.no/development/cppstyle.html)
+
+---------
+1 Introduction
+---------
+
+In order to contribute to this repository one abloslutely MUST follow this guidelines.
+
+---------
+2 General Recommendations
+---------
+
+2.1 Use ONLY spaces for indentation, tabs are not allowed.
+2.2 Basic indentation must be eight spaces.
+2.3 Line width MAY exceed 80 characters, but MAY NOT exceed 150 characters.
+2.4 Double underscore ("__") IS NOT ALLOWED.
+2.5 All names and comments MUST be written in English.
+
+---------
+3 Naming Conventions
+---------
+
+3.1 Names representing types must be in mixed case starting with upper case.
+        Entity, LineSegment, Vector3d
+
+3.2 Variable names must be in mixed case starting with lower case.
+        entity, lineSegment
+
+3.3 Named constants (including enumeration values AND enumeration names) must be all uppercase using underscore to separate words.
+        SELENE_PI, MATERIAL_COLOR_AMBIENT, enum RESULT
+
+3.4 Names representing methods or functions must be verbs and written in mixed case starting with lower case.
+        getName(), removeElement()
+
+3.5 Names representing namespaces should be all lowercase.
+        selene
+
+3.5 Names representing template types should be a single uppercase letter.
+        template <class T>
+
+3.6 Abbreviations and acronyms must not be uppercase when used as name. Numbers are counted as capital letter.
+        VARIABLE AND FUNCTION NAMES:
+            readDdsTexture (NOT readDDSTexture), htmlParser (NOT hTMLParser)
+        CLASS NAMES:
+            Vector3d (NOT Vector3D)
+
+3.7 Global variables should always be referred to using the :: operator.
+        ::engine.start()
+    In general, the use of global variables should be avoided. Consider using singletons instead.
+    Classes and variables in namespace std MUST be referred to using std:: prefix.
+        std::vector, std::map
+
+3.8 Private class variables should have underscore suffix.
+        class SomeClass
+        {
+        public:
+                void setLength(int length)
+                {
+                        length_ = length;
+                }
+
+        private:
+                int length_;
+
+        };
+
+3.9 Generic variables should have the same name as their type.
+        void setEdge(Edge* edge);
+    Non-generic variables have a role. These variables can often be named by combining role and type.
+
+3.10 Variables with a large scope should have long names, variables with a small scope can have short names.
+     Scratch variables used for temporary storage or indices are best kept short. Common scratch variables for
+     integers are i, j, k, m, n and for characters c and d.
+
+3.11 The name of the object is implicit, and should be avoided in a method name.
+        line.getLength() (NOT line.getLineLength())
+
+3.12 Specific Naming Conventions
+
+3.12.1 The terms get/set must be used where an attribute is accessed directly or where something is looked up.
+        entity.getName(), scene.getLight("Light0")
+
+3.12.2 The term compute can be used in methods where something is computed.
+        mesh.computeTangentSpace()
+
+3.12.3 The term find can be used in methods where something is looked up.
+
+3.12.4 The term initialize can be used where an object or a concept is established.
+        renderer.initialize()
+
+3.12.5 Variables representing GUI components should be suffixed by the component type name.
+        exitButton, mainMenu
+
+3.12.6 Plural form should be used on names representing a collection of objects.
+        std::vector<Vector3d> points
+
+3.12.7 The prefix num should be used for variables representing a number of objects.
+        numObjects, numVisibleLights
+
+3.12.8 The suffix No should be used for variables representing an entity number.
+        tableNo, employeeNo
+
+3.12.9 Iterator variables should be called i, j, k etc OR it.
+        for(uint8_t i = 0; i < objects.size(); ++i)
+        for(auto it = objects.begin(); it != objects.end(); ++it)
+       Variables named j, k etc. should be used for nested loops only.
+
+3.12.10 The prefix is should be used for boolean variables and methods.
+            isSet, isVisible, isOpen
+        There are a few alternatives to the is prefix that fit better in some situations. These are the has, can and should prefixes:
+            bool hasLicense();
+            bool canEvaluate();
+            bool shouldSort();
+
+3.12.11 Complement names must be used for complement operations.
+            get/set, add/remove, create/destroy, start/stop,
+            insert/delete, increment/decrement, old/new, begin/end,
+            first/last, up/down, min/max, next/previous, old/new, open/close, show/hide, suspend/resume, etc.
+
+3.12.12 Abbreviations in names should be avoided.
+            computeAverage() (NOT compAvg())
+        There are two types of words to consider. First are the common words listed in a language dictionary. These must never be abbreviated. Never write:
+            cmd   instead of   command
+            cp    instead of   copy
+            pt    instead of   point
+            comp  instead of   compute
+            init  instead of   initialize
+            etc.
+        Then there are domain specific phrases that are more naturally known through their abbreviations/acronym. These phrases should be kept abbreviated. Never write:
+            HypertextMarkupLanguage  instead of   html
+            CentralProcessingUnit    instead of   cpu
+            PriceEarningRatio        instead of   pe
+            etc.
+
+3.12.13 Naming pointers specifically should be avoided.
+            Line* line; // NOT Line* pLine, Line* linePtr
+        Only when the actual type of an object is of special significance, the name should emphasize the type.
+
+3.12.14 Negated boolean variable names must be avoided.
+            bool isError; // NOT isNoError
+
+3.12.15 Enumeration constants can be prefixed by a common type name.
+            enum COLOR
+            {
+                    COLOR_RED,
+                    COLOR_GREEN,
+                    COLOR_BLUE
+            };
+
+3.12.16 Exception classes should be suffixed with Exception.
+            class AccessException { : }
+
+3.12.17 Functions (methods returning something) should be named after what they return and procedures (void methods)
+        after what they do.
+
+---------
+4 Files
+---------
+
+4.1 C++ header files should have the extension .h. Source files should have the extension .cpp.
+
+4.2 A class should be declared in a header file and defined in a source file where the name of the files match the name of the class.
+        SomeClass.h, SomeClass.cpp
+    Makes it easy to find the associated files of a given class.
+    An obvious exception is template classes that must be both declared and defined inside a .h file.
+
+4.3 All definitions should reside in source files.
+        class SomeClass
+        {
+        public:
+                int getValue () {return value_;} // WRONG!!!
+
+        };
+    The header files should declare an interface, the source file should implement it.
+
+4.4 The incompleteness of split lines must be made obvious.
+        totalSum = a + b + c +
+                   d + e;
+        function(param1, param2,
+                 param3);
+        setText("Long line split"
+                "into two parts.");
+        for(int tableNo = 0; tableNo < nTables;
+            tableNo += tableStep);
+
+    In general:
+        Break after a comma.
+        Break after an operator.
+        Align the new line with the beginning of the expression on the previous line.
+
+4.5 Header files must contain an include guard.
+        #ifndef SOME_ENTITY_H
+        #define SOME_ENTITY_H
+        ...
+        #endif
+
+4.6 Include statements may be sorted and grouped. Include file paths must never be absolute.
+    Compiler directives should instead be used to indicate root directories for includes.
+
+4.7 Include statements must be located at the top of a file (after include guards in header) only.
+
+---------
+5 Statements, Comments and Layout
+---------
+
+5.1 The parts of a class must be sorted public, protected and private. All sections must be identified explicitly.
+    Not applicable sections should be left out. Type of iheritance must be defined explicitly. Variables must be
+    declared before methods. Functions and methods must always have the return value explicitly listed.
+    Class MUST have following layout:
+        /**
+         * Class description.
+         */
+        class SomeClass: public SomeBase, private SomeOtherBase
+        {
+        public:
+                SomeClass();
+                ~SomeClass();
+
+                /**
+                 * \brief Does something.
+                 *
+                 * Also does something good.
+                 * \param[in or out] param0 some good param
+                 * \return something
+                 */
+                Something getSomething(const SomethingElse& somethingElse);
+
+        protected:
+                /**
+                 * \brief Makes things.
+                 */
+                void makeThings();
+
+        private:
+                // Some value
+                int value_;
+
+                /**
+                 * \brief Does something.
+                 * \return something
+                 */
+                int getValue();
+
+        };
+
+            ^
+            |
+        Notice blank lines layout.
+
+        Class, all its methods and stand-alone functions and operators must be commented using doxygen syntax.
+        Variables must be commented as usual (with single line comments).
+        All comments should be written in English.
+        All comments must always precede commented statement.
+
+        Namespaces MUST have following layout:
+        namespace selene
+        {
+
+                // Forward declaration of classes
+                class SomeBase, SomeOtherBase;
+
+                // Represents result
+                enum RESULT
+                {
+                        SUCCESS = 0,
+                        FAIL
+                };
+
+                /**
+                 * Represents some class.
+                 */
+                class SomeClass
+                {
+                public:
+                        ...
+                };
+
+        }
+
+5.2 Type conversions must always be done explicitly. Never rely on implicit type conversion.
+        floatValue = static_cast<float>(intValue) (NOT floatValue = intValue)
+
+5.3 The nominal case should be put in the if-part and the exception in the else-part of an if statement.
+
+5.4 Loops
+
+5.4.1 Loop variables should be initialized immediately before the loop.
+
+5.4.2 do-while loops MUST avoided.
+
+5.4.3 The form while(true) should be used for infinite loops.
+
+5.5 The if-else class of statements should have the following form:
+        if(condition)
+        {
+                statements;
+        }
+
+        if(condition)
+        {
+                statements;
+        }
+        else
+        {
+                statements;
+        }
+
+        if(condition)
+        {
+                statements;
+        }
+        else if(condition)
+        {
+                statements;
+        }
+        else
+        {
+                statements;
+        }
+
+5.6 A for statement should have the following form:
+        for(initialization; condition; update)
+        {
+                statements;
+        }
+
+5.7 An empty for statement should have the following form:
+        for(initialization; condition; update);
+
+5.8 A while statement should have the following form:
+        while(condition)
+        {
+                statements;
+        }
+
+5.9 A switch statement should have the following form:
+        switch(condition)
+        {
+                case ABC:
+                        statements;
+                        break;
+
+                case XYZ:
+                        statements;
+                        break;
+
+                default:
+                        statements;
+        }
+
+5.10 A try-catch statement should have the following form:
+        try
+        {
+                statements;
+        }
+        catch(Exception& exception)
+        {
+                statements;
+        }
+
+5.11 Single statement if-else, for or while statements can be written without brackets.
+        if(condition)
+                statement;
+
+        for(initialization; condition; update)
+                statement;
+
+        while(condition)
+                statement;
+
+5.12 Logical units within a block should be separated by one blank line.
+
+5.13 Variables in declarations must be left aligned.
+        AsciiFile* file;
+        int        numPoints;
+        float      x, y;
+
+5.14 Use alignment wherever it enhances readability.
+
+5.15 White Space
+     - Conventional operators should be surrounded by a space character.
+     - C++ reserved words must not be followed by a white space.
+     - Commas should be followed by a white space.
+     - Colons should be followed by white space.
+     - Semicolons in for statments should be followed by a space character.
+            a = (b + c) * d;         // NOT: a=(b+c)*d
+            doSomething(a, b, c, d); // NOT: doSomething(a,b,c,d);
+            for(i = 0; i < 10; ++i); // NOT: for(i=0;i<10;i++)
+
+---------
+6 Variables
+---------
+
+6.1 Variables should be initialized where they are declared whenever possible. auto keyword should be
+    used whenever possible.
+        auto actor = scene.getActor("Actor0");
+
+6.2 Variables must never have dual meaning.
+
+6.3 C++ pointers and references should have their reference symbol next to the type rather than to the name.
+        float* x (NOT float *x)
+        int& y   (NOT int &y)
+    The pointer-ness or reference-ness of a variable is a property of the type rather than the name.
+
+6.4 Implicit test for 0 should not be used other than for boolean variables. Pointers should be tested for nullptr.
+        if(numObjects != 0) (NOT if (numLines))
+        if(gui == nullptr)  (NOT if(gui), if(gui == 0))
+
+6.5 Variables should be declared in the smallest scope possible.
+
+---------
+7 Miscellaneous
+---------
+
+7.1 The use of magic numbers in the code should be avoided. Numbers other than 0 and 1 should be considered declared as named constants instead.
+If the number does not have an obvious meaning by itself, the readability is enhanced by introducing a named constant instead. A different approach is to
+introduce a method from which the constant can be accessed.
+
+7.2 Floating point constants should always be written with decimal point and at least one decimal.
+        double total = 0.0;   // NOT: double total = 0;
+        double speed = 3.0e8; // NOT: double speed = 3e8;
+        float total = 0.0f;
+
+7.3 Floating point constants should always be written with a digit before the decimal point.
+        double total = 0.5; // NOT: double total = .5;
+        float  total = 0.5f // NOT: float total = .5f;
+
+7.4 goto may be used in some rare cases (for example, when function has common code for error handling).
+
+7.5 "NULL" should be never used. "nullptr" must be used for pointers and "0" for other cases.

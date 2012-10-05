@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\Engine\Application\Application.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Application\Timer.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\GUI\Button.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\GUI\GUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\GUI\Label.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Network\Message.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Rendering\Renderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Scene\Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\GUI\TextBox.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Entity\Entity.cpp">
+      <Filter>Core\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\FileManager\FileManager.cpp">
+      <Filter>Core\FileManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Material\Material.cpp">
+      <Filter>Core\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Box.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Circle.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\CollisionManager.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Cone.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Line.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Matrix.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Plane.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Ray.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Volume.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Vector.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Math\Sphere.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Status\Status.cpp">
+      <Filter>Core\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\Resource.cpp">
+      <Filter>Core\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\ResourceFactory.cpp">
+      <Filter>Core\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\ResourceManager.cpp">
+      <Filter>Core\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\Mesh\Mesh.cpp">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimation.cpp">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimationManager.cpp">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimationProcessor.cpp">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\Mesh\MeshManager.cpp">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\Mesh\Skeleton.cpp">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\Texture\Texture.cpp">
+      <Filter>Core\Resources\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Resources\Texture\TextureManager.cpp">
+      <Filter>Core\Resources\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Scene\Nodes\Actor.cpp">
+      <Filter>Scene\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Scene\Nodes\Camera.cpp">
+      <Filter>Scene\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Scene\Nodes\Light.cpp">
+      <Filter>Scene\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Scene\Nodes\ParticleSystem.cpp">
+      <Filter>Scene\Nodes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\Engine\Framework.h" />
+    <ClInclude Include="..\..\Source\Engine\Application\Application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Application\Timer.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\GUI\Button.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\GUI\Label.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\GUI\GUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Network\Message.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Rendering\Renderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Network\Socket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Scene\Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\GUI\TextBox.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Entity\Entity.h">
+      <Filter>Core\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\FileManager\FileManager.h">
+      <Filter>Core\FileManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Helpers\Bag.h">
+      <Filter>Core\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Helpers\Array.h">
+      <Filter>Core\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Macros\Macros.h">
+      <Filter>Core\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Material\Material.h">
+      <Filter>Core\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Box.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Circle.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\CollisionManager.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Cone.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Line.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\LinearInterpolator.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Matrix.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Plane.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Ray.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Volume.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Vector.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Math\Sphere.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Status\Status.h">
+      <Filter>Core\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Resource.h">
+      <Filter>Core\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\ResourceFactory.h">
+      <Filter>Core\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\ResourceManager.h">
+      <Filter>Core\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Mesh\Mesh.h">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimationProcessor.h">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimation.h">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimationFactory.h">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\MeshAnimation\MeshAnimationManager.h">
+      <Filter>Core\Resources\MeshAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Mesh\MeshFactory.h">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Mesh\MeshManager.h">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Mesh\Skeleton.h">
+      <Filter>Core\Resources\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Texture\TextureManager.h">
+      <Filter>Core\Resources\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Texture\Texture.h">
+      <Filter>Core\Resources\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Texture\TextureFactory.h">
+      <Filter>Core\Resources\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Resources\Texture\TextureFormat.h">
+      <Filter>Core\Resources\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Scene\Nodes\ParticleSystem.h">
+      <Filter>Scene\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Scene\Nodes\Actor.h">
+      <Filter>Scene\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Scene\Nodes\Camera.h">
+      <Filter>Scene\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Scene\Nodes\Light.h">
+      <Filter>Scene\Nodes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{169d882d-1b0d-44c8-b8fc-245dff3e18aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{b79ffe03-422d-4966-a5d7-7be52d607cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{e1f13b4d-5e98-43ce-ace2-076d15ca0ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{9000acba-307c-4c21-89f3-c078f43c65d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{4e81ee92-def0-4e1c-bead-2e4940dfad72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{a1b45cb7-42ca-4504-8cff-81d1ff28949f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Entity">
+      <UniqueIdentifier>{d0819ec8-b362-4ffa-8104-7d981f217185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\FileManager">
+      <UniqueIdentifier>{6587f6da-ba1f-41b2-b00f-4868337bcff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Helpers">
+      <UniqueIdentifier>{27de6682-e8e2-4b35-8757-6c14c25b0a4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Macros">
+      <UniqueIdentifier>{dfe68c7f-14c7-4779-af80-78315a68b1c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Material">
+      <UniqueIdentifier>{ddbe4340-e885-472e-ba17-00fe2ab1ffd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Math">
+      <UniqueIdentifier>{f58096d9-d5e7-4618-87da-02dec0f621d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Resources">
+      <UniqueIdentifier>{a7a754f4-7d88-4238-a55c-b044873ee98d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Status">
+      <UniqueIdentifier>{b62438ed-d5cc-4623-a438-d288926b9d2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Resources\Mesh">
+      <UniqueIdentifier>{ebee3ca3-64fa-478f-82ce-457c4aa52d8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Resources\MeshAnimation">
+      <UniqueIdentifier>{214010b8-3772-4b42-8440-92931bb6ab95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Resources\Texture">
+      <UniqueIdentifier>{32ef5c75-1776-4e1d-8866-6e9e09ee8978}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Nodes">
+      <UniqueIdentifier>{98e31562-0e65-4e4d-af38-9589284b17be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
