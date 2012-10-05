@@ -1,12 +1,11 @@
-SELENE Device
-3D graphics rendering framework
+SELENE Device is a 3D graphics rendering engine. It is cross-platform, but currently it has only Windows renderer. Core and exporter can be compiled under Linux with GCC-4.7.
 
-SELENE Device is intended to be cross-platform. Currently it has only windows renderer though, but core can be compiled under Linux with GCC-4.7.
+This repository contains Visual Studio 2010 solution and projects. In order to compile the Windows platform, VC+ Directory which contains direct3D 9 headers and libraries must be specified in project called "Windows".
 
-Repository also contains Visual Studio 2010 solution and projects. In order to compile the Windows platform, VC+ Directory which contains direct3D 9 headers and libraries must be specified in project Windows.
+Currently there is only one demo availiable (it is called "SimpleApplication"). To run it you should unzip the ApplicationData.zip archive (see Downloads) to the folder, which is one level upper than SELENE Device folder, for example:
+        /home/user/SELENE-Device      <-- SELENE Device folder
+        /home/user/ApplicationData    <-- folder which contains application data
 
-See GUIDELINES.txt for programming guidlines.
+For programming style guidlines see GUIDELINES.txt.
 
-The simple demos will be added soon.
-
-for licensing conditions see LICENSE.txt.
+This software is licensed under the MIT License (see LICENSE.txt). I hold the copyright, but my work can be used in any commercial and/or open-source project.
