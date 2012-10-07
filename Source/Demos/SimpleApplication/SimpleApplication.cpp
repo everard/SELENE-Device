@@ -10,8 +10,9 @@ namespace selene
                 return (_access(name, 0) == 0);
         }
 
-        SimpleApplication::SimpleApplication(const char* name, const char* windowClassName):
-                WindowsApplication(name, windowClassName), fileManager_(fileExists), camera_("Scene camera")
+        SimpleApplication::SimpleApplication(const char* name): WindowsApplication(name),
+                                                                fileManager_(fileExists),
+                                                                camera_("Scene camera")
         {
                 // specify search folders for file manager
                 const char* folders[] =
@@ -35,7 +36,7 @@ namespace selene
         bool SimpleApplication::onInitialize()
         {
                 // initialize renderer
-                std::cout << "Initialising D3D9 renderer\n";
+                std::cout << "Initializing D3D9 renderer\n";
 
                 uint8_t d3dFlags = 0;
                 D3d9Renderer::Parameters parameters(&fileManager_, width_, height_, hWnd_, d3dFlags);
@@ -146,8 +147,8 @@ namespace selene
                 // to prevent compilation warning we should use all parameters
                 elementId = message = 0;
 
-                // send WM_DESTROY to the window
-                SendMessage(hWnd_, WM_DESTROY, 0, 0);
+                // halt application
+                halt();
         }
 
 }

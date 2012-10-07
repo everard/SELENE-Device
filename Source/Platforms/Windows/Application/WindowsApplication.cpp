@@ -6,13 +6,9 @@
 namespace selene
 {
 
-        WindowsApplication::WindowsApplication(const char* name,
-                                               const char* windowClassName): Application(name)
+        WindowsApplication::WindowsApplication(const char* name): Application(name)
         {
-                if(windowClassName != nullptr)
-                        windowClassName_ = windowClassName;
-                else
-                        windowClassName_ = "Demo";
+                windowClassName_ = "SELENE Device window class";
 
                 hInstance_ = 0;
                 hWnd_ = 0;
@@ -95,6 +91,13 @@ namespace selene
                 onDestroy();
                 destroy();
                 return true;
+        }
+
+        //-------------------------------------------------------------------------------------
+        void WindowsApplication::halt()
+        {
+                if(hWnd_ != nullptr)
+                        PostQuitMessage(0);
         }
 
         //-------------------------------------------------------------------------------------

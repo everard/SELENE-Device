@@ -48,6 +48,11 @@ namespace selene
                  */
                 virtual bool run() = 0;
 
+                /**
+                 * \brief Halts application. Stops main loop.
+                 */
+                virtual void halt() = 0;
+
         protected:
                 // Width and height of the rendering area
                 uint32_t width_, height_;

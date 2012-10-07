@@ -2,7 +2,7 @@
 
 int main()
 {
-        selene::SimpleApplication application("SELENE Device", "SELENE_WINDOW");
+        selene::SimpleApplication application("SELENE Device");
         if(application.initialize(640, 480))
                 application.run();
 

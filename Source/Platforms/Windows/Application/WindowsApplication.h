@@ -14,7 +14,7 @@ namespace selene
         class WindowsApplication: public Application
         {
         public:
-                WindowsApplication(const char* name, const char* windowClassName);
+                WindowsApplication(const char* name);
                 ~WindowsApplication();
 
                 // Initializes application
@@ -22,6 +22,9 @@ namespace selene
 
                 // Runs application
                 bool run();
+
+                // Halts application
+                void halt();
 
         protected:
                 // Window class name
