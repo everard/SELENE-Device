@@ -28,8 +28,7 @@ namespace selene
                 if(registerWindowClass() == 0)
                         return false;
 
-                if((hWnd_ = CreateWindowEx(0, windowClassName_.c_str(), name_.c_str(),
-                                           WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX,
+                if((hWnd_ = CreateWindowEx(0, windowClassName_.c_str(), name_.c_str(), WS_POPUP,
                                            CW_USEDEFAULT, CW_USEDEFAULT, width_, height_,
                                            0, 0, hInstance_, 0)) == 0)
                 {

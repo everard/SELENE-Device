@@ -242,7 +242,7 @@ class ExportSLE(bpy.types.Operator, ExportHelper):
 
     filename_ext = ".sle"
 
-    path_to_exporter = 'path to Exporter.exe'
+    path_to_exporter = 'Path To Exporter.exe'
 
     @classmethod
     def poll(cls, context):
@@ -254,8 +254,17 @@ class ExportSLE(bpy.types.Operator, ExportHelper):
         fileName = self.filepath
         fileName = bpy.path.ensure_ext(fileName, self.filename_ext)
 
-        mesh = bpy.context.active_object.to_mesh(bpy.context.scene, True, 'PREVIEW')
+        object = bpy.context.active_object
+        newObject = object.copy()
+        for modifier in [modifier for modifier in newObject.modifiers if modifier.type == "ARMATURE"]:
+            newObject.modifiers.remove(modifier)
+
+        mesh = newObject.to_mesh(bpy.context.scene, True, "PREVIEW")
         result = exportMesh(mesh, fileName)
+
+        bpy.data.objects.remove(newObject)
+        bpy.data.meshes.remove(mesh)
+
         if result == 'SUCCESS':
             fileName = fileName.replace(' ', '?')
             subprocess.call([self.path_to_exporter + '/Exporter.exe', fileName, fileName])
