@@ -3,7 +3,6 @@
 
 #include "../../../../Engine/Core/Macros/Macros.h"
 #include "D3D9Device.h"
-#include <iostream>
 #include <new>
 
 namespace selene
@@ -37,13 +36,11 @@ namespace selene
 
         D3d9Device::D3d9Device()
         {
-                std::cout << "Creating D3D9 device\n";
                 d3dDevice_ = nullptr;
                 d3d_ = nullptr;
         }
         D3d9Device::~D3d9Device()
         {
-                std::cout << "Destroying D3D9 device\n";
                 SAFE_RELEASE(d3dDevice_);
                 SAFE_RELEASE(d3d_);
                 device_ = nullptr;

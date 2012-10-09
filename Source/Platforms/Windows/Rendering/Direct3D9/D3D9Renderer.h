@@ -122,6 +122,15 @@ namespace selene
                         PIXEL_SHADER_PARTICLES_PASS,
                         NUM_OF_PIXEL_SHADERS,
 
+                        // Optional vertex shaders
+                        OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS = 0,
+                        OPTIONAL_VERTEX_SHADER_SKIN_POSITIONS_AND_NORMALS_PASS,
+                        NUM_OF_OPTIONAL_VERTEX_SHADERS,
+
+                        // Optional pixel shaders
+                        OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS = 0,
+                        NUM_OF_OPTIONAL_PIXEL_SHADERS,
+
                         // Dummy textures
                         DUMMY_TEXTURE_WHITE = 0,
                         DUMMY_TEXTURE_NORMAL_MAP,
@@ -143,11 +152,14 @@ namespace selene
                         // Rendering passes
                         RENDERING_PASS_POSITIONS = 0,
                         RENDERING_PASS_NORMALS,
-                        RENDERING_PASS_SHADING
+                        RENDERING_PASS_SHADING,
+                        RENDERING_PASS_POSITIONS_AND_NORMALS
                 };
 
                 LPDIRECT3DDEVICE9 d3dDevice_;
 
+                D3d9VertexShader optionalVertexShaders_[NUM_OF_OPTIONAL_VERTEX_SHADERS];
+                D3d9PixelShader  optionalPixelShaders_[NUM_OF_OPTIONAL_PIXEL_SHADERS];
                 D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];
                 D3d9PixelShader  pixelShaders_[NUM_OF_PIXEL_SHADERS];
                 D3d9ParticlesRenderer particlesRenderer_;
@@ -187,6 +199,8 @@ namespace selene
                 Parameters parameters_;
                 DWORD d3dMaxTextureAnisotropy_;
                 bool isR32fRenderTargetFormatSupported_;
+                bool isMultipleRenderTargetSupported_;
+                bool isThirdShaderModelSupported_;
 
                 // Sets texture
                 void setTexture(const Resource::Instance<Texture>& texture, DWORD pass,
