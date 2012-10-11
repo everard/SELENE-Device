@@ -3,6 +3,9 @@
 
 #include "Renderer.h"
 
+#include "../Core/FileManager/FileManager.h"
+#include "../Application/Application.h"
+
 #include "../Scene/Nodes/ParticleSystem.h"
 #include "../Scene/Nodes/Camera.h"
 #include "../Scene/Nodes/Light.h"
@@ -11,12 +14,54 @@
 namespace selene
 {
 
-        Renderer::Parameters::Parameters()
+        Renderer::Parameters::Parameters(Application* application, FileManager* fileManager,
+                                         uint32_t width, uint32_t height, std::ostream* log,
+                                         uint8_t flags)
         {
-                width_ = height_ = 0;
-                flags_ = 0;
+                application_ = application;
+                fileManager_ = fileManager;
+                width_  = width;
+                height_ = height;
+                log_   = log;
+                flags_ = flags;
         }
         Renderer::Parameters::~Parameters() {}
+
+        //-----------------------------------------------------------------------------------------------
+        Application* Renderer::Parameters::getApplication() const
+        {
+                return const_cast<Application*>(application_);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        FileManager* Renderer::Parameters::getFileManager() const
+        {
+                return const_cast<FileManager*>(fileManager_);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        uint32_t Renderer::Parameters::getWidth() const
+        {
+                return width_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        uint32_t Renderer::Parameters::getHeight() const
+        {
+                return height_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        std::ostream* Renderer::Parameters::getLog() const
+        {
+                return const_cast<std::ostream*>(log_);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        uint8_t Renderer::Parameters::getFlags() const
+        {
+                return flags_;
+        }
 
         Renderer::Renderer()
         {

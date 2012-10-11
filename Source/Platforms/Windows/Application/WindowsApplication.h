@@ -26,6 +26,9 @@ namespace selene
                 // Halts application
                 void halt();
 
+                // Returns window handle
+                HWND getWindowHandle();
+
         protected:
                 // Window class name
                 std::string windowClassName_;
@@ -35,6 +38,9 @@ namespace selene
 
                 // Window handle
                 HWND hWnd_;
+
+                // Returns state of the given key
+                float getKeyState(uint8_t key);
 
                 // Windows message event callback
                 virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);

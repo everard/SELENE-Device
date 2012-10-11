@@ -6,6 +6,7 @@
 #include "../../../../Engine/Scene/Nodes/ParticleSystem.h"
 #include "../../../../Engine/Scene/Nodes/Camera.h"
 #include "../../../../Engine/Scene/Nodes/Actor.h"
+#include "../../Application/WindowsApplication.h"
 
 #include "Resources/D3D9Texture.h"
 #include "Resources/D3D9Mesh.h"
@@ -75,21 +76,7 @@ namespace selene
                 return ++x;
         }
 
-        D3d9Renderer::Parameters::Parameters(FileManager* fileManager,
-                                             uint32_t width,
-                                             uint32_t height,
-                                             HWND hWnd,
-                                             uint8_t flags)
-        {
-                fileManager_ = fileManager;
-                width_  = width;
-                height_ = height;
-                hWnd_   = hWnd;
-                flags_  = flags;
-        }
-        D3d9Renderer::Parameters::~Parameters() {}
-
-        D3d9Renderer::D3d9Renderer()
+        D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
         {
                 d3dDevice_ = nullptr;
 
@@ -122,44 +109,59 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         bool D3d9Renderer::initialize(const Renderer::Parameters& parameters)
         {
-                Parameters* d3dRendererParameters = dynamic_cast<Parameters*>(const_cast<Renderer::Parameters*>(&parameters));
-                if(d3dRendererParameters == nullptr)
-                        return false;
-
                 destroy();
 
-                parameters_ = *d3dRendererParameters;
-                setFlags(parameters_.flags_);
+                parameters_ = parameters;
+                WindowsApplication* windowsApplication = dynamic_cast<WindowsApplication*>(parameters_.getApplication());
+
+                writeLogEntry("--- Initializing Direct3D 9 renderer ---");
+                if(windowsApplication == nullptr)
+                {
+                        writeLogEntry("ERROR: Could not get windows application");
+                        return false;
+                }
+
+                setFlags(parameters_.getFlags());
 
                 // check parameters
-                if(parameters_.width_  < 128 || parameters_.width_  > 4096 ||
-                   parameters_.height_ < 128 || parameters_.height_ > 4096)
+                if(parameters_.getWidth()  < 128 || parameters_.getWidth()  > 4096 ||
+                   parameters_.getHeight() < 128 || parameters_.getHeight() > 4096)
+                {
+                        writeLogEntry("ERROR: Width and height of the rendering area must be in range [128; 4096]");
                         return false;
+                }
 
-                uint32_t halfWidth  = parameters_.width_  >> 1;
-                uint32_t halfHeight = parameters_.height_ >> 1;
+                uint32_t halfWidth  = parameters_.getWidth()  >> 1;
+                uint32_t halfHeight = parameters_.getHeight() >> 1;
 
-                uint32_t nearestPowerOfTwo = parameters_.width_ > parameters_.height_ ?
-                                             parameters_.width_ : parameters_.height_;
+                uint32_t nearestPowerOfTwo = parameters_.getWidth() > parameters_.getHeight() ?
+                                             parameters_.getWidth() : parameters_.getHeight();
 
                 nearestPowerOfTwo = getNearestPowerOfTwo(nearestPowerOfTwo);
-                if(nearestPowerOfTwo < parameters_.width_ ||
-                   nearestPowerOfTwo < parameters_.height_)
+                if(nearestPowerOfTwo < parameters_.getWidth() ||
+                   nearestPowerOfTwo < parameters_.getHeight())
                         nearestPowerOfTwo = nearestPowerOfTwo << 1;
 
                 // create d3d
                 D3d9Device* device = D3d9Device::getInstance();
                 if(device == nullptr)
+                {
+                        writeLogEntry("ERROR: Not enough memory");
                         return false;
+                }
 
                 device->d3d_ = Direct3DCreate9(D3D_SDK_VERSION);
                 if(device->d3d_ == nullptr)
+                {
+                        writeLogEntry("ERROR: Could not initialize Direct3D");
                         return false;
+                }
 
                 // get display mode
                 D3DDISPLAYMODE d3dDisplayMode;
                 if(FAILED(device->d3d_->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3dDisplayMode)))
                 {
+                        writeLogEntry("ERROR: Could not get display mode");
                         destroy();
                         return false;
                 }
@@ -174,8 +176,8 @@ namespace selene
                 else
                         d3dPresentParameters.Windowed = TRUE;
 
-                d3dPresentParameters.BackBufferWidth  = parameters_.width_;
-                d3dPresentParameters.BackBufferHeight = parameters_.height_;
+                d3dPresentParameters.BackBufferWidth  = parameters_.getWidth();
+                d3dPresentParameters.BackBufferHeight = parameters_.getHeight();
                 d3dPresentParameters.EnableAutoDepthStencil = TRUE;
                 d3dPresentParameters.AutoDepthStencilFormat = D3DFMT_D24S8;
                 d3dPresentParameters.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
@@ -198,11 +200,17 @@ namespace selene
 
                 isThirdShaderModelSupported_ = false;
                 if(d3dCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0))
+                {
+                        writeLogEntry("PS 3.0 is supported");
                         isThirdShaderModelSupported_ = true;
+                }
 
                 isMultipleRenderTargetSupported_ = false;
                 if(d3dCaps.NumSimultaneousRTs > 1)
+                {
+                        writeLogEntry("MRT is supported");
                         isMultipleRenderTargetSupported_ = true;
+                }
 
                 DWORD d3dFlags = 0;
                 if(IS_SET(d3dCaps.DevCaps, D3DDEVCAPS_HWTRANSFORMANDLIGHT) &&
@@ -216,9 +224,10 @@ namespace selene
                         d3dFlags |= D3DCREATE_PUREDEVICE;
 
                 // create D3D9 device
-                if(FAILED(device->d3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, parameters_.hWnd_,
+                if(FAILED(device->d3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, windowsApplication->getWindowHandle(),
                                                      d3dFlags, &d3dPresentParameters, &device->d3dDevice_)))
                 {
+                        writeLogEntry("ERROR: Could not create Direct3D device");
                         destroy();
                         return false;
                 }
@@ -227,11 +236,15 @@ namespace selene
                 if(FAILED(device->d3d_->CheckDeviceFormat(d3dCaps.AdapterOrdinal, d3dCaps.DeviceType,
                                                           d3dDisplayMode.Format, D3DUSAGE_RENDERTARGET,
                                                           D3DRTYPE_TEXTURE, D3DFMT_R32F)))
+                {
+                        writeLogEntry("R32F texture format is supported");
                         isR32fRenderTargetFormatSupported_ = false;
+                }
 
                 d3dDevice_ = D3d9Device::getInterface();
                 if(d3dDevice_ == nullptr)
                 {
+                        writeLogEntry("ERROR: Direct3D device is not created");
                         destroy();
                         return false;
                 }
@@ -321,7 +334,7 @@ namespace selene
                 }
 
                 // create shaders
-                FileManager* fileManager = parameters_.fileManager_;
+                FileManager* fileManager = parameters_.getFileManager();
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
                         D3d9Shader("Shaders//PositionPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
@@ -376,6 +389,7 @@ namespace selene
                 {
                         if(!vertexShaders_[i].create(d3dVertexShaders[i]))
                         {
+                                writeLogEntry("ERROR: Could not create vertex shader");
                                 destroy();
                                 return false;
                         }
@@ -385,6 +399,7 @@ namespace selene
                 {
                         if(!pixelShaders_[i].create(d3dPixelShaders[i]))
                         {
+                                writeLogEntry("ERROR: Could not create pixel shader");
                                 destroy();
                                 return false;
                         }
@@ -405,6 +420,7 @@ namespace selene
                         {
                                 if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS + i].create(d3dOptionalVertexShaders[i]))
                                 {
+                                        writeLogEntry("ERROR: Could not create optional vertex shader");
                                         destroy();
                                         return false;
                                 }
@@ -412,6 +428,7 @@ namespace selene
 
                         if(!optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS].create(d3dOptionalPixelShader))
                         {
+                                writeLogEntry("ERROR: Could not create optional pixel shader");
                                 destroy();
                                 return false;
                         }
@@ -423,6 +440,7 @@ namespace selene
                         if(FAILED(d3dDevice_->CreateTexture(1, 1, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                                             &d3dDummyTextures_[i], nullptr)))
                         {
+                                writeLogEntry("ERROR: Could not create dummy texture");
                                 destroy();
                                 return false;
                         }
@@ -431,6 +449,7 @@ namespace selene
                 if(FAILED(D3DXFillTexture(d3dDummyTextures_[DUMMY_TEXTURE_WHITE], fillWhiteTexture, nullptr)) ||
                    FAILED(D3DXFillTexture(d3dDummyTextures_[DUMMY_TEXTURE_NORMAL_MAP], fillNormalMap, nullptr)))
                 {
+                        writeLogEntry("ERROR: Could not fill dummy texture");
                         destroy();
                         return false;
                 }
@@ -439,6 +458,7 @@ namespace selene
                 if(FAILED(d3dDevice_->CreateTexture(64, 64, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                                     &d3dRandomTexture_, nullptr)))
                 {
+                        writeLogEntry("ERROR: Could not create random texture");
                         destroy();
                         return false;
                 }
@@ -446,6 +466,7 @@ namespace selene
                 srand(0);
                 if(FAILED(D3DXFillTexture(d3dRandomTexture_, fillRandomTexture, nullptr)))
                 {
+                        writeLogEntry("ERROR: Could not fill random texture");
                         destroy();
                         return false;
                 }
@@ -465,17 +486,19 @@ namespace selene
 
                 for(uint32_t i = 0; i < NUM_OF_RENDER_TARGETS; ++i)
                 {
-                        if(FAILED(d3dDevice_->CreateTexture(parameters_.width_, parameters_.height_, 1,
+                        if(FAILED(d3dDevice_->CreateTexture(parameters_.getWidth(), parameters_.getHeight(), 1,
                                                             D3DUSAGE_RENDERTARGET, d3dRenderTargetFormats[i],
                                                             D3DPOOL_DEFAULT, &d3dRenderTargetTextures_[i],
                                                             nullptr)))
                         {
+                                writeLogEntry("ERROR: Could not create render target");
                                 destroy();
                                 return false;
                         }
 
                         if(FAILED(d3dRenderTargetTextures_[i]->GetSurfaceLevel(0, &d3dRenderTargetSurfaces_[i])))
                         {
+                                writeLogEntry("ERROR: Could not get render target surface");
                                 destroy();
                                 return false;
                         }
@@ -489,12 +512,14 @@ namespace selene
                                                             D3DPOOL_DEFAULT, &d3dHalfSizeRenderTargetTextures_[i],
                                                             nullptr)))
                         {
+                                writeLogEntry("ERROR: Could not create half-size render target");
                                 destroy();
                                 return false;
                         }
 
                         if(FAILED(d3dHalfSizeRenderTargetTextures_[i]->GetSurfaceLevel(0, &d3dHalfSizeRenderTargetSurfaces_[i])))
                         {
+                                writeLogEntry("ERROR: Could not get half-size render target surface");
                                 destroy();
                                 return false;
                         }
@@ -506,12 +531,14 @@ namespace selene
                                                     D3DUSAGE_RENDERTARGET, d3dRenderTargetFormats[RENDER_TARGET_POSITIONS],
                                                     D3DPOOL_DEFAULT, &d3dShadowMapTexture_, nullptr)))
                 {
+                        writeLogEntry("ERROR: Could not create shadow map");
                         destroy();
                         return false;
                 }
 
                 if(FAILED(d3dShadowMapTexture_->GetSurfaceLevel(0, &d3dShadowMapRenderTargetSurface_)))
                 {
+                        writeLogEntry("ERROR: Could not get shadow map render target surface");
                         destroy();
                         return false;
                 }
@@ -523,6 +550,7 @@ namespace selene
                    !ssaoGeometry_.initialize()   ||
                    !guiRenderer_.initialize(fileManager))
                 {
+                        writeLogEntry("ERROR: Could not initialize helper geometry");
                         destroy();
                         return false;
                 }
@@ -530,12 +558,14 @@ namespace selene
                 // get default render target
                 if(FAILED(d3dDevice_->GetRenderTarget(0, &d3dBackBufferSurface_)))
                 {
+                        writeLogEntry("ERROR: Could not get default render target surface");
                         destroy();
                         return false;
                 }
 
                 if(d3dBackBufferSurface_ == nullptr)
                 {
+                        writeLogEntry("ERROR: Could not get default render target surface");
                         destroy();
                         return false;
                 }
@@ -543,12 +573,14 @@ namespace selene
                 // get default depth stencil surface
                 if(FAILED(d3dDevice_->GetDepthStencilSurface(&d3dDepthStencilSurface_)))
                 {
+                        writeLogEntry("ERROR: Could not get default depth stencil surface");
                         destroy();
                         return false;
                 }
 
                 if(d3dDepthStencilSurface_ == nullptr)
                 {
+                        writeLogEntry("ERROR: Could not get default depth stencil surface");
                         destroy();
                         return false;
                 }
@@ -557,6 +589,7 @@ namespace selene
                 D3DSURFACE_DESC d3dSurfaceDesc;
                 if(FAILED(d3dDepthStencilSurface_->GetDesc(&d3dSurfaceDesc)))
                 {
+                        writeLogEntry("ERROR: Could not get default depth stencil surface description");
                         destroy();
                         return false;
                 }
@@ -569,12 +602,14 @@ namespace selene
                                                                 &d3dShadowMapDepthStencilSurface_,
                                                                 nullptr)))
                 {
+                        writeLogEntry("ERROR: Could not create depth stencil surface for shadow map");
                         destroy();
                         return false;
                 }
 
                 if(d3dShadowMapDepthStencilSurface_ == nullptr)
                 {
+                        writeLogEntry("ERROR: Could not create depth stencil surface for shadow map");
                         destroy();
                         return false;
                 }
@@ -588,12 +623,14 @@ namespace selene
                                                                 &newDepthStencilSurface,
                                                                 nullptr)))
                 {
+                        writeLogEntry("ERROR: Could not create new depth stencil surface");
                         destroy();
                         return false;
                 }
 
                 if(newDepthStencilSurface == nullptr)
                 {
+                        writeLogEntry("ERROR: Could not create new depth stencil surface");
                         destroy();
                         return false;
                 }
@@ -604,24 +641,25 @@ namespace selene
 
                 if(FAILED(d3dDevice_->SetDepthStencilSurface(d3dDepthStencilSurface_)))
                 {
+                        writeLogEntry("ERROR: Could not set new depth stencil surface");
                         destroy();
                         return false;
                 }
 
                 // set screen size
-                screenSize_.define((float)parameters_.width_,
-                                   (float)parameters_.height_,
-                                   (float)halfWidth,
-                                   (float)halfHeight);
+                screenSize_.define(static_cast<float>(parameters_.getWidth()),
+                                   static_cast<float>(parameters_.getHeight()),
+                                   static_cast<float>(halfWidth),
+                                   static_cast<float>(halfHeight));
 
                 // set shadow map kernel size
-                shadowMapKernelSize_.define(1.0f / (float)shadowMapSize);
+                shadowMapKernelSize_.define(1.0f / static_cast<float>(shadowMapSize));
 
                 // compute texture coordinates adjustment to directly map texels to pixels
-                textureCoordinatesAdjustment_.define( 1.0f / (float)parameters_.width_,
-                                                     -1.0f / (float)parameters_.height_,
-                                                      0.5f / (float)parameters_.width_,
-                                                      0.5f / (float)parameters_.height_);
+                textureCoordinatesAdjustment_.define( 1.0f / static_cast<float>(parameters_.getWidth()),
+                                                     -1.0f / static_cast<float>(parameters_.getHeight()),
+                                                      0.5f / static_cast<float>(parameters_.getWidth()),
+                                                      0.5f / static_cast<float>(parameters_.getHeight()));
 
                 d3dDevice_->SetRenderState(D3DRS_LIGHTING, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -783,6 +821,13 @@ namespace selene
 
                 // clear rendering lists
                 clearLists();
+        }
+
+        //--------------------------------------------------------------------------------------------
+        void D3d9Renderer::writeLogEntry(const char* entry)
+        {
+                if(parameters_.getLog() != nullptr)
+                        (*parameters_.getLog()) << entry << std::endl;
         }
 
         //--------------------------------------------------------------------------------------------

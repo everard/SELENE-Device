@@ -36,16 +36,11 @@ namespace selene
         bool SimpleApplication::onInitialize()
         {
                 // initialize renderer
-                std::cout << "Initializing D3D9 renderer\n";
-
                 uint8_t d3dFlags = 0;
-                D3d9Renderer::Parameters parameters(&fileManager_, width_, height_, hWnd_, d3dFlags);
+                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, d3dFlags);
 
                 if(!renderer_.initialize(parameters))
-                {
-                        std::cout<<"ERROR\n";
                         return false;
-                }
 
                 // set GUI to render
                 renderer_.setGui(gui_);
@@ -63,11 +58,18 @@ namespace selene
                 camera_.setDistance(15.0f);
 
                 // initialize GUI
-                Vector4d backgroundColors[NUM_OF_GUI_ELEMENT_COLOR_TYPES] =
+                Vector4d buttonBackgroundColors[NUM_OF_GUI_ELEMENT_COLOR_TYPES] =
                 {
                         Vector4d(0.1f, 0.1f, 0.1f, 0.7f),
                         Vector4d(0.1f, 0.1f, 0.4f, 0.9f),
                         Vector4d(0.3f, 0.1f, 0.1f, 0.9f)
+                };
+
+                Vector4d labelBackgroundColors[NUM_OF_GUI_ELEMENT_COLOR_TYPES] =
+                {
+                        Vector4d(0.1f, 0.1f, 0.1f, 0.0f),
+                        Vector4d(0.1f, 0.1f, 0.1f, 0.0f),
+                        Vector4d(0.1f, 0.1f, 0.1f, 0.0f)
                 };
 
                 Vector4d textColors[NUM_OF_GUI_ELEMENT_COLOR_TYPES] =
@@ -81,12 +83,20 @@ namespace selene
                                                          {
                                                                  this->onButtonMessageExit(elementId, message);
                                                          }),
-                                                         backgroundColors,
+                                                         buttonBackgroundColors,
                                                          textColors,
                                                          Vector2d(0.05f, 0.07f),
                                                          Vector2d(0.1f, 0.43f),
-                                                         Vector2d(0.6f, 0.1f),
+                                                         Vector2d(0.2f, 0.1f),
                                                          "Exit"));
+
+                gui_.addElement(new(std::nothrow) Label(std::function<void (int32_t, uint8_t)>(),
+                                                        labelBackgroundColors,
+                                                        textColors,
+                                                        Vector2d(0.05f, 0.07f),
+                                                        Vector2d(0.1f, 0.1f),
+                                                        Vector2d(1.6f, 0.1f),
+                                                        "Use WASD to move the mesh"));
 
                 // load mesh
                 MeshFactory<D3d9Mesh> d3d9MeshFactory(&fileManager_);
@@ -125,13 +135,34 @@ namespace selene
         //-----------------------------------------------------------------------------
         void SimpleApplication::onRender(float elapsedTime)
         {
-                // rotate actor
+                // rotate if key is pressed
                 auto weakPointer = scene_.getActor("object");
                 auto actor = weakPointer.lock();
                 if(actor)
                 {
-                        Quaternion rotation(Vector3d(1.0f, -1.0f, 1.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
-                        actor->setRotation(actor->getRotation() * rotation);
+                        if(getKeyState('W') > 0.0f)
+                        {
+                                Quaternion rotation(Vector3d(1.0f, 0.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
+                                actor->setRotation(actor->getRotation() * rotation);
+                        }
+
+                        if(getKeyState('S') > 0.0f)
+                        {
+                                Quaternion rotation(Vector3d(-1.0f, 0.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
+                                actor->setRotation(actor->getRotation() * rotation);
+                        }
+
+                        if(getKeyState('A') > 0.0f)
+                        {
+                                Quaternion rotation(Vector3d(0.0f, 1.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
+                                actor->setRotation(actor->getRotation() * rotation);
+                        }
+
+                        if(getKeyState('D') > 0.0f)
+                        {
+                                Quaternion rotation(Vector3d(0.0f, -1.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
+                                actor->setRotation(actor->getRotation() * rotation);
+                        }
                 }
 
                 // process GUI

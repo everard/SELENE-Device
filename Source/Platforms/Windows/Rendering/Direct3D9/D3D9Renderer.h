@@ -37,28 +37,6 @@ namespace selene
         class D3d9Renderer: public Renderer, public Status
         {
         public:
-                // Represents rendering parameters.
-                class Parameters: public Renderer::Parameters
-                {
-                public:
-                        Parameters(FileManager* fileManager = nullptr,
-                                   uint32_t width  = 0,
-                                   uint32_t height = 0,
-                                   HWND hWnd = 0,
-                                   uint8_t flags = 0);
-                        ~Parameters();
-
-                private:
-                        friend class D3d9Renderer;
-
-                        // File manager
-                        FileManager* fileManager_;
-
-                        // Window handle
-                        HWND hWnd_;
-
-                };
-
                 D3d9Renderer();
                 ~D3d9Renderer();
 
@@ -201,6 +179,9 @@ namespace selene
                 bool isR32fRenderTargetFormatSupported_;
                 bool isMultipleRenderTargetSupported_;
                 bool isThirdShaderModelSupported_;
+
+                // Writes log entry
+                void writeLogEntry(const char* entry);
 
                 // Sets texture
                 void setTexture(const Resource::Instance<Texture>& texture, DWORD pass,

@@ -64,6 +64,13 @@ namespace selene
                 uint8_t pressedControlButtons_;
 
                 /**
+                 * \brief Returns state of the given key.
+                 * \param[in] key key
+                 * \return state of the key (zero if key is not pressed, one if key is fully pressed)
+                 */
+                virtual float getKeyState(uint8_t key) = 0;
+
+                /**
                  * \brief Initialization event callback.
                  * \return true if initialization succeded
                  */

@@ -8,6 +8,7 @@
 #include "../Core/Math/Matrix.h"
 
 #include <algorithm>
+#include <ostream>
 #include <memory>
 #include <vector>
 #include <map>
@@ -18,6 +19,8 @@ namespace selene
 
         // Forward declaration of classes
         class ParticleSystem;
+        class Application;
+        class FileManager;
         class Camera;
         class Actor;
         class Light;
@@ -55,14 +58,71 @@ namespace selene
                 class Parameters
                 {
                 public:
-                        Parameters();
+                        /**
+                         * \brief Constructs rendering parameters with given application, file manager,
+                         * rendering area width, rendering area height, log and rendering flags.
+                         * \param[in] application application
+                         * \param[in] fileManager file manager
+                         * \param[in] width width of the rendering area
+                         * \param[in] height height of the rendering area
+                         * \param[in] log log
+                         * \param[in] flags rendering flags
+                         */
+                        Parameters(Application* application, FileManager* fileManager,
+                                   uint32_t width, uint32_t height, std::ostream* log,
+                                   uint8_t flags);
                         virtual ~Parameters();
+
+                        /**
+                         * \brief Returns application.
+                         * \return pointer to the application
+                         */
+                        Application* getApplication() const;
+
+                        /**
+                         * \brief Returns file manager.
+                         * \return pointer to the file manager
+                         */
+                        FileManager* getFileManager() const;
+
+                        /**
+                         * \brief Returns width of the rendering area.
+                         * \return width of the rendering area
+                         */
+                        uint32_t getWidth() const;
+
+                        /**
+                         * \brief Returns height of the rendering area.
+                         * \return height of the rendering area
+                         */
+                        uint32_t getHeight() const;
+
+                        /**
+                         * \brief Returns log.
+                         * \return pointer to the log
+                         */
+                        std::ostream* getLog() const;
+
+                        /**
+                         * \brief Returns rendering flags.
+                         * \return rendering flags
+                         */
+                        uint8_t getFlags() const;
 
                 protected:
                         friend class Renderer;
 
+                        // Application
+                        Application* application_;
+
+                        // File manager
+                        FileManager* fileManager_;
+
                         // Width and height
                         uint32_t width_, height_;
+
+                        // Log
+                        std::ostream* log_;
 
                         // Flags
                         uint8_t flags_;

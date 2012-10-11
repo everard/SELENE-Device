@@ -100,6 +100,21 @@ namespace selene
         }
 
         //-------------------------------------------------------------------------------------
+        HWND WindowsApplication::getWindowHandle()
+        {
+                return hWnd_;
+        }
+
+        //-------------------------------------------------------------------------------------
+        float WindowsApplication::getKeyState(uint8_t key)
+        {
+                if(::GetAsyncKeyState(key) != 0)
+                        return 1.0f;
+
+                return 0.0f;
+        }
+
+        //-------------------------------------------------------------------------------------
         LRESULT WindowsApplication::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
         {
                 return DefWindowProc(hWnd_, message, wParam, lParam);
