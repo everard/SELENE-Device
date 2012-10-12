@@ -232,13 +232,16 @@ namespace selene
                         return false;
                 }
 
-                isR32fRenderTargetFormatSupported_ = true;
                 if(FAILED(device->d3d_->CheckDeviceFormat(d3dCaps.AdapterOrdinal, d3dCaps.DeviceType,
                                                           d3dDisplayMode.Format, D3DUSAGE_RENDERTARGET,
                                                           D3DRTYPE_TEXTURE, D3DFMT_R32F)))
                 {
-                        writeLogEntry("R32F texture format is supported");
                         isR32fRenderTargetFormatSupported_ = false;
+                }
+                else
+                {
+                        writeLogEntry("R32F texture format is supported");
+                        isR32fRenderTargetFormatSupported_ = true;
                 }
 
                 d3dDevice_ = D3d9Device::getInterface();

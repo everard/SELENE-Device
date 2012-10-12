@@ -1,17 +1,10 @@
 #include "SimpleApplication.h"
-#include <io.h>
 
 namespace selene
 {
 
-        // Checks file existance
-        bool fileExists(const char* name)
-        {
-                return (_access(name, 0) == 0);
-        }
-
         SimpleApplication::SimpleApplication(const char* name): WindowsApplication(name),
-                                                                fileManager_(fileExists),
+                                                                fileManager_(Platform::fileExists),
                                                                 camera_("Scene camera")
         {
                 // specify search folders for file manager

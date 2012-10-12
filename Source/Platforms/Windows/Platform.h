@@ -11,4 +11,18 @@
 #include "Application/WindowsApplication.h"
 #include "Application/WindowsTimer.h"
 
+namespace selene
+{
+
+        // Represents platform.
+        class Platform
+        {
+        public:
+                // Checks file existence
+                static bool fileExists(const char* fileName);
+
+        };
+
+}
+
 #endif

@@ -93,5 +93,6 @@
     <ClCompile Include="..\..\..\Source\Platforms\Windows\Rendering\Direct3D9\Resources\D3D9Texture.cpp">
       <Filter>Rendering\Direct3D9\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Platforms\Windows\Platform.cpp" />
   </ItemGroup>
 </Project>
