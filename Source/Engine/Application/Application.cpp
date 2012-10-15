@@ -41,6 +41,12 @@ namespace selene
         }
 
         //------------------------------------------------------
+        void Application::onUpdate(float elapsedTime)
+        {
+                elapsedTime = 0.0f;
+        }
+
+        //------------------------------------------------------
         void Application::onRender(float elapsedTime)
         {
                 elapsedTime = 0.0f;

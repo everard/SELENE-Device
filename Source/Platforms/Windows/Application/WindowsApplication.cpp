@@ -79,6 +79,7 @@ namespace selene
                         {
                                 timer.reset();
 
+                                onUpdate(elapsedTime);
                                 onRender(elapsedTime);
 
                                 elapsedTime = timer.getElapsedTime();

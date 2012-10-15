@@ -42,6 +42,9 @@ namespace selene
                 // Destruction event callback
                 void onDestroy();
 
+                // Update event callback
+                void onUpdate(float elapsedTime);
+
                 // Rendering event callback
                 void onRender(float elapsedTime);
 

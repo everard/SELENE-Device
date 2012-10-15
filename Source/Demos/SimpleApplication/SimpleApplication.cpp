@@ -126,7 +126,7 @@ namespace selene
         }
 
         //-----------------------------------------------------------------------------
-        void SimpleApplication::onRender(float elapsedTime)
+        void SimpleApplication::onUpdate(float elapsedTime)
         {
                 // rotate if key is pressed
                 auto weakPointer = scene_.getActor("object");
@@ -160,7 +160,11 @@ namespace selene
 
                 // process GUI
                 gui_.process(cursorPosition_, pressedControlButtons_, 0);
+        }
 
+        //-----------------------------------------------------------------------------
+        void SimpleApplication::onRender(float elapsedTime)
+        {
                 // render scene
                 scene_.updateAndRender(elapsedTime, renderer_);
         }

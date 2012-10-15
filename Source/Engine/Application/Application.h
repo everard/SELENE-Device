@@ -100,6 +100,12 @@ namespace selene
                 virtual void onControlButtonRelease(uint8_t button);
 
                 /**
+                 * \brief Update event callback.
+                 * \param[in] elapsedTime elapsed time since last update
+                 */
+                virtual void onUpdate(float elapsedTime);
+
+                /**
                  * \brief Rendering event callback.
                  * \param[in] elapsedTime elapsed time since last rendering
                  */
