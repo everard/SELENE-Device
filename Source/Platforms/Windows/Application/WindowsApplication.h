@@ -14,11 +14,11 @@ namespace selene
         class WindowsApplication: public Application
         {
         public:
-                WindowsApplication(const char* name);
+                WindowsApplication(const char* name, uint32_t width, uint32_t height);
                 ~WindowsApplication();
 
                 // Initializes application
-                bool initialize(uint32_t width, uint32_t height);
+                bool initialize();
 
                 // Runs application
                 bool run();

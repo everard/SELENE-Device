@@ -14,7 +14,7 @@ namespace selene
         class SimpleApplication: public WindowsApplication
         {
         public:
-                SimpleApplication(const char* name);
+                SimpleApplication(const char* name, uint32_t width, uint32_t height);
                 ~SimpleApplication();
 
         private:

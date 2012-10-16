@@ -26,21 +26,21 @@ namespace selene
         {
         public:
                 /**
-                 * \brief Constructs application object with given name.
-                 * \param[in] name application object name
+                 * \brief Constructs application with given name, width and height of the rendering area.
+                 * \param[in] name name of the application
+                 * \param[in] width rendering area width in pixels
+                 * \param[in] height rendering area height in pixels
                  */
-                Application(const char* name);
+                Application(const char* name, uint32_t width, uint32_t height);
                 virtual ~Application();
 
                 /**
                  * \brief Initializes application.
                  *
                  * Performs all needed operations e.g. rendering and window initialization, etc.
-                 * \param[in] width rendering area width in pixels
-                 * \param[in] height rendering area height in pixels
                  * \return true if initialization succeeded
                  */
-                virtual bool initialize(uint32_t width, uint32_t height) = 0;
+                virtual bool initialize() = 0;
 
                 /**
                  * \brief Runs application. Starts main loop.

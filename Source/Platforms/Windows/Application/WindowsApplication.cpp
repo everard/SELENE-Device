@@ -6,7 +6,7 @@
 namespace selene
 {
 
-        WindowsApplication::WindowsApplication(const char* name): Application(name)
+        WindowsApplication::WindowsApplication(const char* name, uint32_t width, uint32_t height): Application(name, width, height)
         {
                 windowClassName_ = "SELENE Device window class";
 
@@ -19,11 +19,9 @@ namespace selene
         }
 
         //-------------------------------------------------------------------------------------
-        bool WindowsApplication::initialize(uint32_t width, uint32_t height)
+        bool WindowsApplication::initialize()
         {
                 hInstance_ = GetModuleHandle(nullptr);
-                width_  = width;
-                height_ = height;
 
                 if(registerWindowClass() == 0)
                         return false;

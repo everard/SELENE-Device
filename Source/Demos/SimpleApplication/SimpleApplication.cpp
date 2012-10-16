@@ -3,9 +3,15 @@
 namespace selene
 {
 
-        SimpleApplication::SimpleApplication(const char* name): WindowsApplication(name),
-                                                                fileManager_(Platform::fileExists),
-                                                                camera_("Scene camera")
+        // Entry point
+        Application* Platform::createApplication()
+        {
+                return new(std::nothrow) SimpleApplication("SELENE Device", 640, 480);
+        }
+
+        SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): WindowsApplication(name, width, height),
+                                                                                                 fileManager_(Platform::fileExists),
+                                                                                                 camera_("Scene camera")
         {
                 // specify search folders for file manager
                 const char* folders[] =
