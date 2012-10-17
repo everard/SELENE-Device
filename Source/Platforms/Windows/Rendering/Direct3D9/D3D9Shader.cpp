@@ -19,18 +19,18 @@ namespace selene
                 if(fileManager == nullptr)
                         return;
 
-                std::ifstream stream;
-                if(!fileManager->open(fileName, stream))
+                std::unique_ptr<std::istream> stream(fileManager->open(fileName));
+                if(stream.get() == nullptr)
                         return;
 
-                stream.seekg(0, std::ios::end);
+                stream->seekg(0, std::ios::end);
                 Array<uint8_t, uint32_t> fileContent;
-                uint32_t length = (uint32_t)stream.tellg();
+                uint32_t length = (uint32_t)stream->tellg();
                 if(!fileContent.create(length + 1))
                         return;
 
-                stream.seekg(0, std::ios::beg);
-                stream.read((char*)&fileContent[0], length);
+                stream->seekg(0, std::ios::beg);
+                stream->read((char*)&fileContent[0], length);
                 fileContent[length] = 0;
 
                 std::string sourceCode = (char*)&fileContent[0];

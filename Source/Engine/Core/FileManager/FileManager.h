@@ -24,7 +24,7 @@ namespace selene
                  * \param[in] fileExists function which is used to check file existence
                  */
                 FileManager(bool (*fileExists)(const char*));
-                ~FileManager();
+                virtual ~FileManager();
 
                 /**
                  * \brief Adds a folder. Contents of this folder will be looked during search for files.
@@ -40,17 +40,16 @@ namespace selene
                  * \param[in] fileName name of the file to find
                  * \return c-string containing full path if file was found, nullptr otherwise
                  */
-                const char* find(const char* fileName) const;
+                virtual const char* find(const char* fileName) const;
 
                 /**
                  * \brief Opens file with given file name.
                  *
                  * Looks for file in folders specified with addFolder and opens it.
                  * \param[in] fileName name of the file to open
-                 * \param stream std::ifstream which is opened for file IO operations
-                 * \return true if file successfully opened
+                 * \return pointer to the std::istream if file was found and opened, nullptr otherwise
                  */
-                bool open(const char* fileName, std::ifstream& stream) const;
+                virtual std::istream* open(const char* fileName) const;
 
         private:
                 // File name

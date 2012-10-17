@@ -38,10 +38,9 @@ namespace selene
                         if(name == nullptr || fileManager_ == nullptr)
                                 return nullptr;
 
-                        std::ifstream stream;
-
                         // open file
-                        if(!fileManager_->open(name, stream))
+                        std::unique_ptr<std::istream> stream(fileManager_->open(name));
+                        if(stream.get() == nullptr)
                                 return nullptr;
 
                         // create texture
@@ -53,7 +52,7 @@ namespace selene
 
                         // read texture
                         TextureManager textureManager;
-                        if(textureManager.readTexture(stream, resource->getData()))
+                        if(textureManager.readTexture(*stream, resource->getData()))
                                 return resource.release();
 
                         return nullptr;

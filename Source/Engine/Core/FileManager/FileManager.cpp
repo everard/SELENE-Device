@@ -2,6 +2,8 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "FileManager.h"
+#include <memory>
+#include <new>
 
 namespace selene
 {
@@ -12,7 +14,7 @@ namespace selene
         }
         FileManager::~FileManager() {}
 
-        //-----------------------------------------------------------------------
+        //---------------------------------------------------------
         bool FileManager::addFolder(const char* folder)
         {
                 if(folder == nullptr)
@@ -22,7 +24,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------
+        //---------------------------------------------------------
         const char* FileManager::find(const char* fileName) const
         {
                 // validate
@@ -46,15 +48,22 @@ namespace selene
                 return nullptr;
         }
 
-        //-----------------------------------------------------------------------
-        bool FileManager::open(const char* fileName, std::ifstream& stream) const
+        //---------------------------------------------------------
+        std::istream* FileManager::open(const char* fileName) const
         {
                 const char* fullFileName = find(fileName);
                 if(fullFileName == nullptr)
-                        return false;
+                        return nullptr;
 
-                stream.open(fullFileName, std::ios::binary | std::ios::in);
-                return stream.is_open();
+                std::unique_ptr<std::ifstream> stream(new(std::nothrow) std::ifstream(fullFileName, std::ios::binary | std::ios::in));
+
+                if(stream.get() == nullptr)
+                        return nullptr;
+
+                if(!stream->good())
+                        return nullptr;
+
+                return stream.release();
         }
 
 }

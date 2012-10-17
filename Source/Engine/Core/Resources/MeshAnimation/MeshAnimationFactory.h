@@ -38,10 +38,9 @@ namespace selene
                         if(name == nullptr || fileManager_ == nullptr)
                                 return nullptr;
 
-                        std::ifstream stream;
-
                         // open file
-                        if(!fileManager_->open(name, stream))
+                        std::unique_ptr<std::istream> stream(fileManager_->open(name));
+                        if(stream.get() == nullptr)
                                 return nullptr;
 
                         // create mesh animation
@@ -53,7 +52,7 @@ namespace selene
 
                         // read mesh animation
                         MeshAnimationManager meshAnimationManager;
-                        if(meshAnimationManager.readMeshAnimation(stream, resource->getData()))
+                        if(meshAnimationManager.readMeshAnimation(*stream, resource->getData()))
                                 return resource.release();
 
                         return nullptr;
