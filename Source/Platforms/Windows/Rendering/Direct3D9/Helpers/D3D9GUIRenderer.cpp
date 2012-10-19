@@ -109,12 +109,7 @@ namespace selene
                 }
 
                 if(gui_->is(GUI_HIDDEN))
-                {
-                        textVertexIndex_ = 0;
-                        numFrameFaces_ = 0;
-                        numTextFaces_ = 0;
                         return false;
-                }
 
                 if(gui_->is(GUI_UPDATED))
                 {

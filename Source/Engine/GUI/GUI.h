@@ -24,6 +24,7 @@ namespace selene
                 GUI_ELEMENT_TOUCHED  = 0x02,
                 GUI_ELEMENT_DISABLED = 0x04,
                 GUI_ELEMENT_SELECTED = 0x08,
+                GUI_ELEMENT_UPDATED  = 0x10,
 
                 // GUI element color types
                 GUI_ELEMENT_COLOR_DEFAULT = 0,
@@ -115,13 +116,13 @@ namespace selene
                          * \brief Sets text.
                          * \param[in] text text
                          */
-                        void setText(const char* text);
+                        virtual void setText(const char* text);
 
                         /**
                          * \brief Returns text.
                          * \return text
                          */
-                        const std::string& getText() const;
+                        virtual const std::string& getText() const;
 
                         /**
                          * \brief Determines relation between GUI element and cursor position.
@@ -148,8 +149,8 @@ namespace selene
                         // Font size, position and size
                         Vector2d fontSize_, position_, size_;
 
-                        // text
-                        std::string text_;
+                        // Text
+                        mutable std::string text_;
 
                         // ID
                         int32_t id_;

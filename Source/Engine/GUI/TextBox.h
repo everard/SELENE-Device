@@ -5,6 +5,7 @@
 #define TEXT_BOX_H
 
 #include "GUI.h"
+#include <vector>
 
 namespace selene
 {
@@ -35,7 +36,22 @@ namespace selene
                         const char* text);
                 ~TextBox();
 
+                /**
+                 * \brief Sets text.
+                 * \param[in] text text
+                 */
+                void setText(const char* text);
+
+                /**
+                 * \brief Returns text.
+                 * \return text
+                 */
+                const std::string& getText() const;
+
         protected:
+                // Vector, which contains text (is used for text input)
+                std::vector<char> textVector_;
+
                 /**
                  * \brief Processes text box.
                  * \param[in] cursorPosition position of the cursor

@@ -36,11 +36,20 @@ namespace selene
                 // GUI
                 Gui gui_;
 
+                // GUI elements IDs
+                int32_t labelId_, textBoxId_;
+
+                // Flag
+                bool isGuiHidden_;
+
                 // Initialization event callback
                 bool onInitialize();
 
                 // Destruction event callback
                 void onDestroy();
+
+                // Key press event callback
+                void onKeyPress(uint8_t key);
 
                 // Update event callback
                 void onUpdate(float elapsedTime);
@@ -50,6 +59,7 @@ namespace selene
 
                 // GUI message callbacks
                 void onButtonMessageExit(int32_t elementId, uint8_t message);
+                void onButtonMessageCopy(int32_t elementId, uint8_t message);
 
         };
 

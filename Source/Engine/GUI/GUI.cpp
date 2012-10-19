@@ -96,8 +96,7 @@ namespace selene
         {
                 Vector2d p = cursorPosition - position_;
 
-                if(p.x >= 0.0f && p.x <= size_.x &&
-                   p.y >= 0.0f && p.y <= size_.y)
+                if(p.x >= 0.0f && p.x <= size_.x && p.y >= 0.0f && p.y <= size_.y)
                         return INSIDE;
 
                 return OUTSIDE;

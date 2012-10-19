@@ -2,6 +2,8 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "TextBox.h"
+#include <algorithm>
+#include <iterator>
 #include <cstring>
 
 namespace selene
@@ -14,8 +16,40 @@ namespace selene
                          const Vector2d& position,
                          const Vector2d& size,
                          const char* text): Gui::Element(callbackFunction, backgroundColors, textColors,
-                                                         fontSize, position, size, text) {}
+                                                         fontSize, position, size, text)
+        {
+                if(text_.length() > 0)
+                        std::copy(text_.begin(), text_.end(), std::back_inserter(textVector_));
+        }
         TextBox::~TextBox() {}
+
+        //---------------------------------------------------
+        void TextBox::setText(const char* text)
+        {
+                if(text == nullptr)
+                        return;
+
+                text_ = text;
+                textVector_.clear();
+                if(text_.length() > 0)
+                        std::copy(text_.begin(), text_.end(), std::back_inserter(textVector_));
+
+                setFlags(GUI_ELEMENT_UPDATED);
+        }
+
+        //---------------------------------------------------
+        const std::string& TextBox::getText() const
+        {
+                if(!is(GUI_ELEMENT_UPDATED))
+                {
+                        setFlags(GUI_ELEMENT_UPDATED);
+                        text_.clear();
+                        if(textVector_.size() > 0)
+                                std::copy(textVector_.begin(), textVector_.end(), std::back_inserter(text_));
+                }
+
+                return text_;
+        }
 
         //---------------------------------------------------
         void TextBox::process(const Vector2d& cursorPosition,
@@ -28,12 +62,12 @@ namespace selene
                 if(is(GUI_ELEMENT_SELECTED))
                 {
                         if(isprint(key))
-                                text_ += key;
-                        else if(key == '\b' && text_.length() > 0)
-                                text_.pop_back();
+                                textVector_.push_back(key);
+                        else if(key == '\b' && textVector_.size() > 0)
+                                textVector_.pop_back();
 
                         if(key != 0)
-                                onChange();
+                                clearFlags(GUI_ELEMENT_UPDATED);
                 }
 
                 if(determineRelation(cursorPosition) != OUTSIDE)
