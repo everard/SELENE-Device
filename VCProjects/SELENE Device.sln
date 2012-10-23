@@ -1,13 +1,13 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "VCProjects\Engine\Engine.vcxproj", "{0AA48FA6-E242-4607-85FE-DE49D04EEFEB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{0AA48FA6-E242-4607-85FE-DE49D04EEFEB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Exporter", "VCProjects\Exporter\Exporter.vcxproj", "{6E530F66-9461-44F1-AEFA-ECF3298C7097}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Exporter", "Exporter\Exporter.vcxproj", "{6E530F66-9461-44F1-AEFA-ECF3298C7097}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0AA48FA6-E242-4607-85FE-DE49D04EEFEB} = {0AA48FA6-E242-4607-85FE-DE49D04EEFEB}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows", "VCProjects\Platforms\Windows\Windows.vcxproj", "{13E8FB86-DEB4-4587-B39D-C5CB66440817}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows", "Platforms\Windows\Windows.vcxproj", "{13E8FB86-DEB4-4587-B39D-C5CB66440817}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0AA48FA6-E242-4607-85FE-DE49D04EEFEB} = {0AA48FA6-E242-4607-85FE-DE49D04EEFEB}
 	EndProjectSection
