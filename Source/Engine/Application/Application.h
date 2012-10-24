@@ -65,6 +65,9 @@ namespace selene
                 // Cursor position
                 Vector2d cursorPosition_;
 
+                // Cursor shift
+                Vector2d cursorShift_;
+
                 // Control buttons state
                 uint8_t pressedControlButtons_;
 

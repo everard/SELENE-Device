@@ -235,8 +235,10 @@ namespace selene
                           uint8_t pressedControlButtons,
                           uint8_t key)
         {
-                if(is(GUI_HIDDEN))
+                if(is(GUI_HIDDEN | GUI_DISABLED))
                         return;
+
+                cursorPosition_ = cursorPosition;
 
                 for(auto it = elements_.begin(); it != elements_.end(); ++it)
                 {
@@ -247,6 +249,12 @@ namespace selene
 
                         element.process(cursorPosition, pressedControlButtons, key);
                 }
+        }
+
+        //------------------------------------------------------------------------------
+        const Vector2d& Gui::getCursorPosition() const
+        {
+                return cursorPosition_;
         }
 
         //------------------------------------------------------------------------------

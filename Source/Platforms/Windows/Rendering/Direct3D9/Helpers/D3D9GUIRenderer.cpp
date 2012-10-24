@@ -10,6 +10,8 @@ namespace selene
 
         const uint32_t D3d9GuiRenderer::numVerticesPerElement_ = 6;
 
+        const uint32_t D3d9GuiRenderer::cursorVertexStride_ = 4 * sizeof(float);
+
         const uint32_t D3d9GuiRenderer::vertexStride_ = 8 * sizeof(float);
 
         const uint32_t D3d9GuiRenderer::numVertices_ = 24576;
@@ -18,9 +20,12 @@ namespace selene
 
         D3d9GuiRenderer::D3d9GuiRenderer()
         {
-                d3dVertexDeclaration_ = nullptr;
-                d3dVertexBuffer_ = nullptr;
+                d3dVertexDeclaration_ = d3dCursorVertexDeclaration_ = nullptr;
+                d3dVertexBuffer_ = d3dCursorVertexBuffer_ = nullptr;
+
+                d3dCursorTexture_ = nullptr;
                 d3dFontTexture_ = nullptr;
+
                 d3dDevice_ = nullptr;
                 gui_ = nullptr;
 
@@ -43,11 +48,11 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
+                destroy();
+
                 const char* fontTextureFileName = fileManager->find("Fonts//Font.dds");
                 if(fontTextureFileName == nullptr)
                         return false;
-
-                destroy();
 
                 if(FAILED(D3DXCreateTextureFromFile(d3dDevice_, fontTextureFileName, &d3dFontTexture_)))
                 {
@@ -55,6 +60,20 @@ namespace selene
                         return false;
                 }
 
+                const char* cursorTextureFileName = fileManager->find("Cursors//Cursor.dds");
+                if(cursorTextureFileName == nullptr)
+                {
+                        destroy();
+                        return false;
+                }
+
+                if(FAILED(D3DXCreateTextureFromFile(d3dDevice_, cursorTextureFileName, &d3dCursorTexture_)))
+                {
+                        destroy();
+                        return false;
+                }
+
+                // create GUI elements geometry
                 static D3DVERTEXELEMENT9 d3dVertexElements[] =
                 {
                         {0, 0,  D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
@@ -75,14 +94,56 @@ namespace selene
                         return false;
                 }
 
+                // create cursor geometry
+                static D3DVERTEXELEMENT9 d3dCursorVertexElements[] =
+                {
+                        {0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+                        D3DDECL_END()
+                };
+
+                static float vertices[] =
+                {
+                        0.0f, -0.1f, 0.0f, 1.0f,
+                        0.0f,  0.0f,  0.0f, 0.0f,
+                        0.1f, -0.1f, 1.0f, 1.0f,
+                        0.1f, 0.0f, 1.0f, 0.0f
+                };
+
+                if(FAILED(d3dDevice_->CreateVertexDeclaration(d3dCursorVertexElements,
+                                                              &d3dCursorVertexDeclaration_)))
+                {
+                        destroy();
+                        return false;
+                }
+
+                if(FAILED(d3dDevice_->CreateVertexBuffer(4 * cursorVertexStride_, 0, 0, D3DPOOL_DEFAULT,
+                                                         &d3dCursorVertexBuffer_, nullptr)))
+                {
+                        destroy();
+                        return false;
+                }
+
+                void* destinationBuffer = nullptr;
+                if(FAILED(d3dCursorVertexBuffer_->Lock(0, 4 * cursorVertexStride_, &destinationBuffer, 0)))
+                {
+                        destroy();
+                        return false;
+                }
+                memcpy(destinationBuffer, (void*)vertices, 4 * cursorVertexStride_);
+                d3dVertexBuffer_->Unlock();
+
                 return true;
         }
 
         //--------------------------------------------------------
         void D3d9GuiRenderer::destroy()
         {
+                SAFE_RELEASE(d3dCursorVertexDeclaration_);
                 SAFE_RELEASE(d3dVertexDeclaration_);
+                SAFE_RELEASE(d3dCursorVertexBuffer_);
                 SAFE_RELEASE(d3dVertexBuffer_);
+
+                SAFE_RELEASE(d3dCursorTexture_);
                 SAFE_RELEASE(d3dFontTexture_);
 
                 textVertexIndex_ = 0;
@@ -278,6 +339,22 @@ namespace selene
 
                 d3dDevice_->SetTexture(0, d3dFontTexture_);
                 d3dDevice_->DrawPrimitive(D3DPT_TRIANGLELIST, textVertexIndex_, numTextFaces_);
+
+                return true;
+        }
+
+        //--------------------------------------------------------
+        bool D3d9GuiRenderer::renderCursor()
+        {
+                Vector4d cursorPosition(gui_->getCursorPosition() - Vector2d(1.0f, 1.0f), 0.0f, 0.0f);
+                cursorPosition.y = -cursorPosition.y;
+
+                d3dDevice_->SetTexture(0, d3dCursorTexture_);
+                d3dDevice_->SetVertexShaderConstantF(0, static_cast<const float*>(cursorPosition), 1);
+
+                d3dDevice_->SetVertexDeclaration(d3dCursorVertexDeclaration_);
+                d3dDevice_->SetStreamSource(0, d3dCursorVertexBuffer_, 0, cursorVertexStride_);
+                d3dDevice_->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
                 return true;
         }

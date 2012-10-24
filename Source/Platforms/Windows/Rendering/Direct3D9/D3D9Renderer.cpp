@@ -7,6 +7,7 @@
 #include "../../../../Engine/Scene/Nodes/Camera.h"
 #include "../../../../Engine/Scene/Nodes/Actor.h"
 #include "../../Application/WindowsApplication.h"
+#include "../../../../Engine/GUI/GUI.h"
 
 #include "Resources/D3D9Texture.h"
 #include "Resources/D3D9Mesh.h"
@@ -357,6 +358,7 @@ namespace selene
                         D3d9Shader("Shaders//EdgeDetect.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
                         D3d9Shader("Shaders//GUIFramesPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
                         D3d9Shader("Shaders//GUITextPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("Shaders//GUICursorPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
                         D3d9Shader("Shaders//BrightPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
                         D3d9Shader("Shaders//Bloom.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
                         D3d9Shader("Shaders//CombinePass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
@@ -381,6 +383,7 @@ namespace selene
                         D3d9Shader("Shaders//EdgeDetect.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
                         D3d9Shader("Shaders//GUIFramesPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
                         D3d9Shader("Shaders//GUITextPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("Shaders//GUICursorPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
                         D3d9Shader("Shaders//BrightPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
                         D3d9Shader("Shaders//BloomX.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
                         D3d9Shader("Shaders//BloomY.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
@@ -813,6 +816,14 @@ namespace selene
                         d3dDevice_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
                         guiRenderer_.renderText();
+
+                        if(!gui_->is(GUI_DISABLED))
+                        {
+                                vertexShaders_[VERTEX_SHADER_GUI_CURSOR_PASS].set();
+                                pixelShaders_[PIXEL_SHADER_GUI_CURSOR_PASS].set();
+
+                                guiRenderer_.renderCursor();
+                        }
 
                         d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
                         d3dDevice_->SetRenderState(D3DRS_ALPHATESTENABLE,  FALSE);

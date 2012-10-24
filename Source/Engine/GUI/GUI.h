@@ -36,8 +36,9 @@ namespace selene
                 GUI_MESSAGE_ON_CLICK = 0,
 
                 // GUI flags
-                GUI_UPDATED = 0x01,
-                GUI_HIDDEN  = 0x02
+                GUI_DISABLED = 0x01,
+                GUI_UPDATED  = 0x02,
+                GUI_HIDDEN   = 0x04
         };
 
         /**
@@ -248,6 +249,12 @@ namespace selene
                              uint8_t pressedControlButtons,
                              uint8_t key = 0);
 
+                /**
+                 * \brief Returns position of the cursor.
+                 * \return position of the cursor
+                 */
+                const Vector2d& getCursorPosition() const;
+
         protected:
                 // Elements
                 std::map<int32_t, std::shared_ptr<Element>> elements_;
@@ -257,6 +264,9 @@ namespace selene
 
                 // Element ID
                 int32_t elementId_;
+
+                // Cursor position
+                Vector2d cursorPosition_;
 
                 /**
                  * \brief Sets active element.

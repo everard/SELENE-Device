@@ -59,6 +59,15 @@ namespace selene
                 WindowsTimer timer;
                 MSG msg;
 
+                POINT point, centralPoint;
+                centralPoint.x = width_ >> 1;
+                centralPoint.y = height_ >> 1;
+
+                float coefficientX = 2.0f / static_cast<float>(width_);
+                float coefficientY = 2.0f / static_cast<float>(height_);
+
+                ShowCursor(FALSE);
+
                 while(isRunning)
                 {
                         if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
@@ -76,11 +85,23 @@ namespace selene
                         else
                         {
                                 timer.reset();
+                                SetCursorPos(centralPoint.x, centralPoint.y);
 
                                 onUpdate(elapsedTime);
                                 onRender(elapsedTime);
 
                                 elapsedTime = timer.getElapsedTime();
+
+                                GetCursorPos(&point);
+                                cursorShift_.define(static_cast<float>(point.x - centralPoint.x) * coefficientX,
+                                                    static_cast<float>(point.y - centralPoint.y) * coefficientY);
+                                cursorPosition_ += cursorShift_;
+
+                                cursorPosition_.x = cursorPosition_.x < 0.0f ? 0.0f : cursorPosition_.x;
+                                cursorPosition_.y = cursorPosition_.y < 0.0f ? 0.0f : cursorPosition_.y;
+
+                                cursorPosition_.x = cursorPosition_.x > 2.0f ? 2.0f : cursorPosition_.x;
+                                cursorPosition_.y = cursorPosition_.y > 2.0f ? 2.0f : cursorPosition_.y;
 
                                 pressedControlButtons_ = 0;
                         }
@@ -192,8 +213,6 @@ namespace selene
                                 break;
 
                         case WM_MOUSEMOVE:
-                                cursorPosition_.x = 2.0f * ((float)LOWORD(lParam) / (float)width_);
-                                cursorPosition_.y = 2.0f * ((float)HIWORD(lParam) / (float)height_);
                                 break;
 
                         case WM_ERASEBKGND:

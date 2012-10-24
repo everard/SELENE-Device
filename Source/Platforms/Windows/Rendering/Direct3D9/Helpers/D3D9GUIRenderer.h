@@ -39,9 +39,13 @@ namespace selene
                 // Renders GUI text
                 bool renderText();
 
+                // Renders cursor
+                bool renderCursor();
+
         private:
-                LPDIRECT3DVERTEXDECLARATION9 d3dVertexDeclaration_;
-                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffer_;
+                LPDIRECT3DVERTEXDECLARATION9 d3dVertexDeclaration_, d3dCursorVertexDeclaration_;
+                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffer_, d3dCursorVertexBuffer_;
+                LPDIRECT3DTEXTURE9 d3dCursorTexture_;
                 LPDIRECT3DTEXTURE9 d3dFontTexture_;
                 LPDIRECT3DDEVICE9 d3dDevice_;
                 Gui* gui_;
@@ -51,6 +55,7 @@ namespace selene
                 uint32_t numTextFaces_;
 
                 static const uint32_t numVerticesPerElement_;
+                static const uint32_t cursorVertexStride_;
                 static const uint32_t vertexStride_;
                 static const uint32_t numVertices_;
                 static const uint32_t numFaces_;
