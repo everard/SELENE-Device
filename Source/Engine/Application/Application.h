@@ -10,12 +10,17 @@
 namespace selene
 {
 
-        /// Mouse buttons
+        /// Control buttons
         enum
         {
-                MOUSE_BUTTON_LEFT   = 0x01,
-                MOUSE_BUTTON_RIGHT  = 0x02,
-                MOUSE_BUTTON_MIDDLE = 0x04
+                CONTROL_BUTTON_0 = 0x01,
+                CONTROL_BUTTON_1 = 0x02,
+                CONTROL_BUTTON_2 = 0x04,
+                CONTROL_BUTTON_3 = 0x08,
+                CONTROL_BUTTON_4 = 0x10,
+                CONTROL_BUTTON_5 = 0x20,
+                CONTROL_BUTTON_6 = 0x40,
+                CONTROL_BUTTON_7 = 0x80
         };
 
         /**

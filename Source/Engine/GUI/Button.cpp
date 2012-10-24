@@ -28,7 +28,7 @@ namespace selene
                         if(!is(GUI_ELEMENT_TOUCHED))
                                 setFlags(GUI_ELEMENT_TOUCHED);
 
-                        if(IS_SET(pressedControlButtons, MOUSE_BUTTON_LEFT) && callbackFunction_)
+                        if(IS_SET(pressedControlButtons, CONTROL_BUTTON_0) && callbackFunction_)
                                 callbackFunction_(id_, GUI_MESSAGE_ON_CLICK);
                 }
                 else if(is(GUI_ELEMENT_TOUCHED))

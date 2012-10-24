@@ -72,7 +72,7 @@ namespace selene
 
                 if(determineRelation(cursorPosition) != OUTSIDE)
                 {
-                        if(IS_SET(pressedControlButtons, MOUSE_BUTTON_LEFT))
+                        if(IS_SET(pressedControlButtons, CONTROL_BUTTON_0))
                                 gui_->setActiveElement(id_);
                         else if(!is(GUI_ELEMENT_TOUCHED))
                                 setFlags(GUI_ELEMENT_TOUCHED);
@@ -82,7 +82,7 @@ namespace selene
                         if(is(GUI_ELEMENT_TOUCHED))
                                 clearFlags(GUI_ELEMENT_TOUCHED);
 
-                        if(IS_SET(pressedControlButtons, MOUSE_BUTTON_LEFT) &&
+                        if(IS_SET(pressedControlButtons, CONTROL_BUTTON_0) &&
                            is(GUI_ELEMENT_SELECTED))
                                 clearFlags(GUI_ELEMENT_SELECTED);
                 }

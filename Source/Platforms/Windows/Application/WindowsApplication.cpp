@@ -174,21 +174,21 @@ namespace selene
                                 break;
 
                         case WM_LBUTTONDOWN:
-                                onControlButtonPress(MOUSE_BUTTON_LEFT);
+                                onControlButtonPress(CONTROL_BUTTON_0);
                                 break;
 
                         case WM_LBUTTONUP:
-                                pressedControlButtons_ |= MOUSE_BUTTON_LEFT;
-                                onControlButtonRelease(MOUSE_BUTTON_LEFT);
+                                pressedControlButtons_ |= CONTROL_BUTTON_0;
+                                onControlButtonRelease(CONTROL_BUTTON_0);
                                 break;
 
                         case WM_RBUTTONDOWN:
-                                onControlButtonPress(MOUSE_BUTTON_RIGHT);
+                                onControlButtonPress(CONTROL_BUTTON_1);
                                 break;
 
                         case WM_RBUTTONUP:
-                                pressedControlButtons_ |= MOUSE_BUTTON_RIGHT;
-                                onControlButtonRelease(MOUSE_BUTTON_RIGHT);
+                                pressedControlButtons_ |= CONTROL_BUTTON_1;
+                                onControlButtonRelease(CONTROL_BUTTON_1);
                                 break;
 
                         case WM_MOUSEMOVE:
