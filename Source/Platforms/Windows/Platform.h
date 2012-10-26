@@ -20,6 +20,13 @@ namespace selene
         class Platform
         {
         public:
+                typedef WindowsApplication Application;
+                typedef WindowsTimer Timer;
+
+                typedef D3d9Renderer Renderer;
+                typedef D3d9Texture Texture;
+                typedef D3d9Mesh Mesh;
+
                 /**
                  * \brief Checks file existence.
                  * \param[in] fileName name of the file

@@ -4,12 +4,12 @@ namespace selene
 {
 
         // Entry point
-        Application* Platform::createApplication()
+        Platform::Application* Platform::createApplication()
         {
                 return new(std::nothrow) SimpleAnimation("SELENE Device", 640, 480);
         }
 
-        SimpleAnimation::SimpleAnimation(const char* name, uint32_t width, uint32_t height): WindowsApplication(name, width, height),
+        SimpleAnimation::SimpleAnimation(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height),
                                                                                              fileManager_(Platform::fileExists),
                                                                                              camera_("Scene camera")
         {
@@ -31,7 +31,7 @@ namespace selene
                 for(uint32_t i = 0; i < numFolders; ++i)
                         fileManager_.addFolder(folders[i]);
 
-                isGuiHidden_ = false;
+                isCameraRotationEnabled_ = false;
         }
         SimpleAnimation::~SimpleAnimation() {}
 
@@ -39,8 +39,8 @@ namespace selene
         bool SimpleAnimation::onInitialize()
         {
                 // initialize renderer
-                uint8_t d3dFlags = 0;
-                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, d3dFlags);
+                uint8_t flags = 0;
+                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, flags);
 
                 if(!renderer_.initialize(parameters))
                         return false;
@@ -143,11 +143,11 @@ namespace selene
                                                         Vector2d(0.05f, 0.07f),
                                                         Vector2d(0.1f, 0.1f),
                                                         Vector2d(1.6f, 0.1f),
-                                                        "Press ESC to show or hide menu."));
+                                                        "Use controller to rotate camera."));
 
                 // load mesh
-                MeshFactory<D3d9Mesh> meshFactory(&fileManager_);
-                TextureFactory<D3d9Texture> textureFactory(&fileManager_);
+                MeshFactory<Platform::Mesh> meshFactory(&fileManager_);
+                TextureFactory<Platform::Texture> textureFactory(&fileManager_);
                 MeshAnimationFactory<MeshAnimation> meshAnimationFactory(&fileManager_);
 
                 meshFactory.setResourceFactory(&textureFactory);
@@ -234,35 +234,38 @@ namespace selene
         //--------------------------------------------------------------------------------
         void SimpleAnimation::onKeyPress(uint8_t key)
         {
-                if(key == VK_ESCAPE)
-                {
-                        if(isGuiHidden_)
-                        {
-                                gui_.clearFlags(GUI_HIDDEN);
-                                isGuiHidden_ = false;
-                        }
-                        else
-                        {
-                                gui_.setFlags(GUI_HIDDEN);
-                                isGuiHidden_ = true;
-                        }
-                }
+                gui_.process(cursorPosition_, pressedControlButtons_, key);
+        }
 
-                if(!isGuiHidden_)
-                        gui_.process(cursorPosition_, pressedControlButtons_, key);
+        //--------------------------------------------------------------------------------
+        void SimpleAnimation::onControlButtonPress(uint8_t button)
+        {
+                if(IS_SET(button, CONTROL_BUTTON_1))
+                        isCameraRotationEnabled_ = true;
+        }
+
+        //--------------------------------------------------------------------------------
+        void SimpleAnimation::onControlButtonRelease(uint8_t button)
+        {
+                if(IS_SET(button, CONTROL_BUTTON_1))
+                        isCameraRotationEnabled_ = false;
         }
 
         //--------------------------------------------------------------------------------
         void SimpleAnimation::onUpdate(float elapsedTime)
         {
-                // prevent compiler warning (unused parameter)
-                elapsedTime = 0.0f;
-
-                if(!isGuiHidden_)
+                // rotate camera
+                if(isCameraRotationEnabled_)
                 {
-                        // process GUI
-                        gui_.process(cursorPosition_, pressedControlButtons_, 0);
+                        camera_.rotateHorizontally(cursorShift_.x * -5.0f);
+                        camera_.rotateVertically(cursorShift_.y * 5.0f);
                 }
+
+                // process GUI
+                gui_.process(cursorPosition_, pressedControlButtons_, 0);
+
+                // prevent compiler warning
+                elapsedTime = 0.0f;
         }
 
         //--------------------------------------------------------------------------------

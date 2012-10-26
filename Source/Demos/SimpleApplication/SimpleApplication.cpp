@@ -4,12 +4,12 @@ namespace selene
 {
 
         // Entry point
-        Application* Platform::createApplication()
+        Platform::Application* Platform::createApplication()
         {
                 return new(std::nothrow) SimpleApplication("SELENE Device", 640, 480);
         }
 
-        SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): WindowsApplication(name, width, height),
+        SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height),
                                                                                                  fileManager_(Platform::fileExists),
                                                                                                  camera_("Scene camera")
         {
@@ -29,7 +29,7 @@ namespace selene
                 for(uint32_t i = 0; i < numFolders; ++i)
                         fileManager_.addFolder(folders[i]);
 
-                isGuiHidden_ = false;
+                isCameraRotationEnabled_ = false;
                 labelId_ = textBoxId_ = -1;
         }
         SimpleApplication::~SimpleApplication() {}
@@ -38,8 +38,8 @@ namespace selene
         bool SimpleApplication::onInitialize()
         {
                 // initialize renderer
-                uint8_t d3dFlags = 0;
-                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, d3dFlags);
+                uint8_t flags = 0;
+                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, flags);
 
                 if(!renderer_.initialize(parameters))
                         return false;
@@ -116,15 +116,7 @@ namespace selene
                                                         Vector2d(0.05f, 0.07f),
                                                         Vector2d(0.1f, 0.1f),
                                                         Vector2d(1.6f, 0.1f),
-                                                        "Press ESC to show or hide menu."));
-
-                gui_.addElement(new(std::nothrow) Label(std::function<void (int32_t, uint8_t)>(),
-                                                        labelBackgroundColors,
-                                                        textColors,
-                                                        Vector2d(0.05f, 0.07f),
-                                                        Vector2d(0.1f, 0.2f),
-                                                        Vector2d(1.6f, 0.1f),
-                                                        "Use WASD to move the mesh."));
+                                                        "Use controller to rotate camera."));
 
                 textBoxId_ =
                         gui_.addElement(new(std::nothrow) TextBox(std::function<void (int32_t, uint8_t)>(),
@@ -144,14 +136,14 @@ namespace selene
                                                                    "Press copy button to copy text here."));
 
                 // load mesh
-                MeshFactory<D3d9Mesh> d3d9MeshFactory(&fileManager_);
-                TextureFactory<D3d9Texture> d3d9TextureFactory(&fileManager_);
+                MeshFactory<Platform::Mesh> meshFactory(&fileManager_);
+                TextureFactory<Platform::Texture> textureFactory(&fileManager_);
 
-                d3d9MeshFactory.setResourceFactory(&d3d9TextureFactory);
-                d3d9MeshFactory.setResourceManager(&textureManager_);
+                meshFactory.setResourceFactory(&textureFactory);
+                meshFactory.setResourceManager(&textureManager_);
 
                 std::cout << "Loading mesh...";
-                if(meshManager_.createResource("object.sle", d3d9MeshFactory) != SUCCESS)
+                if(meshManager_.createResource("object.sle", meshFactory) != SUCCESS)
                         std::cout << "FAILED";
                 else
                         std::cout << "SUCCEEDED";
@@ -180,64 +172,37 @@ namespace selene
         //-----------------------------------------------------------------------------
         void SimpleApplication::onKeyPress(uint8_t key)
         {
-                if(key == VK_ESCAPE)
-                {
-                        if(isGuiHidden_)
-                        {
-                                gui_.clearFlags(GUI_HIDDEN);
-                                isGuiHidden_ = false;
-                        }
-                        else
-                        {
-                                gui_.setFlags(GUI_HIDDEN);
-                                isGuiHidden_ = true;
-                        }
-                }
+                gui_.process(cursorPosition_, pressedControlButtons_, key);
+        }
 
-                if(!isGuiHidden_)
-                        gui_.process(cursorPosition_, pressedControlButtons_, key);
+        //-----------------------------------------------------------------------------
+        void SimpleApplication::onControlButtonPress(uint8_t button)
+        {
+                if(IS_SET(button, CONTROL_BUTTON_1))
+                        isCameraRotationEnabled_ = true;
+        }
+
+        //-----------------------------------------------------------------------------
+        void SimpleApplication::onControlButtonRelease(uint8_t button)
+        {
+                if(IS_SET(button, CONTROL_BUTTON_1))
+                        isCameraRotationEnabled_ = false;
         }
 
         //-----------------------------------------------------------------------------
         void SimpleApplication::onUpdate(float elapsedTime)
         {
-                if(isGuiHidden_)
+                if(isCameraRotationEnabled_)
                 {
-                        // rotate if key is pressed
-                        auto weakPointer = scene_.getActor("object");
-                        auto actor = weakPointer.lock();
-                        if(actor)
-                        {
-                                if(getKeyState('W') > 0.0f)
-                                {
-                                        Quaternion rotation(Vector3d(1.0f, 0.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
-                                        actor->setRotation(actor->getRotation() * rotation);
-                                }
-
-                                if(getKeyState('S') > 0.0f)
-                                {
-                                        Quaternion rotation(Vector3d(-1.0f, 0.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
-                                        actor->setRotation(actor->getRotation() * rotation);
-                                }
-
-                                if(getKeyState('A') > 0.0f)
-                                {
-                                        Quaternion rotation(Vector3d(0.0f, 1.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
-                                        actor->setRotation(actor->getRotation() * rotation);
-                                }
-
-                                if(getKeyState('D') > 0.0f)
-                                {
-                                        Quaternion rotation(Vector3d(0.0f, -1.0f, 0.0f) * sin(elapsedTime * 0.25f), cos(elapsedTime * 0.25f));
-                                        actor->setRotation(actor->getRotation() * rotation);
-                                }
-                        }
+                        camera_.rotateHorizontally(cursorShift_.x * -5.0f);
+                        camera_.rotateVertically(cursorShift_.y *  5.0f);
                 }
-                else
-                {
-                        // process GUI
-                        gui_.process(cursorPosition_, pressedControlButtons_, 0);
-                }
+
+                // process GUI
+                gui_.process(cursorPosition_, pressedControlButtons_, 0);
+
+                // prevent compiler warning
+                elapsedTime = 0.0f;
         }
 
         //-----------------------------------------------------------------------------

@@ -17,7 +17,7 @@ namespace selene
 
 int main()
 {
-        selene::Application* application = selene::Platform::createApplication();
+        selene::Platform::Application* application = selene::Platform::createApplication();
         if(application == nullptr)
                 return 0;
 

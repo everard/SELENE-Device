@@ -82,42 +82,42 @@ namespace selene
                  * \brief Initialization event callback.
                  * \return true if initialization succeded
                  */
-                virtual bool onInitialize();
+                virtual bool onInitialize() = 0;
 
                 /**
                  * \brief Destruction event callback.
                  */
-                virtual void onDestroy();
+                virtual void onDestroy() = 0;
 
                 /**
                  * \brief Key press event callback.
                  * \param[in] key pressed key
                  */
-                virtual void onKeyPress(uint8_t key);
+                virtual void onKeyPress(uint8_t key) = 0;
 
                 /**
                  * \brief Control button press event callback.
                  * \param[in] button pressed control button (may be used as mask)
                  */
-                virtual void onControlButtonPress(uint8_t button);
+                virtual void onControlButtonPress(uint8_t button) = 0;
 
                 /**
                  * \brief Control button release event callback.
                  * \param[in] button released control button (may be used as mask)
                  */
-                virtual void onControlButtonRelease(uint8_t button);
+                virtual void onControlButtonRelease(uint8_t button) = 0;
 
                 /**
                  * \brief Update event callback.
                  * \param[in] elapsedTime elapsed time since last update
                  */
-                virtual void onUpdate(float elapsedTime);
+                virtual void onUpdate(float elapsedTime) = 0;
 
                 /**
                  * \brief Rendering event callback.
                  * \param[in] elapsedTime elapsed time since last rendering
                  */
-                virtual void onRender(float elapsedTime);
+                virtual void onRender(float elapsedTime) = 0;
 
         };
 
