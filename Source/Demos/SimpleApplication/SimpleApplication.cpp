@@ -195,7 +195,7 @@ namespace selene
                 if(isCameraRotationEnabled_)
                 {
                         camera_.rotateHorizontally(cursorShift_.x * -5.0f);
-                        camera_.rotateVertically(cursorShift_.y *  5.0f);
+                        camera_.rotateVertically(cursorShift_.y * 5.0f);
                 }
 
                 // process GUI

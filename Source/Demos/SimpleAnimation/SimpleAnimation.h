@@ -1,8 +1,8 @@
 #ifndef SIMPLE_ANIMATION_H
 #define SIMPLE_ANIMATION_H
 
-#include "../../Engine/Framework.h"
-#include "../../Platforms/Windows/Platform.h"
+#include <Framework.h>
+#include <Platform.h>
 
 #include <iostream>
 #include <string>

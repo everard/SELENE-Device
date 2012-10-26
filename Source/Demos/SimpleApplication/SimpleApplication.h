@@ -1,8 +1,8 @@
 #ifndef SIMPLE_APPLICATION_H
 #define SIMPLE_APPLICATION_H
 
-#include "../../Engine/Framework.h"
-#include "../../Platforms/Windows/Platform.h"
+#include <Framework.h>
+#include <Platform.h>
 
 #include <iostream>
 #include <string>

@@ -46,13 +46,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(Configuration)\</OutDir>
-    <IncludePath>C:\Program Files\Microsoft DirectX 9.0 SDK %28Summer 2004%29\Include;$(IncludePath)</IncludePath>
+    <IncludePath>../../../Source/Engine/;C:\Program Files\Microsoft DirectX 9.0 SDK %28Summer 2004%29\Include;../../../Source/Platforms/Windows/;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\Microsoft DirectX 9.0 SDK %28Summer 2004%29\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(Configuration)\</OutDir>
-    <IncludePath>C:\Program Files\Microsoft DirectX 9.0 SDK %28Summer 2004%29\Include;$(IncludePath)</IncludePath>
+    <IncludePath>../../../Source/Engine/;C:\Program Files\Microsoft DirectX 9.0 SDK %28Summer 2004%29\Include;../../../Source/Platforms/Windows/;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\Microsoft DirectX 9.0 SDK %28Summer 2004%29\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
