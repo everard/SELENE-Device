@@ -242,7 +242,7 @@ class ExportSLE(bpy.types.Operator, ExportHelper):
 
     filename_ext = ".sle"
 
-    path_to_exporter = 'Path To Exporter.exe'
+    path_to_exporter = 'Path To Exporter'
 
     @classmethod
     def poll(cls, context):
@@ -267,7 +267,7 @@ class ExportSLE(bpy.types.Operator, ExportHelper):
 
         if result == 'SUCCESS':
             fileName = fileName.replace(' ', '?')
-            subprocess.call([self.path_to_exporter + '/Exporter.exe', fileName, fileName])
+            subprocess.call([self.path_to_exporter, fileName, fileName])
         else:
             print(result)
 
