@@ -1,42 +1,67 @@
-OUTPUT_DIR = Release
+DEBUG_OUTPUT_DIR   = Debug
+RELEASE_OUTPUT_DIR = Release
 SOURCE_DIR = ../Source
 
 ENGINE_ROOT = $(SOURCE_DIR)/Engine
 ENGINE_SRC  = $(wildcard $(ENGINE_ROOT)/*.cpp $(ENGINE_ROOT)/*/*.cpp $(ENGINE_ROOT)/*/*/*.cpp $(ENGINE_ROOT)/*/*/*/*.cpp $(ENGINE_ROOT)/*/*/*/*/*.cpp $(ENGINE_ROOT)/*/*/*/*/*/*.cpp)
-ENGINE_OBJ  = $(subst $(OUTPUT_DIR)!,$(OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(OUTPUT_DIR)!%.o, $(ENGINE_SRC))))
-ENGINE_LIBS = -lrt
+DEBUG_ENGINE_OBJ    = $(subst $(DEBUG_OUTPUT_DIR)!,$(DEBUG_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(DEBUG_OUTPUT_DIR)!%.o, $(ENGINE_SRC))))
+RELEASE_ENGINE_OBJ  = $(subst $(RELEASE_OUTPUT_DIR)!,$(RELEASE_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(RELEASE_OUTPUT_DIR)!%.o, $(ENGINE_SRC))))
+DEBUG_ENGINE_LIBS   = -lrt
+RELEASE_ENGINE_LIBS = -lrt
+DEBUG_ENGINE_TARGET   = $(DEBUG_OUTPUT_DIR)/Engine.a
+RELEASE_ENGINE_TARGET = $(RELEASE_OUTPUT_DIR)/Engine.a
 
 EXPORTER_ROOT = $(SOURCE_DIR)/Exporter
 EXPORTER_SRC  = $(wildcard $(EXPORTER_ROOT)/*.cpp)
-EXPORTER_LIBS = -lrt $(ENGINE_TARGET)
+DEBUG_EXPORTER_LIBS   = -lrt $(DEBUG_ENGINE_TARGET)
+RELEASE_EXPORTER_LIBS = -lrt $(RELEASE_ENGINE_TARGET)
+DEBUG_EXPORTER_TARGET   = $(DEBUG_OUTPUT_DIR)/Exporter
+RELEASE_EXPORTER_TARGET = $(RELEASE_OUTPUT_DIR)/Exporter
 
-OPTIMIZE = -O3
-CFLAGS   = -Wall $(OPTIMIZE) -std=c++0x -pthread -ggdb
+DEBUG_OPTIMIZE   = -O0
+RELEASE_OPTIMIZE = -O3
+DEBUG_CFLAGS     = -Wall $(DEBUG_OPTIMIZE) -std=c++0x -pthread -ggdb
+RELEASE_CFLAGS   = -Wall $(RELEASE_OPTIMIZE) -std=c++0x -pthread
 
 CXX = g++
 
-ENGINE_TARGET = $(OUTPUT_DIR)/Engine.a
-EXPORTER_TARGET = $(OUTPUT_DIR)/Exporter
+$(DEBUG_EXPORTER_TARGET): $(EXPORTER_SRC) $(DEBUG_ENGINE_TARGET)
+	$(CXX) $(DEBUG_CFLAGS) $(EXPORTER_SRC) $(DEBUG_EXPORTER_LIBS) -o $(DEBUG_EXPORTER_TARGET)
 
-$(EXPORTER_TARGET): $(EXPORTER_SRC) $(ENGINE_TARGET)
-	$(CXX) $(CFLAGS) $(EXPORTER_SRC) $(EXPORTER_LIBS) -o $(EXPORTER_TARGET)
+$(RELEASE_EXPORTER_TARGET): $(EXPORTER_SRC) $(RELEASE_ENGINE_TARGET)
+	$(CXX) $(RELEASE_CFLAGS) $(EXPORTER_SRC) $(RELEASE_EXPORTER_LIBS) -o $(RELEASE_EXPORTER_TARGET)
 
-$(ENGINE_TARGET): $(ENGINE_OBJ)
-	@ar rvs $(ENGINE_TARGET) $(ENGINE_OBJ)
+$(DEBUG_ENGINE_TARGET): $(DEBUG_ENGINE_OBJ)
+	@ar rvs $(DEBUG_ENGINE_TARGET) $(DEBUG_ENGINE_OBJ)
 
-exporter: $(EXPORTER_TARGET)
+$(RELEASE_ENGINE_TARGET): $(RELEASE_ENGINE_OBJ)
+	@ar rvs $(RELEASE_ENGINE_TARGET) $(RELEASE_ENGINE_OBJ)
 
-engine: $(ENGINE_TARGET)
+Debug: $(DEBUG_ENGINE_TARGET) $(DEBUG_EXPORTER_TARGET)
 
-clean:
-	rm -f $(ENGINE_OBJ)
-	rm -f $(ENGINE_TARGET)
-	rm -f $(EXPORTER_TARGET)
+Release: $(RELEASE_ENGINE_TARGET) $(RELEASE_EXPORTER_TARGET)
 
-all: engine exporter
+cleanDebug:
+	@rm -f $(DEBUG_ENGINE_OBJ)
+	@rm -f $(DEBUG_ENGINE_TARGET)
+	@rm -f $(DEBUG_EXPORTER_TARGET)
+
+cleanRelease:
+	@rm -f $(RELEASE_ENGINE_OBJ)
+	@rm -f $(RELEASE_ENGINE_TARGET)
+	@rm -f $(RELEASE_EXPORTER_TARGET)
+
+clean: cleanDebug cleanRelease
+
+all: Debug Release
 
 .SECONDEXPANSION:
-$(ENGINE_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(OUTPUT_DIR)/%.o, %!cpp, $$@))))
-	@mkdir -p $(OUTPUT_DIR)
+$(DEBUG_ENGINE_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(DEBUG_OUTPUT_DIR)/%.o, %!cpp, $$@))))
+	@mkdir -p $(DEBUG_OUTPUT_DIR)
 	@echo "Compiling $(patsubst $(SOURCE_DIR)/%,%, $?)"
-	@$(CXX) $(CFLAGS) $? $(ENGINE_LIBS) -c -o $@
+	@$(CXX) $(DEBUG_CFLAGS) $? $(DEBUG_ENGINE_LIBS) -c -o $@
+
+$(RELEASE_ENGINE_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(RELEASE_OUTPUT_DIR)/%.o, %!cpp, $$@))))
+	@mkdir -p $(RELEASE_OUTPUT_DIR)
+	@echo "Compiling $(patsubst $(SOURCE_DIR)/%,%, $?)"
+	@$(CXX) $(RELEASE_CFLAGS) $? $(RELEASE_ENGINE_LIBS) -c -o $@

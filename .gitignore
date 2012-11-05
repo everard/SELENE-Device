@@ -8,6 +8,7 @@ VCProjects/Exporter/Debug/
 VCProjects/Exporter/Release/
 VCProjects/Platforms/Windows/Debug/
 VCProjects/Platforms/Windows/Release/
+Make/Debug/
 Make/Release/
 *.lib
 *.suo
