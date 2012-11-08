@@ -16,6 +16,22 @@ namespace selene
                 // specify search folders for file manager
                 const char* folders[] =
                 {
+                        "ApplicationData//",
+                        "ApplicationData//Meshes//",
+                        "ApplicationData//Textures//",
+
+                        "..//ApplicationData//",
+                        "..//ApplicationData//Meshes//",
+                        "..//ApplicationData//Textures//",
+
+                        "..//..//ApplicationData//",
+                        "..//..//ApplicationData//Meshes//",
+                        "..//..//ApplicationData//Textures//",
+
+                        "..//..//..//ApplicationData//",
+                        "..//..//..//ApplicationData//Meshes//",
+                        "..//..//..//ApplicationData//Textures//",
+
                         "..//..//..//..//ApplicationData//",
                         "..//..//..//..//ApplicationData//Meshes//",
                         "..//..//..//..//ApplicationData//Textures//",
