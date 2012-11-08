@@ -90,10 +90,10 @@ Debug: $(DEBUG_ENGINE_TARGET) $(DEBUG_LINUX_PLATFORM_TARGET) $(DEBUG_EXPORTER_TA
 Release: $(RELEASE_ENGINE_TARGET) $(RELEASE_LINUX_PLATFORM_TARGET) $(RELEASE_EXPORTER_TARGET) $(RELEASE_SIMPLE_APPLICATION_TARGET) $(RELEASE_SIMPLE_ANIMATION_TARGET)
 
 cleanDebug:
-	@rm -f $(DEBUG_OUTPUT_DIR)/*.*
+	@rm -f $(DEBUG_OUTPUT_DIR)/*
 
 cleanRelease:
-	@rm -f $(RELEASE_OUTPUT_DIR)/*.*
+	@rm -f $(RELEASE_OUTPUT_DIR)/*
 
 clean: cleanDebug cleanRelease
 
@@ -102,20 +102,20 @@ all: Debug Release
 .SECONDEXPANSION:
 $(DEBUG_ENGINE_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(DEBUG_OUTPUT_DIR)/%.o, %!cpp, $$@))))
 	@mkdir -p $(DEBUG_OUTPUT_DIR)
-	@echo "Compiling $(patsubst $(SOURCE_DIR)/%,%, $?)"
+	@echo "Compiling [DEBUG] $(patsubst $(SOURCE_DIR)/%,%, $?)"
 	@$(CXX) $(DEBUG_CFLAGS) $? $(DEBUG_ENGINE_LIBS) -c -o $@
 
 $(RELEASE_ENGINE_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(RELEASE_OUTPUT_DIR)/%.o, %!cpp, $$@))))
 	@mkdir -p $(RELEASE_OUTPUT_DIR)
-	@echo "Compiling $(patsubst $(SOURCE_DIR)/%,%, $?)"
+	@echo "Compiling [RELEASE] $(patsubst $(SOURCE_DIR)/%,%, $?)"
 	@$(CXX) $(RELEASE_CFLAGS) $? $(RELEASE_ENGINE_LIBS) -c -o $@
 
 $(DEBUG_LINUX_PLATFORM_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(DEBUG_OUTPUT_DIR)/%.o, %!cpp, $$@))))
 	@mkdir -p $(DEBUG_OUTPUT_DIR)
-	@echo "Compiling $(patsubst $(SOURCE_DIR)/%,%, $?)"
+	@echo "Compiling [DEBUG] $(patsubst $(SOURCE_DIR)/%,%, $?)"
 	@$(CXX) $(DEBUG_CFLAGS) $? $(DEBUG_LINUX_PLATFORM_LIBS) -c -o $@
 
 $(RELEASE_LINUX_PLATFORM_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(RELEASE_OUTPUT_DIR)/%.o, %!cpp, $$@))))
 	@mkdir -p $(RELEASE_OUTPUT_DIR)
-	@echo "Compiling $(patsubst $(SOURCE_DIR)/%,%, $?)"
+	@echo "Compiling [RELEASE] $(patsubst $(SOURCE_DIR)/%,%, $?)"
 	@$(CXX) $(RELEASE_CFLAGS) $? $(RELEASE_LINUX_PLATFORM_LIBS) -c -o $@
