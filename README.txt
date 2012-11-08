@@ -17,24 +17,21 @@ To compile existing code under Windows, you should download and unzip SELENE-Dev
 
 Note, that your directory tree should be like this (to build and run everything out-of-box):
 
-+ ..                            <- PARENT DIRECTORY
+- ..                            <- PARENT DIRECTORY
 |\
+| | ApplicationData\            <- APPLICATION DATA (TO RUN DEMOS)
 | + SELENE-Device\              <- SOURCE CODE (CLONED REPOSITORY)
 | |\
-| | \
-| |  | .git\
-| |  | Make\
-| |  | Source\
-| |  | ~ other files ~
+| | | .git\
+| | | Make\
+| | | Source\
+| | | ~ other files ~
 | |
-| + VisualStudioProjects\
+| + ProjectsVisualStudio\
 |  \
-|   \
-|    | ApplicationData\         <- APPLICATION DATA (TO RUN DEMOS)
-|    | SELENE-Device\           <- VISUAL C++ PROJECTS
+|   | SELENE-Device\            <- VISUAL C++ PROJECTS
 |
 |~ other files ~
-+
 
 ================================================================================
 LICENSE
