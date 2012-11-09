@@ -19,7 +19,7 @@ namespace selene
                 RENDERING_FULL_SCREEN_ENABLED = 0x04
         };
 
-        // Represents openGL renderer.
+        // Represents OpenGL renderer.
         class GlRenderer: public Renderer, public Status
         {
         public:
