@@ -1,2 +1,4 @@
-Build/Debug/
-Build/Release/
+Build/Linux/Debug/
+Build/Linux/Release/
+Build/Android/Debug/
+Build/Android/Release/

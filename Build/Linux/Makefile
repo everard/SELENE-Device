@@ -1,12 +1,12 @@
 DEBUG_OUTPUT_DIR   = Debug
 RELEASE_OUTPUT_DIR = Release
-SOURCE_DIR = ../Source
+SOURCE_DIR = ../../Source
 
 # Engine compilation setup
 ENGINE_ROOT = $(SOURCE_DIR)/Engine
 ENGINE_SRC  = $(wildcard $(ENGINE_ROOT)/*.cpp $(ENGINE_ROOT)/*/*.cpp $(ENGINE_ROOT)/*/*/*.cpp $(ENGINE_ROOT)/*/*/*/*.cpp $(ENGINE_ROOT)/*/*/*/*/*.cpp $(ENGINE_ROOT)/*/*/*/*/*/*.cpp)
-DEBUG_ENGINE_OBJ    = $(subst $(DEBUG_OUTPUT_DIR)!,$(DEBUG_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(DEBUG_OUTPUT_DIR)!%.o, $(ENGINE_SRC))))
-RELEASE_ENGINE_OBJ  = $(subst $(RELEASE_OUTPUT_DIR)!,$(RELEASE_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(RELEASE_OUTPUT_DIR)!%.o, $(ENGINE_SRC))))
+DEBUG_ENGINE_OBJ    = $(addprefix $(DEBUG_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, %.o, $(ENGINE_SRC))))
+RELEASE_ENGINE_OBJ  = $(addprefix $(RELEASE_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, %.o, $(ENGINE_SRC))))
 DEBUG_ENGINE_LIBS   = -lrt
 RELEASE_ENGINE_LIBS = -lrt
 DEBUG_ENGINE_TARGET   = $(DEBUG_OUTPUT_DIR)/Engine.a
@@ -23,8 +23,8 @@ RELEASE_EXPORTER_TARGET = $(RELEASE_OUTPUT_DIR)/Exporter
 # Linux platform compilation setup
 LINUX_PLATFORM_ROOT = $(SOURCE_DIR)/Platforms/Linux
 LINUX_PLATFORM_SRC  = $(wildcard $(LINUX_PLATFORM_ROOT)/*.cpp $(LINUX_PLATFORM_ROOT)/*/*.cpp $(LINUX_PLATFORM_ROOT)/*/*/*.cpp $(LINUX_PLATFORM_ROOT)/*/*/*/*.cpp $(LINUX_PLATFORM_ROOT)/*/*/*/*/*.cpp $(LINUX_PLATFORM_ROOT)/*/*/*/*/*/*.cpp)
-DEBUG_LINUX_PLATFORM_OBJ    = $(subst $(DEBUG_OUTPUT_DIR)!,$(DEBUG_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(DEBUG_OUTPUT_DIR)!%.o, $(LINUX_PLATFORM_SRC))))
-RELEASE_LINUX_PLATFORM_OBJ  = $(subst $(RELEASE_OUTPUT_DIR)!,$(RELEASE_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, $(RELEASE_OUTPUT_DIR)!%.o, $(LINUX_PLATFORM_SRC))))
+DEBUG_LINUX_PLATFORM_OBJ    = $(addprefix $(DEBUG_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, %.o, $(LINUX_PLATFORM_SRC))))
+RELEASE_LINUX_PLATFORM_OBJ  = $(addprefix $(RELEASE_OUTPUT_DIR)/,$(subst /,., $(patsubst $(SOURCE_DIR)/%.cpp, %.o, $(LINUX_PLATFORM_SRC))))
 DEBUG_LINUX_PLATFORM_LIBS   = -lrt
 RELEASE_LINUX_PLATFORM_LIBS = -lrt
 DEBUG_LINUX_PLATFORM_TARGET   = $(DEBUG_OUTPUT_DIR)/Linux.a
