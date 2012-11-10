@@ -12,7 +12,7 @@ RELEASE_ENGINE_LIBS = -lstdc++
 DEBUG_ENGINE_TARGET   = $(DEBUG_OUTPUT_DIR)/Engine.a
 RELEASE_ENGINE_TARGET = $(RELEASE_OUTPUT_DIR)/Engine.a
 
-INCLUDE_DIRECTORIES = -I$(shell echo $(ANDROID_NDK_HOME))sources/cxx-stl/gnu-libstdc++/4.6/include
+INCLUDE_DIRECTORIES = -I$(shell echo $(ANDROID_NDK_HOME))sources/cxx-stl/gnu-libstdc++/4.6/include/
 DEBUG_OPTIMIZE   = -O0
 RELEASE_OPTIMIZE = -O3
 DEBUG_CFLAGS     = $(INCLUDE_DIRECTORIES) -Wall $(DEBUG_OPTIMIZE) -frtti -std=c++0x -pthread -ggdb
