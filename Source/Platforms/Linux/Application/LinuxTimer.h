@@ -7,6 +7,8 @@
 #include "../../../Engine/Core/Macros/Macros.h"
 #include "../../../Engine/Application/Timer.h"
 
+#include <ctime>
+
 namespace selene
 {
 
@@ -24,7 +26,7 @@ namespace selene
                 float getElapsedTime();
 
         private:
-                uint64_t currentTime_;
+                timespec currentTime_;
 
         };
 

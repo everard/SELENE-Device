@@ -2,35 +2,33 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "LinuxTimer.h"
-#include <ctime>
 
 namespace selene
 {
 
         LinuxTimer::LinuxTimer()
         {
-                timespec ts;
-                clock_gettime(CLOCK_REALTIME, &ts);
-                currentTime_ = static_cast<uint64_t>(ts.tv_sec) * 1000000000 + ts.tv_nsec;
+                clock_gettime(CLOCK_MONOTONIC, &currentTime_);
         }
         LinuxTimer::~LinuxTimer() {}
 
         //--------------------------------
         void LinuxTimer::reset()
         {
-                timespec ts;
-                clock_gettime(CLOCK_REALTIME, &ts);
-                currentTime_ = static_cast<uint64_t>(ts.tv_sec) * 1000000000 + ts.tv_nsec;
+                clock_gettime(CLOCK_MONOTONIC, &currentTime_);
         }
 
         //--------------------------------
         float LinuxTimer::getElapsedTime()
         {
                 timespec ts;
-                clock_gettime(CLOCK_REALTIME, &ts);
-                uint64_t time = static_cast<uint64_t>(ts.tv_sec) * 1000000000 + ts.tv_nsec;
+                clock_gettime(CLOCK_MONOTONIC, &ts);
 
-                return static_cast<float>(static_cast<double>(time - currentTime_) * 0.000000001);
+                ts.tv_sec -= currentTime_.tv_sec;
+                double delta = static_cast<double>(ts.tv_nsec) - static_cast<double>(currentTime_.tv_nsec);
+                delta *= 0.000000001;
+
+                return static_cast<float>(ts.tv_sec) + static_cast<float>(delta);
         }
 
 }
