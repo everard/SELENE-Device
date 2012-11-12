@@ -22,7 +22,7 @@ namespace selene
                 ResourceManager textureManager_, meshManager_;
 
                 // File manager
-                FileManager fileManager_;
+                Platform::FileManager fileManager_;
 
                 // Renderer
                 Platform::Renderer renderer_;

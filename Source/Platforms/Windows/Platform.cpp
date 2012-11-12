@@ -8,6 +8,10 @@
 namespace selene
 {
 
+        Platform::FileManager::FileManager(): selene::FileManager(Platform::fileExists) {}
+        Platform::FileManager::~FileManager() {}
+
+        //---------------------------------------------
         bool Platform::fileExists(const char* fileName)
         {
                 return (_access(fileName, 0) == 0);

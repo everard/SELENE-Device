@@ -10,7 +10,6 @@ namespace selene
         }
 
         SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height),
-                                                                                                 fileManager_(Platform::fileExists),
                                                                                                  camera_("Scene camera")
         {
                 // specify search folders for file manager

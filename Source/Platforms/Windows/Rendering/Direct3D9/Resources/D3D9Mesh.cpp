@@ -33,6 +33,63 @@ namespace selene
                 if(data_.vertexElements.isEmpty())
                         return false;
 
+                static Mesh::VertexElement staticMeshVertexElements[] =
+                {
+                        Mesh::VertexElement(VERTEX_ELEMENT_POSITION,
+                                            VERTEX_ELEMENT_SIZE_FLOAT3,
+                                            0, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_NORMAL,
+                                            VERTEX_ELEMENT_SIZE_FLOAT3,
+                                            12, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
+                                            VERTEX_ELEMENT_SIZE_FLOAT2,
+                                            24, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_TANGENT,
+                                            VERTEX_ELEMENT_SIZE_FLOAT4,
+                                            32, 0)
+                };
+                static const uint32_t numStaticMeshVertexElements = sizeof(staticMeshVertexElements) / sizeof(staticMeshVertexElements[0]);
+
+                static Mesh::VertexElement skinMeshVertexElements[] =
+                {
+                        Mesh::VertexElement(VERTEX_ELEMENT_POSITION,
+                                            VERTEX_ELEMENT_SIZE_FLOAT3,
+                                            0, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_NORMAL,
+                                            VERTEX_ELEMENT_SIZE_FLOAT3,
+                                            12, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
+                                            VERTEX_ELEMENT_SIZE_FLOAT2,
+                                            24, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_TANGENT,
+                                            VERTEX_ELEMENT_SIZE_FLOAT4,
+                                            32, 0),
+                        Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
+                                            VERTEX_ELEMENT_SIZE_FLOAT4,
+                                            48, 1),
+                        Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
+                                            VERTEX_ELEMENT_SIZE_FLOAT4,
+                                            64, 2)
+                };
+                static const uint32_t numSkinMeshVertexElements = sizeof(skinMeshVertexElements) / sizeof(skinMeshVertexElements[0]);
+
+                Mesh::VertexElement* referenceVertexElements = nullptr;
+                if(data_.vertexElements.getSize() == numStaticMeshVertexElements)
+                        referenceVertexElements = staticMeshVertexElements;
+                else if(data_.vertexElements.getSize() == numSkinMeshVertexElements)
+                        referenceVertexElements = skinMeshVertexElements;
+                else
+                        return false;
+
+                for(register uint8_t i = 0; i < data_.vertexElements.getSize(); ++i)
+                {
+                        if(data_.vertexElements[i].type != referenceVertexElements[i].type ||
+                           data_.vertexElements[i].size != referenceVertexElements[i].size ||
+                           data_.vertexElements[i].offset != referenceVertexElements[i].offset ||
+                           data_.vertexElements[i].index  != referenceVertexElements[i].index)
+                                return false;
+                }
+
                 // allocate memory for vertex elements
                 d3dVertexElements_ = new(std::nothrow) D3DVERTEXELEMENT9[data_.vertexElements.getSize() + 1];
                 if(d3dVertexElements_ == nullptr)

@@ -28,6 +28,17 @@ namespace selene
                 typedef GlMesh Mesh;
 
                 /**
+                 * Represents file manager. This file manager handles platform-dependent file management.
+                 */
+                class FileManager: public selene::FileManager
+                {
+                public:
+                        FileManager();
+                        ~FileManager();
+
+                };
+
+                /**
                  * \brief Checks file existence.
                  * \param[in] fileName name of the file
                  * \return true if file with given name exists
