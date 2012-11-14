@@ -97,10 +97,12 @@ namespace selene
                         // Optional vertex shaders
                         OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS = 0,
                         OPTIONAL_VERTEX_SHADER_SKIN_POSITIONS_AND_NORMALS_PASS,
+                        OPTIONAL_VERTEX_SHADER_SSAO_PASS,
                         NUM_OF_OPTIONAL_VERTEX_SHADERS,
 
                         // Optional pixel shaders
                         OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS = 0,
+                        OPTIONAL_PIXEL_SHADER_SSAO_PASS,
                         NUM_OF_OPTIONAL_PIXEL_SHADERS,
 
                         // Dummy textures
@@ -117,7 +119,8 @@ namespace selene
                         NUM_OF_RENDER_TARGETS,
 
                         // Half-size render targets
-                        HALF_SIZE_RENDER_TARGET_BLOOM = 0,
+                        HALF_SIZE_RENDER_TARGET_SSAO = 0,
+                        HALF_SIZE_RENDER_TARGET_BLOOM,
                         HALF_SIZE_RENDER_TARGET_BLURRED_BLOOM,
                         NUM_OF_HALF_SIZE_RENDER_TARGETS,
 
@@ -221,7 +224,7 @@ namespace selene
                 void accumulateLighting();
 
                 // Blurs SSAO
-                void blurSsao(const Vector4d& edgeDetectionParameters);
+                void blurSsao(const Vector4d& edgeDetectionParameters, bool shouldUpscale = false);
 
                 // Renders SSAO
                 void renderSsao();

@@ -440,6 +440,26 @@ namespace selene
                         }
                 }
 
+                if(isThirdShaderModelSupported_)
+                {
+                        D3d9Shader d3dOptionalVertexShader("Shaders//SSAO30Pass.vsh", fileManager, vertexShaderLibrary, "vs_1_1", 0);
+                        D3d9Shader d3dOptionalPixelShader("Shaders//SSAO30Pass.psh", fileManager, pixelShaderLibrary, "ps_3_0", 0);
+
+                        if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].create(d3dOptionalVertexShader))
+                        {
+                                writeLogEntry("ERROR: Could not create optional vertex shader");
+                                destroy();
+                                return false;
+                        }
+
+                        if(!optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_SSAO_PASS].create(d3dOptionalPixelShader))
+                        {
+                                writeLogEntry("ERROR: Could not create optional pixel shader");
+                                destroy();
+                                return false;
+                        }
+                }
+
                 // create dummy textures
                 for(uint32_t i = 0; i < NUM_OF_DUMMY_TEXTURES; ++i)
                 {
@@ -1478,7 +1498,7 @@ namespace selene
         }
 
         //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::blurSsao(const Vector4d& edgeDetectionParameters)
+        void D3d9Renderer::blurSsao(const Vector4d& edgeDetectionParameters, bool shouldUpscale)
         {
                 d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_BLURRED_SSAO]);
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
@@ -1509,12 +1529,25 @@ namespace selene
                 d3dDevice_->SetTexture(1, d3dRenderTargetTextures_[RENDER_TARGET_NORMALS]);
 
                 // set SSAO at sampler 2
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(2, d3dRenderTargetTextures_[RENDER_TARGET_SSAO]);
+                if(shouldUpscale)
+                {
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetTexture(2, d3dHalfSizeRenderTargetTextures_[HALF_SIZE_RENDER_TARGET_SSAO]);
+                }
+                else
+                {
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetTexture(2, d3dRenderTargetTextures_[RENDER_TARGET_SSAO]);
+                }
+
                 fullScreenQuad_.render();
 
                 d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_SSAO]);
@@ -1558,7 +1591,11 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderSsao()
         {
-                d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_SSAO]);
+                if(isThirdShaderModelSupported_)
+                        d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_SSAO]);
+                else
+                        d3dDevice_->SetRenderTarget(0, d3dHalfSizeRenderTargetSurfaces_[HALF_SIZE_RENDER_TARGET_SSAO]);
+
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -1567,8 +1604,16 @@ namespace selene
                 Vector4d ssaoParameters(2.5f, -0.2f, 1.0f, 1.0f);
                 Vector4d edgeDetectionParameters(2.5f, 0.99f, 4.0f / screenSize_.x, 4.0f / screenSize_.y);
 
-                vertexShaders_[VERTEX_SHADER_SSAO_PASS].set();
-                pixelShaders_[PIXEL_SHADER_SSAO_PASS].set();
+                if(isThirdShaderModelSupported_)
+                {
+                        optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].set();
+                        optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_SSAO_PASS].set();
+                }
+                else
+                {
+                        vertexShaders_[VERTEX_SHADER_SSAO_PASS].set();
+                        pixelShaders_[PIXEL_SHADER_SSAO_PASS].set();
+                }
 
                 d3dDevice_->SetPixelShaderConstantF(0, (const float*)unprojectionVector_, 1);
                 d3dDevice_->SetPixelShaderConstantF(1, (const float*)projectionParameters_, 1);
@@ -1600,19 +1645,26 @@ namespace selene
                 d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_WRAP);
                 d3dDevice_->SetTexture(2, d3dRandomTexture_);
 
-                // setup alpha blend parameters
-                d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
-                d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+                if(isThirdShaderModelSupported_)
+                {
+                        fullScreenQuad_.render();
+                }
+                else
+                {
+                        // setup alpha blend parameters
+                        d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
+                        d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 
-                // render SSAO
-                ssaoGeometry_.render();
+                        // render SSAO
+                        ssaoGeometry_.render();
 
-                // disable alpha blend
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+                        // disable alpha blend
+                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+                }
 
                 // blur SSAO
-                blurSsao(edgeDetectionParameters);
+                blurSsao(edgeDetectionParameters, !isThirdShaderModelSupported_);
                 edgeDetectionParameters.z = 2.0f / screenSize_.x;
                 edgeDetectionParameters.w = 2.0f / screenSize_.y;
                 blurSsao(edgeDetectionParameters);
