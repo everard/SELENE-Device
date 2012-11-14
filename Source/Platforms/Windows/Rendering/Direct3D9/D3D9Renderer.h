@@ -25,14 +25,6 @@ namespace selene
         class D3d9SkinMesh;
         class Material;
 
-        enum
-        {
-                // Rendering flags
-                RENDERING_SSAO_ENABLED  = 0x01,
-                RENDERING_BLOOM_ENABLED = 0x02,
-                RENDERING_FULL_SCREEN_ENABLED = 0x04
-        };
-
         // Represents D3D9 renderer.
         class D3d9Renderer: public Renderer, public Status
         {

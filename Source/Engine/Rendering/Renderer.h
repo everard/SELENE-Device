@@ -26,6 +26,14 @@ namespace selene
         class Light;
         class Gui;
 
+        /// Rendering flags
+        enum
+        {
+                RENDERING_SSAO_ENABLED  = 0x01,
+                RENDERING_BLOOM_ENABLED = 0x02,
+                RENDERING_FULL_SCREEN_ENABLED = 0x04
+        };
+
         /**
          * Represents renderer. This is base class for all renderers.
          */

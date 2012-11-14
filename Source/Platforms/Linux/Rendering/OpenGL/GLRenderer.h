@@ -11,14 +11,6 @@
 namespace selene
 {
 
-        enum
-        {
-                // Rendering flags
-                RENDERING_SSAO_ENABLED  = 0x01,
-                RENDERING_BLOOM_ENABLED = 0x02,
-                RENDERING_FULL_SCREEN_ENABLED = 0x04
-        };
-
         // Represents OpenGL renderer.
         class GlRenderer: public Renderer, public Status
         {
