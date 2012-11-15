@@ -1,4 +1,4 @@
 Build/Linux/Debug/
 Build/Linux/Release/
-Build/Android/Debug/
-Build/Android/Release/
+Build/Android/Engine/obj/
+Build/Android/Engine/libs/
