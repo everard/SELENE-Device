@@ -3,6 +3,9 @@
 
 #include "../../Engine/Application/Application.h"
 #include "Platform.h"
+
+#include <android_native_app_glue.h>
+#include <android/sensor.h>
 #include <unistd.h>
 
 namespace selene
@@ -19,15 +22,16 @@ namespace selene
 
 }
 
-int main()
+void android_main(android_app* state)
 {
+        app_dummy();
+
         selene::Platform::Application* application = selene::Platform::createApplication();
         if(application == nullptr)
-                return 0;
+                return;
 
         if(application->initialize())
                 application->run();
 
         delete application;
-        return 0;
 }
