@@ -100,6 +100,9 @@ clean: cleanDebug cleanRelease
 
 all: Debug Release
 
+original:
+	rm -rf $(DEBUG_OUTPUT_DIR) $(RELEASE_OUTPUT_DIR)
+
 .SECONDEXPANSION:
 $(DEBUG_ENGINE_OBJ): $$(addprefix $(SOURCE_DIR)/,$$(subst !cpp,.cpp, $$(subst .,/, $$(patsubst $(DEBUG_OUTPUT_DIR)/%.o, %!cpp, $$@))))
 	@mkdir -p $(DEBUG_OUTPUT_DIR)
