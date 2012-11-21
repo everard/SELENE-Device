@@ -1,4 +1,4 @@
-APP_MODULES  := engine SimpleApplication
+APP_MODULES  := SimpleApplication
 APP_PLATFORM := android-9
 APP_ABI := all
 APP_STL := gnustl_shared

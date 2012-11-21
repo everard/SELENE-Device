@@ -3,12 +3,12 @@
 PROJECT_NAME=$1
 PLATFORM_NAME=$2
 
-if ! [[ "$PROJECT_NAME" =~ ^[A-Za-z0-9\-]+$ ]]; then
+if !([ "$PROJECT_NAME"=~^[A-Za-z0-9\-]+$ ]); then
         echo 'Error: project name must be specified and can have only A-Z, a-z, 0-9 and - characters.';
         exit 0;
 fi;
 
-if ! [[ "$PLATFORM_NAME" =~ ^[A-Za-z0-9\-]+$ ]]; then
+if !([ "$PLATFORM_NAME"=~^[A-Za-z0-9\-]+$ ]); then
         echo 'Error: platform name must be specified and can have only A-Z, a-z, 0-9 and - characters.';
         exit 0;
 fi;
@@ -29,7 +29,6 @@ touch $PROJECT_NAME/AndroidManifest.xml
 touch $PROJECT_NAME/Makefile
 touch $PROJECT_NAME/jni/Android.mk
 touch $PROJECT_NAME/jni/Application.mk
-touch $PROJECT_NAME/jni/Main.cpp
 touch $PROJECT_NAME/res/values/strings.xml
 touch $PROJECT_NAME/src/com/$PROJECT_NAME/MainActivity.java
 
@@ -89,7 +88,7 @@ echo "LOCAL_PATH := \$(call my-dir)
 include \$(CLEAR_VARS)
 
 LOCAL_MODULE    := $PROJECT_NAME
-LOCAL_SRC_FILES := Main.cpp
+LOCAL_SRC_FILES := \$(notdir \$(wildcard \$(LOCAL_PATH)/*.cpp))
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 #LOCAL_WHOLE_STATIC_LIBRARIES = libraries
 LOCAL_STATIC_LIBRARIES = android_native_app_glue
@@ -104,12 +103,3 @@ APP_ABI := all
 APP_STL := gnustl_shared
 APP_CPPFLAGS := -std=gnu++11 -Wall
 APP_GNUSTL_FORCE_CPP_FEATURES := exceptions rtti" > $PROJECT_NAME/jni/Application.mk
-
-echo "#include <android_native_app_glue.h>
-#include <iostream>
-
-void android_main(android_app* state)
-{
-        app_dummy();
-        std::cout << \"Hello, world!\" << std::endl;
-}" > $PROJECT_NAME/jni/Main.cpp
