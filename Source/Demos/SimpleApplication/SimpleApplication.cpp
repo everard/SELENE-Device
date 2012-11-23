@@ -6,7 +6,9 @@ namespace selene
         // Entry point
         Platform::Application* Platform::createApplication()
         {
-                return new(std::nothrow) SimpleApplication("SELENE Device", 640, 480);
+                return new(std::nothrow) SimpleApplication("SELENE Device",
+                                                           Platform::getDefaultScreenWidth(),
+                                                           Platform::getDefaultScreenHeight());
         }
 
         SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height),

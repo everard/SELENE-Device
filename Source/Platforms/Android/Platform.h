@@ -11,6 +11,8 @@
 #include "Application/AndroidApplication.h"
 #include "Application/AndroidTimer.h"
 
+#include <android_native_app_glue.h>
+
 namespace selene
 {
 
@@ -50,6 +52,26 @@ namespace selene
                  * \return pointer to the Application object
                  */
                 static Application* createApplication();
+
+                /**
+                 * \brief Returns default screen width.
+                 * \return default screen width
+                 */
+                static uint32_t getDefaultScreenWidth();
+
+                /**
+                 * \brief Returns default screen height.
+                 * \return default screen height
+                 */
+                static uint32_t getDefaultScreenHeight();
+
+        private:
+                // Default screen width and height
+                static uint32_t defaultScreenWidth_;
+                static uint32_t defaultScreenHeight_;
+
+                // Declare android_main in global namespace as friend
+                friend void ::android_main(android_app* state);
 
         };
 

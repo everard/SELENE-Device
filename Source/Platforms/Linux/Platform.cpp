@@ -8,6 +8,9 @@
 namespace selene
 {
 
+        uint32_t Platform::defaultScreenWidth_  = 640;
+        uint32_t Platform::defaultScreenHeight_ = 480;
+
         Platform::FileManager::FileManager(): selene::FileManager(Platform::fileExists) {}
         Platform::FileManager::~FileManager() {}
 
@@ -15,6 +18,18 @@ namespace selene
         bool Platform::fileExists(const char* fileName)
         {
                 return (access(fileName, F_OK) == 0);
+        }
+
+        //---------------------------------------------
+        uint32_t Platform::getDefaultScreenWidth()
+        {
+                return Platform::defaultScreenWidth_;
+        }
+
+        //---------------------------------------------
+        uint32_t Platform::getDefaultScreenHeight()
+        {
+                return Platform::defaultScreenHeight_;
         }
 
 }

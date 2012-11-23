@@ -51,6 +51,23 @@ namespace selene
                  */
                 static Application* createApplication();
 
+                /**
+                 * \brief Returns default screen width.
+                 * \return default screen width
+                 */
+                static uint32_t getDefaultScreenWidth();
+
+                /**
+                 * \brief Returns default screen height.
+                 * \return default screen height
+                 */
+                static uint32_t getDefaultScreenHeight();
+
+        private:
+                // Default screen width and height
+                static uint32_t defaultScreenWidth_;
+                static uint32_t defaultScreenHeight_;
+
         };
 
 }
