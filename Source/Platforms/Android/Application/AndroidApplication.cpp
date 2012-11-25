@@ -156,7 +156,7 @@ namespace selene
                         cursorPosition_.y = 2.0f * static_cast<float>(y) / static_cast<float>(height_);
 
                         cursorShift_ = cursorPosition_ - cursorShift_;
-                        pressedControlButtons_ |= CONTROL_BUTTON_0;
+                        pressedControlButtons_ = CONTROL_BUTTON_0;
 
                         return 1;
                 }
