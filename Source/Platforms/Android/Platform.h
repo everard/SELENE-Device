@@ -11,8 +11,6 @@
 #include "Application/AndroidApplication.h"
 #include "Application/AndroidTimer.h"
 
-#include <android_native_app_glue.h>
-
 namespace selene
 {
 
@@ -66,12 +64,15 @@ namespace selene
                 static uint32_t getDefaultScreenHeight();
 
         private:
+                friend class AndroidApplication;
+                friend void ::android_main(android_app* state);
+
+                // Android state
+                static android_app* state_;
+
                 // Default screen width and height
                 static uint32_t defaultScreenWidth_;
                 static uint32_t defaultScreenHeight_;
-
-                // Declare android_main in global namespace as friend
-                friend void ::android_main(android_app* state);
 
         };
 

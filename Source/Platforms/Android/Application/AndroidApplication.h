@@ -7,6 +7,8 @@
 #include "../../../Engine/Application/Application.h"
 #include "AndroidTimer.h"
 
+#include <android_native_app_glue.h>
+
 namespace selene
 {
 
@@ -29,6 +31,19 @@ namespace selene
         protected:
                 // Returns state of the given key
                 float getKeyState(uint8_t key);
+
+        private:
+                android_app* state_;
+                bool shouldRun_, isPaused_;
+                AndroidTimer timer_;
+
+                // Processes commands and input
+                void processCommand(android_app* app, int32_t cmd);
+                int32_t processInputEvent(android_app* app, AInputEvent* event);
+
+                // Android callbacks
+                static void commandProcessingCallback(android_app* app, int32_t cmd);
+                static int32_t inputProcessingCallback(android_app* app, AInputEvent* event);
 
         };
 

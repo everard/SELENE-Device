@@ -4,14 +4,16 @@
 #include "../../Engine/Application/Application.h"
 #include "Platform.h"
 
-#include <android/sensor.h>
+#include <android/native_window.h>
 #include <unistd.h>
+#include <cstdlib>
 
 namespace selene
 {
 
-        uint32_t Platform::defaultScreenWidth_  = 0;
-        uint32_t Platform::defaultScreenHeight_ = 0;
+        android_app* Platform::state_ = nullptr;
+        uint32_t Platform::defaultScreenWidth_  = 1;
+        uint32_t Platform::defaultScreenHeight_ = 1;
 
         Platform::FileManager::FileManager(): selene::FileManager(Platform::fileExists) {}
         Platform::FileManager::~FileManager() {}
@@ -40,9 +42,7 @@ void android_main(android_app* state)
 {
         app_dummy();
 
-        // TO DO: get real screen size
-        selene::Platform::defaultScreenWidth_  = 640;
-        selene::Platform::defaultScreenHeight_ = 480;
+        selene::Platform::state_ = state;
 
         selene::Platform::Application* application = selene::Platform::createApplication();
         if(application == nullptr)
@@ -52,4 +52,5 @@ void android_main(android_app* state)
                 application->run();
 
         delete application;
+        exit(0);
 }
