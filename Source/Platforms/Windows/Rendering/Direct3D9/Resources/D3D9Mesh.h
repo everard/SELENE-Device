@@ -23,10 +23,8 @@ namespace selene
         private:
                 friend class D3d9Renderer;
 
-                LPDIRECT3DVERTEXDECLARATION9 d3dVertexDeclaration_;
-                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffer_;
+                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffers_[NUM_OF_VERTEX_STREAMS];
                 LPDIRECT3DINDEXBUFFER9 d3dIndexBuffer_;
-                D3DVERTEXELEMENT9* d3dVertexElements_;
 
                 // Destroys D3D9 mesh data
                 void destroy();

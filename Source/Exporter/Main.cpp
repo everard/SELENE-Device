@@ -17,7 +17,7 @@ void wait(clock_t interval)
 
 int main(int argc, char* args[])
 {
-        std::cout << "SELENE Exporter.\n";
+        std::cout << "SELENE Exporter." << std::endl;
         std::cout << argc;
 
         if(argc > 1)
@@ -25,10 +25,10 @@ int main(int argc, char* args[])
         else
                 std::cout << " argument";
 
-        std::cout << " passed.\n";
-        std::cout << "Input:\n";
+        std::cout << " passed." << std::endl;
+        std::cout << "Input:" << std::endl;
         for(int i = 0; i < argc; ++i)
-                std::cout << "   <" << args[i] << ">\n";
+                std::cout << "   <" << args[i] << ">" << std::endl;
 
         selene::RawMeshData rawMeshData;
 

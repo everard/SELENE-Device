@@ -84,6 +84,8 @@ namespace selene
                 memset(d3dDummyTextures_, 0, sizeof(d3dDummyTextures_));
                 d3dRandomTexture_ = nullptr;
 
+                d3dMeshVertexDeclaration_ = nullptr;
+
                 memset(d3dRenderTargetTextures_, 0, sizeof(d3dRenderTargetTextures_));
                 memset(d3dRenderTargetSurfaces_, 0, sizeof(d3dRenderTargetSurfaces_));
                 memset(d3dHalfSizeRenderTargetTextures_, 0, sizeof(d3dHalfSizeRenderTargetTextures_));
@@ -497,6 +499,25 @@ namespace selene
                         return false;
                 }
 
+                // create mesh vertex declaration
+                D3DVERTEXELEMENT9 vertexElements[] =
+                {
+                        {0, 0,  D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+                        {1, 0,  D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,   0},
+                        {1, 12, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT,  0},
+                        {2, 0,  D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+                        {3, 0,  D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+                        {3, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
+                        D3DDECL_END()
+                };
+
+                if(FAILED(d3dDevice_->CreateVertexDeclaration(vertexElements, &d3dMeshVertexDeclaration_)))
+                {
+                        writeLogEntry("ERROR: Could not create vertex declaration");
+                        destroy();
+                        return false;
+                }
+
                 // create render targets
                 D3DFORMAT d3dRenderTargetFormats[NUM_OF_RENDER_TARGETS] =
                 {
@@ -719,6 +740,8 @@ namespace selene
                         SAFE_RELEASE(d3dDummyTextures_[i]);
                 SAFE_RELEASE(d3dRandomTexture_);
 
+                SAFE_RELEASE(d3dMeshVertexDeclaration_);
+
                 for(uint8_t i = 0; i < NUM_OF_RENDER_TARGETS; ++i)
                 {
                         SAFE_RELEASE(d3dRenderTargetTextures_[i]);
@@ -791,6 +814,10 @@ namespace selene
                 }
 
                 // render result
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+
                 d3dDevice_->SetRenderTarget(0, d3dBackBufferSurface_);
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET,
                                   D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
@@ -850,6 +877,10 @@ namespace selene
                 }
 
                 // end rendering
+                d3dDevice_->SetStreamSource(0, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
                 d3dDevice_->EndScene();
                 d3dDevice_->Present(nullptr, nullptr, 0, nullptr);
 
@@ -1069,6 +1100,11 @@ namespace selene
                 pixelShaders_[PIXEL_SHADER_POSITIONS_PASS].set();
                 d3dDevice_->SetPixelShaderConstantF(0, (const float*)spotLight.getProjectionParameters(), 1);
 
+                d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+
                 // walk through all meshes
                 for(uint8_t i = 0; i < NUM_OF_MESH_UNITS; ++i)
                 {
@@ -1083,9 +1119,8 @@ namespace selene
 
                                 const Mesh::Data& meshData = d3dMesh->getData();
 
-                                d3dDevice_->SetVertexDeclaration(d3dMesh->d3dVertexDeclaration_);
-                                d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffer_, 0,
-                                                            meshData.vertices.getStride());
+                                d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_POSITIONS], 0,
+                                                            meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getStride());
                                 d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
 
                                 MeshSubsetsList* meshSubsetsList = actorsList.getCurrentData();
@@ -1183,6 +1218,10 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderLights(uint8_t lightsListType)
         {
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+
                 if(lightsListType == LIGHTS_LIST_WITH_SHADOWS)
                 {
                         // render with shadows
@@ -1325,6 +1364,8 @@ namespace selene
         void D3d9Renderer::renderPositionsAndNormals()
         {
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+                d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
 
                 if(isMultipleRenderTargetSupported_)
                 {
@@ -1373,9 +1414,17 @@ namespace selene
 
                                         const Mesh::Data& meshData = d3dMesh->getData();
 
-                                        d3dDevice_->SetVertexDeclaration(d3dMesh->d3dVertexDeclaration_);
-                                        d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffer_, 0,
-                                                                        meshData.vertices.getStride());
+                                        d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_POSITIONS], 0,
+                                                                    meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getStride());
+                                        d3dDevice_->SetStreamSource(1, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_TBN_BASES], 0,
+                                                                    meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES].getStride());
+                                        d3dDevice_->SetStreamSource(2, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES], 0,
+                                                                    meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].getStride());
+
+                                        if(i == UNIT_MESH_SKIN)
+                                                d3dDevice_->SetStreamSource(3, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], 0,
+                                                                            meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
+
                                         d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
 
                                         MeshSubsetsList* meshSubsetsList = actorsList_.getCurrentData();
@@ -1416,6 +1465,17 @@ namespace selene
                         uint8_t vertexShaderNo[] = {VERTEX_SHADER_POSITIONS_PASS, VERTEX_SHADER_NORMALS_PASS};
                         uint8_t renderTargetNo[] = {RENDER_TARGET_POSITIONS,      RENDER_TARGET_NORMALS};
 
+                        uint8_t vertexStreamIndices[][3] =
+                        {
+                                {Mesh::VERTEX_STREAM_POSITIONS, 0, 0},
+                                {
+                                        Mesh::VERTEX_STREAM_POSITIONS,
+                                        Mesh::VERTEX_STREAM_TBN_BASES,
+                                        Mesh::VERTEX_STREAM_TEXTURE_COORDINATES
+                                }
+                        };
+                        uint8_t numVertexStreams[] = {1, 3};
+
                         for(uint8_t pass = RENDERING_PASS_POSITIONS; pass <= RENDERING_PASS_NORMALS; ++pass)
                         {
                                 d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, d3dDepthWriteFlags[pass]);
@@ -1453,9 +1513,17 @@ namespace selene
 
                                                 const Mesh::Data& meshData = d3dMesh->getData();
 
-                                                d3dDevice_->SetVertexDeclaration(d3dMesh->d3dVertexDeclaration_);
-                                                d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffer_, 0,
-                                                                            meshData.vertices.getStride());
+                                                for(uint8_t vertexStream = 0; vertexStream < numVertexStreams[pass]; ++vertexStream)
+                                                {
+                                                        UINT streamNo = vertexStreamIndices[pass][vertexStream];
+                                                        d3dDevice_->SetStreamSource(streamNo, d3dMesh->d3dVertexBuffers_[streamNo], 0,
+                                                                                    meshData.vertices[streamNo].getStride());
+                                                }
+
+                                                if(i == UNIT_MESH_SKIN)
+                                                        d3dDevice_->SetStreamSource(3, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], 0,
+                                                                                    meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
+
                                                 d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
 
                                                 MeshSubsetsList* meshSubsetsList = actorsList_.getCurrentData();
@@ -1591,6 +1659,10 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderSsao()
         {
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+
                 if(isThirdShaderModelSupported_)
                         d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_SSAO]);
                 else
@@ -1729,6 +1801,9 @@ namespace selene
 
                 d3dDevice_->SetPixelShaderConstantF(4, (const float*)textureCoordinatesAdjustment_, 1);
 
+                d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
                 // walk through all meshes
                 for(uint8_t i = 0; i < NUM_OF_MESH_UNITS; ++i)
                 {
@@ -1743,9 +1818,14 @@ namespace selene
 
                                 const Mesh::Data& meshData = d3dMesh->getData();
 
-                                d3dDevice_->SetVertexDeclaration(d3dMesh->d3dVertexDeclaration_);
-                                d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffer_, 0,
-                                                            meshData.vertices.getStride());
+                                d3dDevice_->SetStreamSource(0, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_POSITIONS], 0,
+                                                            meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getStride());
+                                d3dDevice_->SetStreamSource(2, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES], 0,
+                                                            meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].getStride());
+                                if(i == UNIT_MESH_SKIN)
+                                        d3dDevice_->SetStreamSource(3, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], 0,
+                                                                    meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
+
                                 d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
 
                                 MeshSubsetsList* meshSubsetsList = actorsList_.getCurrentData();
@@ -1777,6 +1857,10 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderParticles()
         {
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+
                 d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -1887,6 +1971,10 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderBloom()
         {
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+
                 Vector4d kernelSize(1.0f / screenSize_.z, 1.0f / screenSize_.w);
                 Vector4d luminance(0.08f, 0.08f, 0.08f, 0.08f);
                 Vector4d parameters(0.18f, 0.64f);

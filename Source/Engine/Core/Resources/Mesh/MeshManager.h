@@ -10,7 +10,7 @@ namespace selene
 {
 
         /**
-         * Represents mesh manager.
+         * Represents mesh manager. Reads/writes meshes from/to std::istream/std::ostream.
          */
         class MeshManager
         {
@@ -63,14 +63,9 @@ namespace selene
                 bool writeString(std::ostream& stream, const char* string);
 
         private:
-                // Texture manager
                 ResourceManager* textureManager_;
-
-                // Texture factory
                 ResourceFactory* textureFactory_;
-
-                // Vertex stride
-                uint8_t vertexStride_;
+                bool hasSkeleton_;
 
                 /**
                  * \brief Reads material.
@@ -94,14 +89,6 @@ namespace selene
                  * \return true if bounding box was successfully read
                  */
                 bool readBoundingBox(std::istream& stream, Box& boundingBox);
-
-                /**
-                 * \brief Reads vertex elements.
-                 * \param[in] stream std::istream from which vertex elements are read
-                 * \param[out] meshData mesh data
-                 * \return true if vertex elements were successfully read
-                 */
-                bool readVertexElements(std::istream& stream, Mesh::Data& meshData);
 
                 /**
                  * \brief Reads vertices and faces.
@@ -149,14 +136,6 @@ namespace selene
                  * \return true if bounding box was successfully written
                  */
                 bool writeBoundingBox(std::ostream& stream, const Box& boundingBox);
-
-                /**
-                 * \brief Writes vertex elements.
-                 * \param[in] stream std::ostream to which vertex elements are written
-                 * \param[in] meshData mesh data
-                 * \return true if vertex elements were successfully written
-                 */
-                bool writeVertexElements(std::ostream& stream, const Mesh::Data& meshData);
 
                 /**
                  * \brief Writes vertices and faces.

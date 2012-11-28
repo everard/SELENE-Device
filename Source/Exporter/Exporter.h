@@ -58,9 +58,6 @@ namespace selene
                 // Number of faces
                 uint32_t numFaces_;
 
-                // Vertex stride
-                uint8_t vertexStride_;
-
                 /**
                  * \brief Clears all temporary data.
                  */
@@ -71,13 +68,6 @@ namespace selene
                  * \return true if faces were successfully read
                  */
                 bool readFaces();
-
-                /**
-                 * \brief Creates vertex elements.
-                 * \param[out] meshData mesh data
-                 * \return true if vertex elements were successfully created
-                 */
-                bool createVertexElements(Mesh::Data& meshData);
 
                 /**
                  * \brief Creates vertices and faces.

@@ -170,8 +170,8 @@ namespace selene
                                                        meshManager_.requestResource<Mesh>("object.sle")));
 
                 scene_.addNode(new(std::nothrow) SpotLight("light",
-                                                           Vector3d(0.0f, 10.f, 0.0f),
-                                                           Vector3d(0.0f, -20.0f, 0.0f),
+                                                           Vector3d(10.0f, 10.f, 0.0f),
+                                                           Vector3d(-20.0f, -20.0f, 0.0f),
                                                            Vector3d(1.0f, 1.0f, 1.0f),
                                                            1.0f, 30.0f));
 

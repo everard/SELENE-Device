@@ -144,7 +144,6 @@ namespace selene
 
                 numVertices_  = 0;
                 numFaces_     = 0;
-                vertexStride_ = 0;
         }
         Exporter::~Exporter()
         {
@@ -160,16 +159,16 @@ namespace selene
 
                 if(rawMeshData_ == nullptr)
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 if(rawMeshData_->positions_.isEmpty() || rawMeshData_->faces_.isEmpty() ||
                    rawMeshData_->textureCoordinates_.isEmpty() || rawMeshData_->textureFaces_.isEmpty())
                 {
-                        std::cout << "   ERROR: mesh is broken\n";
+                        std::cout << "   ERROR: mesh is broken" << std::endl;
                         return false;
                 }
 
@@ -191,22 +190,22 @@ namespace selene
 
                 if(!readFaces())
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 // merge with texture faces
                 std::cout << "Merging faces with texture faces...";
 
                 if(!mergeFaces(&faces_, &rawMeshData_->textureFaces_[0], numVertices_, numFaces_))
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 // create skin vertices
                 if(rawMeshData_->hasSkeleton_)
@@ -215,7 +214,7 @@ namespace selene
 
                         if(!skinVertices_.create(numVertices_))
                         {
-                                std::cout << "FAILED\n";
+                                std::cout << "FAILED" << std::endl;
                                 return false;
                         }
 
@@ -231,7 +230,7 @@ namespace selene
                                 }
                         }
 
-                        std::cout << "SUCCESS\n";
+                        std::cout << "SUCCESS" << std::endl;
                 }
 
                 // mend the mesh
@@ -275,7 +274,7 @@ namespace selene
                 if(!meshMender.Mend(meshMenderVertices_, meshMenderFaces,
                                     newToOldVertexMapping_, 0.1f, 1.0f, 1.0f))
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
@@ -287,40 +286,29 @@ namespace selene
                                 faces_[i].indices[j] = meshMenderFaces[3 * i + j];
                 }
 
-                std::cout << "SUCCESS\n";
-
-                // create vertex elements
-                std::cout << "Creating vertex elements...";
-
-                if(!createVertexElements(meshData))
-                {
-                        std::cout << "FAILED\n";
-                        return false;
-                }
-
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 // create vertices and faces
                 std::cout << "Creating vertices and faces...";
 
                 if(!createVerticesAndFaces(meshData))
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 // create subsets
                 std::cout << "Creating subsets...";
 
                 if(!createSubsets(meshData))
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 // create bones
                 if(rawMeshData_->hasSkeleton_)
@@ -329,7 +317,7 @@ namespace selene
 
                         meshData.skeleton.getBones() = rawMeshData_->bones_;
 
-                        std::cout << "SUCCESS\n";
+                        std::cout << "SUCCESS" << std::endl;
                 }
 
                 // save mesh
@@ -341,24 +329,24 @@ namespace selene
 
                 if(!stream.good())
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
+                std::cout << "SUCCESS" << std::endl;
 
                 // write mesh to file
                 std::cout << "Writing mesh data to file...";
 
                 if(!meshManager.writeMesh(stream, meshData))
                 {
-                        std::cout << "FAILED\n";
+                        std::cout << "FAILED" << std::endl;
                         return false;
                 }
 
-                std::cout << "SUCCESS\n";
-                std::cout << "Exported mesh has " << meshData.vertices.getSize() <<
-                             " verts and " << meshData.faces.getSize() << " faces.\n";
+                std::cout << "SUCCESS" << std::endl;
+                std::cout << "Exported mesh has " << meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getSize() <<
+                             " vertices and " << meshData.faces.getSize() << " faces." << std::endl;
 
                 return true;
         }
@@ -372,7 +360,6 @@ namespace selene
 
                 numVertices_  = 0;
                 numFaces_     = 0;
-                vertexStride_ = 0;
         }
 
         //---------------------------------------------------------
@@ -390,111 +377,50 @@ namespace selene
         }
 
         //---------------------------------------------------------
-        bool Exporter::createVertexElements(Mesh::Data& meshData)
-        {
-                if(rawMeshData_->hasSkeleton_)
-                {
-                        vertexStride_ = 2 * VERTEX_ELEMENT_SIZE_FLOAT3 +
-                                        3 * VERTEX_ELEMENT_SIZE_FLOAT4 +
-                                        VERTEX_ELEMENT_SIZE_FLOAT2;
-
-                        if(!meshData.vertexElements.create(6))
-                                return false;
-
-                        meshData.vertexElements[0] = Mesh::VertexElement(VERTEX_ELEMENT_POSITION,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT3,
-                                                                         0, 0);
-                        meshData.vertexElements[1] = Mesh::VertexElement(VERTEX_ELEMENT_NORMAL,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT3,
-                                                                         12, 0);
-                        meshData.vertexElements[2] = Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT2,
-                                                                         24, 0);
-                        meshData.vertexElements[3] = Mesh::VertexElement(VERTEX_ELEMENT_TANGENT,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT4,
-                                                                         32, 0);
-                        meshData.vertexElements[4] = Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT4,
-                                                                         48, 1);
-                        meshData.vertexElements[5] = Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT4,
-                                                                         64, 2);
-                }
-                else
-                {
-                        vertexStride_ = 2 * VERTEX_ELEMENT_SIZE_FLOAT3 +
-                                        VERTEX_ELEMENT_SIZE_FLOAT4 +
-                                        VERTEX_ELEMENT_SIZE_FLOAT2;
-
-                        if(!meshData.vertexElements.create(4))
-                                return false;
-
-                        meshData.vertexElements[0] = Mesh::VertexElement(VERTEX_ELEMENT_POSITION,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT3,
-                                                                         0, 0);
-                        meshData.vertexElements[1] = Mesh::VertexElement(VERTEX_ELEMENT_NORMAL,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT3,
-                                                                         12, 0);
-                        meshData.vertexElements[2] = Mesh::VertexElement(VERTEX_ELEMENT_TEXCOORD,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT2,
-                                                                         24, 0);
-                        meshData.vertexElements[3] = Mesh::VertexElement(VERTEX_ELEMENT_TANGENT,
-                                                                         VERTEX_ELEMENT_SIZE_FLOAT4,
-                                                                         32, 0);
-                }
-
-                return true;
-        }
-
-        //---------------------------------------------------------
         bool Exporter::createVerticesAndFaces(Mesh::Data& meshData)
         {
-                if(!meshData.vertices.create(numVertices_, vertexStride_))
+                if(!meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].create(numVertices_, sizeof(Vector3d)) ||
+                   !meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES].create(numVertices_, sizeof(Vector3d) + sizeof(Vector4d)) ||
+                   !meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].create(numVertices_, sizeof(Vector2d)))
                         return false;
+
+                if(rawMeshData_->hasSkeleton_)
+                        if(!meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].create(numVertices_, 2 * sizeof(Vector4d)))
+                                return false;
 
                 for(uint32_t i = 0; i < numFaces_; ++i)
                 {
                         for(uint8_t j = 0; j < 3; ++j)
                         {
-                                uint8_t* vertex = &meshData.vertices[faces_[i].indices[j] *
-                                                                     meshData.vertices.getStride()];
+                                uint32_t vertexIndex = faces_[i].indices[j];
+                                uint8_t* vertexPosition = &meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS][vertexIndex *
+                                        meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getStride()];
 
                                 const MeshMender::Vertex& menderVertex =
                                         meshMenderVertices_[faces_[i].indices[j]];
 
-                                // Position
-                                Vector3d& position = *(reinterpret_cast<Vector3d*>(vertex));
+                                // position
+                                Vector3d& position = *(reinterpret_cast<Vector3d*>(vertexPosition));
 
                                 position.define(menderVertex.pos.x,
                                                 menderVertex.pos.y,
                                                 menderVertex.pos.z);
 
                                 // normal
-                                vertex += VERTEX_ELEMENT_SIZE_FLOAT3;
-                                Vector3d& normal = *(reinterpret_cast<Vector3d*>(vertex));
+                                uint8_t* vertexTbnBasis = &meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES][vertexIndex *
+                                        meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES].getStride()];
+                                Vector3d& normal = *(reinterpret_cast<Vector3d*>(vertexTbnBasis));
 
                                 normal.define(menderVertex.normal.x,
                                               menderVertex.normal.y,
                                               menderVertex.normal.z);
                                 normal.normalize();
 
-                                // texture coordinates
-                                vertex += VERTEX_ELEMENT_SIZE_FLOAT3;
-                                Vector2d& textureCoordinates = *(reinterpret_cast<Vector2d*>(vertex));
-
-                                textureCoordinates.define(menderVertex.s, menderVertex.t);
-
                                 // tangent and binormal
-                                vertex += VERTEX_ELEMENT_SIZE_FLOAT2;
-                                Vector4d& tangent = *(reinterpret_cast<Vector4d*>(vertex));
+                                Vector4d& tangent = *(reinterpret_cast<Vector4d*>(vertexTbnBasis + sizeof(Vector3d)));
 
-                                Vector3d t(menderVertex.tangent.x,
-                                           menderVertex.tangent.y,
-                                           menderVertex.tangent.z);
-
-                                Vector3d b(menderVertex.binormal.x,
-                                           menderVertex.binormal.y,
-                                           menderVertex.binormal.z);
+                                Vector3d t = menderVertex.tangent;
+                                Vector3d b = menderVertex.binormal;
 
                                 t = t - normal.dot(t) * normal;
                                 t.normalize();
@@ -509,32 +435,38 @@ namespace selene
                                         tangent.define(t, -1.0f);
                                 else
                                 {
-                                        std::cout << "          Warning! V[" << faces_[i].indices[j] << "] has non ortho TBN basis\n";
+                                        std::cout << "          Warning! V[" << faces_[i].indices[j] << "] has non ortho TBN basis" << std::endl;
                                         tangent = Vector4d(t, -1.0f);
                                 }
+
+                                // texture coordinates
+                                uint8_t* vertexTextureCoordinates = &meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES][vertexIndex *
+                                        meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].getStride()];
+                                Vector2d& textureCoordinates = *(reinterpret_cast<Vector2d*>(vertexTextureCoordinates));
+
+                                textureCoordinates.define(menderVertex.s, menderVertex.t);
 
                                 // fill weights and indices
                                 if(rawMeshData_->hasSkeleton_)
                                 {
-                                        vertex += VERTEX_ELEMENT_SIZE_FLOAT4;
-                                        Vector4d& weights = *(reinterpret_cast<Vector4d*>(vertex));
+                                        uint8_t* vertexIndicesAndWeights = &meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS][vertexIndex *
+                                                meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].getStride()];
+                                        Vector4d& indices = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights));
+                                        Vector4d& weights = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights + sizeof(Vector4d)));
 
-                                        uint32_t vertexIndex = newToOldVertexMapping_[faces_[i].indices[j]];
-                                        weights = skinVertices_[vertexIndex].weights;
+                                        uint32_t oldVertexIndex = newToOldVertexMapping_[vertexIndex];
+                                        indices = skinVertices_[oldVertexIndex].indices;
+                                        weights = skinVertices_[oldVertexIndex].weights;
+
                                         if(fabs(weights.x + weights.y + weights.z + weights.w - 1.0f) > SELENE_EPSILON)
-                                                std::cout << "          Warning! V[" << faces_[i].indices[j] << "] has overall skin weights != 1.0\n";
-
-                                        vertex += VERTEX_ELEMENT_SIZE_FLOAT4;
-                                        Vector4d& indices = *(reinterpret_cast<Vector4d*>(vertex));
-
-                                        indices = skinVertices_[vertexIndex].indices;
+                                                std::cout << "          Warning! V[" << vertexIndex << "] has overall skin weights != 1.0" << std::endl;
                                 }
                         }
                 }
 
                 // create faces
                 uint8_t faceStride = 4;
-                if(meshData.vertices.getSize() <= 0xFFFF)
+                if(meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getSize() <= 0xFFFF)
                         faceStride = 2;
 
                 if(!meshData.faces.create(numFaces_, faceStride, 3))

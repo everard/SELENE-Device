@@ -12,29 +12,22 @@
 namespace selene
 {
 
-        /// Vertex element types and sizes
-        enum
-        {
-                // Vertex element types
-                VERTEX_ELEMENT_POSITION = 0,
-                VERTEX_ELEMENT_TEXCOORD,
-                VERTEX_ELEMENT_BINORMAL,
-                VERTEX_ELEMENT_TANGENT,
-                VERTEX_ELEMENT_NORMAL,
-
-                // Vertex element sizes
-                VERTEX_ELEMENT_SIZE_FLOAT1 = 4,
-                VERTEX_ELEMENT_SIZE_FLOAT2 = 8,
-                VERTEX_ELEMENT_SIZE_FLOAT3 = 12,
-                VERTEX_ELEMENT_SIZE_FLOAT4 = 16
-        };
-
         /**
          * Represents mesh.
          */
         class Mesh: public Resource
         {
         public:
+                /// Vertex streams
+                enum
+                {
+                        VERTEX_STREAM_POSITIONS = 0,
+                        VERTEX_STREAM_TBN_BASES,
+                        VERTEX_STREAM_TEXTURE_COORDINATES,
+                        VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS,
+                        NUM_OF_VERTEX_STREAMS
+                };
+
                 /**
                  * Represents mesh subset.
                  */
@@ -62,60 +55,17 @@ namespace selene
                 };
 
                 /**
-                 * Represents vertex element.
-                 */
-                class VertexElement
-                {
-                public:
-                        // Type
-                        uint8_t type;
-
-                        // Size
-                        uint8_t size;
-
-                        // Offset
-                        uint8_t offset;
-
-                        // Index
-                        uint8_t index;
-
-                        /**
-                         * \brief Constructs vertex element with given type, size, offset and index.
-                         * \param[in] type_ type of the vertex element
-                         * \param[in] size_ size of the vertex element
-                         * \param[in] offset_ offset of the vertex element
-                         * \param[in] index_ index of the vertex element
-                         */
-                        VertexElement(uint8_t type_ = VERTEX_ELEMENT_POSITION,
-                                      uint8_t size_ = VERTEX_ELEMENT_SIZE_FLOAT1,
-                                      uint8_t offset_ = 0,
-                                      uint8_t index_  = 0);
-                        ~VertexElement();
-
-                };
-
-                /**
-                 * Represents mesh data container.
+                 * Represents mesh data container. Mesh data consists of vertices, faces, subsets,
+                 * bounding box and skeleton. Vertices consist of streams, which hold specific data,
+                 * such as, positions, tangent-bitangent-normal bases, texture coordinates, bone
+                 * indices and weights. Subsets split mesh into submeshes with different materials.
                  */
                 class Data
                 {
                 public:
-                        // Vertices
-                        Array<uint8_t, uint32_t> vertices;
-
-                        // Faces
-                        Array<uint8_t, uint32_t> faces;
-
-                        // Subsets
+                        Array<uint8_t, uint32_t> vertices[NUM_OF_VERTEX_STREAMS], faces;
                         Array<Subset, uint16_t> subsets;
-
-                        // Vertex elements
-                        Array<VertexElement, uint8_t> vertexElements;
-
-                        // Bounding box
                         Box boundingBox;
-
-                        // Skeleton
                         Skeleton skeleton;
 
                 };
@@ -146,7 +96,6 @@ namespace selene
                 bool hasSkeleton() const;
 
         protected:
-                // Data
                 Data data_;
 
         };

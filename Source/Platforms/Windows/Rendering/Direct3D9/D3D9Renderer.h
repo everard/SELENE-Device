@@ -147,6 +147,9 @@ namespace selene
                 LPDIRECT3DTEXTURE9 d3dDummyTextures_[NUM_OF_DUMMY_TEXTURES];
                 LPDIRECT3DTEXTURE9 d3dRandomTexture_;
 
+                // Mesh vertex declaration
+                LPDIRECT3DVERTEXDECLARATION9 d3dMeshVertexDeclaration_;
+
                 // Render targets
                 LPDIRECT3DTEXTURE9 d3dRenderTargetTextures_[NUM_OF_RENDER_TARGETS];
                 LPDIRECT3DSURFACE9 d3dRenderTargetSurfaces_[NUM_OF_RENDER_TARGETS];
