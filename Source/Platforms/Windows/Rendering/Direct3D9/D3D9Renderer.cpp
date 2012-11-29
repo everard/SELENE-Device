@@ -1365,6 +1365,8 @@ namespace selene
         {
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
+                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
+                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
 
                 if(isMultipleRenderTargetSupported_)
