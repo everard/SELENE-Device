@@ -450,7 +450,7 @@ namespace selene
                                 if(rawMeshData_->hasSkeleton_)
                                 {
                                         uint8_t* vertexIndicesAndWeights = &meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS][vertexIndex *
-                                                meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].getStride()];
+                                                meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride()];
                                         Vector4d& indices = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights));
                                         Vector4d& weights = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights + sizeof(Vector4d)));
 
