@@ -131,28 +131,13 @@ namespace selene
                                 NUM_OF_INDICES
                         };
 
-                        // Positions
                         mutable Vector3d positions_[NUM_OF_INDICES];
-
-                        // Rotations
                         mutable Quaternion rotations_[NUM_OF_INDICES];
-
-                        // Scale
                         mutable Vector3d scale_[NUM_OF_INDICES];
-
-                        // World matrix
                         mutable Matrix worldMatrix_;
-
-                        // Skeleton
-                        Skeleton* skeleton_;
-
-                        // Bone index
+                        Skeleton::Instance* skeletonInstance_;
                         int32_t boneIndex_;
-
-                        // Parent node
                         Node* parentNode_;
-
-                        // Child nodes
                         std::set<Node*> childNodes_;
 
                         /**

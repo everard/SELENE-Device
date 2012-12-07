@@ -106,10 +106,10 @@ namespace selene
                 const Resource::Instance<Mesh>& getMesh() const;
 
                 /**
-                 * \brief Returns skeleton.
-                 * \return const reference to the skeleton
+                 * \brief Returns skeleton instance.
+                 * \return const reference to the skeleton instance
                  */
-                const Skeleton& getSkeleton() const;
+                const Skeleton::Instance& getSkeletonInstance() const;
 
                 /**
                  * \brief Adds mesh animation.
@@ -178,16 +178,9 @@ namespace selene
                 void update() const;
 
         private:
-                // View-projection transform
                 ViewProjectionTransform viewProjectionTransform_;
-
-                // Mesh animation processor
                 MeshAnimationProcessor meshAnimationProcessor_;
-
-                // Bounding boxes
                 mutable Box boundingBoxes_[NUM_OF_INDICES];
-
-                // Mesh
                 Resource::Instance<Mesh> mesh_;
 
         };

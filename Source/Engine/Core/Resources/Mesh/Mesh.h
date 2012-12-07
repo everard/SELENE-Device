@@ -66,7 +66,7 @@ namespace selene
                         Array<uint8_t, uint32_t> vertices[NUM_OF_VERTEX_STREAMS], faces;
                         Array<Subset, uint16_t> subsets;
                         Box boundingBox;
-                        Skeleton skeleton;
+                        std::shared_ptr<Skeleton> skeleton;
 
                 };
 

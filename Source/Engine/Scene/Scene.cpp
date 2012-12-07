@@ -16,7 +16,7 @@ namespace selene
         {
                 scale_[ORIGINAL].define(1.0f);
 
-                skeleton_  = nullptr;
+                skeletonInstance_ = nullptr;
                 boneIndex_ = -1;
 
                 parentNode_ = nullptr;
@@ -97,8 +97,8 @@ namespace selene
                         return false;
                 }
 
-                if(boneName != nullptr && node.skeleton_ != nullptr)
-                        boneIndex_ = node.skeleton_->getBoneIndex(std::string(boneName));
+                if(boneName != nullptr && node.skeletonInstance_ != nullptr)
+                        boneIndex_ = node.skeletonInstance_->getBoneIndex(std::string(boneName));
 
                 return true;
         }
@@ -156,10 +156,10 @@ namespace selene
                 {
                         parentNode_->performUpdateOperation();
 
-                        if(boneIndex_ >= 0 && parentNode_->skeleton_ != nullptr)
+                        if(boneIndex_ >= 0 && parentNode_->skeletonInstance_ != nullptr)
                         {
                                 const Array<Skeleton::Transform, uint16_t>& boneTransforms =
-                                        parentNode_->skeleton_->getCombinedBoneTransforms();
+                                        parentNode_->skeletonInstance_->getCombinedBoneTransforms();
 
                                 if(boneIndex_ < boneTransforms.getSize())
                                 {

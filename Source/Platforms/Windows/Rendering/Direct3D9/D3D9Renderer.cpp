@@ -1040,7 +1040,7 @@ namespace selene
                         }
 
                         if(meshRenderingUnit == UNIT_MESH_SKIN)
-                                setSkeletonPose(actor->getSkeleton().getFinalBoneTransforms());
+                                setSkeletonPose(actor->getSkeletonInstance().getFinalBoneTransforms());
 
                         d3dDevice_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, meshSubset.vertexIndex,
                                                          meshSubset.numVertices, 3 * meshSubset.faceIndex,
@@ -1066,7 +1066,7 @@ namespace selene
                                                                 spotLight.getViewMatrix()), 4);
 
                         if(meshRenderingUnit == UNIT_MESH_SKIN)
-                                setSkeletonPose(actor->getSkeleton().getFinalBoneTransforms());
+                                setSkeletonPose(actor->getSkeletonInstance().getFinalBoneTransforms());
 
                         d3dDevice_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, meshSubset.vertexIndex,
                                                          meshSubset.numVertices, 3 * meshSubset.faceIndex,

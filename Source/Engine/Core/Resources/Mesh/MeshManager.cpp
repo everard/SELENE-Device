@@ -42,10 +42,14 @@ namespace selene
                 // read bones
                 if(hasSkeleton_)
                 {
-                        if(!readBones(stream, meshData.skeleton.getBones()))
+                        meshData.skeleton.reset(new(std::nothrow) Skeleton);
+                        if(!meshData.skeleton)
                                 return false;
 
-                        return meshData.skeleton.initialize();
+                        if(!readBones(stream, meshData.skeleton->getBones()))
+                                return false;
+
+                        return meshData.skeleton->initialize();
                 }
 
                 return true;
@@ -55,7 +59,7 @@ namespace selene
         bool MeshManager::writeMesh(std::ostream& stream, const Mesh::Data& meshData)
         {
                 // write header
-                hasSkeleton_ = (meshData.skeleton.getBones().getSize() > 0) ? true : false;
+                hasSkeleton_ = static_cast<bool>(meshData.skeleton) ? true : false;
                 if(!writeHeader(stream))
                         return false;
 
@@ -73,7 +77,7 @@ namespace selene
 
                 // write bones
                 if(hasSkeleton_)
-                        return writeBones(stream, meshData.skeleton.getBones());
+                        return writeBones(stream, meshData.skeleton->getBones());
 
                 return true;
         }

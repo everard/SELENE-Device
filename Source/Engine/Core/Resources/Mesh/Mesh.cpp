@@ -30,7 +30,7 @@ namespace selene
         //----------------------------
         bool Mesh::hasSkeleton() const
         {
-                return (data_.skeleton.getBones().getSize() > 0);
+                return static_cast<bool>(data_.skeleton);
         }
 
 }

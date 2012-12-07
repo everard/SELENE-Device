@@ -79,11 +79,16 @@ namespace selene
 
                 if((*mesh_)->hasSkeleton())
                 {
-                        meshAnimationProcessor_.initialize(meshData.skeleton);
-                        skeleton_ = const_cast<Skeleton*>(&meshAnimationProcessor_.getSkeleton());
+                        if(!meshAnimationProcessor_.initialize(meshData.skeleton))
+                        {
+                                mesh_ = Resource::Instance<Mesh>();
+                                skeletonInstance_ = nullptr;
+                                return;
+                        }
+                        skeletonInstance_ = const_cast<Skeleton::Instance*>(&meshAnimationProcessor_.getSkeletonInstance());
                 }
                 else
-                        skeleton_ = nullptr;
+                        skeletonInstance_ = nullptr;
 
                 requestUpdateOperation();
         }
@@ -95,9 +100,9 @@ namespace selene
         }
 
         //------------------------------------------------------------------------------------
-        const Skeleton& Actor::getSkeleton() const
+        const Skeleton::Instance& Actor::getSkeletonInstance() const
         {
-                return meshAnimationProcessor_.getSkeleton();
+                return meshAnimationProcessor_.getSkeletonInstance();
         }
 
         //------------------------------------------------------------------------------------
@@ -108,7 +113,7 @@ namespace selene
                                      float animationTime,
                                      float blendFactor)
         {
-                if(skeleton_ == nullptr)
+                if(skeletonInstance_ == nullptr)
                         return false;
 
                 return meshAnimationProcessor_.addMeshAnimation(meshAnimation,
@@ -122,7 +127,7 @@ namespace selene
         //------------------------------------------------------------------------------------
         bool Actor::removeMeshAnimation(uint32_t index)
         {
-                if(skeleton_ == nullptr)
+                if(skeletonInstance_ == nullptr)
                         return false;
 
                 return meshAnimationProcessor_.removeMeshAnimation(index);
@@ -137,7 +142,7 @@ namespace selene
         //------------------------------------------------------------------------------------
         void Actor::processMeshAnimations(float elapsedTime)
         {
-                if(skeleton_ == nullptr)
+                if(skeletonInstance_ == nullptr)
                         return;
 
                 meshAnimationProcessor_.processMeshAnimations(elapsedTime);
@@ -158,7 +163,7 @@ namespace selene
                 if(mesh == nullptr)
                         return -1;
 
-                if(skeleton_ != nullptr)
+                if(skeletonInstance_ != nullptr)
                         return Renderer::UNIT_MESH_SKIN;
 
                 return Renderer::UNIT_MESH_STATIC;

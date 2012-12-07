@@ -12,7 +12,8 @@ namespace selene
 {
 
         /**
-         * Represents mesh animation processor.
+         * Represents mesh animation processor. It handles skeletal animation: starts/stops animations and
+         * combines them in different ways.
          */
         class MeshAnimationProcessor
         {
@@ -26,7 +27,7 @@ namespace selene
                         /**
                          * \brief Constructs mixable mesh animation with given mesh animation instance, blend factor
                          * transition time, starting transition time, stopping transition time, animation time, blend
-                         * factor and skeleton.
+                         * factor and skeleton instance.
                          * \param[in] meshAnimation mesh animation instance
                          * \param[in] blendFactorTransitionTime specifies how much time it takes to change blend factor
                          * \param[in] startingTransitionTime specifies how much time it takes to start the animation
@@ -34,7 +35,7 @@ namespace selene
                          * \param[in] animationTime animation time
                          * \param[in] blendFactor blend factor (if set to zero, then current animation has no effect
                          * on skeleton)
-                         * \param[in] skeleton skeleton
+                         * \param[in] skeletonInstance skeleton instance
                          */
                         MixableMeshAnimation(const Resource::Instance<MeshAnimation>& meshAnimation = Resource::Instance<MeshAnimation>(),
                                              float blendFactorTransitionTime = 0.0f,
@@ -42,7 +43,7 @@ namespace selene
                                              float stoppingTransitionTime    = 0.0f,
                                              float animationTime = 0.0f,
                                              float blendFactor   = 0.0f,
-                                             Skeleton* skeleton = nullptr);
+                                             Skeleton::Instance* skeletonInstance = nullptr);
                         ~MixableMeshAnimation();
 
                         /**
@@ -86,8 +87,8 @@ namespace selene
                         // Mesh animation
                         Resource::Instance<MeshAnimation> meshAnimation_;
 
-                        // Skeleton
-                        Skeleton* skeleton_;
+                        // Skeleton instance
+                        Skeleton::Instance* skeletonInstance_;
 
                         // Number of times to play animation
                         uint32_t numTimesToPlay_;
@@ -127,9 +128,10 @@ namespace selene
 
                 /**
                  * \brief Initializes mesh animation processor.
-                 * \param[in] skeleton skeleton
+                 * \param[in] skeleton const reference to the shared pointer to the skeleton
+                 * \return true if mesh animation processor has been successfully initialized
                  */
-                void initialize(const Skeleton& skeleton);
+                bool initialize(const std::shared_ptr<Skeleton>& skeleton);
 
                 /**
                  * \brief Destroys mesh animation processor.
@@ -137,10 +139,10 @@ namespace selene
                 void destroy();
 
                 /**
-                 * \brief Returns skeleton.
-                 * \return const reference to the skeleton
+                 * \brief Returns skeleton instance.
+                 * \return const reference to the skeleton instance
                  */
-                const Skeleton& getSkeleton() const;
+                const Skeleton::Instance& getSkeletonInstance() const;
 
                 /**
                  * \brief Adds mesh animation.
@@ -181,14 +183,9 @@ namespace selene
                 void processMeshAnimations(float elapsedTime);
 
         private:
-                // Mixable mesh animations
-                std::vector<MixableMeshAnimation*> mixableMeshAnimations_;
-
-                // Empty mixable mesh animation
+                std::vector<std::unique_ptr<MixableMeshAnimation>> mixableMeshAnimations_;
                 MixableMeshAnimation emptyMixableMeshAnimation_;
-
-                // Skeleton
-                Skeleton skeleton_;
+                Skeleton::Instance skeletonInstance_;
 
         };
 

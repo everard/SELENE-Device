@@ -6,14 +6,14 @@
 namespace selene
 {
 
-        //---------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------
         void Skeleton::Transform::identity()
         {
                 position.define(0.0f);
                 rotation.define(0.0f, 0.0f, 0.0f, 1.0f);
         }
 
-        //---------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------
         Skeleton::Transform Skeleton::Transform::operator +(const Skeleton::Transform& transform)
         {
                 Transform combinedTransform;
@@ -22,7 +22,7 @@ namespace selene
                 return combinedTransform;
         }
 
-        //---------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------
         Skeleton::Transform operator -(const Skeleton::Transform& transform)
         {
                 Skeleton::Transform invertedTransform;
@@ -31,7 +31,7 @@ namespace selene
                 return invertedTransform;
         }
 
-        //---------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------
         Skeleton::Transform Skeleton::Transform::operator -(const Skeleton::Transform& transform)
         {
                 Transform initialTransform;
@@ -41,90 +41,47 @@ namespace selene
                 return initialTransform;
         }
 
-        Skeleton::Skeleton()
+        Skeleton::Instance::Instance()
         {
                 isUpdated_ = false;
         }
-        Skeleton::~Skeleton() {}
+        Skeleton::Instance::~Instance() {}
 
-        //---------------------------------------------------------------------------------------
-        bool Skeleton::initialize()
+        //-----------------------------------------------------------------------------------------------
+        bool Skeleton::Instance::initialize(std::shared_ptr<Skeleton> skeleton)
         {
-                // allocate memory
-                uint16_t numBones = bones_.getSize();
+                destroy();
+                skeleton_ = skeleton;
 
-                if(!initialLocalBoneTransforms_.create(numBones) ||
-                   !combinedBoneTransforms_.create(numBones) ||
-                   !finalBoneTransforms_.create(numBones) ||
-                   !localBoneTransforms_.create(numBones))
+                if(!skeleton)
+                        return false;
+
+                uint16_t numBones = skeleton->bones_.getSize();
+
+                if(!combinedBoneTransforms_.create(numBones) ||
+                   !localBoneTransforms_.create(numBones) ||
+                   !finalBoneTransforms_.create(numBones))
                 {
                         destroy();
                         return false;
                 }
 
-                bonesMap_.clear();
-                for(uint16_t i = 0; i < localBoneTransforms_.getSize(); ++i)
-                {
-                        bonesMap_.insert(std::pair<std::string, uint16_t>(bones_[i].name, i));
-
-                        finalBoneTransforms_[i].identity();
-                        localBoneTransforms_[i] = combinedBoneTransforms_[i] = -bones_[i].offsetTransform;
-                }
-
-                for(int32_t i = (localBoneTransforms_.getSize() - 1); i >= 0; --i)
-                {
-                        int32_t parent = bones_[i].parent;
-
-                        if(parent >= 0 && parent < localBoneTransforms_.getSize())
-                                localBoneTransforms_[i] = combinedBoneTransforms_[i] - combinedBoneTransforms_[parent];
-
-                        initialLocalBoneTransforms_[i] = localBoneTransforms_[i];
-                }
-
-                isUpdated_ = true;
-
+                localBoneTransforms_ = skeleton->initialLocalBoneTransforms_;
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------
-        void Skeleton::destroy()
+        //-----------------------------------------------------------------------------------------------
+        void Skeleton::Instance::destroy()
         {
-                bonesMap_.clear();
-                bones_.destroy();
-
-                initialLocalBoneTransforms_.destroy();
-                combinedBoneTransforms_.destroy();
                 localBoneTransforms_.destroy();
+                combinedBoneTransforms_.destroy();
                 finalBoneTransforms_.destroy();
+                skeleton_.reset();
+                isUpdated_ = false;
         }
 
-        //---------------------------------------------------------------------------------------
-        Array<Skeleton::Bone, uint16_t>& Skeleton::getBones()
-        {
-                return bones_;
-        }
-
-        //---------------------------------------------------------------------------------------
-        const Array<Skeleton::Bone, uint16_t>& Skeleton::getBones() const
-        {
-                return bones_;
-        }
-
-        //---------------------------------------------------------------------------------------
-        int32_t Skeleton::getBoneIndex(const std::string& boneName) const
-        {
-                auto it = bonesMap_.find(boneName);
-                if(it == bonesMap_.end())
-                        return -1;
-
-                if(it->second >= bones_.getSize())
-                        return -1;
-
-                return (int32_t)it->second;
-        }
-
-        //---------------------------------------------------------------------------------------
-        const Array<Skeleton::Transform, uint16_t>& Skeleton::getFinalBoneTransforms() const
+        //-----------------------------------------------------------------------------------------------
+        const Array<Skeleton::Transform, uint16_t>& Skeleton::Instance::getFinalBoneTransforms() const
         {
                 if(!isUpdated_)
                 {
@@ -135,8 +92,8 @@ namespace selene
                 return finalBoneTransforms_;
         }
 
-        //---------------------------------------------------------------------------------------
-        const Array<Skeleton::Transform, uint16_t>& Skeleton::getCombinedBoneTransforms() const
+        //-----------------------------------------------------------------------------------------------
+        const Array<Skeleton::Transform, uint16_t>& Skeleton::Instance::getCombinedBoneTransforms() const
         {
                 if(!isUpdated_)
                 {
@@ -147,31 +104,40 @@ namespace selene
                 return combinedBoneTransforms_;
         }
 
-        //---------------------------------------------------------------------------------------
-        void Skeleton::setInitialPose()
+        //-----------------------------------------------------------------------------------------------
+        void Skeleton::Instance::setInitialPose()
         {
-                if(initialLocalBoneTransforms_.getSize() != localBoneTransforms_.getSize())
+                if(skeleton_.expired())
                         return;
 
-                for(uint16_t i = 0; i < localBoneTransforms_.getSize(); ++i)
-                        localBoneTransforms_[i] = initialLocalBoneTransforms_[i];
+                auto skeleton = skeleton_.lock();
+                const auto& initialLocalBoneTransforms = skeleton->initialLocalBoneTransforms_;
 
+                if(initialLocalBoneTransforms.getSize() != localBoneTransforms_.getSize())
+                        return;
+
+                localBoneTransforms_ = initialLocalBoneTransforms;
                 isUpdated_ = false;
         }
 
-        //---------------------------------------------------------------------------------------
-        void Skeleton::blendPose(const Array<BoneTransform, uint16_t>& boneTransforms,
-                                 float blendFactor)
+        //-----------------------------------------------------------------------------------------------
+        void Skeleton::Instance::blendPose(const Array<BoneTransform, uint16_t>& boneTransforms,
+                                           float blendFactor)
         {
+                if(skeleton_.expired())
+                        return;
+
                 if(boneTransforms.isEmpty())
                         return;
+
+                auto skeleton = skeleton_.lock();
 
                 if(blendFactor >= 1.0f)
                 {
                         for(uint32_t i = 0; i < boneTransforms.getSize(); ++i)
                         {
                                 const BoneTransform& boneTransform = boneTransforms[i];
-                                int32_t boneIndex = getBoneIndex(boneTransform.boneName);
+                                int32_t boneIndex = skeleton->getBoneIndex(boneTransform.boneName);
                                 if(boneIndex < 0)
                                         continue;
 
@@ -183,7 +149,7 @@ namespace selene
                         for(uint32_t i = 0; i < boneTransforms.getSize(); ++i)
                         {
                                 const BoneTransform& boneTransform = boneTransforms[i];
-                                int32_t boneIndex = getBoneIndex(boneTransform.boneName);
+                                int32_t boneIndex = skeleton->getBoneIndex(boneTransform.boneName);
                                 if(boneIndex < 0)
                                         continue;
 
@@ -201,27 +167,117 @@ namespace selene
                 isUpdated_ = false;
         }
 
-        //---------------------------------------------------------------------------------------
-        Skeleton& Skeleton::operator =(const Skeleton& skeleton)
+        //-----------------------------------------------------------------------------------------------
+        int32_t Skeleton::Instance::getBoneIndex(const std::string& boneName) const
         {
-                bones_ = skeleton.bones_;
-                initialize();
-                return *this;
+                if(skeleton_.expired())
+                        return -1;
+
+                auto skeleton = skeleton_.lock();
+                return skeleton->getBoneIndex(boneName);
         }
 
-        //---------------------------------------------------------------------------------------
-        void Skeleton::computeFinalBoneTransforms() const
+        //-----------------------------------------------------------------------------------------------
+        void Skeleton::Instance::computeFinalBoneTransforms() const
         {
+                if(skeleton_.expired())
+                        return;
+
+                auto skeleton = skeleton_.lock();
+                const auto& bones = skeleton->bones_;
+
+                if(bones.getSize() != localBoneTransforms_.getSize())
+                        return;
+
                 for(uint16_t i = 0; i < localBoneTransforms_.getSize(); ++i)
                 {
-                        int32_t parent = bones_[i].parent;
+                        int32_t parent = bones[i].parent;
                         if(parent >= 0 && parent < localBoneTransforms_.getSize())
                                 combinedBoneTransforms_[i] = combinedBoneTransforms_[parent] + localBoneTransforms_[i];
                         else
                                 combinedBoneTransforms_[i] = localBoneTransforms_[i];
 
-                        finalBoneTransforms_[i] = combinedBoneTransforms_[i] + bones_[i].offsetTransform;
+                        finalBoneTransforms_[i] = combinedBoneTransforms_[i] + bones[i].offsetTransform;
                 }
+        }
+
+        Skeleton::Skeleton() {}
+        Skeleton::~Skeleton() {}
+
+        //-----------------------------------------------------------------------------------------------
+        bool Skeleton::initialize()
+        {
+                // allocate memory
+                uint16_t numBones = bones_.getSize();
+
+                Array<Transform, uint16_t> combinedBoneTransforms, localBoneTransforms;
+                if(!initialLocalBoneTransforms_.create(numBones) ||
+                   !combinedBoneTransforms.create(numBones) ||
+                   !localBoneTransforms.create(numBones))
+                {
+                        destroy();
+                        return false;
+                }
+
+                bonesMap_.clear();
+                for(uint16_t i = 0; i < bones_.getSize(); ++i)
+                {
+                        bonesMap_.insert(std::pair<std::string, uint16_t>(bones_[i].name, i));
+                        localBoneTransforms[i] = combinedBoneTransforms[i] = -bones_[i].offsetTransform;
+                }
+
+                for(int32_t i = (bones_.getSize() - 1); i >= 0; --i)
+                {
+                        int32_t parent = bones_[i].parent;
+
+                        if(parent >= 0 && parent < bones_.getSize())
+                                localBoneTransforms[i] = combinedBoneTransforms[i] - combinedBoneTransforms[parent];
+
+                        initialLocalBoneTransforms_[i] = localBoneTransforms[i];
+                }
+
+                return true;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        void Skeleton::destroy()
+        {
+                bonesMap_.clear();
+                bones_.destroy();
+                initialLocalBoneTransforms_.destroy();
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        Array<Skeleton::Bone, uint16_t>& Skeleton::getBones()
+        {
+                return bones_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        const Array<Skeleton::Bone, uint16_t>& Skeleton::getBones() const
+        {
+                return bones_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        int32_t Skeleton::getBoneIndex(const std::string& boneName) const
+        {
+                auto it = bonesMap_.find(boneName);
+                if(it == bonesMap_.end())
+                        return -1;
+
+                if(it->second >= bones_.getSize())
+                        return -1;
+
+                return static_cast<int32_t>(it->second);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        Skeleton& Skeleton::operator =(const Skeleton& skeleton)
+        {
+                bones_ = skeleton.bones_;
+                initialize();
+                return *this;
         }
 
 }

@@ -315,7 +315,14 @@ namespace selene
                 {
                         std::cout << "Creating bones...";
 
-                        meshData.skeleton.getBones() = rawMeshData_->bones_;
+                        meshData.skeleton.reset(new(std::nothrow) Skeleton);
+                        if(!meshData.skeleton)
+                        {
+                                std::cout << "FAILED" << std::endl;
+                                return false;
+                        }
+
+                        meshData.skeleton->getBones() = rawMeshData_->bones_;
 
                         std::cout << "SUCCESS" << std::endl;
                 }

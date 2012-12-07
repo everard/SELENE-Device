@@ -6,6 +6,7 @@
 
 #include "../../Helpers/Array.h"
 #include "../../Math/Vector.h"
+#include <memory>
 #include <string>
 #include <map>
 
@@ -61,13 +62,8 @@ namespace selene
                 class Bone
                 {
                 public:
-                        // Offset tansform
                         Transform offsetTransform;
-
-                        // Name
                         std::string name;
-
-                        // Parent index
                         int32_t parent;
 
                 };
@@ -78,11 +74,80 @@ namespace selene
                 class BoneTransform
                 {
                 public:
-                        // Bone transform
                         Transform transform;
-
-                        // Bone name
                         std::string boneName;
+
+                };
+
+                /**
+                 * Represents skeleton instance. This instance can be animated. It also holds reference to the
+                 * original skeleton.
+                 */
+                class Instance
+                {
+                public:
+                        Instance();
+                        ~Instance();
+
+                        /**
+                         * \brief Initializes skeleton instance with skeleton.
+                         * \param[in] skeleton shared pointer to the skeleton
+                         * \return true if instance has been successfully initialized
+                         */
+                        bool initialize(std::shared_ptr<Skeleton> skeleton);
+
+                        /**
+                         * \brief Destroys skeleton instance.
+                         */
+                        void destroy();
+
+                        /**
+                         * \brief Returns final bone transforms.
+                         *
+                         * Final bone transforms are combined bone transforms with bind pose transformation applied.
+                         * \return const reference to the array of final bone transforms (which can be used
+                         * in rendering)
+                         */
+                        const Array<Transform, uint16_t>& getFinalBoneTransforms() const;
+
+                        /**
+                         * \brief Returns combined bone transforms.
+                         * \return const reference to the array of combined bone transforms (this bone transforms
+                         * do not have bind pose transformation applied)
+                         */
+                        const Array<Transform, uint16_t>& getCombinedBoneTransforms() const;
+
+                        /**
+                         * \brief Sets initial skeleton pose.
+                         */
+                        void setInitialPose();
+
+                        /**
+                         * \brief Blends skeleton pose.
+                         * \param[in] boneTransforms local bone transforms which will be blended with current
+                         * \param[in] blendFactor blend factor (float in [0; 1] range)
+                         */
+                        void blendPose(const Array<BoneTransform, uint16_t>& boneTransforms,
+                                       float blendFactor);
+
+                        /**
+                         * \brief Returns bone index.
+                         * \param[in] boneName name of the bone
+                         * \return index of the bone with given name (or -1 if bone could not be found)
+                         */
+                        int32_t getBoneIndex(const std::string& boneName) const;
+
+                private:
+                        Array<Transform, uint16_t> localBoneTransforms_;
+                        mutable Array<Transform, uint16_t> combinedBoneTransforms_;
+                        mutable Array<Transform, uint16_t> finalBoneTransforms_;
+                        std::weak_ptr<Skeleton> skeleton_;
+                        mutable bool isUpdated_;
+
+                        /**
+                         * \brief Computes final bone transforms.
+                         */
+                        void computeFinalBoneTransforms() const;
 
                 };
 
@@ -120,33 +185,6 @@ namespace selene
                 int32_t getBoneIndex(const std::string& boneName) const;
 
                 /**
-                 * \brief Returns final bone transforms.
-                 * \return const reference to the array of final bone transforms (which can be used
-                 * in rendering)
-                 */
-                const Array<Transform, uint16_t>& getFinalBoneTransforms() const;
-
-                /**
-                 * \brief Returns combined bone transforms.
-                 * \return const reference to the array of combined bone transforms (this bone transforms
-                 * do not have bind pose transformation applied)
-                 */
-                const Array<Transform, uint16_t>& getCombinedBoneTransforms() const;
-
-                /**
-                 * \brief Sets initial skeleton pose.
-                 */
-                void setInitialPose();
-
-                /**
-                 * \brief Blends skeleton pose.
-                 * \param[in] boneTransforms local bone transforms which will be blended with current
-                 * \param[in] blendFactor blend factor (float in [0; 1] range)
-                 */
-                void blendPose(const Array<BoneTransform, uint16_t>& boneTransforms,
-                               float blendFactor);
-
-                /**
                  * \brief Assignes skeleton.
                  * \param[in] skeleton another skeleton which will be assigned to current
                  * \return reference to the skeleton
@@ -154,25 +192,9 @@ namespace selene
                 Skeleton& operator =(const Skeleton& skeleton);
 
         private:
-                // Bones
                 Array<Bone, uint16_t> bones_;
-
-                // Bone transforms
                 Array<Transform, uint16_t> initialLocalBoneTransforms_;
-                Array<Transform, uint16_t> localBoneTransforms_;
-                mutable Array<Transform, uint16_t> combinedBoneTransforms_;
-                mutable Array<Transform, uint16_t> finalBoneTransforms_;
-
-                // Bones map
                 std::map<std::string, uint16_t> bonesMap_;
-
-                // Skeleton status
-                mutable bool isUpdated_;
-
-                /**
-                 * \brief Computes final bone transforms.
-                 */
-                void computeFinalBoneTransforms() const;
 
         };
 
