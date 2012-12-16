@@ -10,12 +10,16 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents 4x4 matrix.
          */
         class Matrix
         {
         public:
-                // Elements of matrix
                 float a[4][4];
 
                 /**
@@ -210,6 +214,10 @@ namespace selene
                 friend Matrix operator *(const Matrix& matrix0, const Matrix& matrix1);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

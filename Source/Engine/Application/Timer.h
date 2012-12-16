@@ -8,8 +8,23 @@ namespace selene
 {
 
         /**
+         * \addtogroup Application
+         * @{
+         */
+
+        /**
          * Represents generic timer.
-         * This is base class for all timers.
+         * This is base class for all timers. It provides interface for time handling on different platforms.
+         * Basically, usage of timers can be described with following code:
+         * \code
+         * Timer timer;
+         * t.reset();
+         * doSomething();
+         * float elapsedTime = t.getElapsedTime();
+         * \endcode
+         * Now elapsedTime holds time passed since the start of the doSomething() function.
+         * Of course, in examle above class Timer can not be used directly, it should be replaced by the actual
+         * Platform::Timer.
          */
         class Timer
         {
@@ -29,6 +44,10 @@ namespace selene
                 virtual float getElapsedTime() = 0;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

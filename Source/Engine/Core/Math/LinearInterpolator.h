@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents linear interpolator.
          */
         template <class T> class LinearInterpolator
@@ -63,14 +68,16 @@ namespace selene
         private:
                 enum
                 {
-                        // Number of values
                         NUM_OF_VALUES = 2
                 };
 
-                // Values
                 T values_[NUM_OF_VALUES];
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

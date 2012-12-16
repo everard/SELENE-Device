@@ -10,8 +10,16 @@
 namespace selene
 {
 
-        /// Control buttons
-        enum
+        /**
+         * \addtogroup Application
+         * \brief Application and timer.
+         * @{
+         */
+
+        /// Control button. For different platforms has different meanings.
+        /// For example, on Windows and Linux platforms this enum represents
+        /// states of the mouse buttons.
+        enum CONTROL_BUTTON
         {
                 CONTROL_BUTTON_0 = 0x01,
                 CONTROL_BUTTON_1 = 0x02,
@@ -26,6 +34,10 @@ namespace selene
         /**
          * Represents generic application.
          * This is base class for all applications (to build new application this class MUST be inherited).
+         * Current class contains interface for initialization, running and stopping the application (though
+         * it does not provide any implementation, since each platform has its own application class, derived
+         * from the current). It also contains different callbacks, which must be implemented in the actual game
+         * (or whatever) application.
          */
         class Application: public Entity
         {
@@ -59,16 +71,9 @@ namespace selene
                 virtual void halt() = 0;
 
         protected:
-                // Width and height of the rendering area
                 uint32_t width_, height_;
-
-                // Cursor position
                 Vector2d cursorPosition_;
-
-                // Cursor shift
                 Vector2d cursorShift_;
-
-                // Control buttons state
                 uint8_t pressedControlButtons_;
 
                 /**
@@ -120,6 +125,10 @@ namespace selene
                 virtual void onRender(float elapsedTime) = 0;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

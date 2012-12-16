@@ -9,11 +9,16 @@
 namespace selene
 {
 
+        /**
+         * \addtogroup Math
+         * @{
+         */
+
         // Forward declaration of classes
         class Matrix;
 
         /**
-         * Represents volume in 3D space.
+         * Represents volume in 3D space. Volume is described with bounding planes.
          */
         class Volume
         {
@@ -60,17 +65,17 @@ namespace selene
         private:
                 enum
                 {
-                        // Max number of planes
                         MAX_NUM_OF_PLANES = 16
                 };
 
-                // Bounding planes
                 Plane planes_[MAX_NUM_OF_PLANES];
-
-                // Number of bounding planes
                 uint8_t numPlanes_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -10,7 +10,19 @@ namespace selene
 {
 
         /**
+         * \addtogroup Core
+         * @{
+         */
+
+        /**
          * Represents status.
+         * It contains status flags. Flags can be accessed through interface methods. This class
+         * is usually used as base for other classes, which instantiate objects, whose state can
+         * be described with different flags.
+         *
+         * Note, that change of the flags results in execution of the Status::onChange callback,
+         * which can be implemented in the derived class. There are also const methods for flags
+         * manipulations, which do not execute Status::onChange callback.
          */
         class Status
         {
@@ -76,10 +88,13 @@ namespace selene
                 void clearFlags(uint8_t flags) const;
 
         private:
-                // Flags
                 mutable uint8_t flags_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

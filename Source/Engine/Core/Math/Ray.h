@@ -9,6 +9,11 @@
 namespace selene
 {
 
+        /**
+         * \addtogroup Math
+         * @{
+         */
+
         // Forward declaration of classes
         class LineSegment2d;
         class Line2d;
@@ -85,7 +90,6 @@ namespace selene
                 bool intersects(const Circle& circle, float& distanceToIntersection) const;
 
         private:
-                // Ray definition
                 Vector2d origin_, direction_;
 
         };
@@ -144,10 +148,13 @@ namespace selene
                 bool intersects(const Sphere& sphere, float& distanceToIntersection) const;
 
         private:
-                // Ray definition
                 Vector3d origin_, direction_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

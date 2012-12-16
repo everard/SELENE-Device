@@ -11,7 +11,12 @@ namespace selene
 {
 
         /**
-         * Represents mesh animation manager.
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
+         * Represents mesh animation manager. Reads mesh animation from std::istream.
          */
         class MeshAnimationManager: protected MeshManager
         {
@@ -29,6 +34,10 @@ namespace selene
                                        MeshAnimation::Data& meshAnimationData);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -12,6 +12,12 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * \brief Vectors, quaternions, matrices, 3D and 2D objects, collision detection.
+         * @{
+         */
+
+        /**
          * Represents box in 3D space.
          */
         class Box
@@ -74,10 +80,13 @@ namespace selene
                 void transform(const Matrix& matrix);
 
         private:
-                // Vertices
                 Vector3d vertices_[8];
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

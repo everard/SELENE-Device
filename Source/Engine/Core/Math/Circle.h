@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents circle in 2D space.
          */
         class Circle
@@ -55,7 +60,6 @@ namespace selene
                 float getRadius() const;
 
         private:
-                // Circle definition
                 Vector2d center_;
                 float radius_;
 
@@ -130,13 +134,16 @@ namespace selene
                 float getSweepDistance() const;
 
         private:
-                // Swept circle definition
                 Vector2d center_, direction_;
                 float radius_, sweepDistance_;
 
         };
 
         typedef SweptCircle* PSweptCircle;
+
+        /**
+         * @}
+         */
 
 }
 

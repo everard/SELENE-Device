@@ -13,6 +13,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents mesh.
          */
         class Mesh: public Resource
@@ -34,19 +39,10 @@ namespace selene
                 class Subset
                 {
                 public:
-                        // Index of the first vertex in subset
                         uint32_t vertexIndex;
-
-                        // Number of vertices used in subset
                         uint32_t numVertices;
-
-                        // Index of the first face in subset
                         uint32_t faceIndex;
-
-                        // Number of faces in subset
                         uint32_t numFaces;
-
-                        // Material
                         Material material;
 
                         Subset();
@@ -99,6 +95,10 @@ namespace selene
                 Data data_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

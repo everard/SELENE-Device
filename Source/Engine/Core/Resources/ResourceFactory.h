@@ -10,12 +10,22 @@
 namespace selene
 {
 
+        /**
+         * \addtogroup Resources
+         * @{
+         */
+
         // Forward declaration of classes
         class ResourceManager;
         class Resource;
 
         /**
          * Represents resource factory. This is base class for all resource factories.
+         * The actual factory must implement ResourceFactory::createResource method.
+         * This method must return valid pointer to the actual resource (be it texture,
+         * mesh or whatever) if it has been successfully created, or nullptr otherwise.
+         *
+         * \see ResourceManager for usage example (of TextureFactory in that particular case).
          */
         class ResourceFactory
         {
@@ -60,16 +70,15 @@ namespace selene
                 virtual Resource* createResource(const char* name) = 0;
 
         protected:
-                // File manager
                 FileManager* fileManager_;
-
-                // Resource manager
                 ResourceManager* resourceManager_;
-
-                // Resource factory
                 ResourceFactory* resourceFactory_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

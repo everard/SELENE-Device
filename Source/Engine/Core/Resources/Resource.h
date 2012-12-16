@@ -11,8 +11,21 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents resource. This is base class for all resources (textures, meshes, etc.).
-         * Resource may be created and destroyed ONLY with ResourceManager.
+         * Resource may be created and destroyed ONLY with ResourceManager. The only valid way to
+         * obtain the resource is to request it from the ResourceManager, which possesses it. In
+         * this case Resource::Instance object is returned. Note, that when resource is requested,
+         * its type is automatically checked. This behavior improves program stability.
+         *
+         * To create resource, specific ResourceFactory must be used. For example, to create texture,
+         * TextureFactory can be used.
+         * \see ResourceManager for more info.
+         * \see Resource::Instance
          */
         class Resource: public Entity
         {
@@ -97,10 +110,7 @@ namespace selene
                         }
 
                 private:
-                        // Weak pointer to the resource
                         std::weak_ptr<Resource> weakPointer_;
-
-                        // Resource
                         T* resource_;
 
                         /**
@@ -141,7 +151,6 @@ namespace selene
                 virtual bool prepare() = 0;
 
         private:
-                // Number of requests
                 uint32_t numRequests_;
 
                 /**
@@ -156,6 +165,10 @@ namespace selene
                 void release();
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -11,8 +11,15 @@ namespace selene
 {
 
         /**
+         * \addtogroup Core
+         * \brief File management and helpers.
+         * @{
+         */
+
+        /**
          * Represents entity.
-         * This class is base for many other classes, such as resources, scene objects, GUI elements, etc.
+         * This class is base for many other classes, such as resources, scene objects, applications, etc.
+         * It contains only one property - name - and provides interface for getting and setting it.
          */
         class Entity
         {
@@ -31,10 +38,13 @@ namespace selene
                 const char* getName() const;
 
         protected:
-                // Name
                 std::string name_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents plane in 3D space.
          */
         class Plane
@@ -79,11 +84,14 @@ namespace selene
                 void normalize();
 
         private:
-                // Plane definition
                 Vector3d normal_;
                 float d_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

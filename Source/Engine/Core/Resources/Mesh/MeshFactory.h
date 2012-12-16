@@ -11,6 +11,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents mesh factory. This factory loads mesh data from file.
          */
         template <class T> class MeshFactory: public ResourceFactory
@@ -58,6 +63,10 @@ namespace selene
                 }
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -11,6 +11,11 @@
 namespace selene
 {
 
+        /**
+         * \addtogroup Math
+         * @{
+         */
+
         // Forward declaration of classes
         class Matrix;
 
@@ -20,7 +25,6 @@ namespace selene
         class Vector2d
         {
         public:
-                // Coordinates
                 float x, y;
 
                 /**
@@ -170,7 +174,6 @@ namespace selene
         class Vector3d
         {
         public:
-                // Coordinates
                 float x, y, z;
 
                 /**
@@ -400,7 +403,6 @@ namespace selene
         class Vector4d
         {
         public:
-                // Coordinates
                 float x, y, z, w;
 
                 /**
@@ -626,6 +628,10 @@ namespace selene
                 Quaternion& operator *=(float scalar);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

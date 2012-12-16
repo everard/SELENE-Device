@@ -13,8 +13,29 @@ namespace selene
 {
 
         /**
+         * \addtogroup Core
+         * @{
+         */
+
+        /**
          * Represents file manager.
          * File manager provides access to files (folders which are used in search for files may be specified as well).
+         * This is also base class for all file managers. For example, if zip archive management is needed, then this
+         * class should be used as base:
+         * \code
+         * class ZipArchiveManager: public FileManager
+         * {
+         * public:
+         *         ZipArchiveManager();
+         *         ~ZipArchiveManager();
+         *
+         *         const char* find(const char* fileName) const;
+         *         std::istream* open(const char* fileName) const;
+         * };
+         * \endcode
+         * Note, that in this case FileManager::find and FileManager::open methods should be re-implemented.
+         *
+         * This class can also be used as-is for accessing files in native file system.
          */
         class FileManager
         {
@@ -52,16 +73,15 @@ namespace selene
                 virtual std::istream* open(const char* fileName) const;
 
         private:
-                // File name
                 mutable std::string fileName_;
-
-                // Folders
                 std::vector<std::string> folders_;
-
-                // File existence check function
                 bool (*fileExists_)(const char*);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

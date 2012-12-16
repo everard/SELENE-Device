@@ -10,7 +10,12 @@
 namespace selene
 {
 
-        /// Relation
+        /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /// Relation between geometry objects
         enum RELATION
         {
                 OUTSIDE = 0,
@@ -72,11 +77,14 @@ namespace selene
                 RELATION determineRelation(const Volume& volume) const;
 
         private:
-                // Sphere definition
                 Vector3d center_;
                 float radius_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -13,6 +13,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents collision manager.
          */
         class CollisionManager
@@ -57,14 +62,9 @@ namespace selene
                               Geometry geometry, uint8_t maxRecursion);
 
         private:
-                // Geometry
                 Geometry geometry_;
-
-                // Recursion
                 uint8_t maxRecursion_;
                 uint8_t recursion_;
-
-                // Radius
                 float radius_;
 
                 /**
@@ -139,6 +139,10 @@ namespace selene
                               float distanceToTravel);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

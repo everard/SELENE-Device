@@ -11,8 +11,14 @@ namespace selene
 {
 
         /**
+         * \addtogroup Core
+         * @{
+         */
+
+        /**
          * Represents array.
          * In such array data stride may be specified (this might be helpful for holding mesh vertices).
+         * \see Array::create for use cases.
          */
         template <class D, class S> class Array
         {
@@ -162,19 +168,16 @@ namespace selene
                 }
 
         private:
-                // Data
                 D* data_;
-
-                // Size and size modifier
                 S size_, sizeModifier_;
-
-                // Real size
                 uint32_t realSize_;
-
-                // Stride
                 uint8_t stride_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

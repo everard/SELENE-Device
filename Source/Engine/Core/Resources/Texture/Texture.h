@@ -12,10 +12,14 @@
 namespace selene
 {
 
-        /// Texture formats
-        enum
+        /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /// Texture format
+        enum TEXTURE_FORMAT
         {
-                // Texture formats
                 TEXTURE_FORMAT_DXT1 = 0,
                 TEXTURE_FORMAT_DXT3,
                 TEXTURE_FORMAT_DXT5,
@@ -29,21 +33,19 @@ namespace selene
         {
         public:
                 /**
-                 * Represents texture data container.
+                 * Represents texture data container. Includes:
+                 * - array of bytes, which contains pixels,
+                 * - width and height of the texture,
+                 * - number of mip maps,
+                 * - format of texture (one of the selene::TEXTURE_FORMAT),
+                 * - bytes per pixel (bpp) for not compressed texture.
                  */
                 class Data
                 {
                 public:
-                        // Pixels
                         Array<uint8_t, uint32_t> pixels;
-
-                        // Width and height
                         uint32_t width, height;
-
-                        // Number of mip maps
                         uint32_t numMipMaps;
-
-                        // Texture format and bytes per pixel
                         uint8_t format, bpp;
 
                         Data();
@@ -71,10 +73,13 @@ namespace selene
                 Data& getData();
 
         protected:
-                // Data
                 Data data_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -11,6 +11,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents texture factory.
          */
         template <class T> class TextureFactory: public ResourceFactory
@@ -59,6 +64,10 @@ namespace selene
                 }
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

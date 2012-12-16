@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents cone in 3D space.
          */
         class Cone
@@ -81,11 +86,14 @@ namespace selene
                 RELATION determineRelation(const Volume& volume) const;
 
         private:
-                // Cone definition
                 Vector3d apex_, direction_;
                 float radius_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

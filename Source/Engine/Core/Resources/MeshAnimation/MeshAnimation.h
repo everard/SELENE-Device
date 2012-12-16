@@ -11,6 +11,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents mesh animation.
          */
         class MeshAnimation: public Resource
@@ -22,21 +27,20 @@ namespace selene
                 typedef Array<Skeleton::BoneTransform, uint16_t> Key;
 
                 /**
-                 * Represents mesh animation data container.
+                 * Represents mesh animation data container. Includes:
+                 * - animation keys (which are basically arrays of bone transforms),
+                 * - helperKey, which is used in key interpolation and usually returned
+                 *   as the result of interpolation,
+                 * - emptyKey, which is returned when MeshAnimation::getKey is called with wrong
+                 *   parameter,
+                 * - length of the animation (and 1/length).
                  */
                 class Data
                 {
                 public:
-                        // Mesh animation keys
                         Array<Key, uint32_t> keys;
-
-                        // Helper key (used in interpolation)
                         Key helperKey;
-
-                        // Empty key
                         Key emptyKey;
-
-                        // Animation length
                         float length, lengthInv;
 
                         Data();
@@ -85,10 +89,13 @@ namespace selene
                 uint32_t getNumKeys();
 
         protected:
-                // Data
                 Data data_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

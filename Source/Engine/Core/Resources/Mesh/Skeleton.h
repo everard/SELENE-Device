@@ -14,7 +14,15 @@ namespace selene
 {
 
         /**
-         * Represents skeleton.
+         * \addtogroup Resources
+         * \brief Resources (textures, meshes, animations, etc.) and resource management.
+         * @{
+         */
+
+        /**
+         * Represents skeleton. Skeleton is used in mesh animation, it contains bones hierarchy.
+         * Skeleton can have one or more instances. Each instance can be in its own pose - bones
+         * can have different transformations for each instance.
          */
         class Skeleton
         {
@@ -197,6 +205,10 @@ namespace selene
                 std::map<std::string, uint16_t> bonesMap_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

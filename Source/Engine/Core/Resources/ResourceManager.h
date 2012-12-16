@@ -11,7 +11,12 @@
 namespace selene
 {
 
-        /// Result
+        /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /// Result of the ResourceManager's operation
         enum RESULT
         {
                 FAIL = 0,
@@ -22,7 +27,36 @@ namespace selene
         };
 
         /**
-         * Represents resource manager.
+         * Represents resource manager. Handles resource creation and destruction.
+         * Creates resource instances when requested.
+         * The following code shows basic resource life cycle in the application (in this example texture
+         * is used):
+         * \code
+         * // create texture
+         * selene::TextureFactory<selene::Texture> textureFactory(&fileManager);
+         * selene::ResourceManager resourceManager;
+         *
+         * if(resourceManager.createResource("brick.dds", textureFactory) != SUCCESS)
+         * {
+         *         handleError();
+         * }
+         *
+         * ...
+         *
+         * // get resource instance
+         * auto textureInstance = resourceManager.requestResource<selene::Texture>("brick.dds");
+         * // now to access actual texture (*textureInstance) can be used
+         *
+         * // note, that if requested resource can not be found or has different type (not Texture),
+         * // then (*textureInstance) will be equal to nullptr
+         *
+         * ...
+         *
+         * // destroy resource
+         * resourceManager.destroyResource("brick.dds");
+         * // if you want to destroy resource, even if it is used somewhere, force its destruction:
+         * resourceManager.destroyResource("brick.dds", true);
+         * \endcode
          */
         class ResourceManager
         {
@@ -73,10 +107,7 @@ namespace selene
                 }
 
         private:
-                // Resources
                 std::map<std::string, std::shared_ptr<Resource>> resources_;
-
-                // Null shared pointer
                 std::shared_ptr<Resource> nullSharedPointer_;
 
                 /**
@@ -87,6 +118,10 @@ namespace selene
                 const std::shared_ptr<Resource>& getResource(const char* name);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

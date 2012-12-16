@@ -12,14 +12,104 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents mesh animation processor. It handles skeletal animation: starts/stops animations and
          * combines them in different ways.
+         * The following example shows how to use mesh animation processor:
+         * \code
+         * // somewhere in program resource manager and mesh animation processor are declared
+         * selene::ResourceManager resourceManager;
+         * selene::MeshAnimationProcessor meshAnimationProcessor;
+         *
+         * ...
+         *
+         * // get instance of the mesh, whose skeleton shall be animated
+         * selene::Resource::Instance<selene::Mesh> meshInstance = resourceManager.requestResource<selene::Mesh>("skin mesh");
+         * if((*meshInstance) == nullptr)
+         * {
+         *         handleError();
+         * }
+         *
+         * // get the skeleton of the mesh
+         * std::shared_ptr<selene::Skeleton> skeleton = (*meshInstance).getData().skeleton;
+         *
+         * // initialize mesh animation processor (this action actually creates skeleton instance)
+         * if(!meshAnimationProcessor.initialize(skeleton))
+         * {
+         *         handleError();
+         * }
+         *
+         * ...
+         *
+         * // get instance of the animation
+         * selene::Resource::Instance<MeshAnimation> animationInstance =
+         *         resourceManager.requestResource<selene::MeshAnimation>("mesh animation");
+         * // in real application we should also check animationInstance (as we checked meshInstance)
+         *
+         * // add mesh animation
+         * meshAnimationProcessor.addMeshAnimation(animationInstance, 0.0f, 0.0f, 0.0f, 10.0f, 1.0f);
+         * // now this animation has index zero in the mesh animation processor
+         * // and it can be accessed through MeshAnimationProcessor::getMeshAnimation function
+         *
+         * // start mesh animation
+         * meshAnimationProcessor.getMeshAnimation(0).play();
+         *
+         * ...
+         * float elapsedTime;
+         *
+         * // animate skeleton
+         * meshAnimationProcessor.processMeshAnimations(elapsedTime);
+         * \endcode
+         * Now meshAnimationProcessor has skeleton instance, which contains pose; latter can be accessed
+         * through MeshAnimationProcessor::getSkeletonInstance method:
+         * \code
+         * const auto& finalBoneTransforms =
+         *         meshAnimationProcessor.getSkeletonInstance().getFinalBoneTransforms();
+         * \endcode
+         *
+         * Note, that this class should not be used directly, because mesh animation is handled inside
+         * Actor class.
+         *
+         * This class uses MeshAnimationProcessor::MixableMeshAnimation for animation playing and mixing.
+         * When MeshAnimationProcessor::getMeshAnimation is called, reference to the
+         * MeshAnimationProcessor::MixableMeshAnimation is returned.
+         * \see MeshAnimationProcessor::MixableMeshAnimation
          */
         class MeshAnimationProcessor
         {
         public:
                 /**
-                 * Represents mixable mesh animation.
+                 * Represents mixable mesh animation. It contains instance of the actual MeshAnimation and
+                 * additional data for animation processing:
+                 * - state of the animation: starting, playing, stopping and stopped;
+                 * - blend factor of current animation, which shows how much influence it has on the skeleton
+                     (zero for none, one for maximum);
+                 * - transition times between states (from starting to playing, from playing to stopped);
+                 * - blend factor transition time (how fast blend factor will be changed).
+                 *
+                 * When animation is starting, its blend factor fades-in from zero to the actual value.
+                 * When animation is stopping, its blend factor fades-out from the actual value to zero.
+                 *
+                 * There is a list of MixableMeshAnimation inside of the MeshAnimationProcessor. Each
+                 * MixableMeshAnimation is processed, from the first to the last, and the result is applied
+                 * to the skeleton. The influence, which MixableMeshAnimation has on the skeleton depends on
+                 * the blend factor.
+                 *
+                 * For example, consider the following: we have two animations, which were previously added with
+                 * MeshAnimationProcessor::addMeshAnimation. They both influence the same bone, say, "left_arm".
+                 * First animation has it rotated by 90 degrees around Z axis, second - around Y axis.
+                 * If they both have blendfactors less that one, then resulting pose is computed as following:
+                 * 1. orientation["left_arm"] = orientation["left_arm"].blend(first_animation.orientation["left_arm"],
+                 *    first_animation.blendFactor).
+                 * 2. orientation["left_arm"] = orientation["left_arm"].blend(second_animation.orientation["left_arm"],
+                 *    second_animation.blendFactor).
+                 *
+                 * If the second animation has blend factor equal to one, then the first animation's influence is
+                 * completely discarded (rewrited by the second animation).
                  */
                 class MixableMeshAnimation
                 {
@@ -84,35 +174,21 @@ namespace selene
                                 STOPPED
                         };
 
-                        // Mesh animation
                         Resource::Instance<MeshAnimation> meshAnimation_;
-
-                        // Skeleton instance
                         Skeleton::Instance* skeletonInstance_;
-
-                        // Number of times to play animation
                         uint32_t numTimesToPlay_;
-
-                        // Number of times animation has been played
                         uint32_t numTimesPlayed_;
 
-                        // Animation times
                         float blendFactorTransitionTime_;
                         float startingTransitionTime_;
                         float stoppingTransitionTime_;
                         float animationTime_;
                         float elapsedTime_;
 
-                        // Animation interpolation scalar
                         float animationInterpolationScalar_;
-
-                        // Blend factor
                         LinearInterpolator<float> blendFactor_;
-
-                        // Blend factor interpolation scalar
                         float blendFactorInterpolationScalar_;
 
-                        // Mesh animation state
                         STATE state_;
 
                         /**
@@ -188,6 +264,10 @@ namespace selene
                 Skeleton::Instance skeletonInstance_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

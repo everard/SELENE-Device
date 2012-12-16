@@ -11,10 +11,15 @@ namespace selene
 {
 
         /**
+         * \addtogroup Core
+         * @{
+         */
+
+        /**
          * Represents bag. This is NOT regular bag data structure (i.e. unspecified order of elements, etc.).
-         * This data structure is intended to fast insert and delete the elements without slow memory allocation and
-         * deallocation. In order to do so, placement new operator is used. Such bag has limited capacity which is specified
-         * during its creation.
+         * This data structure is intended for fast insertion and deletion of the elements without slow memory
+         * allocation and deallocation. In order to do so, placement new operator is used. Such bag has limited
+         * capacity, which is specified during its creation.
          */
         template <class T> class Bag
         {
@@ -152,19 +157,16 @@ namespace selene
                 }
 
         private:
-                // Reserved space for elements
                 uint8_t* data_;
-
-                // Elements
                 T** elements_;
-
-                // Size
                 volatile uint32_t size_;
-
-                // Capacity
                 uint32_t capacity_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -11,6 +11,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents mesh animation factory.
          */
         template <class T> class MeshAnimationFactory: public ResourceFactory
@@ -59,6 +64,10 @@ namespace selene
                 }
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

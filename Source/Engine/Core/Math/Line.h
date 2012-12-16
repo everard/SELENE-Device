@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Math
+         * @{
+         */
+
+        /**
          * Represents line in 2D space.
          */
         class Line2d
@@ -56,7 +61,6 @@ namespace selene
                 float distance(const Vector2d& point) const;
 
         private:
-                // Line definition
                 Vector2d normal_;
                 float c_;
 
@@ -111,13 +115,16 @@ namespace selene
                 const Vector2d& getClosestVertex(const Vector2d& point) const;
 
         private:
-                // Line segment definition
                 Vector2d vertices_[2];
                 Line2d line_;
 
         };
 
         typedef LineSegment2d* PLineSegment2d;
+
+        /**
+         * @}
+         */
 
 }
 

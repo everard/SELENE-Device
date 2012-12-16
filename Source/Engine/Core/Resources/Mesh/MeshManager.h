@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
          * Represents mesh manager. Reads/writes meshes from/to std::istream/std::ostream.
          */
         class MeshManager
@@ -42,7 +47,6 @@ namespace selene
         protected:
                 enum
                 {
-                        // Max string length
                         MAX_STRING_LENGTH = 1024
                 };
 
@@ -162,6 +166,10 @@ namespace selene
                 bool writeBones(std::ostream& stream, const Array<Skeleton::Bone, uint16_t>& bones);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

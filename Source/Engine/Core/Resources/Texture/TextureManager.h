@@ -10,7 +10,12 @@ namespace selene
 {
 
         /**
-         * Represents texture manager.
+         * \addtogroup Resources
+         * @{
+         */
+
+        /**
+         * Represents texture manager. Reads DDS texture from std::istream.
          */
         class TextureManager
         {
@@ -27,13 +32,8 @@ namespace selene
                 bool readTexture(std::istream& stream, Texture::Data& textureData);
 
         private:
-                // Total size of the texture and compression factor
                 uint32_t totalSize_, compressionFactor_;
-
-                // DDS header
                 DdsHeader ddsHeader_;
-
-                // DXT flag
                 bool isDxt_;
 
                 /**
@@ -72,6 +72,10 @@ namespace selene
                 bool readPixels(std::istream& stream, Texture::Data& textureData);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
