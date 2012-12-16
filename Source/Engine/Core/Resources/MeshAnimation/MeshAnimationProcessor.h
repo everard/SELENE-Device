@@ -87,7 +87,7 @@ namespace selene
                  * additional data for animation processing:
                  * - state of the animation: starting, playing, stopping and stopped;
                  * - blend factor of current animation, which shows how much influence it has on the skeleton
-                     (zero for none, one for maximum);
+                 *   (zero for none, one for maximum);
                  * - transition times between states (from starting to playing, from playing to stopped);
                  * - blend factor transition time (how fast blend factor will be changed).
                  *
