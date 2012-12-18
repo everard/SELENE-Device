@@ -10,7 +10,13 @@ namespace selene
 {
 
         /**
-         * Represents button.
+         * \addtogroup GUI
+         * \brief Graphical user interface subsystem.
+         * @{
+         */
+
+        /**
+         * Represents button. Button will send message selene::GUI_MESSAGE_ON_CLICK when clicked.
          */
         class Button: public Gui::Element
         {
@@ -47,6 +53,10 @@ namespace selene
                              uint8_t key);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -11,7 +11,12 @@ namespace selene
 {
 
         /**
-         * Represents text box.
+         * \addtogroup GUI
+         * @{
+         */
+
+        /**
+         * Represents text box. This GUI element can take input from keyboard.
          */
         class TextBox: public Gui::Element
         {
@@ -49,7 +54,6 @@ namespace selene
                 const std::string& getText() const;
 
         protected:
-                // Vector, which contains text (is used for text input)
                 std::vector<char> textVector_;
 
                 /**
@@ -63,6 +67,10 @@ namespace selene
                              uint8_t key);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

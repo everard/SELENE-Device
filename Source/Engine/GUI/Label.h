@@ -10,7 +10,13 @@ namespace selene
 {
 
         /**
-         * Represents label.
+         * \addtogroup GUI
+         * @{
+         */
+
+        /**
+         * Represents label. This GUI element does not send any messages, its purpose is to
+         * decorate.
          */
         class Label: public Gui::Element
         {
@@ -36,6 +42,10 @@ namespace selene
                 ~Label();
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

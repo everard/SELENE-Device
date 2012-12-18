@@ -16,39 +16,79 @@
 namespace selene
 {
 
-        /// GUI element flags, GUI element color types, GUI message types and GUI flags
-        enum
+        /**
+         * \addtogroup GUI
+         * @{
+         */
+
+        /// GUI element flag
+        enum GUI_ELEMENT_FLAG
         {
-                // GUI element flags
                 GUI_ELEMENT_HIDDEN   = 0x01,
                 GUI_ELEMENT_TOUCHED  = 0x02,
                 GUI_ELEMENT_DISABLED = 0x04,
                 GUI_ELEMENT_SELECTED = 0x08,
-                GUI_ELEMENT_UPDATED  = 0x10,
+                GUI_ELEMENT_UPDATED  = 0x10
+        };
 
-                // GUI element color types
+        /// GUI element color type
+        enum GUI_ELEMENT_COLOR_TYPE
+        {
                 GUI_ELEMENT_COLOR_DEFAULT = 0,
                 GUI_ELEMENT_COLOR_TOUCHED,
                 GUI_ELEMENT_COLOR_SELECTED,
-                NUM_OF_GUI_ELEMENT_COLOR_TYPES,
+                NUM_OF_GUI_ELEMENT_COLOR_TYPES
+        };
 
-                // GUI message types
-                GUI_MESSAGE_ON_CLICK = 0,
+        /// GUI message type
+        enum GUI_MESSAGE_TYPE
+        {
+                GUI_MESSAGE_ON_CLICK = 0
+        };
 
-                // GUI flags
+        /// GUI flag
+        enum GUI_FLAG
+        {
                 GUI_DISABLED = 0x01,
                 GUI_UPDATED  = 0x02,
                 GUI_HIDDEN   = 0x04
         };
 
         /**
-         * Represents GUI.
+         * Represents GUI. This class can be used in actual application as-is. Gui contains
+         * methods for adding, deleting and getting GUI elements. Each GUI element has unique
+         * ID, which is basically an integer. GUI elements must not be deleted outside the Gui,
+         * which holds them. After the element is added to the Gui with Gui::addElement method,
+         * it will be automatically managed by the latter. This is the reason why GUI elements
+         * must not be created on stack. They can only be created with operator new.
+         *
+         * The following example shows how to use Gui:
+         * \code
+         * // somewhere in program GUI object is declared
+         * selene::Gui gui;
+         *
+         * ...
+         * // here we add some buttons, labels and text boxes to the GUI
+         * int32_t labelId0 = gui.addElement(new(std::nothrow) Label(...));
+         * int32_t labelId1 = gui.addElement(new(std::nothrow) Label(...));
+         * int32_t textBoxId0 = gui.addElement(new(std::nothrow) TextBox(...));
+         *
+         * // note, that if delegated function should be passed as callback, then consider using C++11 lambdas
+         * int32_t buttonId0 = gui.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t elementId, uint8_t message)
+         *                                                             {
+         *                                                                     this->onButtonMessage(elementId, message);
+         *                                                             }),
+         *                                                             other parameters);
+         * \endcode
+         * \see Gui::Element
+         * \see Label Button TextBox
          */
         class Gui: public Status
         {
         public:
                 /**
-                 * Represents GUI Element.
+                 * Represents GUI Element. This is base class for all GUI elements and should not be used
+                 * as-is.
                  */
                 class Element: public Status
                 {
@@ -82,7 +122,7 @@ namespace selene
                         /**
                          * \brief Returns background color.
                          * \param[in] type type of the background color (must be one of the
-                         * GUI element color types)
+                         * selene::GUI_ELEMENT_COLOR_TYPE)
                          * \return const reference to the background color of specified type
                          */
                         const Vector4d& getBackgroundColor(uint8_t type) const;
@@ -90,7 +130,7 @@ namespace selene
                         /**
                          * \brief Returns text color.
                          * \param[in] type type of the text color (must be one of the
-                         * GUI element color types)
+                         * selene::GUI_ELEMENT_COLOR_TYPE)
                          * \return const reference to the text color of specified type
                          */
                         const Vector4d& getTextColor(uint8_t type) const;
@@ -135,28 +175,16 @@ namespace selene
                 protected:
                         friend class Gui;
 
-                        // Callback function
                         std::function<void (int32_t, uint8_t)> callbackFunction_;
 
-                        // Background colors
                         Vector4d backgroundColors_[NUM_OF_GUI_ELEMENT_COLOR_TYPES];
-
-                        // Text colors
                         Vector4d textColors_[NUM_OF_GUI_ELEMENT_COLOR_TYPES];
-
-                        // Black color
                         Vector4d blackColor_;
 
-                        // Font size, position and size
                         Vector2d fontSize_, position_, size_;
-
-                        // Text
                         mutable std::string text_;
 
-                        // ID
                         int32_t id_;
-
-                        // GUI
                         Gui* gui_;
 
                         /**
@@ -256,17 +284,10 @@ namespace selene
                 const Vector2d& getCursorPosition() const;
 
         protected:
-                // Elements
                 std::map<int32_t, std::shared_ptr<Element>> elements_;
-
-                // Active element
                 std::weak_ptr<Element> activeElement_;
-
-                // Element ID
-                int32_t elementId_;
-
-                // Cursor position
                 Vector2d cursorPosition_;
+                int32_t nextElementId_;
 
                 /**
                  * \brief Sets active element.
@@ -275,6 +296,10 @@ namespace selene
                 void setActiveElement(const std::shared_ptr<Element>& element);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

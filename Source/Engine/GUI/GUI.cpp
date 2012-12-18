@@ -138,7 +138,7 @@ namespace selene
 
         Gui::Gui()
         {
-                elementId_ = 0;
+                nextElementId_ = 0;
         }
         Gui::~Gui()
         {
@@ -148,7 +148,7 @@ namespace selene
         //------------------------------------------------------------------------------
         void Gui::destroy()
         {
-                elementId_ = 0;
+                nextElementId_ = 0;
                 elements_.clear();
                 clearFlags(GUI_UPDATED);
         }
@@ -161,14 +161,14 @@ namespace selene
 
                 std::unique_ptr<Element> elementPointer(element);
 
-                if(elementId_ < 0)
+                if(nextElementId_ < 0)
                         return -1;
 
-                elementPointer->setId(elementId_);
+                elementPointer->setId(nextElementId_);
                 elementPointer->setGui(this);
 
                 auto result =
-                        elements_.insert(std::make_pair(elementId_,
+                        elements_.insert(std::make_pair(nextElementId_,
                                                         std::shared_ptr<Element>(elementPointer.release())));
 
                 if(!result.second)
@@ -176,7 +176,7 @@ namespace selene
 
                 clearFlags(GUI_UPDATED);
 
-                return elementId_++;
+                return nextElementId_++;
         }
 
         //------------------------------------------------------------------------------
