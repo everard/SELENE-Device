@@ -10,6 +10,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Network
+         * @{
+         */
+
+        /**
          * Represents socket. This is base class for all sockets.
          */
         class Socket
@@ -32,6 +37,10 @@ namespace selene
                 virtual bool send(const uint8_t* buffer, uint32_t size) const = 0;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

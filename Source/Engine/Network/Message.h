@@ -10,8 +10,42 @@ namespace selene
 {
 
         /**
-         * Represents message. This message is used for client-server communications.
-         * Message consists of type (2 bytes), size (2 bytes), and data.
+         * \addtogroup Network
+         * \brief Sockets and messages.
+         * @{
+         */
+
+        /**
+         * Represents message. This message is used for client-server communications via TCP.
+         * Message consists of type (2 bytes), size (2 bytes), and data. Checksum is not used,
+         * because TCP already guarantees package delivery. Type has application-defined meaning.
+         *
+         * Message can be received with multiple pieces. In this case return value of Message::receive
+         * method should be checked. If it returns true, then message is completely received.
+         *
+         * Simple example:
+         * \code
+         * // some declarations:
+         * // we have socket, which receives raw data via TCP, and message
+         * // of course, actual socket implementation must be used instead of
+         * // the pure virtual class (because the latter can not define objects)
+         * selene::Socket socket;
+         * selene::Message message;
+         *
+         * // we also have buffer, which holds raw data, and size of the received data:
+         * uint8_t buffer[BUFFER_SIZE];
+         * uint16_t numBytesReceived = 0;
+         *
+         * ...
+         * // somewhere in program we receive data through socket
+         * numBytesReceived = socket.receive(buffer, BUFFER_SIZE);
+         * // and from raw data we get our message
+         * if(message.receive(buffer, numBytesReceived))
+         * {
+         *         // message received complitely, now we can use it somehow
+         *         doSomething(message);
+         * }
+         * \endcode
          */
         class Message
         {
@@ -76,19 +110,10 @@ namespace selene
                                  const uint8_t* buffer = nullptr, uint16_t size = 0);
 
         private:
-                // Data
                 uint8_t data_[MESSAGE_HEADER_SIZE + MAX_MESSAGE_SIZE];
-
-                // Type
                 uint16_t type_;
-
-                // Size
                 uint16_t size_;
-
-                // Position
                 uint16_t position_;
-
-                // Number of bytes received during last attempt
                 uint16_t numBytesReceived_;
 
                 /**
@@ -97,6 +122,10 @@ namespace selene
                 void clear();
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
