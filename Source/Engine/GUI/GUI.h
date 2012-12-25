@@ -227,15 +227,15 @@ namespace selene
                 /**
                  * \brief Adds element.
                  * \param[in] element GUI element
-                 * \return ID of the element if it was successfully added, -1 otherwise (in this case
-                 * element is destroyed, no manual memory deallocation is needed)
+                 * \return ID of the element if it has been successfully added, -1 otherwise (in this case
+                 * element has been destroyed, no manual memory deallocation is needed)
                  */
                 int32_t addElement(Element* element);
 
                 /**
                  * \brief Removes element.
                  * \param[in] elementId ID of the element
-                 * \return true if element with given ID was successfully deleted
+                 * \return true if element with given ID has been successfully deleted
                  */
                 bool removeElement(int32_t elementId);
 
@@ -255,7 +255,7 @@ namespace selene
                 /**
                  * \brief Sets active element.
                  * \param[in] elementId ID of the element
-                 * \return true if element with given ID was successfully activated
+                 * \return true if element with given ID has been successfully activated
                  */
                 bool setActiveElement(int32_t elementId);
 

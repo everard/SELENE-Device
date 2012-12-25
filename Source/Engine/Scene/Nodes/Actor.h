@@ -120,7 +120,7 @@ namespace selene
                  * \param[in] animationTime animation time
                  * \param[in] blendFactor blend factor (if set to zero, then current animation has no effect
                  * on skeleton)
-                 * \return true if mesh animation was successfully added
+                 * \return true if mesh animation has been successfully added
                  */
                 bool addMeshAnimation(const Resource::Instance<MeshAnimation>& meshAnimation,
                                       float blendFactorTransitionTime,
@@ -132,7 +132,7 @@ namespace selene
                 /**
                  * \brief Removes mesh animation.
                  * \param[in] index index of the animation which will be removed
-                 * \return true if animation was successfully removed
+                 * \return true if animation has been successfully removed
                  */
                 bool removeMeshAnimation(uint32_t index);
 
@@ -182,6 +182,7 @@ namespace selene
                 MeshAnimationProcessor meshAnimationProcessor_;
                 mutable Box boundingBoxes_[NUM_OF_INDICES];
                 Resource::Instance<Mesh> mesh_;
+                int16_t renderingUnit_;
 
         };
 

@@ -212,7 +212,7 @@ namespace selene
                 /**
                  * \brief Adds particle.
                  * \param[in] position position of the particle
-                 * \return true if particle was successfully added
+                 * \return true if particle has been successfully added
                  */
                 bool addParticle(const Vector3d& position) const;
 

@@ -57,7 +57,7 @@ namespace selene
 
                 /**
                  * \brief Prepares mesh animation.
-                 * \return true if mesh animation was successfully prepared for rendering
+                 * \return true if mesh animation has been successfully prepared for rendering
                  */
                 bool prepare();
 

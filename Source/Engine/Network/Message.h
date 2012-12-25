@@ -94,7 +94,7 @@ namespace selene
                  * is completely received.
                  * \param[in] buffer buffer from which message is received
                  * \param[in] size size of the buffer
-                 * \return true if message was completely received
+                 * \return true if message has been completely received
                  */
                 bool receive(uint8_t* buffer, uint16_t size);
 
@@ -104,7 +104,7 @@ namespace selene
                  * \param[in] type type of the message
                  * \param[in] buffer buffer which contains message data
                  * \param[in] size size of the message
-                 * \return true if message was successfully sent
+                 * \return true if message has been successfully sent
                  */
                 static bool send(const Socket& socket, uint16_t type,
                                  const uint8_t* buffer = nullptr, uint16_t size = 0);

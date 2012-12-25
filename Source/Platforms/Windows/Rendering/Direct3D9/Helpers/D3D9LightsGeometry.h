@@ -15,6 +15,14 @@ namespace selene
         class D3d9LightsGeometry
         {
         public:
+                enum
+                {
+                        LIGHT_DIRECTIONAL = 0,
+                        LIGHT_POINT,
+                        LIGHT_SPOT,
+                        NUM_OF_LIGHT_TYPES
+                };
+
                 D3d9LightsGeometry();
                 ~D3d9LightsGeometry();
 
@@ -28,7 +36,7 @@ namespace selene
                 uint32_t getBatchSize() const;
 
                 // Begins rendering
-                bool beginRendering(int16_t lightRenderingUnit);
+                bool beginRendering(uint8_t lightType);
 
                 // Ends rendering
                 void endRendering();
@@ -37,18 +45,18 @@ namespace selene
                 bool render(uint32_t numLights);
 
         private:
-                LPDIRECT3DVERTEXDECLARATION9 d3dVertexDeclarations_[Renderer::NUM_OF_LIGHT_UNITS];
-                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffers_[Renderer::NUM_OF_LIGHT_UNITS];
+                LPDIRECT3DVERTEXDECLARATION9 d3dVertexDeclarations_[NUM_OF_LIGHT_TYPES];
+                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffers_[NUM_OF_LIGHT_TYPES];
                 LPDIRECT3DDEVICE9 d3dDevice_;
 
-                int16_t currentLightRenderingUnit_;
+                int16_t currentLightType_;
 
                 static float vertices_[];
                 static const uint32_t batchSize_;
-                static const uint32_t offsets_[Renderer::NUM_OF_LIGHT_UNITS];
-                static const uint32_t numVertices_[Renderer::NUM_OF_LIGHT_UNITS];
-                static const uint32_t vertexStrides_[Renderer::NUM_OF_LIGHT_UNITS];
-                static const uint32_t vertexBufferSizes_[Renderer::NUM_OF_LIGHT_UNITS];
+                static const uint32_t offsets_[NUM_OF_LIGHT_TYPES];
+                static const uint32_t numVertices_[NUM_OF_LIGHT_TYPES];
+                static const uint32_t vertexStrides_[NUM_OF_LIGHT_TYPES];
+                static const uint32_t vertexBufferSizes_[NUM_OF_LIGHT_TYPES];
 
         };
 

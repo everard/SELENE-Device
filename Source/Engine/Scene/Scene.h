@@ -93,7 +93,7 @@ namespace selene
                          * \param[in] node target node, to which current node will be attached
                          * \param[in] boneName name of the bone in target node, to which current
                          * node will be attached
-                         * \return true if attachment was successfully done
+                         * \return true if attachment has been successfully done
                          */
                         bool attach(Node& node, const char* boneName = nullptr);
 
@@ -222,29 +222,29 @@ namespace selene
                 /**
                  * \brief Adds node.
                  * \param[in] node node
-                 * \return true if node was successfully added, otherwise node
-                 * is deleted and no manual memory deallocation is needed
+                 * \return true if node has been successfully added, otherwise node
+                 * has been deleted and no manual memory deallocation is needed
                  */
                 bool addNode(Node* node);
 
                 /**
                  * \brief Removes actor.
                  * \param[in] name name of the actor
-                 * \return true if actor was successfully deleted
+                 * \return true if actor has been successfully deleted
                  */
                 bool removeActor(const char* name);
 
                 /**
                  * \brief Removes light.
                  * \param[in] name name of the light
-                 * \return true if light was successfully deleted
+                 * \return true if light has been successfully deleted
                  */
                 bool removeLight(const char* name);
 
                 /**
                  * \brief Removes particle system.
                  * \param[in] name name of the particle system
-                 * \return true if particle system was successfully deleted
+                 * \return true if particle system has been successfully deleted
                  */
                 bool removeParticleSystem(const char* name);
 
@@ -273,7 +273,7 @@ namespace selene
                  * \brief Updates and renders scene.
                  * \param[in] elapsedTime elapsed time since last render
                  * \param[in] renderer renderer
-                 * \return true if rendering was successfully performed
+                 * \return true if rendering has been successfully performed
                  */
                 bool updateAndRender(float elapsedTime, Renderer& renderer);
 

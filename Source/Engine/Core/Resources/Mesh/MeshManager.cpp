@@ -311,8 +311,13 @@ namespace selene
                 // read subsets
                 for(register uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
                 {
+                        // create material
+                        meshData.subsets[i].material.reset(new(std::nothrow) Material);
+                        if(!meshData.subsets[i].material)
+                                return false;
+
                         // read material
-                        if(!readMaterial(stream, meshData.subsets[i].material))
+                        if(!readMaterial(stream, *meshData.subsets[i].material))
                                 return false;
 
                         // read subset data
@@ -512,8 +517,12 @@ namespace selene
                         // write subsets
                         for(register uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
                         {
+                                // check material
+                                if(!meshData.subsets[i].material)
+                                        return false;
+
                                 // write material
-                                if(!writeMaterial(stream, meshData.subsets[i].material))
+                                if(!writeMaterial(stream, *meshData.subsets[i].material))
                                         return false;
 
                                 // write subset data

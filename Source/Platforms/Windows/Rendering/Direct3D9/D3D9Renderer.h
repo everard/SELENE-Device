@@ -203,10 +203,18 @@ namespace selene
                 void setupLightAccumulationPass();
 
                 // Renders actors
+                void renderActors(D3d9VertexShader* vertexShaders, uint8_t vertexShaderBaseIndex,
+                                  uint8_t* vertexStreamIndices, uint8_t numVertexStreams,
+                                  uint8_t pass);
+
+                // Renders actors
                 void renderActors(const Mesh::Subset& meshSubset,
                                   const std::vector<Actor*>& actors,
                                   uint8_t meshRenderingUnit,
                                   uint8_t pass);
+
+                // Renders shadows
+                void renderShadows(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
 
                 // Renders shadows
                 void renderShadows(const Mesh::Subset& meshSubset,
@@ -215,10 +223,10 @@ namespace selene
                                    uint8_t meshRenderingUnit);
 
                 // Creates shadow map
-                void createShadowMap(ActorsList& actorsList, const SpotLight& spotLight);
+                void createShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
 
                 // Renders lights
-                void renderLights(uint8_t lightsListType = LIGHTS_LIST_WITHOUT_SHADOWS);
+                void renderLights();
 
                 // Renders positions and normals
                 void renderPositionsAndNormals();

@@ -145,7 +145,7 @@ namespace selene
 
                 /**
                  * \brief Prepares resource.
-                 * \return true if resource was successfully prepared for use in
+                 * \return true if resource has been successfully prepared for use in
                  * corresponding API
                  */
                 virtual bool prepare() = 0;
@@ -155,7 +155,7 @@ namespace selene
 
                 /**
                  * \brief Requests resource.
-                 * \return true if request was granted
+                 * \return true if request has been granted
                  */
                 bool request();
 

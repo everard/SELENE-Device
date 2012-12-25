@@ -66,7 +66,7 @@ namespace selene
                  * \brief Reads raw mesh data from file.
                  * \param[in] fileName name of the file from which raw
                  * data will be read
-                 * \return true if data was successfully read
+                 * \return true if data has been successfully read
                  */
                 bool read(const char* fileName);
 
@@ -102,7 +102,7 @@ namespace selene
                  * \brief Reads material.
                  * \param[in] stream std::istream from which material will be read
                  * \param[out] material material
-                 * \return true if material was successfully read
+                 * \return true if material has been successfully read
                  */
                 bool readMaterial(std::istream& stream, RawMeshData::Material& material);
 

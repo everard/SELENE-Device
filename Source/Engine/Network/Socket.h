@@ -32,7 +32,7 @@ namespace selene
                  * \brief Sends data.
                  * \param[in] buffer buffer which holds data
                  * \param[in] size size of the buffer
-                 * \return true if data was successfully sent
+                 * \return true if data has been successfully sent
                  */
                 virtual bool send(const uint8_t* buffer, uint32_t size) const = 0;
 

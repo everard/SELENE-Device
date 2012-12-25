@@ -26,7 +26,7 @@ namespace selene
                 /**
                  * \brief Exports mesh.
                  * \param[in] fileName name of the file which will hold exported mesh
-                 * \return true if mesh was successfully exported
+                 * \return true if mesh has been successfully exported
                  */
                 bool doExport(const char* fileName);
 
@@ -65,21 +65,21 @@ namespace selene
 
                 /**
                  * \brief Reads faces from raw mesh data.
-                 * \return true if faces were successfully read
+                 * \return true if faces have been successfully read
                  */
                 bool readFaces();
 
                 /**
                  * \brief Creates vertices and faces.
                  * \param[out] meshData mesh data
-                 * \return true if vertices and faces were successfully created
+                 * \return true if vertices and faces have been successfully created
                  */
                 bool createVerticesAndFaces(Mesh::Data& meshData);
 
                 /**
                  * \brief Creates subsets.
                  * \param[out] meshData mesh data
-                 * \return true if subsets were successfully created
+                 * \return true if subsets have been successfully created
                  */
                 bool createSubsets(Mesh::Data& meshData);
 

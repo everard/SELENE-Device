@@ -14,6 +14,196 @@
 namespace selene
 {
 
+        Renderer::Data::MeshSubsetNode::MeshSubsetNode() {}
+        Renderer::Data::MeshSubsetNode::~MeshSubsetNode() {}
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::MeshSubsetNode::add(const Mesh::Subset& meshSubset, const Actor& actor)
+        {
+                Element* element = requestElement(const_cast<Mesh::Subset*>(&meshSubset));
+                if(element == nullptr)
+                        return false;
+
+                element->data.push_back(const_cast<Actor*>(&actor));
+                addElement(element);
+                return true;
+        }
+
+        Renderer::Data::MeshNode::MeshNode() {}
+        Renderer::Data::MeshNode::~MeshNode() {}
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::MeshNode::add(const Mesh& mesh, const Mesh::Subset& meshSubset,
+                                           const Actor& actor)
+        {
+                Element* element = requestElement(const_cast<Mesh*>(&mesh));
+                if(element == nullptr)
+                        return false;
+
+                element->data.add(meshSubset, actor);
+
+                addElement(element);
+                return true;
+        }
+
+        Renderer::Data::MaterialNode::MaterialNode() {}
+        Renderer::Data::MaterialNode::~MaterialNode() {}
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::MaterialNode::add(const Material& material, const Mesh& mesh,
+                                               const Mesh::Subset& meshSubset,
+                                               const Actor& actor)
+        {
+                Element* element = requestElement(const_cast<Material*>(&material));
+                if(element == nullptr)
+                        return false;
+
+                if(!element->data.add(mesh, meshSubset, actor))
+                        return false;
+
+                uint8_t renderingUnit = material.is(MATERIAL_TWO_SIDED) ? static_cast<uint8_t>(UNIT_MATERIAL_TWO_SIDED) : static_cast<uint8_t>(UNIT_MATERIAL_ONE_SIDED);
+
+                addElement(element, renderingUnit);
+                return true;
+        }
+
+        Renderer::Data::ActorNode::ActorNode() {}
+        Renderer::Data::ActorNode::~ActorNode() {}
+
+        //-----------------------------------------------------------------------------------------------
+        void Renderer::Data::ActorNode::clear(bool freeMemory)
+        {
+                for(uint8_t i = 0; i < NUM_OF_MESH_UNITS; ++i)
+                        materialNodes_[i].clear(freeMemory);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::ActorNode::add(const Actor& actor)
+        {
+                int16_t renderingUnit = actor.getRenderingUnit();
+                if(renderingUnit < 0 || renderingUnit >= NUM_OF_MESH_UNITS)
+                        return false;
+
+                auto& materialNode = materialNodes_[renderingUnit];
+
+                Mesh* mesh = *actor.getMesh();
+                if(mesh == nullptr)
+                        return false;
+
+                const auto& meshData = mesh->getData();
+                for(uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
+                {
+                        if(!meshData.subsets[i].material)
+                                continue;
+
+                        materialNode.add(*meshData.subsets[i].material, *mesh, meshData.subsets[i], actor);
+                }
+
+                return true;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        Renderer::Data::MaterialNode& Renderer::Data::ActorNode::getMaterialNode(uint8_t unit)
+        {
+                if(unit >= NUM_OF_MESH_UNITS)
+                        return emptyMaterialNode_;
+
+                return materialNodes_[unit];
+        }
+
+        Renderer::Data::LightNode::LightNode() {}
+        Renderer::Data::LightNode::~LightNode() {}
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::LightNode::add(const Light& light, Actor* shadowCaster)
+        {
+                int16_t renderingUnit = light.getRenderingUnit();
+                if(renderingUnit < 0 || renderingUnit >= NUM_OF_LIGHT_UNITS)
+                        return false;
+
+                Element* element = requestElement(const_cast<Light*>(&light));
+                if(element == nullptr)
+                        return false;
+
+                if(shadowCaster != nullptr)
+                        element->data.add(*shadowCaster);
+
+                addElement(element, static_cast<uint8_t>(renderingUnit));
+                return true;
+        }
+
+        Renderer::Data::ParticleSystemNode::ParticleSystemNode() {}
+        Renderer::Data::ParticleSystemNode::~ParticleSystemNode() {}
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::ParticleSystemNode::add(const ParticleSystem& particleSystem)
+        {
+                int16_t renderingUnit = particleSystem.getRenderingUnit();
+                if(renderingUnit < 0 || renderingUnit >= NUM_OF_PARTICLE_SYSTEM_UNITS)
+                        return false;
+
+                Element* element = requestElement(const_cast<Texture*>(*particleSystem.getTexture()));
+                if(element == nullptr)
+                        return false;
+
+                element->data.push_back(const_cast<ParticleSystem*>(&particleSystem));
+                addElement(element, static_cast<uint8_t>(renderingUnit));
+                return true;
+        }
+
+        Renderer::Data::Data() {}
+        Renderer::Data::~Data() {}
+
+        //-----------------------------------------------------------------------------------------------
+        void Renderer::Data::clear(bool freeMemory)
+        {
+                actorNode_.clear(freeMemory);
+                lightNode_.clear(freeMemory);
+                particleSystemNode_.clear(freeMemory);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        Renderer::Data::ActorNode& Renderer::Data::getActorNode()
+        {
+                return actorNode_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        Renderer::Data::LightNode& Renderer::Data::getLightNode()
+        {
+                return lightNode_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        Renderer::Data::ParticleSystemNode& Renderer::Data::getParticleSystemNode()
+        {
+                return particleSystemNode_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::addActor(const Actor& actor)
+        {
+                return actorNode_.add(actor);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::addLight(const Light& light)
+        {
+                return lightNode_.add(light);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::addShadow(const Light& light, const Actor& caster)
+        {
+                return lightNode_.add(light, const_cast<Actor*>(&caster));
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        bool Renderer::Data::addParticleSystem(const ParticleSystem& particleSystem)
+        {
+                return particleSystemNode_.add(particleSystem);
+        }
+
         Renderer::Parameters::Parameters(Application* application, FileManager* fileManager,
                                          uint32_t width, uint32_t height, std::ostream* log,
                                          uint8_t flags)
@@ -70,205 +260,21 @@ namespace selene
         Renderer::~Renderer() {}
 
         //-----------------------------------------------------------------------------------------------
+        Renderer::Data& Renderer::getData()
+        {
+                return data_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        const Renderer::Data& Renderer::getData() const
+        {
+                return data_;
+        }
+
+        //-----------------------------------------------------------------------------------------------
         void Renderer::setGui(const Gui& gui)
         {
                 gui_ = const_cast<Gui*>(&gui);
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        void Renderer::clearLists(bool freeMemory)
-        {
-                actorsList_.clear(freeMemory);
-
-                for(uint8_t i = 0; i < NUM_OF_LIGHTS_LIST_TYPES; ++i)
-                        lightsLists_[i].clear(freeMemory);
-
-                particleSystemsList_.clear(freeMemory);
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::addActor(const Actor& actor)
-        {
-                return actorsList_.addActor(actor);
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::addActor(const Light& light, const Actor& actor)
-        {
-                if(light.is(Scene::Node::SHADOW_CASTER))
-                        return lightsLists_[LIGHTS_LIST_WITH_SHADOWS].addLight(light, const_cast<Actor*>(&actor));
-
-                return lightsLists_[LIGHTS_LIST_WITHOUT_SHADOWS].addLight(light, const_cast<Actor*>(&actor));
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::addLight(const Light& light)
-        {
-                if(light.is(Scene::Node::SHADOW_CASTER))
-                        return lightsLists_[LIGHTS_LIST_WITH_SHADOWS].addLight(light);
-
-                return lightsLists_[LIGHTS_LIST_WITHOUT_SHADOWS].addLight(light);
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::addShadow(const Light& light, const Actor& caster)
-        {
-                if(!light.is(Scene::Node::SHADOW_CASTER))
-                        return false;
-
-                return lightsLists_[LIGHTS_LIST_WITH_SHADOWS].addLight(light, nullptr,
-                                                                       const_cast<Actor*>(&caster));
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::addParticleSystem(const ParticleSystem& particleSystem)
-        {
-                return particleSystemsList_.addParticleSystem(particleSystem);
-        }
-
-        Renderer::MeshSubsetsList::MeshSubsetsList() {}
-        Renderer::MeshSubsetsList::~MeshSubsetsList() {}
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::MeshSubsetsList::addMeshSubset(const Mesh::Subset& meshSubset, const Actor& actor)
-        {
-                // get element
-                Element* element = requestElement(const_cast<Mesh::Subset*>(&meshSubset));
-
-                if(element == nullptr)
-                        return false;
-
-                // add actor
-                element->data.push_back(const_cast<Actor*>(&actor));
-
-                // add element
-                uint8_t unit = UNIT_MATERIAL_ONE_SIDED;
-
-                if(meshSubset.material.is(MATERIAL_TWO_SIDED))
-                        unit = UNIT_MATERIAL_TWO_SIDED;
-
-                addElement(element, unit);
-                return true;
-        }
-
-        Renderer::ActorsList::ActorsList() {}
-        Renderer::ActorsList::~ActorsList() {}
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::ActorsList::addActor(const Actor& actor)
-        {
-                // get mesh
-                Mesh* mesh = *actor.getMesh();
-
-                if(mesh == nullptr)
-                        return false;
-
-                // get unit
-                int16_t unit = actor.getRenderingUnit();
-
-                if(unit < 0 || unit >= NUM_OF_MESH_UNITS)
-                        return false;
-
-                // get element
-                Element* element = requestElement(mesh);
-
-                if(element == nullptr)
-                        return false;
-
-                // add mesh subset instances
-                const Array<Mesh::Subset, uint16_t>& meshSubsets = mesh->getData().subsets;
-
-                for(uint16_t i = 0; i < meshSubsets.getSize(); ++i)
-                        element->data.addMeshSubset(meshSubsets[i], actor);
-
-                // add element
-                addElement(element, static_cast<uint8_t>(unit));
-                return true;
-        }
-
-        Renderer::LightData::LightData() {}
-        Renderer::LightData::~LightData() {}
-
-        //-----------------------------------------------------------------------------------------------
-        void Renderer::LightData::clear()
-        {
-                actorsList_.clear();
-                shadowsList_.clear();
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        Renderer::ActorsList& Renderer::LightData::getActorsList()
-        {
-                return actorsList_;
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        Renderer::ActorsList& Renderer::LightData::getShadowsList()
-        {
-                return shadowsList_;
-        }
-
-        Renderer::LightsList::LightsList() {}
-        Renderer::LightsList::~LightsList() {}
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::LightsList::addLight(const Light& light, Actor* actor, Actor* shadow)
-        {
-                // get unit
-                int16_t unit = light.getRenderingUnit();
-
-                if(unit < 0 || unit >= NUM_OF_LIGHT_UNITS)
-                        return false;
-
-                // get element
-                Element* element = requestElement(const_cast<Light*>(&light));
-
-                if(element == nullptr)
-                        return false;
-
-                // add actor
-                if(actor != nullptr)
-                {
-                        if(!element->data.getActorsList().addActor(*actor))
-                                return false;
-                }
-
-                // add shadow
-                if(shadow != nullptr)
-                {
-                        if(!element->data.getShadowsList().addActor(*shadow))
-                                return false;
-                }
-
-                // add element
-                addElement(element, static_cast<uint8_t>(unit));
-                return true;
-        }
-
-        Renderer::ParticleSystemsList::ParticleSystemsList() {}
-        Renderer::ParticleSystemsList::~ParticleSystemsList() {}
-
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::ParticleSystemsList::addParticleSystem(const ParticleSystem& particleSystem)
-        {
-                // get unit
-                int16_t unit = particleSystem.getRenderingUnit();
-
-                if(unit < 0 || unit >= NUM_OF_PARTICLE_SYSTEM_UNITS)
-                        return false;
-
-                // get element
-                Element* element = requestElement(*particleSystem.getTexture());
-
-                if(element == nullptr)
-                        return false;
-
-                // add particle system
-                element->data.push_back(const_cast<ParticleSystem*>(&particleSystem));
-
-                // add element
-                addElement(element, static_cast<uint8_t>(unit));
-                return true;
         }
 
 }

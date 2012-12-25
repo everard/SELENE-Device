@@ -117,20 +117,20 @@ namespace selene
 
         const uint32_t D3d9LightsGeometry::batchSize_ = 30;
 
-        const uint32_t D3d9LightsGeometry::offsets_[Renderer::NUM_OF_LIGHT_UNITS] =
+        const uint32_t D3d9LightsGeometry::offsets_[NUM_OF_LIGHT_TYPES] =
         {
                 // Directional light
                 0,
 
                 // Point light
-                4 * D3d9LightsGeometry::numVertices_[Renderer::UNIT_LIGHT_DIRECTIONAL],
+                4 * D3d9LightsGeometry::numVertices_[LIGHT_DIRECTIONAL],
 
                 // Spot light
-                4 * D3d9LightsGeometry::numVertices_[Renderer::UNIT_LIGHT_DIRECTIONAL] +
-                4 * D3d9LightsGeometry::numVertices_[Renderer::UNIT_LIGHT_POINT]
+                4 * D3d9LightsGeometry::numVertices_[LIGHT_DIRECTIONAL] +
+                4 * D3d9LightsGeometry::numVertices_[LIGHT_POINT]
         };
 
-        const uint32_t D3d9LightsGeometry::numVertices_[Renderer::NUM_OF_LIGHT_UNITS] =
+        const uint32_t D3d9LightsGeometry::numVertices_[NUM_OF_LIGHT_TYPES] =
         {
                 // Directional light
                 4,
@@ -142,7 +142,7 @@ namespace selene
                 38
         };
 
-        const uint32_t D3d9LightsGeometry::vertexStrides_[Renderer::NUM_OF_LIGHT_UNITS] =
+        const uint32_t D3d9LightsGeometry::vertexStrides_[NUM_OF_LIGHT_TYPES] =
         {
                 // Directional light
                 4 * sizeof(float),
@@ -154,21 +154,21 @@ namespace selene
                 4 * sizeof(float)
         };
 
-        const uint32_t D3d9LightsGeometry::vertexBufferSizes_[Renderer::NUM_OF_LIGHT_UNITS] =
+        const uint32_t D3d9LightsGeometry::vertexBufferSizes_[NUM_OF_LIGHT_TYPES] =
         {
                 // Directional light
-                D3d9LightsGeometry::vertexStrides_[Renderer::UNIT_LIGHT_DIRECTIONAL] *
-                D3d9LightsGeometry::numVertices_[Renderer::UNIT_LIGHT_DIRECTIONAL] *
+                D3d9LightsGeometry::vertexStrides_[LIGHT_DIRECTIONAL] *
+                D3d9LightsGeometry::numVertices_[LIGHT_DIRECTIONAL] *
                 D3d9LightsGeometry::batchSize_,
 
                 // Point light
-                D3d9LightsGeometry::vertexStrides_[Renderer::UNIT_LIGHT_POINT] *
-                D3d9LightsGeometry::numVertices_[Renderer::UNIT_LIGHT_POINT] *
+                D3d9LightsGeometry::vertexStrides_[LIGHT_POINT] *
+                D3d9LightsGeometry::numVertices_[LIGHT_POINT] *
                 D3d9LightsGeometry::batchSize_,
 
                 // Spot light
-                D3d9LightsGeometry::vertexStrides_[Renderer::UNIT_LIGHT_SPOT] *
-                D3d9LightsGeometry::numVertices_[Renderer::UNIT_LIGHT_SPOT] *
+                D3d9LightsGeometry::vertexStrides_[LIGHT_SPOT] *
+                D3d9LightsGeometry::numVertices_[LIGHT_SPOT] *
                 D3d9LightsGeometry::batchSize_
         };
 
@@ -178,7 +178,7 @@ namespace selene
                 memset(d3dVertexBuffers_, 0, sizeof(d3dVertexBuffers_));
                 d3dDevice_ = nullptr;
 
-                currentLightRenderingUnit_ = -1;
+                currentLightType_ = -1;
         }
         D3d9LightsGeometry::~D3d9LightsGeometry()
         {
@@ -200,7 +200,7 @@ namespace selene
                         D3DDECL_END()
                 };
 
-                for(uint8_t l = 0; l < Renderer::NUM_OF_LIGHT_UNITS; ++l)
+                for(uint8_t l = 0; l < NUM_OF_LIGHT_TYPES; ++l)
                 {
                         if(FAILED(d3dDevice_->CreateVertexDeclaration(d3dVertexElements,
                                                                       &d3dVertexDeclarations_[l])))
@@ -246,13 +246,13 @@ namespace selene
         //-----------------------------------------------------------------
         void D3d9LightsGeometry::destroy()
         {
-                for(uint8_t i = 0; i < Renderer::NUM_OF_LIGHT_UNITS; ++i)
+                for(uint8_t i = 0; i < NUM_OF_LIGHT_TYPES; ++i)
                 {
                         SAFE_RELEASE(d3dVertexDeclarations_[i]);
                         SAFE_RELEASE(d3dVertexBuffers_[i]);
                 }
 
-                currentLightRenderingUnit_ = -1;
+                currentLightType_ = -1;
         }
 
         //-----------------------------------------------------------------
@@ -262,27 +262,27 @@ namespace selene
         }
 
         //-----------------------------------------------------------------
-        bool D3d9LightsGeometry::beginRendering(int16_t lightRenderingUnit)
+        bool D3d9LightsGeometry::beginRendering(uint8_t lightType)
         {
-                if(d3dDevice_ == nullptr || lightRenderingUnit < 0 ||
-                   lightRenderingUnit >= Renderer::NUM_OF_LIGHT_UNITS)
+                if(d3dDevice_ == nullptr ||
+                   lightType >= NUM_OF_LIGHT_TYPES)
                 {
-                        currentLightRenderingUnit_ = -1;
+                        currentLightType_ = -1;
                         return false;
                 }
 
-                if(d3dVertexDeclarations_[lightRenderingUnit] == nullptr ||
-                   d3dVertexBuffers_[lightRenderingUnit] == nullptr)
+                if(d3dVertexDeclarations_[lightType] == nullptr ||
+                   d3dVertexBuffers_[lightType] == nullptr)
                 {
-                        currentLightRenderingUnit_ = -1;
+                        currentLightType_ = -1;
                         return false;
                 }
 
-                currentLightRenderingUnit_ = lightRenderingUnit;
+                currentLightType_ = static_cast<int16_t>(lightType);
 
-                d3dDevice_->SetVertexDeclaration(d3dVertexDeclarations_[lightRenderingUnit]);
-                d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[lightRenderingUnit],
-                                            0, vertexStrides_[lightRenderingUnit]);
+                d3dDevice_->SetVertexDeclaration(d3dVertexDeclarations_[lightType]);
+                d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[lightType],
+                                            0, vertexStrides_[lightType]);
                 d3dDevice_->SetIndices(nullptr);
 
                 return true;
@@ -291,18 +291,18 @@ namespace selene
         //-----------------------------------------------------------------
         void D3d9LightsGeometry::endRendering()
         {
-                currentLightRenderingUnit_ = -1;
+                currentLightType_ = -1;
         }
 
         //-----------------------------------------------------------------
         bool D3d9LightsGeometry::render(uint32_t numLights)
         {
-                if(d3dDevice_ == nullptr || currentLightRenderingUnit_ < 0 ||
+                if(d3dDevice_ == nullptr || currentLightType_ < 0 ||
                    numLights == 0 || numLights > batchSize_)
                         return false;
 
                 d3dDevice_->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0,
-                                          numLights * numVertices_[currentLightRenderingUnit_] - 2);
+                                          numLights * numVertices_[currentLightType_] - 2);
 
                 return true;
         }

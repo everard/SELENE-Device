@@ -69,10 +69,12 @@ namespace selene
         //------------------------------------------------------------------------------------
         void Actor::setMesh(const Resource::Instance<Mesh>& mesh)
         {
-                if(*mesh == nullptr)
-                        return;
-
+                skeletonInstance_ = nullptr;
+                renderingUnit_ = -1;
                 mesh_ = mesh;
+
+                if(*mesh_ == nullptr)
+                        return;
 
                 const Mesh::Data& meshData = (*mesh_)->getData();
                 boundingBoxes_[ORIGINAL] = meshData.boundingBox;
@@ -83,12 +85,18 @@ namespace selene
                         {
                                 mesh_ = Resource::Instance<Mesh>();
                                 skeletonInstance_ = nullptr;
+
                                 return;
                         }
+
+                        renderingUnit_ = Renderer::Data::UNIT_MESH_SKIN;
                         skeletonInstance_ = const_cast<Skeleton::Instance*>(&meshAnimationProcessor_.getSkeletonInstance());
                 }
                 else
+                {
+                        renderingUnit_ = Renderer::Data::UNIT_MESH_STATIC;
                         skeletonInstance_ = nullptr;
+                }
 
                 requestUpdateOperation();
         }
@@ -159,14 +167,7 @@ namespace selene
         //------------------------------------------------------------------------------------
         int16_t Actor::getRenderingUnit() const
         {
-                Mesh* mesh = *mesh_;
-                if(mesh == nullptr)
-                        return -1;
-
-                if(skeletonInstance_ != nullptr)
-                        return Renderer::UNIT_MESH_SKIN;
-
-                return Renderer::UNIT_MESH_STATIC;
+                return renderingUnit_;
         }
 
         //------------------------------------------------------------------------------------

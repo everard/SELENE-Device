@@ -396,7 +396,8 @@ namespace selene
                 if(camera_ == nullptr)
                         return false;
 
-                renderer.clearLists();
+                auto& renderingData = renderer.getData();
+                renderingData.clear();
 
                 numVisibleActors_ = numVisibleLights_ = 0;
                 numVisibleParticleSystems_ = 0;
@@ -413,7 +414,7 @@ namespace selene
 
                                 actor.processMeshAnimations(elapsedTime);
                                 actor.computeViewProjectionTransform(*camera_);
-                                renderer.addActor(actor);
+                                renderingData.addActor(actor);
                         }
                 }
 
@@ -424,7 +425,7 @@ namespace selene
                         if(light.determineRelation(cameraFrustum) != OUTSIDE)
                         {
                                 ++numVisibleLights_;
-                                renderer.addLight(light);
+                                renderingData.addLight(light);
 
                                 if(!light.is(Node::SHADOW_CASTER))
                                         continue;
@@ -437,7 +438,7 @@ namespace selene
                                                 continue;
 
                                         if(actor.determineRelation(light.getVolume()) != OUTSIDE)
-                                                renderer.addShadow(light, actor);
+                                                renderingData.addShadow(light, actor);
                                 }
                         }
                 }
@@ -450,7 +451,7 @@ namespace selene
                         {
                                 ++numVisibleParticleSystems_;
                                 particleSystem.process(elapsedTime);
-                                renderer.addParticleSystem(particleSystem);
+                                renderingData.addParticleSystem(particleSystem);
                         }
                 }
 

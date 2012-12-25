@@ -28,7 +28,7 @@ namespace selene
                  * \brief Reads mesh animation.
                  * \param[in] stream std::istream from which mesh animation data is read
                  * \param[out] meshAnimationData mesh animation data
-                 * \return true if mesh animation was successfully read
+                 * \return true if mesh animation has been successfully read
                  */
                 bool readMeshAnimation(std::istream& stream,
                                        MeshAnimation::Data& meshAnimationData);

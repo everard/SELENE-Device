@@ -92,7 +92,10 @@ namespace selene
         //----------------------------------------------------------------------
         int16_t DirectionalLight::getRenderingUnit() const
         {
-                return Renderer::UNIT_LIGHT_DIRECTIONAL;
+                if(is(Light::SHADOW_CASTER))
+                        return Renderer::Data::UNIT_LIGHT_DIRECTIONAL;
+
+                return Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL;
         }
 
         //----------------------------------------------------------------------
@@ -139,7 +142,10 @@ namespace selene
         //----------------------------------------------------------------------
         int16_t PointLight::getRenderingUnit() const
         {
-                return Renderer::UNIT_LIGHT_POINT;
+                if(is(Light::SHADOW_CASTER))
+                        return Renderer::Data::UNIT_LIGHT_POINT;
+
+                return Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT;
         }
 
         //----------------------------------------------------------------------
@@ -269,7 +275,10 @@ namespace selene
         //----------------------------------------------------------------------
         int16_t SpotLight::getRenderingUnit() const
         {
-                return Renderer::UNIT_LIGHT_SPOT;
+                if(is(Light::SHADOW_CASTER))
+                        return Renderer::Data::UNIT_LIGHT_SPOT;
+
+                return Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT;
         }
 
         //----------------------------------------------------------------------

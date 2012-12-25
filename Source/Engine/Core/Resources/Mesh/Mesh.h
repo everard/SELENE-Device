@@ -19,6 +19,7 @@ namespace selene
 
         /**
          * Represents mesh.
+         * \see Mesh::Data for more info.
          */
         class Mesh: public Resource
         {
@@ -43,7 +44,7 @@ namespace selene
                         uint32_t numVertices;
                         uint32_t faceIndex;
                         uint32_t numFaces;
-                        Material material;
+                        std::shared_ptr<Material> material;
 
                         Subset();
                         ~Subset();

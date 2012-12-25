@@ -29,7 +29,7 @@ namespace selene
                  * \param[out] meshData mesh data
                  * \param[in] textureManager texture manager
                  * \param[in] textureFactory texture factory
-                 * \return true if mesh was successfully read
+                 * \return true if mesh has been successfully read
                  */
                 bool readMesh(std::istream& stream,
                               Mesh::Data& meshData,
@@ -40,7 +40,7 @@ namespace selene
                  * \brief Writes mesh.
                  * \param[in] stream std::ostream to which mesh data is written
                  * \param[in] meshData mesh data
-                 * \return true if mesh was successfully written
+                 * \return true if mesh has been successfully written
                  */
                 bool writeMesh(std::ostream& stream, const Mesh::Data& meshData);
 
@@ -54,7 +54,7 @@ namespace selene
                  * \brief Reads string.
                  * \param[in] stream std::istream from which string is read
                  * \param[out] string c-string
-                 * \return true if string was successfully read
+                 * \return true if string has been successfully read
                  */
                 bool readString(std::istream& stream, char* string);
 
@@ -62,7 +62,7 @@ namespace selene
                  * \brief Writes string.
                  * \param[in] stream std::ostream to which string is written
                  * \param[in] string c-string
-                 * \return true if string was successfully written
+                 * \return true if string has been successfully written
                  */
                 bool writeString(std::ostream& stream, const char* string);
 
@@ -75,14 +75,14 @@ namespace selene
                  * \brief Reads material.
                  * \param[in] stream std::istream from which material is read
                  * \param[out] material material
-                 * \return true if material was successfully read
+                 * \return true if material has been successfully read
                  */
                 bool readMaterial(std::istream& stream, Material& material);
 
                 /**
                  * \brief Reads header.
                  * \param[in] stream std::istream from which header is read
-                 * \return true if header was successfully read
+                 * \return true if header has been successfully read
                  */
                 bool readHeader(std::istream& stream);
 
@@ -90,7 +90,7 @@ namespace selene
                  * \brief Reads bounding box.
                  * \param[in] stream std::istream from which bounding box is read
                  * \param[out] boundingBox bounding box
-                 * \return true if bounding box was successfully read
+                 * \return true if bounding box has been successfully read
                  */
                 bool readBoundingBox(std::istream& stream, Box& boundingBox);
 
@@ -98,7 +98,7 @@ namespace selene
                  * \brief Reads vertices and faces.
                  * \param[in] stream std::istream from which vertices and faces are read
                  * \param[out] meshData mesh data
-                 * \return true if vertices and faces were successfully read
+                 * \return true if vertices and faces have been successfully read
                  */
                 bool readVerticesAndFaces(std::istream& stream, Mesh::Data& meshData);
 
@@ -106,7 +106,7 @@ namespace selene
                  * \brief Reads subsets.
                  * \param[in] stream std::istream from which subsets are read
                  * \param[out] meshData mesh data
-                 * \return true if subsets were successfully read
+                 * \return true if subsets have been successfully read
                  */
                 bool readSubsets(std::istream& stream, Mesh::Data& meshData);
 
@@ -114,7 +114,7 @@ namespace selene
                  * \brief Reads bones.
                  * \param[in] stream std::istream from which bones are read
                  * \param[out] bones array of bones
-                 * \return true if bones were successfully read
+                 * \return true if bones have been successfully read
                  */
                 bool readBones(std::istream& stream, Array<Skeleton::Bone, uint16_t>& bones);
 
@@ -122,14 +122,14 @@ namespace selene
                  * \brief Writes material.
                  * \param[in] stream std::ostream to which material is written
                  * \param[in] material material
-                 * \return true if material was successfully written
+                 * \return true if material has been successfully written
                  */
                 bool writeMaterial(std::ostream& stream, const Material& material);
 
                 /**
                  * \brief Writes header.
                  * \param[in] stream std::ostream to which header is written
-                 * \return true if header was successfully written
+                 * \return true if header has been successfully written
                  */
                 bool writeHeader(std::ostream& stream);
 
@@ -137,7 +137,7 @@ namespace selene
                  * \brief Writes bounding box.
                  * \param[in] stream std::ostream to which bounding box is written
                  * \param[in] boundingBox bounding box
-                 * \return true if bounding box was successfully written
+                 * \return true if bounding box has been successfully written
                  */
                 bool writeBoundingBox(std::ostream& stream, const Box& boundingBox);
 
@@ -145,7 +145,7 @@ namespace selene
                  * \brief Writes vertices and faces.
                  * \param[in] stream std::ostream to which vertices and faces are written
                  * \param[in] meshData mesh data
-                 * \return true if vertices and faces were successfully written
+                 * \return true if vertices and faces have been successfully written
                  */
                 bool writeVerticesAndFaces(std::ostream& stream, const Mesh::Data& meshData);
 
@@ -153,7 +153,7 @@ namespace selene
                  * \brief Writes subsets.
                  * \param[in] stream std::ostream to which subsets are written
                  * \param[in] meshData mesh data
-                 * \return true if subsets were successfully written
+                 * \return true if subsets have been successfully written
                  */
                 bool writeSubsets(std::ostream& stream, const Mesh::Data& meshData);
 
@@ -161,7 +161,7 @@ namespace selene
                  * \brief Writes bones.
                  * \param[in] stream std::ostream to which bones are written
                  * \param[in] bones array of bones
-                 * \return true if bones were successfully written
+                 * \return true if bones have been successfully written
                  */
                 bool writeBones(std::ostream& stream, const Array<Skeleton::Bone, uint16_t>& bones);
 

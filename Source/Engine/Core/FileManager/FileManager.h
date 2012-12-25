@@ -59,7 +59,7 @@ namespace selene
                  *
                  * Searches in folders specified with addFolder.
                  * \param[in] fileName name of the file to find
-                 * \return c-string containing full path if file was found, nullptr otherwise
+                 * \return c-string containing full path if file has been found, nullptr otherwise
                  */
                 virtual const char* find(const char* fileName) const;
 
@@ -68,7 +68,7 @@ namespace selene
                  *
                  * Looks for file in folders specified with addFolder and opens it.
                  * \param[in] fileName name of the file to open
-                 * \return pointer to the std::istream if file was found and opened, nullptr otherwise
+                 * \return pointer to the std::istream if file has been found and opened, nullptr otherwise
                  */
                 virtual std::istream* open(const char* fileName) const;
 

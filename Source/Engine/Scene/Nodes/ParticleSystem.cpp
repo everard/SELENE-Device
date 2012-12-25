@@ -233,7 +233,7 @@ namespace selene
         //-------------------------------------------------------------------------
         int16_t ParticleSystem::getRenderingUnit() const
         {
-                return Renderer::UNIT_PARTICLE_SYSTEM;
+                return Renderer::Data::UNIT_PARTICLE_SYSTEM;
         }
 
         //-------------------------------------------------------------------------

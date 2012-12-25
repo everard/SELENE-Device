@@ -515,17 +515,21 @@ namespace selene
                 for(uint32_t i = 0; i < meshData.subsets.getSize(); ++i)
                 {
                         Mesh::Subset& subset = meshData.subsets[i];
+                        subset.material.reset(new(std::nothrow) Material);
+                        if(!subset.material)
+                                return false;
+
                         RawMeshData::Material& rawMaterial = rawMeshData_->materials_[i];
 
                         subset.faceIndex = rawMaterial.faceIndex;
 
                         // set blinn material
                         if(strncmp(reinterpret_cast<char*>(rawMaterial.type), "BLINN", 5) == 0)
-                                subset.material.setShadingType(MATERIAL_SHADING_BLINN);
+                                subset.material->setShadingType(MATERIAL_SHADING_BLINN);
                         else if(strncmp(reinterpret_cast<char*>(rawMaterial.type), "PHONG", 5) == 0)
-                                subset.material.setShadingType(MATERIAL_SHADING_PHONG);
+                                subset.material->setShadingType(MATERIAL_SHADING_PHONG);
 
-                        Material& material = subset.material;
+                        Material& material = *subset.material;
 
                         if(rawMaterial.isTwoSided)
                                 material.setFlags(MATERIAL_TWO_SIDED);

@@ -62,7 +62,7 @@ namespace selene
 
                 /**
                  * \brief Prepares texture.
-                 * \return true if texture was successfully prepared for rendering
+                 * \return true if texture has been successfully prepared for rendering
                  */
                 bool prepare();
 

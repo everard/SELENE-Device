@@ -99,7 +99,7 @@ namespace selene
                  * to the skeleton. The influence, which MixableMeshAnimation has on the skeleton depends on
                  * the blend factor.
                  *
-                 * For example, consider the following: we have two animations, which were previously added with
+                 * For example, consider the following: we have two animations, which have previously been added with
                  * MeshAnimationProcessor::addMeshAnimation. They both influence the same bone, say, "left_arm".
                  * First animation has it rotated by 90 degrees around Z axis, second - around Y axis.
                  * If they both have blendfactors less that one, then resulting pose is computed as following:
@@ -241,7 +241,7 @@ namespace selene
                 /**
                  * \brief Removes mesh animation.
                  * \param[in] index index of the animation which will be removed
-                 * \return true if animation was successfully removed
+                 * \return true if animation has been successfully removed
                  */
                 bool removeMeshAnimation(uint32_t index);
 
