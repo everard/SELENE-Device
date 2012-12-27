@@ -38,7 +38,8 @@ namespace selene
                          * \param[in] actor actor which holds world matrix
                          * \param[in] camera camera which holds view-projection matrix
                          */
-                        void compute(const Actor& actor, const Camera& camera);
+                        void compute(const Actor& actor, const Matrix& viewMatrix,
+                                     const Matrix& viewProjectionMatrix);
 
                         /**
                          * \brief Returns world-view-projection matrix.
@@ -80,18 +81,6 @@ namespace selene
                       const Quaternion& rotation = Quaternion(),
                       const Vector3d& scale = Vector3d(1.0f, 1.0f, 1.0f));
                 virtual ~Actor();
-
-                /**
-                 * \brief Computes view-projection transform.
-                 * \param[in] camera camera which holds view-projection matrix
-                 */
-                void computeViewProjectionTransform(const Camera& camera);
-
-                /**
-                 * \brief Returns view-projection transform.
-                 * \return const reference to the view-projection transform
-                 */
-                const ViewProjectionTransform& getViewProjectionTransform() const;
 
                 /**
                  * \brief Sets mesh.

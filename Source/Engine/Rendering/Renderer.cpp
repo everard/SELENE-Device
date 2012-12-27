@@ -18,13 +18,13 @@ namespace selene
         Renderer::Data::MeshSubsetNode::~MeshSubsetNode() {}
 
         //-----------------------------------------------------------------------------------------------
-        bool Renderer::Data::MeshSubsetNode::add(const Mesh::Subset& meshSubset, const Actor& actor)
+        bool Renderer::Data::MeshSubsetNode::add(const Mesh::Subset& meshSubset, const Renderer::Data::Instance& instance)
         {
                 Element* element = requestElement(const_cast<Mesh::Subset*>(&meshSubset));
                 if(element == nullptr)
                         return false;
 
-                element->data.push_back(const_cast<Actor*>(&actor));
+                element->data.push_back(instance);
                 addElement(element);
                 return true;
         }
@@ -34,13 +34,13 @@ namespace selene
 
         //-----------------------------------------------------------------------------------------------
         bool Renderer::Data::MeshNode::add(const Mesh& mesh, const Mesh::Subset& meshSubset,
-                                           const Actor& actor)
+                                           const Renderer::Data::Instance& instance)
         {
                 Element* element = requestElement(const_cast<Mesh*>(&mesh));
                 if(element == nullptr)
                         return false;
 
-                element->data.add(meshSubset, actor);
+                element->data.add(meshSubset, instance);
 
                 addElement(element);
                 return true;
@@ -52,13 +52,13 @@ namespace selene
         //-----------------------------------------------------------------------------------------------
         bool Renderer::Data::MaterialNode::add(const Material& material, const Mesh& mesh,
                                                const Mesh::Subset& meshSubset,
-                                               const Actor& actor)
+                                               const Renderer::Data::Instance& instance)
         {
                 Element* element = requestElement(const_cast<Material*>(&material));
                 if(element == nullptr)
                         return false;
 
-                if(!element->data.add(mesh, meshSubset, actor))
+                if(!element->data.add(mesh, meshSubset, instance))
                         return false;
 
                 uint8_t renderingUnit = material.is(MATERIAL_TWO_SIDED) ? static_cast<uint8_t>(UNIT_MATERIAL_TWO_SIDED) : static_cast<uint8_t>(UNIT_MATERIAL_ONE_SIDED);
@@ -78,7 +78,7 @@ namespace selene
         }
 
         //-----------------------------------------------------------------------------------------------
-        bool Renderer::Data::ActorNode::add(const Actor& actor)
+        bool Renderer::Data::ActorNode::add(const Actor& actor, const Renderer::Data::Instance& instance)
         {
                 int16_t renderingUnit = actor.getRenderingUnit();
                 if(renderingUnit < 0 || renderingUnit >= NUM_OF_MESH_UNITS)
@@ -96,7 +96,7 @@ namespace selene
                         if(!meshData.subsets[i].material)
                                 continue;
 
-                        materialNode.add(*meshData.subsets[i].material, *mesh, meshData.subsets[i], actor);
+                        materialNode.add(*meshData.subsets[i].material, *mesh, meshData.subsets[i], instance);
                 }
 
                 return true;
@@ -125,8 +125,15 @@ namespace selene
                 if(element == nullptr)
                         return false;
 
-                if(shadowCaster != nullptr)
-                        element->data.add(*shadowCaster);
+                if(shadowCaster != nullptr && light.getRenderingUnit() == UNIT_LIGHT_SPOT)
+                {
+                        const SpotLight& spotLight = static_cast<const SpotLight&>(light);
+
+                        Instance instance(&shadowCaster->getSkeletonInstance(), Actor::ViewProjectionTransform());
+                        instance.second.compute(*shadowCaster, spotLight.getViewMatrix(), spotLight.getViewProjectionMatrix());
+
+                        element->data.add(*shadowCaster, instance);
+                }
 
                 addElement(element, static_cast<uint8_t>(renderingUnit));
                 return true;
@@ -181,9 +188,11 @@ namespace selene
         }
 
         //-----------------------------------------------------------------------------------------------
-        bool Renderer::Data::addActor(const Actor& actor)
+        bool Renderer::Data::addActor(const Actor& actor, const Camera& camera)
         {
-                return actorNode_.add(actor);
+                Instance instance(&actor.getSkeletonInstance(), Actor::ViewProjectionTransform());
+                instance.second.compute(actor, camera.getViewMatrix(), camera.getViewProjectionMatrix());
+                return actorNode_.add(actor, instance);
         }
 
         //-----------------------------------------------------------------------------------------------

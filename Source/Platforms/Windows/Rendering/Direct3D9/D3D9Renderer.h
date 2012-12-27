@@ -203,24 +203,24 @@ namespace selene
                 void setupLightAccumulationPass();
 
                 // Renders actors
-                void renderActors(D3d9VertexShader* vertexShaders, uint8_t vertexShaderBaseIndex,
-                                  uint8_t* vertexStreamIndices, uint8_t numVertexStreams,
-                                  uint8_t pass);
+                void renderActors(Renderer::Data::ActorNode& actorNode, D3d9VertexShader* vertexShaders,
+                                  uint8_t vertexShaderBaseIndex, uint8_t* vertexStreamIndices,
+                                  uint8_t numVertexStreams, uint8_t pass);
 
                 // Renders actors
                 void renderActors(const Mesh::Subset& meshSubset,
-                                  const std::vector<Actor*>& actors,
+                                  const std::vector<Renderer::Data::Instance>& instances,
                                   uint8_t meshRenderingUnit,
                                   uint8_t pass);
 
                 // Renders shadows
-                void renderShadows(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
+                /*void renderShadows(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);*/
 
                 // Renders shadows
-                void renderShadows(const Mesh::Subset& meshSubset,
+                /*void renderShadows(const Mesh::Subset& meshSubset,
                                    const std::vector<Actor*>& actors,
                                    const SpotLight& spotLight,
-                                   uint8_t meshRenderingUnit);
+                                   uint8_t meshRenderingUnit);*/
 
                 // Creates shadow map
                 void createShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
@@ -230,9 +230,6 @@ namespace selene
 
                 // Renders positions and normals
                 void renderPositionsAndNormals();
-
-                // Accumulates lighting
-                void accumulateLighting();
 
                 // Blurs SSAO
                 void blurSsao(const Vector4d& edgeDetectionParameters, bool shouldUpscale = false);

@@ -413,8 +413,7 @@ namespace selene
                                 ++numVisibleActors_;
 
                                 actor.processMeshAnimations(elapsedTime);
-                                actor.computeViewProjectionTransform(*camera_);
-                                renderingData.addActor(actor);
+                                renderingData.addActor(actor, *camera_);
                         }
                 }
 

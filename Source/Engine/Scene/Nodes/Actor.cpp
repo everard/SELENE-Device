@@ -12,11 +12,12 @@ namespace selene
         Actor::ViewProjectionTransform::ViewProjectionTransform() {}
         Actor::ViewProjectionTransform::~ViewProjectionTransform() {}
 
-        //------------------------------------------------------------------------------------
-        void Actor::ViewProjectionTransform::compute(const Actor& actor, const Camera& camera)
+        //----------------------------------------------------------------------------------------
+        void Actor::ViewProjectionTransform::compute(const Actor& actor, const Matrix& viewMatrix,
+                                                     const Matrix& viewProjectionMatrix)
         {
-                worldViewProjectionMatrix_ = actor.getWorldMatrix() * camera.getViewProjectionMatrix();
-                worldViewMatrix_ = actor.getWorldMatrix() * camera.getViewMatrix();
+                worldViewProjectionMatrix_ = actor.getWorldMatrix() * viewProjectionMatrix;
+                worldViewMatrix_ = actor.getWorldMatrix() * viewMatrix;
                 normalsMatrix_ = worldViewMatrix_;
                 normalsMatrix_.invert();
                 normalsMatrix_.transpose();
@@ -53,18 +54,6 @@ namespace selene
                 setMesh(mesh);
         }
         Actor::~Actor() {}
-
-        //------------------------------------------------------------------------------------
-        void Actor::computeViewProjectionTransform(const Camera& camera)
-        {
-                viewProjectionTransform_.compute(*this, camera);
-        }
-
-        //------------------------------------------------------------------------------------
-        const Actor::ViewProjectionTransform& Actor::getViewProjectionTransform() const
-        {
-                return viewProjectionTransform_;
-        }
 
         //------------------------------------------------------------------------------------
         void Actor::setMesh(const Resource::Instance<Mesh>& mesh)

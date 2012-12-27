@@ -7,8 +7,11 @@
 #include "../Core/Resources/Mesh/Mesh.h"
 #include "../Core/Math/Matrix.h"
 
+#include "../Scene/Nodes/Actor.h"
+
 #include <algorithm>
 #include <ostream>
+#include <utility>
 #include <memory>
 #include <vector>
 #include <map>
@@ -23,7 +26,6 @@ namespace selene
         class FileManager;
         class Material;
         class Camera;
-        class Actor;
         class Light;
         class Gui;
 
@@ -271,9 +273,14 @@ namespace selene
                         };
 
                         /**
+                         * Represents rendering instance.
+                         */
+                        typedef std::pair<const Skeleton::Instance*, Actor::ViewProjectionTransform> Instance;
+
+                        /**
                          * Represents mesh subset node.
                          */
-                        class MeshSubsetNode: public Node<Mesh::Subset, std::vector<Actor*>>
+                        class MeshSubsetNode: public Node<Mesh::Subset, std::vector<Instance>>
                         {
                         public:
                                 MeshSubsetNode();
@@ -282,10 +289,10 @@ namespace selene
                                 /**
                                  * \brief Adds mesh subset.
                                  * \param[in] meshSubset mesh subset, which should be added to the node
-                                 * \param[in] actor actor, which holds given mesh subset
+                                 * \param[in] instance instance of the rendered entity
                                  * \return true if mesh subset has been successfully
                                  */
-                                bool add(const Mesh::Subset& meshSubset, const Actor& actor);
+                                bool add(const Mesh::Subset& meshSubset, const Instance& instance);
 
                         };
 
@@ -303,11 +310,11 @@ namespace selene
                                  * \param[in] mesh mesh, which should be added to the node
                                  * \param[in] meshSubset mesh subset, which should be added
                                  * to the child nodes
-                                 * \param[in] actor actor, which holds given mesh
+                                 * \param[in] instance instance of the rendered entity
                                  * \return true if mesh has been successfully added
                                  */
                                 bool add(const Mesh& mesh, const Mesh::Subset& meshSubset,
-                                         const Actor& actor);
+                                         const Instance& instance);
 
                         };
 
@@ -326,12 +333,12 @@ namespace selene
                                  * \param[in] mesh mesh, which should be added to the child nodes
                                  * \param[in] meshSubset mesh subset, which is associated with
                                  * given material
-                                 * \param[in] actor actor, which contains given material
+                                 * \param[in] instance instance of the rendered entity
                                  * \return true if material has been successfully added
                                  */
                                 bool add(const Material& material, const Mesh& mesh,
                                          const Mesh::Subset& meshSubset,
-                                         const Actor& actor);
+                                         const Instance& instance);
 
                         };
 
@@ -353,9 +360,10 @@ namespace selene
                                 /**
                                  * \brief Adds actor.
                                  * \param[in] actor actor, which should be added to the node
+                                 * \param[in] instance instance of the rendered entity
                                  * \return true if actor has been successfully added
                                  */
-                                bool add(const Actor& actor);
+                                bool add(const Actor& actor, const Instance& instance);
 
                                 /**
                                  * \brief Returns material node.
@@ -439,7 +447,7 @@ namespace selene
                          * \param[in] actor actor, which should be rendered
                          * \return true if actor has been successfully added
                          */
-                        bool addActor(const Actor& actor);
+                        bool addActor(const Actor& actor, const Camera& camera);
 
                         /**
                          * \brief Adds light.

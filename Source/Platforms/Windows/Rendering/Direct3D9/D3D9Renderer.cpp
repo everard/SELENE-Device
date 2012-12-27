@@ -798,7 +798,7 @@ namespace selene
                         return;
 
                 renderPositionsAndNormals();
-                accumulateLighting();
+                renderLights();
 
                 if(is(RENDERING_SSAO_ENABLED))
                         renderSsao();
@@ -997,12 +997,11 @@ namespace selene
         }
 
         //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderActors(D3d9VertexShader* vertexShaders, uint8_t vertexShaderBaseIndex,
-                                        uint8_t* vertexStreamIndices, uint8_t numVertexStreams,
-                                        uint8_t pass)
+        void D3d9Renderer::renderActors(Renderer::Data::ActorNode& actorNode, D3d9VertexShader* vertexShaders,
+                                        uint8_t vertexShaderBaseIndex, uint8_t* vertexStreamIndices,
+                                        uint8_t numVertexStreams, uint8_t pass)
         {
                 const DWORD cullModes[] = {D3DCULL_CCW, D3DCULL_NONE};
-                auto& actorNode = data_.getActorNode();
 
                 // walk through all mesh units
                 for(uint8_t meshUnit = 0; meshUnit < Renderer::Data::NUM_OF_MESH_UNITS; ++meshUnit)
@@ -1071,12 +1070,12 @@ namespace selene
                                                          resultMeshSubset = meshSubsetNode->readNextElement())
                                                 {
                                                         auto meshSubset = meshSubsetNode->getCurrentKey();
-                                                        auto actors     = meshSubsetNode->getCurrentData();
+                                                        auto transforms = meshSubsetNode->getCurrentData();
 
-                                                        if(meshSubset == nullptr || actors == nullptr)
+                                                        if(meshSubset == nullptr || transforms == nullptr)
                                                                 break;
 
-                                                        renderActors(*meshSubset, *actors, meshUnit, pass);
+                                                        renderActors(*meshSubset, *transforms, meshUnit, pass);
                                                 }
                                         }
                                 }
@@ -1086,134 +1085,33 @@ namespace selene
 
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderActors(const Mesh::Subset& meshSubset,
-                                        const std::vector<Actor*>& actors,
+                                        const std::vector<Renderer::Data::Instance>& instances,
                                         uint8_t meshRenderingUnit,
                                         uint8_t pass)
         {
-                for(auto it = actors.begin(); it != actors.end(); ++it)
+                for(auto it = instances.begin(); it != instances.end(); ++it)
                 {
-                        Actor* actor = (*it);
-                        if(actor == nullptr)
-                                continue;
-
-                        const Actor::ViewProjectionTransform& viewProjectionTransform = actor->getViewProjectionTransform();
-                        d3dDevice_->SetVertexShaderConstantF(0, static_cast<const float*>(viewProjectionTransform.getWorldViewProjectionMatrix()), 4);
+                        const auto& transform = (*it).second;
+                        d3dDevice_->SetVertexShaderConstantF(0, static_cast<const float*>(transform.getWorldViewProjectionMatrix()), 4);
 
                         switch(pass)
                         {
                                 case RENDERING_PASS_POSITIONS_AND_NORMALS:
-                                        d3dDevice_->SetVertexShaderConstantF(4, static_cast<const float*>(viewProjectionTransform.getWorldViewMatrix()), 4);
-                                        d3dDevice_->SetVertexShaderConstantF(8, static_cast<const float*>(viewProjectionTransform.getNormalsMatrix()), 4);
+                                        d3dDevice_->SetVertexShaderConstantF(4, static_cast<const float*>(transform.getWorldViewMatrix()), 4);
+                                        d3dDevice_->SetVertexShaderConstantF(8, static_cast<const float*>(transform.getNormalsMatrix()), 4);
                                         break;
 
                                 case RENDERING_PASS_POSITIONS:
-                                        d3dDevice_->SetVertexShaderConstantF(4, static_cast<const float*>(viewProjectionTransform.getWorldViewMatrix()), 4);
+                                        d3dDevice_->SetVertexShaderConstantF(4, static_cast<const float*>(transform.getWorldViewMatrix()), 4);
                                         break;
 
                                 case RENDERING_PASS_NORMALS:
-                                        d3dDevice_->SetVertexShaderConstantF(8, static_cast<const float*>(viewProjectionTransform.getNormalsMatrix()), 4);
+                                        d3dDevice_->SetVertexShaderConstantF(8, static_cast<const float*>(transform.getNormalsMatrix()), 4);
                                         break;
                         }
 
                         if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                setSkeletonPose(actor->getSkeletonInstance().getFinalBoneTransforms());
-
-                        d3dDevice_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, meshSubset.vertexIndex,
-                                                         meshSubset.numVertices, 3 * meshSubset.faceIndex,
-                                                         meshSubset.numFaces);
-                }
-        }
-
-        //------------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderShadows(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
-        {
-                const DWORD cullModes[] = {D3DCULL_CCW, D3DCULL_NONE};
-
-                // walk through all mesh units
-                for(uint8_t meshUnit = 0; meshUnit < Renderer::Data::NUM_OF_MESH_UNITS; ++meshUnit)
-                {
-                        auto& materialNode = actorNode.getMaterialNode(meshUnit);
-                        vertexShaders_[VERTEX_SHADER_POSITIONS_PASS + meshUnit].set();
-
-                        // walk through all material units
-                        for(uint8_t materialUnit = 0; materialUnit < Renderer::Data::NUM_OF_MATERIAL_UNITS; ++materialUnit)
-                        {
-                                d3dDevice_->SetRenderState(D3DRS_CULLMODE, cullModes[materialUnit]);
-
-                                // walk through all materials
-                                for(bool materialResult = materialNode.readFirstElement(materialUnit); materialResult;
-                                         materialResult = materialNode.readNextElement())
-                                {
-                                        auto material = materialNode.getCurrentKey();
-                                        if(material == nullptr)
-                                                break;
-
-                                        auto meshNode = materialNode.getCurrentData();
-                                        if(meshNode == nullptr)
-                                                break;
-
-                                        // walk through all meshes
-                                        for(bool resultMesh = meshNode->readFirstElement(); resultMesh;
-                                                 resultMesh = meshNode->readNextElement())
-                                        {
-                                                D3d9Mesh* d3dMesh = static_cast<D3d9Mesh*>(meshNode->getCurrentKey());
-                                                if(d3dMesh == nullptr)
-                                                        break;
-
-                                                auto meshSubsetNode = meshNode->getCurrentData();
-                                                if(meshSubsetNode == nullptr)
-                                                        break;
-
-                                                const auto& meshData = d3dMesh->getData();
-
-                                                d3dDevice_->SetStreamSource(Mesh::VERTEX_STREAM_POSITIONS,
-                                                                            d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_POSITIONS],
-                                                                            0,
-                                                                            meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getStride());
-
-                                                if(meshUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                                        d3dDevice_->SetStreamSource(3, d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], 0,
-                                                                                    meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
-
-                                                d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
-
-                                                // walk through all mesh subsets
-                                                for(bool resultMeshSubset = meshSubsetNode->readFirstElement(); resultMeshSubset;
-                                                         resultMeshSubset = meshSubsetNode->readNextElement())
-                                                {
-                                                        auto meshSubset = meshSubsetNode->getCurrentKey();
-                                                        auto actors     = meshSubsetNode->getCurrentData();
-
-                                                        if(meshSubset == nullptr || actors == nullptr)
-                                                                break;
-
-                                                        renderShadows(*meshSubset, *actors, spotLight, meshUnit);
-                                                }
-                                        }
-                                }
-                        }
-                }
-        }
-
-        //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderShadows(const Mesh::Subset& meshSubset,
-                                         const std::vector<Actor*>& actors,
-                                         const SpotLight& spotLight,
-                                         uint8_t meshRenderingUnit)
-        {
-                for(auto it = actors.begin(); it != actors.end(); ++it)
-                {
-                        Actor* actor = (*it);
-                        if(actor == nullptr)
-                                continue;
-
-                        d3dDevice_->SetVertexShaderConstantF(0, static_cast<const float*>(actor->getWorldMatrix() *
-                                                                spotLight.getViewProjectionMatrix()), 4);
-                        d3dDevice_->SetVertexShaderConstantF(4, static_cast<const float*>(actor->getWorldMatrix() *
-                                                                spotLight.getViewMatrix()), 4);
-
-                        if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                setSkeletonPose(actor->getSkeletonInstance().getFinalBoneTransforms());
+                                setSkeletonPose((*it).first->getFinalBoneTransforms());
 
                         d3dDevice_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, meshSubset.vertexIndex,
                                                          meshSubset.numVertices, 3 * meshSubset.faceIndex,
@@ -1251,7 +1149,12 @@ namespace selene
                 // set shaders
                 pixelShaders_[PIXEL_SHADER_POSITIONS_PASS].set();
                 d3dDevice_->SetPixelShaderConstantF(0, static_cast<const float*>(spotLight.getProjectionParameters()), 1);
-                renderShadows(actorNode, spotLight);
+
+                uint8_t vertexStreamIndices[] = {Mesh::VERTEX_STREAM_POSITIONS};
+                renderActors(actorNode, vertexShaders_,
+                             VERTEX_SHADER_POSITIONS_PASS,
+                             vertexStreamIndices,
+                             1, RENDERING_PASS_POSITIONS);
 
                 // render shadow
                 Matrix lightTextureMatrix, lightViewMatrix;
@@ -1323,63 +1226,12 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderLights()
         {
+                d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_LIGHTS]);
+                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
+
                 d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
-
-                /*
-                if(lightsListType == LIGHTS_LIST_WITH_SHADOWS)
-                {
-                        // render with shadows
-                        LightsList& lightsList = lightsLists_[lightsListType];
-
-                        for(bool result = lightsList.readFirstElement(UNIT_LIGHT_SPOT); result; result = lightsList.readNextElement())
-                        {
-                                auto lightData = lightsList.getCurrentData();
-                                auto spotLight = static_cast<SpotLight*>(lightsList.getCurrentKey());
-
-                                if(lightData == nullptr || spotLight == nullptr)
-                                        break;
-
-                                // create shadow map
-                                createShadowMap(lightData->getShadowsList(), *spotLight);
-
-                                // setup light accumulation
-                                setupLightAccumulationPass();
-
-                                // set shadow map at sampler 2
-                                d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                                d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                                d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetTexture(2, d3dRenderTargetTextures_[RENDER_TARGET_SSAO]);
-
-                                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-                                d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-                                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
-
-                                vertexShaders_[VERTEX_SHADER_SPOT_LIGHT_ACCUMULATION].set();
-                                pixelShaders_[PIXEL_SHADER_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS].set();
-
-                                // render with shadows
-                                if(!lightsGeometry_.beginRendering(UNIT_LIGHT_SPOT))
-                                        break;
-
-                                Vector4d position(spotLight->getPosition(), spotLight->getRadius());
-                                Vector4d direction(spotLight->getDirection(), spotLight->getCosTheta());
-                                Vector4d color(spotLight->getColor(), spotLight->getIntensity());
-
-                                d3dDevice_->SetVertexShaderConstantF(12, (float*)position,  1);
-                                d3dDevice_->SetVertexShaderConstantF(42, (float*)direction, 1);
-                                d3dDevice_->SetVertexShaderConstantF(72, (float*)color, 1);
-
-                                lightsGeometry_.render(1);
-                                lightsGeometry_.endRendering();
-                        }
-
-                        return;
-                }*/
 
                 auto& lightNode = data_.getLightNode();
 
@@ -1511,11 +1363,15 @@ namespace selene
                         lightsGeometry_.render(1);
                         lightsGeometry_.endRendering();
                 }
+
+                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         }
 
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderPositionsAndNormals()
         {
+                auto& actorNode = data_.getActorNode();
+
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
                 d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
@@ -1565,7 +1421,8 @@ namespace selene
 
                         optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS].set();
                         d3dDevice_->SetPixelShaderConstantF(0, static_cast<const float*>(projectionParameters_), 1);
-                        renderActors(optionalVertexShaders_, OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS,
+                        renderActors(actorNode, optionalVertexShaders_,
+                                     OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS,
                                      vertexStreamIndices[1], numVertexStreams[1],
                                      RENDERING_PASS_POSITIONS_AND_NORMALS);
                         d3dDevice_->SetRenderTarget(1, nullptr);
@@ -1601,21 +1458,11 @@ namespace selene
                                 pixelShaders_[pixelShaderNo[pass]].set();
                                 d3dDevice_->SetPixelShaderConstantF(0, (const float*)projectionParameters_, 1);
 
-                                renderActors(vertexShaders_, vertexShaderNo[pass],
+                                renderActors(actorNode, vertexShaders_, vertexShaderNo[pass],
                                              vertexStreamIndices[pass], numVertexStreams[pass],
                                              pass);
                         }
                 }
-        }
-
-        //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::accumulateLighting()
-        {
-                d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_LIGHTS]);
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
-
-                renderLights();
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         }
 
         //--------------------------------------------------------------------------------------------
@@ -1865,7 +1712,7 @@ namespace selene
                         Mesh::VERTEX_STREAM_TEXTURE_COORDINATES
                 };
                 uint8_t numVertexStreams = 2;
-                renderActors(vertexShaders_, VERTEX_SHADER_SHADING_PASS,
+                renderActors(data_.getActorNode(), vertexShaders_, VERTEX_SHADER_SHADING_PASS,
                              vertexStreamIndices, numVertexStreams,
                              RENDERING_PASS_SHADING);
         }

@@ -55,8 +55,7 @@ namespace selene
                                            projectionInvMatrix.a[1][1],
                                            1.0, 0.0);
 
-                // clear rendering lists
-                clearLists();
+                data_.clear();
         }
 
         //-------------------------------------------------------------------
