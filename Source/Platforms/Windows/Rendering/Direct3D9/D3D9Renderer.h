@@ -226,10 +226,10 @@ namespace selene
                 void createShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
 
                 // Renders lights
-                void renderLights();
+                void renderLights(Renderer::Data::LightNode& lightNode);
 
                 // Renders positions and normals
-                void renderPositionsAndNormals();
+                void renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode);
 
                 // Blurs SSAO
                 void blurSsao(const Vector4d& edgeDetectionParameters, bool shouldUpscale = false);
@@ -238,10 +238,10 @@ namespace selene
                 void renderSsao();
 
                 // Renders shading
-                void shade();
+                void shade(Renderer::Data::ActorNode& actorNode);
 
                 // Renders particles
-                void renderParticles();
+                void renderParticles(Renderer::Data::ParticleSystemNode& particleSystemNode);
 
                 // Blurs bloom
                 void blurBloom(const Vector4d& kernelSize);

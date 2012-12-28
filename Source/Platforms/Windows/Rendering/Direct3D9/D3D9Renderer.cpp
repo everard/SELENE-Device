@@ -774,7 +774,9 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return;
 
-                guiRenderer_.setGui(gui_);
+                auto& renderingData = const_cast<Renderer::Data&>(camera.getRenderingData());
+                Gui* gui = camera.getGui();
+                guiRenderer_.setGui(gui);
 
                 // get matrices
                 viewProjectionMatrix_ = camera.getViewProjectionMatrix();
@@ -797,14 +799,14 @@ namespace selene
                 if(FAILED(d3dDevice_->BeginScene()))
                         return;
 
-                renderPositionsAndNormals();
-                renderLights();
+                renderPositionsAndNormals(renderingData.getActorNode());
+                renderLights(renderingData.getLightNode());
 
                 if(is(RENDERING_SSAO_ENABLED))
                         renderSsao();
 
-                shade();
-                renderParticles();
+                shade(renderingData.getActorNode());
+                renderParticles(renderingData.getParticleSystemNode());
 
                 uint8_t resultRenderTarget = RENDER_TARGET_NORMALS;
                 if(is(RENDERING_BLOOM_ENABLED))
@@ -864,7 +866,7 @@ namespace selene
 
                         guiRenderer_.renderText();
 
-                        if(!gui_->is(GUI_DISABLED))
+                        if(!gui->is(GUI_DISABLED))
                         {
                                 vertexShaders_[VERTEX_SHADER_GUI_CURSOR_PASS].set();
                                 pixelShaders_[PIXEL_SHADER_GUI_CURSOR_PASS].set();
@@ -883,9 +885,6 @@ namespace selene
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
                 d3dDevice_->EndScene();
                 d3dDevice_->Present(nullptr, nullptr, 0, nullptr);
-
-                // clear rendering data
-                data_.clear();
         }
 
         //--------------------------------------------------------------------------------------------
@@ -1224,7 +1223,7 @@ namespace selene
         }
 
         //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderLights()
+        void D3d9Renderer::renderLights(Renderer::Data::LightNode& lightNode)
         {
                 d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_LIGHTS]);
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
@@ -1232,8 +1231,6 @@ namespace selene
                 d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
-
-                auto& lightNode = data_.getLightNode();
 
                 // render without shadows
                 setupLightAccumulationPass();
@@ -1368,10 +1365,8 @@ namespace selene
         }
 
         //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderPositionsAndNormals()
+        void D3d9Renderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
-                auto& actorNode = data_.getActorNode();
-
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
                 d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
@@ -1646,7 +1641,7 @@ namespace selene
         }
 
         //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::shade()
+        void D3d9Renderer::shade(Renderer::Data::ActorNode& actorNode)
         {
                 d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_NORMALS]);
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
@@ -1712,13 +1707,13 @@ namespace selene
                         Mesh::VERTEX_STREAM_TEXTURE_COORDINATES
                 };
                 uint8_t numVertexStreams = 2;
-                renderActors(data_.getActorNode(), vertexShaders_, VERTEX_SHADER_SHADING_PASS,
+                renderActors(actorNode, vertexShaders_, VERTEX_SHADER_SHADING_PASS,
                              vertexStreamIndices, numVertexStreams,
                              RENDERING_PASS_SHADING);
         }
 
         //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderParticles()
+        void D3d9Renderer::renderParticles(Renderer::Data::ParticleSystemNode& particleSystemNode)
         {
                 d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
@@ -1754,8 +1749,6 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
                 d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-                auto& particleSystemNode = data_.getParticleSystemNode();
 
                 for(bool result = particleSystemNode.readFirstElement(Renderer::Data::UNIT_PARTICLE_SYSTEM); result;
                          result = particleSystemNode.readNextElement())

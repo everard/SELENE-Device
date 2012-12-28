@@ -36,7 +36,8 @@ namespace selene
                         /**
                          * \brief Computes view-projection transform.
                          * \param[in] actor actor which holds world matrix
-                         * \param[in] camera camera which holds view-projection matrix
+                         * \param[in] viewMatrix view matrix
+                         * \param[in] viewProjectionMatrix view-projection matrix
                          */
                         void compute(const Actor& actor, const Matrix& viewMatrix,
                                      const Matrix& viewProjectionMatrix);

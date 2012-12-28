@@ -11,7 +11,8 @@ namespace selene
                        const Vector3d& direction,
                        const Vector3d& upVector,
                        const Vector4d& projectionParameters,
-                       float distance): Scene::Node(name)
+                       float distance,
+                       Gui* gui): Scene::Node(name)
         {
                 setPosition(position);
                 setDirection(direction);
@@ -21,8 +22,35 @@ namespace selene
                 setDistance(distance);
 
                 horizontalAngle_ = verticalAngle_ = 0.0f;
+
+                renderingData_.setCamera(*this);
+                gui_ = gui;
         }
         Camera::~Camera() {}
+
+        //---------------------------------------------------------------
+        void Camera::setGui(Gui* gui)
+        {
+                gui_ = gui;
+        }
+
+        //---------------------------------------------------------------
+        Gui* Camera::getGui() const
+        {
+                return gui_;
+        }
+
+        //---------------------------------------------------------------
+        Renderer::Data& Camera::getRenderingData()
+        {
+                return renderingData_;
+        }
+
+        //---------------------------------------------------------------
+        const Renderer::Data& Camera::getRenderingData() const
+        {
+                return renderingData_;
+        }
 
         //---------------------------------------------------------------
         void Camera::setPerspective(const Vector4d& projectionParameters)

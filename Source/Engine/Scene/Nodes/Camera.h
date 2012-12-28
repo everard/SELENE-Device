@@ -4,6 +4,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "../../Rendering/Renderer.h"
+#include "../../GUI/GUI.h"
+
 #include "../../Core/Math/Matrix.h"
 #include "../../Core/Math/Sphere.h"
 #include "../Scene.h"
@@ -27,14 +30,40 @@ namespace selene
                  * \param[in] projectionParameters projection parameters (where x is half of field of view,
                  * y - aspect ratio, z - distance to the near clip plane, w - distance to the far clip plane)
                  * \param[in] distance distance from the original position
+                 * \param[in] gui GUI
                  */
                 Camera(const char* name,
                        const Vector3d& position  = Vector3d(),
                        const Vector3d& direction = Vector3d(1.0f),
                        const Vector3d& upVector  = Vector3d(0.0f, 1.0f),
                        const Vector4d& projectionParameters = Vector4d(45.0f, 0.75f, 1.0f, 1000.0f),
-                       float distance = 0.0f);
+                       float distance = 0.0f,
+                       Gui* gui = nullptr);
                 virtual ~Camera();
+
+                /**
+                 * \brief Sets GUI.
+                 * \param[in] gui GUI
+                 */
+                void setGui(Gui* gui);
+
+                /**
+                 * \brief Returns GUI, associated with current camera.
+                 * \return pointer to the GUI
+                 */
+                Gui* getGui() const;
+
+                /**
+                 * \brief Returns rendering data.
+                 * \return reference to the rendering data
+                 */
+                Renderer::Data& getRenderingData();
+
+                /**
+                 * \brief Returns rendering data.
+                 * \return const reference to the rendering data
+                 */
+                const Renderer::Data& getRenderingData() const;
 
                 /**
                  * \brief Sets perspective.
@@ -168,24 +197,17 @@ namespace selene
                 RELATION determineRelation(const Volume& volume) const;
 
         protected:
-                // Matrices
                 mutable Matrix projectionMatrix_, projectionInvMatrix_;
                 mutable Matrix viewProjectionMatrix_, viewMatrix_;
-
-                // Projection parameters
                 Vector4d projectionParameters_;
 
-                // Directions and up vectors
                 mutable Vector3d directions_[NUM_OF_INDICES], upVectors_[NUM_OF_INDICES];
-
-                // Rotation angles and distance
                 float horizontalAngle_, verticalAngle_, distance_;
-
-                // Strafe direction and target
                 mutable Vector3d strafeDirection_, target_;
-
-                // Frustum
                 mutable Volume frustum_;
+
+                Renderer::Data renderingData_;
+                Gui* gui_;
 
                 /**
                  * \brief Updates camera.

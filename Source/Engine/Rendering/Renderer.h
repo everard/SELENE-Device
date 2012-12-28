@@ -20,6 +20,12 @@
 namespace selene
 {
 
+        /**
+         * \addtogroup Rendering
+         * \brief Renderer and rendering data.
+         * @{
+         */
+
         // Forward declaration of classes
         class ParticleSystem;
         class Application;
@@ -44,7 +50,17 @@ namespace selene
         {
         public:
                 /**
-                 * Represents rendering data.
+                 * Represents rendering data. It is organized in tree-like structure.
+                 * Nodes of the tree are keys, which sort rendering entities, reducing
+                 * state change. There are various types of nodes:
+                 * - ActorNode, which sorts rendered objects by mesh types;
+                 * - MaterialNode, which sorts objects by materials;
+                 * - MeshNode, which sorts objects by meshes and
+                 * - MeshSubsetNode, which sorts objects by mesh subsets.
+                 *
+                 * There is also LightNode, which contains shadow casters, sorted by lights (and
+                 * lights data), and ParticleSystemNode, which sorts particle systems by type and
+                 * particles inside them by textures.
                  */
                 class Data
                 {
@@ -75,7 +91,7 @@ namespace selene
                         /**
                          * Represents rendering node. Each node contains elements, which are
                          * sorted by given key K. During data preparation elements are added
-                         * to one or more rendering unit (number of units is N). Each element
+                         * to one or more rendering units (number of units is N). Each element
                          * contains rendering data D, which can be anything.
                          */
                         template <class K, class D, uint8_t N = 1> class Node
@@ -120,8 +136,8 @@ namespace selene
                                 /**
                                  * \brief Reads first element from specified unit.
                                  *
-                                 * Next element from this unit can be read by readNextElement() function.
-                                 * \param[in] unit unit
+                                 * Next element from this unit can be read using readNextElement() function.
+                                 * \param[in] unit rendering unit
                                  * \return true if first element from specified unit has been successfully read
                                  */
                                 bool readFirstElement(uint8_t unit = 0)
@@ -147,8 +163,7 @@ namespace selene
                                 /**
                                  * \brief Reads next element from unit.
                                  *
-                                 * This function may be called only after call to the readFirstElement()
-                                 * function.
+                                 * This function may only be called after using the readFirstElement() function.
                                  * \see readFirstElement
                                  * \return true if next element from current unit has been successfully read,
                                  * false if reading of current unit has been ended
@@ -273,12 +288,17 @@ namespace selene
                         };
 
                         /**
-                         * Represents rendering instance.
+                         * Represents rendering instance. Contains pointer to the skeleton instance of the actor
+                         * and view-projection transform of the actor, which will be rendered. The vector of
+                         * instances is present inside MeshSubsetNode.
+                         * \see MeshSubsetNode
                          */
                         typedef std::pair<const Skeleton::Instance*, Actor::ViewProjectionTransform> Instance;
 
                         /**
-                         * Represents mesh subset node.
+                         * Represents mesh subset node. Contains vectors of rendering instances, sorted by
+                         * mesh subsets.
+                         * \see Instance MeshNode
                          */
                         class MeshSubsetNode: public Node<Mesh::Subset, std::vector<Instance>>
                         {
@@ -290,14 +310,16 @@ namespace selene
                                  * \brief Adds mesh subset.
                                  * \param[in] meshSubset mesh subset, which should be added to the node
                                  * \param[in] instance instance of the rendered entity
-                                 * \return true if mesh subset has been successfully
+                                 * \return true if mesh subset has been successfully added
                                  */
                                 bool add(const Mesh::Subset& meshSubset, const Instance& instance);
 
                         };
 
                         /**
-                         * Represents mesh node.
+                         * Represents mesh node. Contains vectors of mesh subset nodes, sorted by
+                         * meshes.
+                         * \see MeshSubsetNode MaterialNode
                          */
                         class MeshNode: public Node<Mesh, MeshSubsetNode>
                         {
@@ -319,7 +341,9 @@ namespace selene
                         };
 
                         /**
-                         * Represents material node.
+                         * Represents material node. Contains vectors of mesh nodes, sorted by
+                         * materials and ordered by material units.
+                         * \see MeshNode ActorNode
                          */
                         class MaterialNode: public Node<Material, MeshNode, NUM_OF_MATERIAL_UNITS>
                         {
@@ -343,7 +367,8 @@ namespace selene
                         };
 
                         /**
-                         * Represents actor node.
+                         * Represents actor node. Contains material nodes, ordered by mesh units.
+                         * \see MaterialNode
                          */
                         class ActorNode
                         {
@@ -379,7 +404,9 @@ namespace selene
                         };
 
                         /**
-                         * Represents light node.
+                         * Represents light node. Contains vectors of actor nodes (which hold shadows),
+                         * sorted by lights and ordered by light units.
+                         * \see ActorNode
                          */
                         class LightNode: public Node<Light, ActorNode, NUM_OF_LIGHT_UNITS>
                         {
@@ -398,7 +425,8 @@ namespace selene
                         };
 
                         /**
-                         * Represents particle system node.
+                         * Represents particle system node. Contains vectors of particle systems,
+                         * sorted by textures and ordered by particle system units.
                          */
                         class ParticleSystemNode: public Node<Texture, std::vector<ParticleSystem*>, NUM_OF_PARTICLE_SYSTEM_UNITS>
                         {
@@ -417,6 +445,12 @@ namespace selene
 
                         Data();
                         ~Data();
+
+                        /**
+                         * \brief Sets camera, which point of view will be used to render the scene
+                         * \param[in] camera camera, which point of view will be used to render the scene
+                         */
+                        void setCamera(const Camera& camera);
 
                         /**
                          * \brief Clears data.
@@ -447,7 +481,7 @@ namespace selene
                          * \param[in] actor actor, which should be rendered
                          * \return true if actor has been successfully added
                          */
-                        bool addActor(const Actor& actor, const Camera& camera);
+                        bool addActor(const Actor& actor);
 
                         /**
                          * \brief Adds light.
@@ -459,10 +493,10 @@ namespace selene
                         /**
                          * \brief Adds shadow.
                          * \param[in] light light, which illuminates given shadow caster
-                         * \param[in] caster actor, which casts shadow from given light
+                         * \param[in] shadowCaster actor, which casts shadow from given light
                          * \return true if shadow has been successfully added
                          */
-                        bool addShadow(const Light& light, const Actor& caster);
+                        bool addShadow(const Light& light, const Actor& shadowCaster);
 
                         /**
                          * \brief Adds particle system.
@@ -475,6 +509,7 @@ namespace selene
                         ActorNode actorNode_;
                         LightNode lightNode_;
                         ParticleSystemNode particleSystemNode_;
+                        Camera* camera_;
 
                 };
 
@@ -536,8 +571,6 @@ namespace selene
                         uint8_t getFlags() const;
 
                 protected:
-                        friend class Renderer;
-
                         Application* application_;
                         FileManager* fileManager_;
                         uint32_t width_, height_;
@@ -550,24 +583,6 @@ namespace selene
                 virtual ~Renderer();
 
                 /**
-                 * \brief Sets GUI.
-                 * \param[in] gui GUI
-                 */
-                void setGui(const Gui& gui);
-
-                /**
-                 * \brief Returns rendering data.
-                 * \return reference to the rendering data
-                 */
-                Data& getData();
-
-                /**
-                 * \brief Returns rendering data.
-                 * \return const reference to the rendering data
-                 */
-                const Data& getData() const;
-
-                /**
                  * \brief Initializes renderer.
                  * \param[in] parameters rendering parameters
                  * \return true if renderer has been successfully initialized
@@ -577,7 +592,7 @@ namespace selene
                 /**
                  * \brief Destroys renderer.
                  *
-                 * Clears all rendering lists and releases all helper resources.
+                 * Releases all helper resources.
                  */
                 virtual void destroy() = 0;
 
@@ -587,11 +602,11 @@ namespace selene
                  */
                 virtual void render(const Camera& camera) = 0;
 
-        protected:
-                Data data_;
-                Gui* gui_;
-
         };
+
+        /**
+         * @}
+         */
 
 }
 

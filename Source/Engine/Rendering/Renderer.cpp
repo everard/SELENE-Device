@@ -17,7 +17,7 @@ namespace selene
         Renderer::Data::MeshSubsetNode::MeshSubsetNode() {}
         Renderer::Data::MeshSubsetNode::~MeshSubsetNode() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::MeshSubsetNode::add(const Mesh::Subset& meshSubset, const Renderer::Data::Instance& instance)
         {
                 Element* element = requestElement(const_cast<Mesh::Subset*>(&meshSubset));
@@ -32,7 +32,7 @@ namespace selene
         Renderer::Data::MeshNode::MeshNode() {}
         Renderer::Data::MeshNode::~MeshNode() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::MeshNode::add(const Mesh& mesh, const Mesh::Subset& meshSubset,
                                            const Renderer::Data::Instance& instance)
         {
@@ -49,7 +49,7 @@ namespace selene
         Renderer::Data::MaterialNode::MaterialNode() {}
         Renderer::Data::MaterialNode::~MaterialNode() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::MaterialNode::add(const Material& material, const Mesh& mesh,
                                                const Mesh::Subset& meshSubset,
                                                const Renderer::Data::Instance& instance)
@@ -61,7 +61,8 @@ namespace selene
                 if(!element->data.add(mesh, meshSubset, instance))
                         return false;
 
-                uint8_t renderingUnit = material.is(MATERIAL_TWO_SIDED) ? static_cast<uint8_t>(UNIT_MATERIAL_TWO_SIDED) : static_cast<uint8_t>(UNIT_MATERIAL_ONE_SIDED);
+                uint8_t renderingUnit = material.is(MATERIAL_TWO_SIDED) ? static_cast<uint8_t>(UNIT_MATERIAL_TWO_SIDED) :
+                                                                          static_cast<uint8_t>(UNIT_MATERIAL_ONE_SIDED);
 
                 addElement(element, renderingUnit);
                 return true;
@@ -70,14 +71,14 @@ namespace selene
         Renderer::Data::ActorNode::ActorNode() {}
         Renderer::Data::ActorNode::~ActorNode() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         void Renderer::Data::ActorNode::clear(bool freeMemory)
         {
                 for(uint8_t i = 0; i < NUM_OF_MESH_UNITS; ++i)
                         materialNodes_[i].clear(freeMemory);
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::ActorNode::add(const Actor& actor, const Renderer::Data::Instance& instance)
         {
                 int16_t renderingUnit = actor.getRenderingUnit();
@@ -102,7 +103,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         Renderer::Data::MaterialNode& Renderer::Data::ActorNode::getMaterialNode(uint8_t unit)
         {
                 if(unit >= NUM_OF_MESH_UNITS)
@@ -114,7 +115,7 @@ namespace selene
         Renderer::Data::LightNode::LightNode() {}
         Renderer::Data::LightNode::~LightNode() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::LightNode::add(const Light& light, Actor* shadowCaster)
         {
                 int16_t renderingUnit = light.getRenderingUnit();
@@ -142,7 +143,7 @@ namespace selene
         Renderer::Data::ParticleSystemNode::ParticleSystemNode() {}
         Renderer::Data::ParticleSystemNode::~ParticleSystemNode() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::ParticleSystemNode::add(const ParticleSystem& particleSystem)
         {
                 int16_t renderingUnit = particleSystem.getRenderingUnit();
@@ -158,10 +159,19 @@ namespace selene
                 return true;
         }
 
-        Renderer::Data::Data() {}
+        Renderer::Data::Data()
+        {
+                camera_ = nullptr;
+        }
         Renderer::Data::~Data() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
+        void Renderer::Data::setCamera(const Camera& camera)
+        {
+                camera_ = const_cast<Camera*>(&camera);
+        }
+
+        //----------------------------------------------------------------------------------------------------------------
         void Renderer::Data::clear(bool freeMemory)
         {
                 actorNode_.clear(freeMemory);
@@ -169,45 +179,48 @@ namespace selene
                 particleSystemNode_.clear(freeMemory);
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         Renderer::Data::ActorNode& Renderer::Data::getActorNode()
         {
                 return actorNode_;
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         Renderer::Data::LightNode& Renderer::Data::getLightNode()
         {
                 return lightNode_;
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         Renderer::Data::ParticleSystemNode& Renderer::Data::getParticleSystemNode()
         {
                 return particleSystemNode_;
         }
 
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::Data::addActor(const Actor& actor, const Camera& camera)
+        //----------------------------------------------------------------------------------------------------------------
+        bool Renderer::Data::addActor(const Actor& actor)
         {
+                if(camera_ == nullptr)
+                        return false;
+
                 Instance instance(&actor.getSkeletonInstance(), Actor::ViewProjectionTransform());
-                instance.second.compute(actor, camera.getViewMatrix(), camera.getViewProjectionMatrix());
+                instance.second.compute(actor, camera_->getViewMatrix(), camera_->getViewProjectionMatrix());
                 return actorNode_.add(actor, instance);
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::addLight(const Light& light)
         {
                 return lightNode_.add(light);
         }
 
-        //-----------------------------------------------------------------------------------------------
-        bool Renderer::Data::addShadow(const Light& light, const Actor& caster)
+        //----------------------------------------------------------------------------------------------------------------
+        bool Renderer::Data::addShadow(const Light& light, const Actor& shadowCaster)
         {
-                return lightNode_.add(light, const_cast<Actor*>(&caster));
+                return lightNode_.add(light, const_cast<Actor*>(&shadowCaster));
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         bool Renderer::Data::addParticleSystem(const ParticleSystem& particleSystem)
         {
                 return particleSystemNode_.add(particleSystem);
@@ -226,64 +239,43 @@ namespace selene
         }
         Renderer::Parameters::~Parameters() {}
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         Application* Renderer::Parameters::getApplication() const
         {
                 return const_cast<Application*>(application_);
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         FileManager* Renderer::Parameters::getFileManager() const
         {
                 return const_cast<FileManager*>(fileManager_);
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         uint32_t Renderer::Parameters::getWidth() const
         {
                 return width_;
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         uint32_t Renderer::Parameters::getHeight() const
         {
                 return height_;
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         std::ostream* Renderer::Parameters::getLog() const
         {
                 return const_cast<std::ostream*>(log_);
         }
 
-        //-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         uint8_t Renderer::Parameters::getFlags() const
         {
                 return flags_;
         }
 
-        Renderer::Renderer()
-        {
-                gui_ = nullptr;
-        }
+        Renderer::Renderer() {}
         Renderer::~Renderer() {}
-
-        //-----------------------------------------------------------------------------------------------
-        Renderer::Data& Renderer::getData()
-        {
-                return data_;
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        const Renderer::Data& Renderer::getData() const
-        {
-                return data_;
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        void Renderer::setGui(const Gui& gui)
-        {
-                gui_ = const_cast<Gui*>(&gui);
-        }
 
 }

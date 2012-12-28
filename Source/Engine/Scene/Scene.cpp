@@ -396,7 +396,7 @@ namespace selene
                 if(camera_ == nullptr)
                         return false;
 
-                auto& renderingData = renderer.getData();
+                auto& renderingData = camera_->getRenderingData();
                 renderingData.clear();
 
                 numVisibleActors_ = numVisibleLights_ = 0;
@@ -413,7 +413,7 @@ namespace selene
                                 ++numVisibleActors_;
 
                                 actor.processMeshAnimations(elapsedTime);
-                                renderingData.addActor(actor, *camera_);
+                                renderingData.addActor(actor);
                         }
                 }
 

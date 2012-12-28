@@ -61,8 +61,8 @@ namespace selene
                 if(!renderer_.initialize(parameters))
                         return false;
 
-                // set GUI to render
-                renderer_.setGui(gui_);
+                // set GUI to camera
+                camera_.setGui(&gui_);
 
                 // set camera for scene
                 scene_.setCamera(&camera_);

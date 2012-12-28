@@ -54,8 +54,6 @@ namespace selene
                 unprojectionVector_.define(projectionInvMatrix.a[0][0],
                                            projectionInvMatrix.a[1][1],
                                            1.0, 0.0);
-
-                data_.clear();
         }
 
         //-----------------------------------------------------------------
