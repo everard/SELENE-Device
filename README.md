@@ -4,23 +4,26 @@ Compiling under Linux
 =====================
 
 To compile existing code under Linux you should cd to the Build/Linux directory and run:
-        make all
+    make all
 
 Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
 
 Compiling under Android
 =======================
-Requirements: latest Android SDK and NDK installed.
+Requirements:
+* latest Android SDK and NDK
+* apache ant
+
 To compile core, cd to the Build/Android/Engine and run:
-        ndk-build
+    ndk-build
 
 It will build static library for x86 platform. If you wish to build libraries for all platforms, change APP_ABI in Android.mk:
-        APP_ABI := all
+    APP_ABI := all
 
 Now applications can be built. To do this, cd to the Build/Android/Demos/SimpleApplication or Build/Android/Demos/SimpleAnimation folder and run:
-        ndk-build
-        ant debug
-        ant installd
+    ndk-build
+    ant debug
+    ant installd
 
 This applications will run on your android device, but will not render, because, as mentioned earlier,
 currently there is no OpenGL ES renderer.
