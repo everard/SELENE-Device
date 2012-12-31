@@ -45,6 +45,7 @@ namespace selene
 
         /**
          * Represents renderer. This is base class for all renderers.
+         * \see Renderer::Data to obtain information about how scene objects are passed to the renderer.
          */
         class Renderer
         {
@@ -61,6 +62,56 @@ namespace selene
                  * There is also LightNode, which contains shadow casters, sorted by lights (and
                  * lights data), and ParticleSystemNode, which sorts particle systems by type and
                  * particles inside them by textures.
+                 *
+                 * Rendering data on the top level contains ActorNode (contains actors, which should be rendered),
+                 * LightNode (contains lights and shadow casters from each light) and ParticleSystemNode (contains
+                 * particle systems, which sould be rendered).
+                 *
+                 * The following oulines the structure of rendering data nodes.
+                 *
+                 * LightNode contains:
+                 * -------------------
+                 * - pointer to the selene::Light, which is sort key;
+                 * - ActorNode, which can be in one of the following units:
+                 *   + Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL,
+                 *   + Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT,
+                 *   + Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT,
+                 *   + Renderer::Data::UNIT_LIGHT_DIRECTIONAL,
+                 *   + Renderer::Data::UNIT_LIGHT_POINT,
+                 *   + Renderer::Data::UNIT_LIGHT_SPOT.
+                 *
+                 * ActorNode contains:
+                 * -------------------
+                 * - MaterialNode(s), which can be in one of the following units:
+                 *   + Renderer::Data::UNIT_MESH_STATIC,
+                 *   + Renderer::Data::UNIT_MESH_SKIN.
+                 *
+                 * MaterialNode contains:
+                 * ----------------------
+                 * - pointer to the selene::Material, which is sort key;
+                 * - MeshNode, which can be in one of the following units:
+                 *   + Renderer::Data::UNIT_MATERIAL_ONE_SIDED,
+                 *   + Renderer::Data::UNIT_MATERIAL_TWO_SIDED.
+                 *
+                 * MeshNode contains:
+                 * ------------------
+                 * - pointer to the selene::Mesh, which is sort key;
+                 * - MeshSubsetNode.
+                 *
+                 * MeshSubsetNode contains:
+                 * ------------------------
+                 * - pointer to the selene::Mesh::Subset, which is sort key;
+                 * - vector of Renderer::Data::Instance s.
+                 *
+                 * Renderer::Data::Instance contains:
+                 * ----------------------------------
+                 * transform matrices and pointer to the Skeleton::Instance.
+                 *
+                 * ParticleSystemNode contains:
+                 * ----------------------------
+                 * - pointer to the selene::Texture, which is sort key;
+                 * - vector of pointers to the selene::ParticleSystem, which can be in one of the following units:
+                 *   + Renderer::Data::UNIT_PARTICLE_SYSTEM.
                  */
                 class Data
                 {
