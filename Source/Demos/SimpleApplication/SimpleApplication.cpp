@@ -11,8 +11,7 @@ namespace selene
                                                            Platform::getDefaultScreenHeight());
         }
 
-        SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height),
-                                                                                                 camera_("Scene camera")
+        SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height)
         {
                 // specify search folders for file manager
                 const char* folders[] =
@@ -60,21 +59,6 @@ namespace selene
 
                 if(!renderer_.initialize(parameters))
                         return false;
-
-                // set GUI to camera
-                camera_.setGui(&gui_);
-
-                // set camera for scene
-                scene_.setCamera(&camera_);
-
-                // set camera parameters
-                camera_.setPerspective(Vector4d(45.0f,
-                                                static_cast<float>(height_) / static_cast<float>(width_),
-                                                1.0f,
-                                                1000.0f));
-                camera_.setPosition(Vector3d());
-                camera_.setDirection(Vector3d(0.0f, -0.5f, -1.0f));
-                camera_.setDistance(15.0f);
 
                 // initialize GUI
                 Vector4d buttonBackgroundColors[NUM_OF_GUI_ELEMENT_COLOR_TYPES] =
@@ -175,6 +159,18 @@ namespace selene
                                                            Vector3d(1.0f, 1.0f, 1.0f),
                                                            1.0f, 30.0f));
 
+                scene_.addNode(new(std::nothrow) Camera("Camera",
+                                                        Vector3d(),
+                                                        Vector3d(0.0f, -0.5f, -1.0f),
+                                                        Vector3d(0.0f, 1.0f),
+                                                        Vector4d(45.0f,
+                                                                 static_cast<float>(height_) / static_cast<float>(width_),
+                                                                 1.0f,
+                                                                 1000.0f),
+                                                        15.0f,
+                                                        &gui_));
+                camera_ = scene_.getCamera("Camera");
+
                 return true;
         }
 
@@ -211,8 +207,13 @@ namespace selene
         {
                 if(isCameraRotationEnabled_)
                 {
-                        camera_.rotateHorizontally(cursorShift_.x * -5.0f);
-                        camera_.rotateVertically(cursorShift_.y * 5.0f);
+                        auto camera = camera_.lock();
+
+                        if(camera)
+                        {
+                                camera->rotateHorizontally(cursorShift_.x * -5.0f);
+                                camera->rotateVertically(cursorShift_.y * 5.0f);
+                        }
                 }
 
                 // process GUI

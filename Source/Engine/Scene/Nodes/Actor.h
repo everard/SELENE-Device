@@ -15,11 +15,18 @@
 namespace selene
 {
 
+        /**
+         * \addtogroup Scene
+         * @{
+         */
+
         // Forward declaration of classes
         class Camera;
 
         /**
-         * Represents scene actor.
+         * Represents scene actor. This is a body in 3D space, whose appearance is determined
+         * by the Mesh. Actor also contains MeshAnimationProcessor, which is used in skeletal
+         * animation of the mesh (if it has skeleton).
          */
         class Actor: public Scene::Node
         {
@@ -35,7 +42,7 @@ namespace selene
 
                         /**
                          * \brief Computes view-projection transform.
-                         * \param[in] actor actor which holds world matrix
+                         * \param[in] actor actor, which holds world matrix
                          * \param[in] viewMatrix view matrix
                          * \param[in] viewProjectionMatrix view-projection matrix
                          */
@@ -61,7 +68,6 @@ namespace selene
                         const Matrix& getNormalsMatrix() const;
 
                 private:
-                        // Matrices
                         Matrix worldViewProjectionMatrix_;
                         Matrix worldViewMatrix_;
                         Matrix normalsMatrix_;
@@ -71,7 +77,7 @@ namespace selene
                 /**
                  * \brief Constructs actor with given name, mesh, position, rotation and scale.
                  * \param[in] name name of the actor
-                 * \param[in] mesh mesh which represents actor in scene
+                 * \param[in] mesh mesh, which represents actor in scene
                  * \param[in] position position of the actor
                  * \param[in] rotation rotation of the actor
                  * \param[in] scale scale of the actor
@@ -85,7 +91,7 @@ namespace selene
 
                 /**
                  * \brief Sets mesh.
-                 * \param[in] mesh mesh instance
+                 * \param[in] mesh instance of the mesh
                  */
                 void setMesh(const Resource::Instance<Mesh>& mesh);
 
@@ -103,6 +109,7 @@ namespace selene
 
                 /**
                  * \brief Adds mesh animation.
+                 * \see MeshAnimationProcessor::addMeshAnimation
                  * \param[in] meshAnimation mesh animation instance
                  * \param[in] blendFactorTransitionTime specifies how much time it takes to change blend factor
                  * \param[in] startingTransitionTime specifies how much time it takes to start the animation
@@ -121,13 +128,15 @@ namespace selene
 
                 /**
                  * \brief Removes mesh animation.
-                 * \param[in] index index of the animation which will be removed
+                 * \see MeshAnimationProcessor::removeMeshAnimation
+                 * \param[in] index index of the animation, which will be removed
                  * \return true if animation has been successfully removed
                  */
                 bool removeMeshAnimation(uint32_t index);
 
                 /**
                  * \brief Returns mesh animation.
+                 * \see MeshAnimationProcessor::getMeshAnimation
                  * \param[in] index index of the animation
                  * \return reference to the mixable mesh animation
                  */
@@ -135,6 +144,7 @@ namespace selene
 
                 /**
                  * \brief Processes mesh animations.
+                 * \see MeshAnimationProcessor::processMeshAnimations
                  * \param[in] elapsedTime elapsed time since last processing
                  */
                 void processMeshAnimations(float elapsedTime);
@@ -147,8 +157,8 @@ namespace selene
 
                 /**
                  * \brief Returns rendering unit.
-                 * \return -1 if actor has no mesh, UNIT_MESH_STATIC if mesh is static,
-                 * UNIT_MESH_SKIN if mesh has skeleton
+                 * \return -1 if actor has no mesh, Renderer::Data::UNIT_MESH_STATIC if actor's mesh is static,
+                 * Renderer::Data::UNIT_MESH_SKIN if actor's mesh has skeleton
                  */
                 int16_t getRenderingUnit() const;
 
@@ -168,13 +178,16 @@ namespace selene
                 void update() const;
 
         private:
-                ViewProjectionTransform viewProjectionTransform_;
                 MeshAnimationProcessor meshAnimationProcessor_;
                 mutable Box boundingBoxes_[NUM_OF_INDICES];
                 Resource::Instance<Mesh> mesh_;
                 int16_t renderingUnit_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

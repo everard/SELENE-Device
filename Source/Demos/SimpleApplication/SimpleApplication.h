@@ -27,11 +27,11 @@ namespace selene
                 // Renderer
                 Platform::Renderer renderer_;
 
-                // Camera
-                Camera camera_;
-
                 // Scene
                 Scene scene_;
+
+                // Camera
+                std::weak_ptr<Camera> camera_;
 
                 // GUI
                 Gui gui_;

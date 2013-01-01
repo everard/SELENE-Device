@@ -28,7 +28,7 @@ namespace selene
                 Platform::Renderer renderer_;
 
                 // Camera
-                Camera camera_;
+                std::weak_ptr<Camera> camera_;
 
                 // Scene
                 Scene scene_;

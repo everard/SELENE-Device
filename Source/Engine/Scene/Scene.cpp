@@ -104,15 +104,17 @@ namespace selene
         }
 
         //----------------------------------------------------------------------
-        void Scene::Node::detach()
+        bool Scene::Node::detach()
         {
-                if(parentNode_ != nullptr)
-                        parentNode_->childNodes_.erase(this);
+                if(parentNode_ == nullptr)
+                        return false;
 
+                parentNode_->childNodes_.erase(this);
                 parentNode_ = nullptr;
                 boneIndex_ = -1;
 
                 requestUpdateOperation();
+                return true;
         }
 
         //----------------------------------------------------------------------
@@ -217,8 +219,6 @@ namespace selene
         {
                 numVisibleActors_ = numVisibleLights_ = 0;
                 numVisibleParticleSystems_ = 0;
-
-                camera_ = nullptr;
         }
         Scene::~Scene()
         {
@@ -230,13 +230,19 @@ namespace selene
         {
                 actors_.clear();
                 lights_.clear();
+                cameras_.clear();
                 particleSystems_.clear();
         }
 
         //----------------------------------------------------------------------
-        void Scene::setCamera(Camera* camera)
+        bool Scene::setActiveCamera(const char* name)
         {
-                camera_ = camera;
+                auto camera = getCamera(name);
+                if(camera.expired())
+                        return false;
+
+                activeCamera_ = camera;
+                return true;
         }
 
         //----------------------------------------------------------------------
@@ -270,6 +276,12 @@ namespace selene
         }
 
         //----------------------------------------------------------------------
+        size_t Scene::getNumCameras() const
+        {
+                return cameras_.size();
+        }
+
+        //----------------------------------------------------------------------
         size_t Scene::getNumParticleSystems() const
         {
                 return particleSystems_.size();
@@ -299,6 +311,20 @@ namespace selene
                                                                     std::shared_ptr<Light>(light)));
                         if(!result.second)
                                 return false;
+
+                        return true;
+                }
+
+                Camera* camera = dynamic_cast<Camera*>(node);
+                if(camera != nullptr)
+                {
+                        auto result = cameras_.insert(std::make_pair(std::string(node->getName()),
+                                                                     std::shared_ptr<Camera>(camera)));
+                        if(!result.second)
+                                return false;
+
+                        if(activeCamera_.expired())
+                                activeCamera_ = result.first->second;
 
                         return true;
                 }
@@ -345,6 +371,19 @@ namespace selene
         }
 
         //----------------------------------------------------------------------
+        bool Scene::removeCamera(const char* name)
+        {
+                auto it = cameras_.find(std::string(name));
+
+                if(it == cameras_.end())
+                        return false;
+
+                cameras_.erase(it);
+
+                return true;
+        }
+
+        //----------------------------------------------------------------------
         bool Scene::removeParticleSystem(const char* name)
         {
                 auto it = particleSystems_.find(std::string(name));
@@ -380,6 +419,17 @@ namespace selene
         }
 
         //----------------------------------------------------------------------
+        std::weak_ptr<Camera> Scene::getCamera(const char* name)
+        {
+                auto it = cameras_.find(std::string(name));
+
+                if(it == cameras_.end())
+                        return std::weak_ptr<Camera>();
+
+                return std::weak_ptr<Camera>(it->second);
+        }
+
+        //----------------------------------------------------------------------
         std::weak_ptr<ParticleSystem> Scene::getParticleSystem(const char* name)
         {
                 auto it = particleSystems_.find(std::string(name));
@@ -393,16 +443,18 @@ namespace selene
         //----------------------------------------------------------------------
         bool Scene::updateAndRender(float elapsedTime, Renderer& renderer)
         {
-                if(camera_ == nullptr)
+                if(activeCamera_.expired())
                         return false;
 
-                auto& renderingData = camera_->getRenderingData();
+                auto camera = activeCamera_.lock();
+
+                auto& renderingData = camera->getRenderingData();
                 renderingData.clear();
 
                 numVisibleActors_ = numVisibleLights_ = 0;
                 numVisibleParticleSystems_ = 0;
 
-                const Volume& cameraFrustum = camera_->getFrustum();
+                const Volume& cameraFrustum = camera->getFrustum();
 
                 for(auto it = actors_.begin(); it != actors_.end(); ++it)
                 {
@@ -454,7 +506,7 @@ namespace selene
                         }
                 }
 
-                renderer.render(*camera_);
+                renderer.render(*camera);
                 return true;
         }
 
