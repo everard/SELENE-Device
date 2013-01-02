@@ -15,21 +15,26 @@ namespace selene
 {
 
         /**
-         * Represents camera.
+         * \addtogroup Scene
+         * @{
+         */
+
+        /**
+         * Represents scene camera. Contains rendering data, which can be passed to the renderer.
          */
         class Camera: public Scene::Node
         {
         public:
                 /**
                  * \brief Constructs camera with given name, position, direction, up vector,
-                 * projection parameters and distance from original position.
+                 * projection parameters, distance from target and GUI.
                  * \param[in] name name of the camera
                  * \param[in] position original position of the camera
                  * \param[in] direction original direction of the camera
                  * \param[in] upVector original up vector of the camera
                  * \param[in] projectionParameters projection parameters (where x is half of field of view,
                  * y - aspect ratio, z - distance to the near clip plane, w - distance to the far clip plane)
-                 * \param[in] distance distance from the original position
+                 * \param[in] distance distance from target
                  * \param[in] gui GUI
                  */
                 Camera(const char* name,
@@ -104,16 +109,21 @@ namespace selene
                 const Vector3d& getDirection() const;
 
                 /**
-                 * \brief Sets distance.
-                 * \param[in] distance distance from original camera position
-                 * to the modified camera position
+                 * \brief Sets distance from target.
+                 *
+                 * If set to zero, then camera becomes first person camera. Otherwise it becomes third person camera,
+                 * whose target resides in its local position (set by Scene::Node::setPosition method) and its actual
+                 * position resides in point, determined by the following formula.
+                 *
+                 * [real position of the camera] = [local position] - [camera direction] * [distance from target]
+                 * \param[in] distance distance from camera target
                  */
                 void setDistance(float distance);
 
                 /**
-                 * \brief Returns distance.
-                 * \return distance from original camera position
-                 * to the modified camera position
+                 * \brief Returns distance from target.
+                 * \see setDistance
+                 * \return distance from target
                  */
                 float getDistance() const;
 
@@ -220,6 +230,10 @@ namespace selene
                 void computeVectors() const;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
