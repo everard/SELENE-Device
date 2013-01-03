@@ -12,6 +12,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Scene
+         * @{
+         */
+
+        /**
          * Represents light. This is base class for all lights.
          */
         class Light: public Scene::Node
@@ -55,13 +60,8 @@ namespace selene
                 float getIntensity() const;
 
         protected:
-                // Volume
                 mutable Volume volume_;
-
-                // Color
                 Vector3d color_;
-
-                // Intensity
                 float intensity_;
 
         };
@@ -102,19 +102,24 @@ namespace selene
 
                 /**
                  * \brief Sets size.
+                 *
+                 * Size of the light defines maximum distance from the camera's position
+                 * at which scene nodes are illuminated by the current light.
                  * \param[in] size size of the light
                  */
                 void setSize(float size);
 
                 /**
                  * \brief Returns size.
+                 * \see setSize
                  * \return size of the light
                  */
                 float getSize() const;
 
                 /**
                  * \brief Returns rendering unit.
-                 * \return UNIT_LIGHT_DIRECTIONAL
+                 * \return Renderer::Data::UNIT_LIGHT_DIRECTIONAL if light casts shadows,
+                 * Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL if it doesn't
                  */
                 int16_t getRenderingUnit() const;
 
@@ -132,10 +137,7 @@ namespace selene
                 void update() const;
 
         private:
-                // Direction
                 Vector3d direction_;
-
-                // Size
                 float size_;
 
         };
@@ -176,7 +178,8 @@ namespace selene
 
                 /**
                  * \brief Returns rendering unit.
-                 * \return UNIT_LIGHT_POINT
+                 * \return Renderer::Data::UNIT_LIGHT_POINT if light casts shadows,
+                 * Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT if it doesn't
                  */
                 int16_t getRenderingUnit() const;
 
@@ -196,7 +199,6 @@ namespace selene
                 void update() const;
 
         private:
-                // Bounding sphere
                 mutable Sphere boundingSphere_;
 
         };
@@ -277,7 +279,8 @@ namespace selene
 
                 /**
                  * \brief Returns rendering unit.
-                 * \return UNIT_LIGHT_SPOT
+                 * \return Renderer::Data::UNIT_LIGHT_SPOT if light casts shadows,
+                 * Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT if it doesn't
                  */
                 int16_t getRenderingUnit() const;
 
@@ -297,22 +300,18 @@ namespace selene
                 void update() const;
 
         private:
-                // Directions
                 mutable Vector3d directions_[NUM_OF_INDICES];
-
-                // Bounding cone
                 mutable Cone boundingCone_;
 
-                // Matrices
                 mutable Matrix viewProjectionMatrix_, viewMatrix_;
-
-                // Projection parameters
                 mutable Vector4d projectionParameters_;
-
-                // Cosine of theta
                 mutable float cosTheta_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

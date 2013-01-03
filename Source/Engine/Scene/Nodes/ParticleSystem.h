@@ -13,6 +13,11 @@ namespace selene
 {
 
         /**
+         * \addtogroup Scene
+         * @{
+         */
+
+        /**
          * Represents particle system.
          */
         class ParticleSystem: public Scene::Node
@@ -71,14 +76,9 @@ namespace selene
                         void process(float elapsedTime);
 
                 private:
-                        // Position and velocity
                         Vector3d position_, velocity_;
-
-                        // Color
-                        Vector4d color_;
-
-                        // Size and fade-out speed
                         float size_, fadeOutSpeed_;
+                        Vector4d color_;
 
                 };
 
@@ -159,7 +159,7 @@ namespace selene
 
                 /**
                  * \brief Returns rendering unit.
-                 * \return UNIT_PARTICLE_SYSTEM
+                 * \return Renderer::Data::UNIT_PARTICLE_SYSTEM
                  */
                 int16_t getRenderingUnit() const;
 
@@ -179,34 +179,17 @@ namespace selene
                 void update() const;
 
         private:
-                // Particles
                 mutable Bag<Particle> particles_;
-
-                // Directions
                 mutable Vector3d directions_[NUM_OF_INDICES];
-
-                // Previous position
                 mutable Vector3d previousPosition_;
-
-                // Bounding box
                 mutable Box boundingBox_;
-
-                // Elapsed time
                 mutable float elapsedTime_;
 
-                // Velocity, life span and size
                 Vector2d velocity_, lifeSpan_, size_;
-
-                // Scattering
                 Vector3d scattering_;
-
-                // Color
                 Vector4d color_;
-
-                // Density
                 float density_;
 
-                // Texture
                 Resource::Instance<Texture> texture_;
 
                 /**
@@ -223,6 +206,10 @@ namespace selene
                 float getRandomFloatValue() const;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
