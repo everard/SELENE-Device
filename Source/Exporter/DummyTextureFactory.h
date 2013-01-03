@@ -10,6 +10,15 @@ namespace selene
 {
 
         /**
+         * \addtogroup Exporter
+         * \brief Application, which exports geometry to the SLE model format.
+         *
+         * Its input is RawMeshData, which is loaded from file. RawMeshData is then processed in Exporter, which
+         * saves the result as SLE model.
+         * @{
+         */
+
+        /**
          * Represents dummy texture factory.
          */
         class DummyTextureFactory: public ResourceFactory
@@ -31,6 +40,10 @@ namespace selene
                 Resource* createResource(const char* name);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

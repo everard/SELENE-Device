@@ -11,7 +11,13 @@ namespace selene
 {
 
         /**
-         * Represents exporter.
+         * \addtogroup Exporter
+         * @{
+         */
+
+        /**
+         * Represents exporter. Processes RawMeshData and saves the result as SLE model.
+         * Uses nvMeshMender to compute tangent-bitangent-normal basis for vertices.
          */
         class Exporter
         {
@@ -31,31 +37,17 @@ namespace selene
                 bool doExport(const char* fileName);
 
         private:
-                // Resource manager
                 ResourceManager resourceManager_;
-
-                // Mesh
                 Mesh mesh_;
 
-                // Raw mesh data
                 RawMeshData* rawMeshData_;
-
-                // Temporary faces
                 RawMeshData::Face* faces_;
 
-                // MeshMender vertices
                 std::vector<MeshMender::Vertex> meshMenderVertices_;
-
-                // MeshMender vertices mapping
                 std::vector<unsigned int> newToOldVertexMapping_;
 
-                // Skin vertices
                 Array<RawMeshData::SkinVertex, uint32_t> skinVertices_;
-
-                // Number of vertices
                 uint32_t numVertices_;
-
-                // Number of faces
                 uint32_t numFaces_;
 
                 /**
@@ -84,6 +76,10 @@ namespace selene
                 bool createSubsets(Mesh::Data& meshData);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -5,15 +5,6 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
-#include <ctime>
-
-// Waits for specified time interval
-void wait(clock_t interval)
-{
-        clock_t endwait;
-        endwait = clock() + interval;
-        while (clock() < endwait) {}
-}
 
 int main(int argc, char* args[])
 {
@@ -48,6 +39,5 @@ int main(int argc, char* args[])
                 }
         }
 
-        wait(1500);
         return 0;
 }

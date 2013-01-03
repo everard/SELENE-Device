@@ -58,8 +58,8 @@ Note, that your directory tree should be like this (to build and run everything 
 LINKS TO DOWNLOADS
 ==================
 Download Visual Studio 2010 Express Edition projects and application data from google drive:
-https://docs.google.com/open?id=0Byy41LxMuTKUdG5fV3dEc2hVcHM
-https://docs.google.com/open?id=0Byy41LxMuTKUOTh5VVFiS1V4bkE
+* [Application data](https://docs.google.com/open?id=0Byy41LxMuTKUdG5fV3dEc2hVcHM)
+* [Visual Studio 2010 Express Edition projects](https://docs.google.com/open?id=0Byy41LxMuTKULW5odzdhRWcxVEE)
 
 LICENSE
 =======

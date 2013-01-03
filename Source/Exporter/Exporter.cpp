@@ -56,7 +56,6 @@ namespace selene
                 }
 
         private:
-                // Vertex duplicates
                 std::map<uint32_t, FaceMap> duplicates_;
 
         };
