@@ -3,8 +3,12 @@
 
 /**
  * \mainpage SELENE Device
- * This software is cross-platform 3D graphics rendering engine, licensed under the
- * MIT License (see LICENSE.txt for details).
+ * SELENE Device is a cross-platform 3D graphics rendering engine. Current documentation outlines internal
+ * structure of the engine along with complete class reference. A good place to start reading the documentation
+ * is <a href="modules.html">modules</a> page.
+ *
+ * SELENE Device was created by Nezametdinov E. Eldus (neil.log@gmail.com) and licensed under the MIT License
+ * (see LICENSE.txt for details).
  */
 
 #ifndef FRAMEWORK_H
