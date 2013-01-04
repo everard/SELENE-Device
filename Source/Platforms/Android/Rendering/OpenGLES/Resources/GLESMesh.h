@@ -9,20 +9,20 @@
 namespace selene
 {
 
-        // Represents OpenGLES mesh.
+        // Represents OpenGL ES mesh.
         class GlesMesh: public Mesh
         {
         public:
                 GlesMesh(const char* name = nullptr);
                 ~GlesMesh();
 
-                // Prepares OpenGLES mesh
+                // Prepares OpenGL ES mesh
                 bool prepare();
 
         private:
                 friend class GlesRenderer;
 
-                // Destroys OpenGLES mesh data
+                // Destroys OpenGL ES mesh data
                 void destroy();
 
         };

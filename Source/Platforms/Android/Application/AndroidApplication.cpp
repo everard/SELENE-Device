@@ -78,6 +78,12 @@ namespace selene
         }
 
         //---------------------------------------------------------------------------------------
+        android_app* AndroidApplication::getState()
+        {
+                return state_;
+        }
+
+        //---------------------------------------------------------------------------------------
         float AndroidApplication::getKeyState(uint8_t key)
         {
                 key = 0;

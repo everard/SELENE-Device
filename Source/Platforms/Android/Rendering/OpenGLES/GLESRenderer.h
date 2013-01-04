@@ -8,10 +8,13 @@
 #include "../../../../Engine/Core/Resources/Mesh/Mesh.h"
 #include "../../../../Engine/Core/Status/Status.h"
 
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+
 namespace selene
 {
 
-        // Represents OpenGLES renderer.
+        // Represents OpenGL ES renderer.
         class GlesRenderer: public Renderer, public Status
         {
         public:
@@ -28,7 +31,6 @@ namespace selene
                 void render(const Camera& camera);
 
         private:
-                // Matrices and vectors
                 Matrix viewProjectionMatrix_;
                 Matrix projectionMatrix_;
                 Matrix viewInvMatrix_;
@@ -40,11 +42,17 @@ namespace selene
                 Vector4d unprojectionVector_;
                 Vector4d screenSize_;
 
-                // Parameters
                 Parameters parameters_;
+
+                EGLSurface surface_;
+                EGLContext context_;
+                EGLDisplay display_;
 
                 // Writes log entry
                 void writeLogEntry(const char* entry);
+
+                // Initializes context
+                bool initializeContext();
 
         };
 
