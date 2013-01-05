@@ -5,9 +5,9 @@ CONFIGURATION & BUILDING
 
 1. Create parent directory, which will contain SELENE Device:
 
-    mkdir SELENE-Device
-    cd SELENE-Device
-    git clone git://github.com/everard/SELENE-Device.git Repository
+        mkdir SELENE-Device
+        cd SELENE-Device
+        git clone git://github.com/everard/SELENE-Device.git Repository
 
 2. Download Build.zip archive and unzip it to the SELENE-Device directory.
 
@@ -68,7 +68,7 @@ To compile existing code under Windows, you should cd to the Build/Windows and c
 LINKS TO DOWNLOADS
 ==================
 Download Visual Studio 2010 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
-* [Build system and assets](https://docs.google.com/open?id=0Byy41LxMuTKUOU0wVy1DaW1DZEE)
+* [Build system and assets](https://docs.google.com/open?id=0Byy41LxMuTKUQ3Z3OFlRVXZrcGc)
 
 LICENSE
 =======
