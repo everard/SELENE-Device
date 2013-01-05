@@ -76,6 +76,8 @@ namespace selene
                                            projectionInvMatrix.a[1][1],
                                            1.0, 0.0);
 
+                glViewport(0, 0, parameters_.getWidth(), parameters_.getHeight());
+
                 glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -140,12 +142,8 @@ namespace selene
                         return false;
 
                 // prepare OpenGL ES
-                glDisable(GL_DITHER);
-                glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
                 glEnable(GL_CULL_FACE);
                 glEnable(GL_DEPTH_TEST);
-
-                glViewport(0, 0, parameters_.getWidth(), parameters_.getHeight());
 
                 return true;
         }

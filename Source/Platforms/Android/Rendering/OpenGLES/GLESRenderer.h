@@ -9,7 +9,7 @@
 #include "../../../../Engine/Core/Status/Status.h"
 
 #include <EGL/egl.h>
-#include <GLES/gl.h>
+#include <GLES2/gl2.h>
 
 namespace selene
 {

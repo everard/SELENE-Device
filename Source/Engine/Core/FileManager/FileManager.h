@@ -72,7 +72,7 @@ namespace selene
                  */
                 virtual std::istream* open(const char* fileName) const;
 
-        private:
+        protected:
                 mutable std::string fileName_;
                 std::vector<std::string> folders_;
                 bool (*fileExists_)(const char*);

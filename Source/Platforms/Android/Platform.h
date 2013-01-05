@@ -11,6 +11,9 @@
 #include "Application/AndroidApplication.h"
 #include "Application/AndroidTimer.h"
 
+#include <android/asset_manager.h>
+#include <set>
+
 namespace selene
 {
 
@@ -35,6 +38,19 @@ namespace selene
                 public:
                         FileManager();
                         ~FileManager();
+
+                        virtual const char* find(const char* fileName) const;
+                        virtual std::istream* open(const char* fileName) const;
+
+                private:
+                        static AAssetManager* assetManager_;
+                        std::set<std::string> fileSystemHierarchy_;
+
+                        /**
+                         * \brief Recursively reads contents of the assets directory.
+                         * \param[in] directoryName name of the directory
+                         */
+                        void readAssetsDirectory(const std::string& directoryName);
 
                 };
 
