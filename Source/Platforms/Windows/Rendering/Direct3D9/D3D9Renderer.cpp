@@ -343,54 +343,54 @@ namespace selene
                 FileManager* fileManager = parameters_.getFileManager();
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("Shaders//PositionPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SkinPositionPass.vsh", fileManager, vertexShaderLibrary, "vs_2_0", 0),
-                        D3d9Shader("Shaders//NormalsPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SkinNormalsPass.vsh", fileManager, vertexShaderLibrary, "vs_2_0", 0),
-                        D3d9Shader("Shaders//DirectionalLightAccPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//PointLightAccPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SpotLightAccPass.vsh", fileManager, emptyLibrary, "vs_2_0", 0),
-                        D3d9Shader("Shaders//SpotLightShadowPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//ShadingPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SkinShadingPass.vsh", fileManager, vertexShaderLibrary, "vs_2_0", 0),
-                        D3d9Shader("Shaders//ResultPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SSAOPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SSAOBlurX.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//SSAOBlurY.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//EdgeDetect.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//GUIFramesPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//GUITextPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//GUICursorPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//BrightPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//Bloom.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//CombinePass.vsh", fileManager, emptyLibrary, "vs_1_1", 0),
-                        D3d9Shader("Shaders//ParticlesPass.vsh", fileManager, emptyLibrary, "vs_1_1", 0)
+                        D3d9Shader("PositionPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SkinPositionPass.vsh", vertexShaderLibrary, "vs_2_0", 0),
+                        D3d9Shader("NormalsPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SkinNormalsPass.vsh", vertexShaderLibrary, "vs_2_0", 0),
+                        D3d9Shader("DirectionalLightAccPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("PointLightAccPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SpotLightAccPass.vsh", emptyLibrary, "vs_2_0", 0),
+                        D3d9Shader("SpotLightShadowPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("ShadingPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SkinShadingPass.vsh", vertexShaderLibrary, "vs_2_0", 0),
+                        D3d9Shader("ResultPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SSAOPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SSAOBlurX.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("SSAOBlurY.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("EdgeDetect.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("GUIFramesPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("GUITextPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("GUICursorPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("BrightPass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("Bloom.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("CombinePass.vsh", emptyLibrary, "vs_1_1", 0),
+                        D3d9Shader("ParticlesPass.vsh", emptyLibrary, "vs_1_1", 0)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("Shaders//PositionPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//NormalsPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//DirectionalLightAccPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//PointLightAccPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//SpotLightAccPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//SpotLightAccPassWithShadows.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//SpotLightShadowPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//ShadingPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//ShadingPassSSAO.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//ResultPass.psh", fileManager, pixelShaderLibrary, "ps_1_1", 0),
-                        D3d9Shader("Shaders//SSAOPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//SSAOBlurX.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//SSAOBlurY.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//EdgeDetect.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//GUIFramesPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//GUITextPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//GUICursorPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//BrightPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//BloomX.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//BloomY.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//CombinePass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0),
-                        D3d9Shader("Shaders//ParticlesPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0)
+                        D3d9Shader("PositionPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("NormalsPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("DirectionalLightAccPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("PointLightAccPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("SpotLightAccPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("SpotLightAccPassWithShadows.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("SpotLightShadowPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("ShadingPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("ShadingPassSSAO.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("ResultPass.psh", pixelShaderLibrary, "ps_1_1", 0),
+                        D3d9Shader("SSAOPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("SSAOBlurX.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("SSAOBlurY.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("EdgeDetect.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("GUIFramesPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("GUITextPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("GUICursorPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("BrightPass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("BloomX.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("BloomY.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("CombinePass.psh", pixelShaderLibrary, "ps_2_0", 0),
+                        D3d9Shader("ParticlesPass.psh", pixelShaderLibrary, "ps_2_0", 0)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -418,11 +418,11 @@ namespace selene
                 {
                         D3d9Shader d3dOptionalVertexShaders[Renderer::Data::NUM_OF_MESH_UNITS] =
                         {
-                                D3d9Shader("Shaders//PositionNormalsPass.vsh", fileManager, vertexShaderLibrary, "vs_1_1", 0),
-                                D3d9Shader("Shaders//SkinPositionNormalsPass.vsh", fileManager, vertexShaderLibrary, "vs_2_0", 0)
+                                D3d9Shader("PositionNormalsPass.vsh", vertexShaderLibrary, "vs_1_1", 0),
+                                D3d9Shader("SkinPositionNormalsPass.vsh", vertexShaderLibrary, "vs_2_0", 0)
                         };
 
-                        D3d9Shader d3dOptionalPixelShader("Shaders//PositionNormalsPass.psh", fileManager, pixelShaderLibrary, "ps_2_0", 0);
+                        D3d9Shader d3dOptionalPixelShader("PositionNormalsPass.psh", pixelShaderLibrary, "ps_2_0", 0);
 
                         for(uint32_t i = 0; i < Renderer::Data::NUM_OF_MESH_UNITS; ++i)
                         {
@@ -444,8 +444,8 @@ namespace selene
 
                 if(isThirdShaderModelSupported_)
                 {
-                        D3d9Shader d3dOptionalVertexShader("Shaders//SSAO30Pass.vsh", fileManager, vertexShaderLibrary, "vs_1_1", 0);
-                        D3d9Shader d3dOptionalPixelShader("Shaders//SSAO30Pass.psh", fileManager, pixelShaderLibrary, "ps_3_0", 0);
+                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", vertexShaderLibrary, "vs_1_1", 0);
+                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh", pixelShaderLibrary, "ps_3_0", 0);
 
                         if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].create(d3dOptionalVertexShader))
                         {

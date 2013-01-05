@@ -1,0 +1,63 @@
+sampler2D GBufferPosition: register(s0);
+sampler2D GBufferNormals: register(s1);
+sampler2D RandomDirections: register(s2);
+float4 unprojectionVector: register(c0);
+float4 projectionParameters: register(c1);
+float4 ssaoParams: register(c2);
+
+struct PS_INPUT
+{
+        float4 textureCoords: TEXCOORD0;
+        float2 RTexCoords: TEXCOORD1;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        float4 traceDirections[] =
+        {
+                float4(-0.5, -0.5, -0.5, 1.0),
+                float4( 0.5, -0.5, -0.5, 1.0),
+                float4(-0.5,  0.5, -0.5, 1.0),
+                float4( 0.5,  0.5, -0.5, 1.0),
+                float4(-0.5, -0.5,  0.5, 1.0),
+                float4( 0.5, -0.5,  0.5, 1.0),
+                float4(-0.5,  0.5,  0.5, 1.0),
+                float4( 0.5,  0.5,  0.5, 1.0),
+
+                float4(-0.5, -0.5, -0.5, 0.5),
+                float4( 0.5, -0.5, -0.5, 0.5),
+                float4(-0.5,  0.5, -0.5, 0.5),
+                float4( 0.5,  0.5, -0.5, 0.5),
+                float4(-0.5, -0.5,  0.5, 0.5),
+                float4( 0.5, -0.5,  0.5, 0.5),
+                float4(-0.5,  0.5,  0.5, 0.5),
+                float4( 0.5,  0.5,  0.5, 0.5)
+        };
+
+        float ATT = 0.0;
+        for(int i = 0; i < 16; ++i)
+        {
+                float4 traceDirection = traceDirections[i];
+
+                float3 p = DecodePos(tex2D(GBufferPosition, In.textureCoords.xy), In.textureCoords.zw, projectionParameters, unprojectionVector);
+                float3 n = DecodeNormal(tex2D(GBufferNormals, In.textureCoords.xy).xyz);
+                float3 plane = normalize(2.0 * tex2D(RandomDirections, In.RTexCoords).xyz - float3(1.0, 1.0, 1.0));
+                float3 sample = reflect(traceDirection, plane);
+
+                float4 textureCoords;
+                textureCoords.xy = In.textureCoords.xy + (traceDirection.w * ssaoParams.x * sample.xy / p.z);
+                textureCoords.zw = 2.0 * float2(textureCoords.x, -textureCoords.y) - float2(1.0, -1.0);
+
+                float3 p1 = DecodePos(tex2D(GBufferPosition, textureCoords.xy), textureCoords.zw, projectionParameters, unprojectionVector);
+                float3 dir = p1 - p;
+                float DirLen = length(dir);
+                dir /= DirLen;
+
+                float norm = clamp(dot(dir, n) + ssaoParams.y, 0.0, 1.0);
+                float range = 1.0 - clamp(DirLen / ssaoParams.x, 0.0, 1.0);
+
+                ATT += norm * range;
+        }
+
+        return ATT.xxxx * 0.06875;
+}

@@ -1,0 +1,11 @@
+float4 projectionParameters: register(c0);
+
+struct PS_INPUT
+{
+        float4 pos: TEXCOORD0;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        return EncodePos(In.pos, projectionParameters);
+}

@@ -9,31 +9,37 @@ namespace selene
 {
 
         D3d9Shader::D3d9Shader(const char* fileName,
-                               FileManager* fileManager,
                                const std::string& library,
                                const std::string& version,
                                DWORD flags)
         {
                 code_ = nullptr;
 
-                if(fileManager == nullptr)
+                HRSRC hResource = ::FindResource(GetModuleHandle(nullptr), fileName, RT_RCDATA);
+                if(hResource == nullptr)
                         return;
 
-                std::unique_ptr<std::istream> stream(fileManager->open(fileName));
-                if(stream.get() == nullptr)
+                DWORD size = ::SizeofResource(GetModuleHandle(nullptr), hResource);
+                if(size == 0)
                         return;
 
-                stream->seekg(0, std::ios::end);
+                HGLOBAL hResourceData = ::LoadResource(GetModuleHandle(nullptr), hResource);
+                if(hResourceData == nullptr)
+                        return;
+
+                LPVOID buffer = ::LockResource(hResourceData);
+                if(buffer == nullptr)
+                        return;
+
                 Array<uint8_t, uint32_t> fileContent;
-                uint32_t length = (uint32_t)stream->tellg();
-                if(!fileContent.create(length + 1))
+                uint32_t length = static_cast<uint32_t>(size + 1);
+                if(!fileContent.create(length))
                         return;
 
-                stream->seekg(0, std::ios::beg);
-                stream->read((char*)&fileContent[0], length);
-                fileContent[length] = 0;
+                memcpy(reinterpret_cast<char*>(&fileContent[0]), buffer, size);
+                fileContent[length - 1] = 0;
 
-                std::string sourceCode = (char*)&fileContent[0];
+                std::string sourceCode = reinterpret_cast<char*>(&fileContent[0]);
                 sourceCode = library + sourceCode;
 
                 if(FAILED(D3DXCompileShader(sourceCode.c_str(), sourceCode.length(),

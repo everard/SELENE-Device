@@ -1,0 +1,14 @@
+sampler2D Texture0: register(s0);
+sampler2D Texture1: register(s1);
+float4 texCoordsAdjustment: register(c0);
+
+struct PS_INPUT
+{
+        float2 textureCoords: TEXCOORD0;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        In.textureCoords += texCoordsAdjustment.zw;
+        return tex2D(Texture0, In.textureCoords) + tex2D(Texture1, In.textureCoords);
+}

@@ -1,0 +1,23 @@
+sampler2D Texture: register(s0);
+float4 luminance: register(c0);
+float4 texCoordsAdjustment: register(c1);
+float4 parameters: register(c2);
+
+struct PS_INPUT
+{
+        float2 textureCoords: TEXCOORD0;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        In.textureCoords.xy += texCoordsAdjustment.zw;
+        float3 ColorOut = tex2D(Texture, In.textureCoords);
+
+    ColorOut *= parameters.x / (luminance + 0.001);
+    ColorOut *= (1.0 + (ColorOut / (parameters.y)));
+    ColorOut -= 5.0;
+    ColorOut = max(ColorOut, 0.0);
+    ColorOut /= (10.0 + ColorOut);
+
+    return float4(ColorOut, 1.0);
+}

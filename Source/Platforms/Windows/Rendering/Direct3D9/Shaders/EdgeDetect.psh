@@ -1,0 +1,41 @@
+sampler2D GBufferPosition: register(s0);
+sampler2D GBufferNormals: register(s1);
+float4 unprojectionVector: register(c0);
+float4 projectionParameters: register(c1);
+float4 edgeDetectionParams: register(c2);
+float4 screenSize: register(c3);
+
+struct PS_INPUT
+{
+        float4 textureCoords: TEXCOORD0;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        float2 kernel = float2(1.0, 1.0) / screenSize.xy;
+        float3 p = DecodePos(tex2D(GBufferPosition, In.textureCoords.xy), In.textureCoords.zw, projectionParameters, unprojectionVector);
+        float3 n = DecodeNormal(tex2D(GBufferNormals, In.textureCoords.xy).xyz);
+
+        float4 textureCoords;
+        textureCoords.xy = In.textureCoords.xy;
+        textureCoords.x += kernel.x;
+        textureCoords.zw = 2.0 * float2(textureCoords.x, -textureCoords.y) - float2(1.0, -1.0);
+        float3 p1 = DecodePos(tex2D(GBufferPosition, textureCoords.xy), textureCoords.zw, projectionParameters, unprojectionVector);
+        float3 n1 = DecodeNormal(tex2D(GBufferNormals, textureCoords.xy).xyz);
+
+        textureCoords.xy = In.textureCoords.xy;
+        textureCoords.y += kernel.y;
+        textureCoords.zw = 2.0 * float2(textureCoords.x, -textureCoords.y) - float2(1.0, -1.0);
+        float3 p2 = DecodePos(tex2D(GBufferPosition, textureCoords.xy), textureCoords.zw, projectionParameters, unprojectionVector);
+        float3 n2 = DecodeNormal(tex2D(GBufferNormals, textureCoords.xy).xyz);
+
+        /*float res = clamp(1.0 - (abs(p.z - p1.z) + abs(p.z - p2.z)) * 0.5 / edgeDetectionParams.x, 0.0, 1.0);
+        res *=  clamp(0.5 * (abs(dot(n, n1)) + abs(dot(n, n2))), 0.0, 1.0);*/
+
+        float4 res = float4(1.0, 1.0, 1.0, 1.0);
+        if(abs(p.z - p1.z) >= edgeDetectionParams.x || abs(p.z - p2.z) >= edgeDetectionParams.x ||
+           dot(n, n1) <= edgeDetectionParams.y || dot(n, n2) <= edgeDetectionParams.y)
+                res = float4(0.0, 0.0, 0.0, 0.0);
+
+        return res.xxxx;
+}

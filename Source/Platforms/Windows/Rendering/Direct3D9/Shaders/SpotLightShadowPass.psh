@@ -1,0 +1,45 @@
+sampler2D GBufferPosition: register(s0);
+sampler2D shadowMapTexture: register(s1);
+float4 texCoordsAdjustment: register(c0);
+float4 unprojectionVector: register(c1);
+float4 projectionParameters: register(c2);
+float4 lightProjectionParams: register(c3);
+float4x4 lightViewMat: register(c4);
+float4x4 LightTexMat: register(c8);
+float4 bias: register(c12);
+float4 shadowMapKernelSize: register(c13);
+
+struct PS_INPUT
+{
+        float4 textureCoords: TEXCOORD0;
+};
+
+float ComputeLight(in float2 TC, in float Z)
+{
+        float ShadowMapValue = DecodeZEye(tex2D(shadowMapTexture, TC.xy), lightProjectionParams) + bias.x;
+        return (Z >= ShadowMapValue) ? 0.0 : 1.0;
+}
+
+float4 main(PS_INPUT In): COLOR0
+{
+        // compute tex coords
+        In.textureCoords.xy /= In.textureCoords.w;
+        // map texels to pixels
+        In.textureCoords.xy += texCoordsAdjustment.xy;
+        float2 TC = 0.5f * (float2(In.textureCoords.x, -In.textureCoords.y) + 1.0);
+
+        // restore position in view space
+        float3 p = DecodePos(tex2D(GBufferPosition, TC), In.textureCoords.xy, projectionParameters, unprojectionVector);
+
+        // compute light texture coords
+        float4 LTC = mul(LightTexMat, float4(p, 1.0));
+        LTC.xyz /= LTC.w;
+        LTC.xy = 0.5 * (float2(LTC.x, -LTC.y) + 1.0);
+
+        // compute light-space pos
+        float4 LSPos = mul(lightViewMat, float4(p, 1.0));
+        LSPos.xyz /= LSPos.w;
+
+        float Light = ComputeLight(LTC.xy, LSPos.z);
+        return Light.xxxx;
+}

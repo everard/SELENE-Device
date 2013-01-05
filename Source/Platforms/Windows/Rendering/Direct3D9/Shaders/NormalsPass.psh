@@ -1,0 +1,20 @@
+sampler2D normalMap: register(s0);
+sampler2D specularMap: register(s1);
+float4 specularParams: register(c1);
+
+struct PS_INPUT
+{
+        float2 TC: TEXCOORD0;
+        float3 N: TEXCOORD1;
+        float3 T: TEXCOORD2;
+        float3 B: TEXCOORD3;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        float3 n = 2.0 * tex2D(normalMap, In.TC).xyz - 1.0;
+        float3 nv = normalize(n.x * In.T + n.y * In.B + n.z * In.N);
+        float3 nout = EncodeNormal(nv);
+
+        return float4(nout, specularParams.x * tex2D(specularMap, In.TC).a);
+}

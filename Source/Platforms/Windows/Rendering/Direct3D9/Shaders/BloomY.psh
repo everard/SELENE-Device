@@ -1,0 +1,42 @@
+float4 kernelSize: register(c0);
+float4 texCoordsAdjustment: register(c1);
+sampler2D Texture: register(s0);
+
+struct PS_INPUT
+{
+        float2 textureCoords: TEXCOORD0;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        In.textureCoords.xy += texCoordsAdjustment.zw;
+        float2 textureCoords = In.textureCoords;
+        float4 sum = 0.16 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y - 4.0 * kernelSize.y;
+        sum += 0.05 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y - 3.0 * kernelSize.y;
+        sum += 0.09 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y - 2.0 * kernelSize.y;
+        sum += 0.12 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y - kernelSize.y;
+        sum += 0.15 * tex2D(Texture, textureCoords);
+
+
+        textureCoords.y = In.textureCoords.y + 4.0 * kernelSize.y;
+        sum += 0.05 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y + 3.0 * kernelSize.y;
+        sum += 0.09 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y + 2.0 * kernelSize.y;
+        sum += 0.12 * tex2D(Texture, textureCoords);
+
+        textureCoords.y = In.textureCoords.y + kernelSize.y;
+        sum += 0.15 * tex2D(Texture, textureCoords);
+
+        return 1.5 * sum;
+}

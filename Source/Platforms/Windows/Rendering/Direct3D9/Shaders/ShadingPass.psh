@@ -1,0 +1,32 @@
+sampler2D ambientMap: register(s0);
+sampler2D diffuseMap: register(s1);
+sampler2D specularMap: register(s2);
+sampler2D GBufferResult: register(s3);
+
+float4 ambientColor: register(c0);
+float4 diffuseColor: register(c1);
+float4 specularColor: register(c2);
+float4 specularParams: register(c3);
+float4 texCoordsAdjustment: register(c4);
+
+struct PS_INPUT
+{
+        float4 pos: TEXCOORD0;
+        float2 textureCoords: TEXCOORD1;
+};
+
+float4 main(PS_INPUT In): COLOR0
+{
+        // compute tex coords
+        In.pos.xy /= In.pos.w;
+        // map texels to pixels
+        In.pos.xy += texCoordsAdjustment.xy;
+        float2 TC = 0.5f * (float2(In.pos.x, -In.pos.y) + 1.0);
+
+        float4 GBufColor = tex2D(GBufferResult, TC);
+        float4 Ambient = ambientColor * tex2D(ambientMap, In.textureCoords);
+        float4 Diffuse = diffuseColor * tex2D(diffuseMap, In.textureCoords);
+        float4 Specular = specularColor * tex2D(specularMap, In.textureCoords) * specularParams.x * GBufColor.w;
+        Specular *= GBufColor;
+        return Ambient + Diffuse * GBufColor + Specular;
+}

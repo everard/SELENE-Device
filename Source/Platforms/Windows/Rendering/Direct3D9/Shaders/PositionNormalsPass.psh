@@ -1,0 +1,32 @@
+sampler2D normalMap: register(s0);
+sampler2D specularMap: register(s1);
+float4 projectionParameters: register(c0);
+float4 specularParams: register(c1);
+
+struct PS_INPUT
+{
+        float4 TCNXY: TEXCOORD0;
+        float4 NZT:   TEXCOORD1;
+        float3 B:     TEXCOORD2;
+        float4 pos:   TEXCOORD3;
+};
+
+struct PS_OUTPUT
+{
+        float4 position: COLOR0;
+        float4 normal:   COLOR1;
+};
+
+PS_OUTPUT main(in PS_INPUT In)
+{
+        PS_OUTPUT Out;
+        float3 N = float3(In.TCNXY.zw, In.NZT.x);
+        float3 T = In.NZT.yzw;
+        float3 n = 2.0 * tex2D(normalMap, In.TCNXY.xy).xyz - 1.0;
+        float3 nv = normalize(n.x * T + n.y * In.B + n.z * N);
+        float3 nout = EncodeNormal(nv);
+
+        Out.position = EncodePos(In.pos, projectionParameters);
+        Out.normal   = float4(nout, specularParams.x * tex2D(specularMap, In.TCNXY.xy).a);
+        return Out;
+}

@@ -43,7 +43,7 @@ namespace selene
                         virtual std::istream* open(const char* fileName) const;
 
                 private:
-                        static AAssetManager* assetManager_;
+                        AAssetManager* assetManager_;
                         std::set<std::string> fileSystemHierarchy_;
 
                         /**

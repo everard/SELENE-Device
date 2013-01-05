@@ -18,7 +18,6 @@ namespace selene
         {
         public:
                 D3d9Shader(const char* fileName,
-                           FileManager* fileManager,
                            const std::string& library,
                            const std::string& version,
                            DWORD flags);

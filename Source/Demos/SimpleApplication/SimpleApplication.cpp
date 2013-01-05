@@ -16,29 +16,29 @@ namespace selene
                 // specify search folders for file manager
                 const char* folders[] =
                 {
-                        "ApplicationData//",
-                        "ApplicationData//Meshes//",
-                        "ApplicationData//Textures//",
+                        "Assets//",
+                        "Assets//Meshes//",
+                        "Assets//Textures//",
 
-                        "..//ApplicationData//",
-                        "..//ApplicationData//Meshes//",
-                        "..//ApplicationData//Textures//",
+                        "..//Assets//",
+                        "..//Assets//Meshes//",
+                        "..//Assets//Textures//",
 
-                        "..//..//ApplicationData//",
-                        "..//..//ApplicationData//Meshes//",
-                        "..//..//ApplicationData//Textures//",
+                        "..//..//Assets//",
+                        "..//..//Assets//Meshes//",
+                        "..//..//Assets//Textures//",
 
-                        "..//..//..//ApplicationData//",
-                        "..//..//..//ApplicationData//Meshes//",
-                        "..//..//..//ApplicationData//Textures//",
+                        "..//..//..//Assets//",
+                        "..//..//..//Assets//Meshes//",
+                        "..//..//..//Assets//Textures//",
 
-                        "..//..//..//..//ApplicationData//",
-                        "..//..//..//..//ApplicationData//Meshes//",
-                        "..//..//..//..//ApplicationData//Textures//",
+                        "..//..//..//..//Assets//",
+                        "..//..//..//..//Assets//Meshes//",
+                        "..//..//..//..//Assets//Textures//",
 
-                        "..//..//..//..//..//ApplicationData//",
-                        "..//..//..//..//..//ApplicationData//Meshes//",
-                        "..//..//..//..//..//ApplicationData//Textures//"
+                        "..//..//..//..//..//Assets//",
+                        "..//..//..//..//..//Assets//Meshes//",
+                        "..//..//..//..//..//Assets//Textures//"
                 };
                 const uint32_t numFolders = sizeof(folders) / sizeof(folders[0]);
 
@@ -145,9 +145,9 @@ namespace selene
 
                 std::cout << "Loading mesh...";
                 if(meshManager_.createResource("object.sle", meshFactory) != SUCCESS)
-                        std::cout << "FAILED";
+                        std::cout << "FAILED" << std::endl;
                 else
-                        std::cout << "SUCCEEDED";
+                        std::cout << "SUCCEEDED" << std::endl;
 
                 // create scene objects
                 scene_.addNode(new(std::nothrow) Actor("object",

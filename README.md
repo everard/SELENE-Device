@@ -1,45 +1,50 @@
 SELENE Device is a 3D graphics rendering engine. It is cross-platform, but currently it has only Windows renderer. For programming style guidlines see GUIDELINES.txt.
 
-BUILDING
-========
+CONFIGURATION & BUILDING
+========================
 
-To build SELENE-Device you should download SELENE-Device-Build-System.zip archive (links below) and unzip it to the direcory, where SELENE-Device resides.
-Note, that your directory tree should be like this (to build and run everything out-of-box):
+1. Create parent directory, which will contain SELENE Device:
 
-    - ..                            <- PARENT DIRECTORY
+    mkdir SELENE-Device
+    cd SELENE-Device
+    git clone git://github.com/everard/SELENE-Device.git Repository
+
+2. Download Build.zip archive and unzip it to the SELENE-Device directory.
+
+To build and run everything out-of-box your directory tree should be like this:
+
+    + SELENE-Device              <- ROOT DIRECTORY
     |\
-    | | ApplicationData\            <- APPLICATION DATA (TO RUN DEMOS)
-    | + SELENE-Device\              <- SOURCE CODE (CLONED REPOSITORY)
+    | + Repository\              <- SOURCE CODE (CLONED REPOSITORY)
     | |\
     | | | .git\
     | | | Source\
     | | | ~ other files ~
     | |
-    | + SELENE-Device-Build-System\
+    | + Build\
     |  \
-    |   | Android\            <- ANDROID PROJECTS
-    |   | Linux\              <- LINUX MAKEFILE
-    |   | Windows\            <- VISUAL C++ PROJECTS
-    |
-    |~ other files ~
+    |   | Assets\                <- ASSETS NEEDED TO RUN APPLICATIONS
+    |   | Android\               <- ANDROID BUILD SCRIPTS
+    |   | Linux\                 <- LINUX MAKEFILE
+    |   | Windows\               <- VISUAL C++ PROJECTS
 
-Compiling under Linux
-=====================
+LINUX
+-----
 
-To compile existing code under Linux you should cd to the SELENE-Device-Build-System/Linux directory and run:
+To compile existing code under Linux you should cd to the Build/Linux directory and run:
 
     make all
 
 Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
 
-Compiling under Android
-=======================
+ANDROID
+-------
 Requirements:
 * latest Android SDK and NDK (r8d)
 * GNU Make ver. >= 3.81
 * apache ant ver. >= 1.8.4
 
-To compile core, cd to the SELENE-Device-Build-System/Android/Engine and run:
+To compile core, cd to the Build/Android/Engine and run:
 
     ndk-build
 
@@ -47,25 +52,23 @@ It will build static library for x86 platform. If you wish to build libraries fo
 
     APP_ABI := all
 
-Now applications can be built. To do this, cd to the SELENE-Device-Build-System/Android/Demos/SimpleApplication or SELENE-Device-Build-System/Android/Demos/SimpleAnimation folder and run:
+Now applications can be built. To do this, cd to the Build/Android/Demos/SimpleApplication or Build/Android/Demos/SimpleAnimation folder and run:
 
     ndk-build
     ant debug
     ant installd
 
-This applications will run on your android device, but will not render, because, as mentioned earlier,
-currently there is no OpenGL ES renderer.
+This applications will run on your android device, but will not render, because currently there is no OpenGL ES renderer implemented.
 
-Compiling under Windows
-=======================
+WINDOWS
+-------
 
-To compile existing code under Windows, you should cd to the SELENE-Device-Build-System/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2010.
+To compile existing code under Windows, you should cd to the Build/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2010.
 
 LINKS TO DOWNLOADS
 ==================
-Download Visual Studio 2010 Express Edition projects and application data from google drive:
-* [Application data](https://docs.google.com/open?id=0Byy41LxMuTKUOTh5VVFiS1V4bkE)
-* [Visual Studio 2010 Express Edition projects](https://docs.google.com/open?id=0Byy41LxMuTKULW5odzdhRWcxVEE)
+Download Visual Studio 2010 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
+* [Build system and assets](https://docs.google.com/open?id=0Byy41LxMuTKUOU0wVy1DaW1DZEE)
 
 LICENSE
 =======

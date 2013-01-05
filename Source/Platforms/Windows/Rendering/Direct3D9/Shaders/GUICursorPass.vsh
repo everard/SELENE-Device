@@ -1,0 +1,20 @@
+float4 cursorPosition: register(c0);
+
+struct VS_INPUT
+{
+        float4 position: POSITION0;
+};
+
+struct VS_OUTPUT
+{
+        float4 P: POSITION;
+        float2 textureCoords: TEXCOORD0;
+};
+
+VS_OUTPUT main(VS_INPUT In)
+{
+        VS_OUTPUT Out;
+        Out.P = float4(In.position.xy + cursorPosition.xy, 0.0, 1.0);
+        Out.textureCoords = In.position.zw;
+        return Out;
+}
