@@ -1,9 +1,32 @@
 SELENE Device is a 3D graphics rendering engine. It is cross-platform, but currently it has only Windows renderer. For programming style guidlines see GUIDELINES.txt.
 
+BUILDING
+========
+
+To build SELENE-Device you should download SELENE-Device-Build-System.zip archive (links below) and unzip it to the direcory, where SELENE-Device resides.
+Note, that your directory tree should be like this (to build and run everything out-of-box):
+
+    - ..                            <- PARENT DIRECTORY
+    |\
+    | | ApplicationData\            <- APPLICATION DATA (TO RUN DEMOS)
+    | + SELENE-Device\              <- SOURCE CODE (CLONED REPOSITORY)
+    | |\
+    | | | .git\
+    | | | Source\
+    | | | ~ other files ~
+    | |
+    | + SELENE-Device-Build-System\
+    |  \
+    |   | Android\            <- ANDROID PROJECTS
+    |   | Linux\              <- LINUX MAKEFILE
+    |   | Windows\            <- VISUAL C++ PROJECTS
+    |
+    |~ other files ~
+
 Compiling under Linux
 =====================
 
-To compile existing code under Linux you should cd to the Build/Linux directory and run:
+To compile existing code under Linux you should cd to the SELENE-Device-Build-System/Linux directory and run:
 
     make all
 
@@ -12,10 +35,11 @@ Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
 Compiling under Android
 =======================
 Requirements:
-* latest Android SDK and NDK
-* apache ant
+* latest Android SDK and NDK (r8d)
+* GNU Make ver. >= 3.81
+* apache ant ver. >= 1.8.4
 
-To compile core, cd to the Build/Android/Engine and run:
+To compile core, cd to the SELENE-Device-Build-System/Android/Engine and run:
 
     ndk-build
 
@@ -23,7 +47,7 @@ It will build static library for x86 platform. If you wish to build libraries fo
 
     APP_ABI := all
 
-Now applications can be built. To do this, cd to the Build/Android/Demos/SimpleApplication or Build/Android/Demos/SimpleAnimation folder and run:
+Now applications can be built. To do this, cd to the SELENE-Device-Build-System/Android/Demos/SimpleApplication or SELENE-Device-Build-System/Android/Demos/SimpleAnimation folder and run:
 
     ndk-build
     ant debug
@@ -35,25 +59,7 @@ currently there is no OpenGL ES renderer.
 Compiling under Windows
 =======================
 
-To compile existing code under Windows, you should download and unzip SELENE-Device.zip and compile projects in solution called "SELENE Device.sln". Also you should download and unzip ApplicationData.zip.
-
-Note, that your directory tree should be like this (to build and run everything out-of-box):
-
-    - ..                            <- PARENT DIRECTORY
-    |\
-    | | ApplicationData\            <- APPLICATION DATA (TO RUN DEMOS)
-    | + SELENE-Device\              <- SOURCE CODE (CLONED REPOSITORY)
-    | |\
-    | | | .git\
-    | | | Make\
-    | | | Source\
-    | | | ~ other files ~
-    | |
-    | + ProjectsVisualStudio\
-    |  \
-    |   | SELENE-Device\            <- VISUAL C++ PROJECTS
-    |
-    |~ other files ~
+To compile existing code under Windows, you should cd to the SELENE-Device-Build-System/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2010.
 
 LINKS TO DOWNLOADS
 ==================
