@@ -28,8 +28,8 @@ namespace selene
                 // Halts application
                 void halt();
 
-                // Returns android application state
-                android_app* getState();
+                // Returns android application handle
+                android_app* getHandle();
 
         protected:
                 // Returns state of the given key

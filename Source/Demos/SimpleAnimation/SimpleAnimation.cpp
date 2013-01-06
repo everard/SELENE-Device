@@ -16,35 +16,35 @@ namespace selene
                 // specify search folders for file manager
                 const char* folders[] =
                 {
-                        "Assets//",
-                        "Assets//Meshes//",
-                        "Assets//Textures//",
-                        "Assets//Animations//",
+                        "Assets/",
+                        "Assets/Meshes/",
+                        "Assets/Textures/",
+                        "Assets/Animations/",
 
-                        "..//Assets//",
-                        "..//Assets//Meshes//",
-                        "..//Assets//Textures//",
-                        "..//Assets//Animations//",
+                        "../Assets/",
+                        "../Assets/Meshes/",
+                        "../Assets/Textures/",
+                        "../Assets/Animations/",
 
-                        "..//..//Assets//",
-                        "..//..//Assets//Meshes//",
-                        "..//..//Assets//Textures//",
-                        "..//..//Assets//Animations//",
+                        "../../Assets/",
+                        "../../Assets/Meshes/",
+                        "../../Assets/Textures/",
+                        "../../Assets/Animations/",
 
-                        "..//..//..//Assets//",
-                        "..//..//..//Assets//Meshes//",
-                        "..//..//..//Assets//Textures//",
-                        "..//..//..//Assets//Animations//",
+                        "../../../Assets/",
+                        "../../../Assets/Meshes/",
+                        "../../../Assets/Textures/",
+                        "../../../Assets/Animations/",
 
-                        "..//..//..//..//Assets//",
-                        "..//..//..//..//Assets//Meshes//",
-                        "..//..//..//..//Assets//Textures//",
-                        "..//..//..//..//Assets//Animations//",
+                        "../../../../Assets/",
+                        "../../../../Assets/Meshes/",
+                        "../../../../Assets/Textures/",
+                        "../../../../Assets/Animations/",
 
-                        "..//..//..//..//..//Assets//",
-                        "..//..//..//..//..//Assets//Meshes//",
-                        "..//..//..//..//..//Assets//Textures//",
-                        "..//..//..//..//..//Assets//Animations//"
+                        "../../../../../Assets/",
+                        "../../../../../Assets/Meshes/",
+                        "../../../../../Assets/Textures/",
+                        "../../../../../Assets/Animations/"
                 };
                 const uint32_t numFolders = sizeof(folders) / sizeof(folders[0]);
 

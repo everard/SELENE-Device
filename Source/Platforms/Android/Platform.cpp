@@ -20,15 +20,10 @@ namespace selene
         Platform::FileManager::FileManager(): selene::FileManager(Platform::fileExists)
         {
                 assetManager_ = Platform::state_->activity->assetManager;
-
-                if(assetManager_ == nullptr)
-                        return;
-
-                readAssetsDirectory("");
         }
         Platform::FileManager::~FileManager() {}
 
-        //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------
         const char* Platform::FileManager::find(const char* fileName) const
         {
                 // validate
@@ -36,23 +31,30 @@ namespace selene
                         return nullptr;
 
                 // check current folder
-                if(fileSystemHierarchy_.find(std::string(fileName)) != fileSystemHierarchy_.end())
+                AAsset* asset = AAssetManager_open(assetManager_, fileName, AASSET_MODE_STREAMING);
+                if(asset != nullptr)
+                {
+                        AAsset_close(asset);
                         return fileName;
+                }
 
                 // search all folders
                 for(auto it = folders_.begin(); it != folders_.end(); ++it)
                 {
                         fileName_ = (*it) + fileName;
 
-                        // check
-                        if(fileSystemHierarchy_.find(fileName_) != fileSystemHierarchy_.end())
+                        asset = AAssetManager_open(assetManager_, fileName_.c_str(), AASSET_MODE_STREAMING);
+                        if(asset != nullptr)
+                        {
+                                AAsset_close(asset);
                                 return fileName_.c_str();
+                        }
                 }
 
                 return nullptr;
         }
 
-        //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------
         std::istream* Platform::FileManager::open(const char* fileName) const
         {
                 const char* fullFileName = find(fileName);
@@ -63,7 +65,9 @@ namespace selene
                 if(asset == nullptr)
                         return nullptr;
 
-                std::unique_ptr<std::stringstream> stream(new(std::nothrow) std::stringstream(std::ios::binary));
+                std::unique_ptr<std::stringstream> stream(new(std::nothrow) std::stringstream(std::ios::binary |
+                                                                                              std::ios::out |
+                                                                                              std::ios::in));
 
                 if(stream.get() == nullptr)
                 {
@@ -83,43 +87,19 @@ namespace selene
                 return stream.release();
         }
 
-        //-------------------------------------------------------------------------------
-        void Platform::FileManager::readAssetsDirectory(const std::string& directoryName)
-        {
-                AAssetDir* directory = AAssetManager_openDir(assetManager_, directoryName.c_str());
-                if(directory == nullptr)
-                        return;
-
-                for(const char* assetName = AAssetDir_getNextFileName(directory);
-                    assetName != nullptr; assetName = AAssetDir_getNextFileName(directory))
-                {
-                        if(strlen(assetName) == 0)
-                                continue;
-
-                        std::string assetNameString = directoryName + assetName;
-
-                        if(assetNameString[assetNameString.length() - 1] == '/')
-                                readAssetsDirectory(assetNameString);
-
-                        fileSystemHierarchy_.insert(assetNameString);
-                }
-
-                AAssetDir_close(directory);
-        }
-
-        //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------
         bool Platform::fileExists(const char* fileName)
         {
                 return (access(fileName, F_OK) == 0);
         }
 
-        //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------
         uint32_t Platform::getDefaultScreenWidth()
         {
                 return Platform::defaultScreenWidth_;
         }
 
-        //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------
         uint32_t Platform::getDefaultScreenHeight()
         {
                 return Platform::defaultScreenHeight_;

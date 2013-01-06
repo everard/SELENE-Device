@@ -16,29 +16,29 @@ namespace selene
                 // specify search folders for file manager
                 const char* folders[] =
                 {
-                        "Assets//",
-                        "Assets//Meshes//",
-                        "Assets//Textures//",
+                        "Assets/",
+                        "Assets/Meshes/",
+                        "Assets/Textures/",
 
-                        "..//Assets//",
-                        "..//Assets//Meshes//",
-                        "..//Assets//Textures//",
+                        "../Assets/",
+                        "../Assets/Meshes/",
+                        "../Assets/Textures/",
 
-                        "..//..//Assets//",
-                        "..//..//Assets//Meshes//",
-                        "..//..//Assets//Textures//",
+                        "../../Assets/",
+                        "../../Assets/Meshes/",
+                        "../../Assets/Textures/",
 
-                        "..//..//..//Assets//",
-                        "..//..//..//Assets//Meshes//",
-                        "..//..//..//Assets//Textures//",
+                        "../../../Assets/",
+                        "../../../Assets/Meshes/",
+                        "../../../Assets/Textures/",
 
-                        "..//..//..//..//Assets//",
-                        "..//..//..//..//Assets//Meshes//",
-                        "..//..//..//..//Assets//Textures//",
+                        "../../../../Assets/",
+                        "../../../../Assets/Meshes/",
+                        "../../../../Assets/Textures/",
 
-                        "..//..//..//..//..//Assets//",
-                        "..//..//..//..//..//Assets//Meshes//",
-                        "..//..//..//..//..//Assets//Textures//"
+                        "../../../../../Assets/",
+                        "../../../../../Assets/Meshes/",
+                        "../../../../../Assets/Textures/"
                 };
                 const uint32_t numFolders = sizeof(folders) / sizeof(folders[0]);
 

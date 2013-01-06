@@ -98,7 +98,7 @@ namespace selene
                 if(application == nullptr)
                         return false;
 
-                android_app* state = application->getState();
+                android_app* state = application->getHandle();
                 if(state == nullptr)
                         return false;
 

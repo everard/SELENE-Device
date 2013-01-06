@@ -44,13 +44,6 @@ namespace selene
 
                 private:
                         AAssetManager* assetManager_;
-                        std::set<std::string> fileSystemHierarchy_;
-
-                        /**
-                         * \brief Recursively reads contents of the assets directory.
-                         * \param[in] directoryName name of the directory
-                         */
-                        void readAssetsDirectory(const std::string& directoryName);
 
                 };
 
@@ -83,10 +76,7 @@ namespace selene
                 friend class AndroidApplication;
                 friend void ::android_main(android_app* state);
 
-                // Android state
                 static android_app* state_;
-
-                // Default screen width and height
                 static uint32_t defaultScreenWidth_;
                 static uint32_t defaultScreenHeight_;
 

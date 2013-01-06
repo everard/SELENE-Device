@@ -18,28 +18,15 @@ namespace selene
                 ~SimpleApplication();
 
         private:
-                // Resource managers
                 ResourceManager textureManager_, meshManager_;
-
-                // File manager
                 Platform::FileManager fileManager_;
-
-                // Renderer
                 Platform::Renderer renderer_;
 
-                // Scene
                 Scene scene_;
-
-                // Camera
-                std::weak_ptr<Camera> camera_;
-
-                // GUI
                 Gui gui_;
-
-                // GUI elements IDs
                 int32_t labelId_, textBoxId_;
 
-                // Flag
+                std::weak_ptr<Camera> camera_;
                 bool isCameraRotationEnabled_;
 
                 // Initialization event callback

@@ -78,7 +78,7 @@ namespace selene
         }
 
         //---------------------------------------------------------------------------------------
-        android_app* AndroidApplication::getState()
+        android_app* AndroidApplication::getHandle()
         {
                 return state_;
         }
