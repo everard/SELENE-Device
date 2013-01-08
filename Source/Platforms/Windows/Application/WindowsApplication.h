@@ -30,14 +30,11 @@ namespace selene
                 HWND getWindowHandle();
 
         protected:
-                // Window class name
                 std::string windowClassName_;
-
-                // Applicaton instance
                 HINSTANCE hInstance_;
-
-                // Window handle
                 HWND hWnd_;
+
+                bool isActive_;
 
                 // Returns state of the given key
                 float getKeyState(uint8_t key);

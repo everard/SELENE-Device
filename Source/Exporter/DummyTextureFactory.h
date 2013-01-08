@@ -21,15 +21,11 @@ namespace selene
         /**
          * Represents dummy texture factory.
          */
-        class DummyTextureFactory: public ResourceFactory
+        template <class T> class DummyTextureFactory: public ResourceFactory
         {
         public:
-                /**
-                 * \brief Constructs dummy texture factory with given file manager.
-                 * \param[in] fileManager file manager
-                 */
-                DummyTextureFactory(FileManager* fileManager = nullptr);
-                ~DummyTextureFactory();
+                DummyTextureFactory() {}
+                ~DummyTextureFactory() {}
 
                 /**
                  * \brief Creates dummy texture with given name.
@@ -37,7 +33,13 @@ namespace selene
                  * \return pointer to the created texture, or nullptr if texture
                  * could not be created
                  */
-                Resource* createResource(const char* name);
+                Resource* createResource(const char* name)
+                {
+                        if(name == nullptr)
+                                return nullptr;
+
+                        return new(std::nothrow) T(name);
+                }
 
         };
 

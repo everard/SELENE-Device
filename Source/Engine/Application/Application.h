@@ -36,8 +36,7 @@ namespace selene
          * This is base class for all applications (to build new application this class MUST be inherited).
          * Current class contains interface for initialization, running and stopping the application (though
          * it does not provide any implementation, since each platform has its own application class, derived
-         * from the current). It also contains different callbacks, which must be implemented in the actual game
-         * (or whatever) application.
+         * from the current). It also contains different callbacks, which must be implemented in the actual application.
          */
         class Application: public Entity
         {

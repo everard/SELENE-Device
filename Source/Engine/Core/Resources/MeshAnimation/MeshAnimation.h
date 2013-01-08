@@ -56,12 +56,6 @@ namespace selene
                 ~MeshAnimation();
 
                 /**
-                 * \brief Prepares mesh animation.
-                 * \return true if mesh animation has been successfully prepared for rendering
-                 */
-                bool prepare();
-
-                /**
                  * \brief Returns mesh animation data.
                  * \return reference to the mesh animation data
                  */
@@ -87,6 +81,17 @@ namespace selene
                  * \return number of mesh animation keys
                  */
                 uint32_t getNumKeys();
+
+                /**
+                 * \brief Does nothing.
+                 * \return true
+                 */
+                bool retain();
+
+                /**
+                 * \brief Does nothing.
+                 */
+                void discard();
 
         protected:
                 Data data_;

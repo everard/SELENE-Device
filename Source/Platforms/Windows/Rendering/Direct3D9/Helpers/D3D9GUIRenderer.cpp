@@ -32,6 +32,8 @@ namespace selene
                 textVertexIndex_ = 0;
                 numFrameFaces_ = 0;
                 numTextFaces_ = 0;
+
+                isRecentlyInitialized_ = true;
         }
         D3d9GuiRenderer::~D3d9GuiRenderer()
         {
@@ -132,6 +134,8 @@ namespace selene
                 memcpy(destinationBuffer, (void*)vertices, 4 * cursorVertexStride_);
                 d3dVertexBuffer_->Unlock();
 
+                isRecentlyInitialized_ = true;
+
                 return true;
         }
 
@@ -172,13 +176,14 @@ namespace selene
                 if(gui_->is(GUI_HIDDEN))
                         return false;
 
-                if(gui_->is(GUI_UPDATED))
+                if(gui_->is(GUI_UPDATED) && !isRecentlyInitialized_)
                 {
                         d3dDevice_->SetVertexDeclaration(d3dVertexDeclaration_);
                         d3dDevice_->SetStreamSource(0, d3dVertexBuffer_, 0, vertexStride_);
                         return true;
                 }
 
+                isRecentlyInitialized_ = false;
                 gui_->setFlags(GUI_UPDATED);
 
                 textVertexIndex_ = 0;

@@ -37,8 +37,50 @@ namespace selene
                 bool doExport(const char* fileName);
 
         private:
+                /**
+                 * Represents dummy mesh.
+                 */
+                class DummyMesh: public Mesh
+                {
+                public:
+                        DummyMesh(const char* name);
+                        ~DummyMesh();
+
+                        /**
+                         * \brief Does nothing.
+                         */
+                        bool retain();
+
+                        /**
+                         * \brief Does nothing.
+                         */
+                        void discard();
+
+                };
+
+                /**
+                 * Represents dummy texture.
+                 */
+                class DummyTexture: public Texture
+                {
+                public:
+                        DummyTexture(const char* name);
+                        ~DummyTexture();
+
+                        /**
+                         * \brief Does nothing.
+                         */
+                        bool retain();
+
+                        /**
+                         * \brief Does nothing.
+                         */
+                        void discard();
+
+                };
+
                 ResourceManager resourceManager_;
-                Mesh mesh_;
+                DummyMesh mesh_;
 
                 RawMeshData* rawMeshData_;
                 RawMeshData::Face* faces_;

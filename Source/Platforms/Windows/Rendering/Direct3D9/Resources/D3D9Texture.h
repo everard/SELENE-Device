@@ -17,8 +17,11 @@ namespace selene
                 D3d9Texture(const char* name = nullptr);
                 ~D3d9Texture();
 
-                // Prepares D3D9 texture
-                bool prepare();
+                // Retains D3D9 texture
+                bool retain();
+
+                // Discards D3D9 texture
+                void discard();
 
         private:
                 friend class D3d9Renderer;

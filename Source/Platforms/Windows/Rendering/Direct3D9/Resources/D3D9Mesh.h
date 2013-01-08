@@ -17,8 +17,11 @@ namespace selene
                 D3d9Mesh(const char* name = nullptr);
                 ~D3d9Mesh();
 
-                // Prepares D3D9 mesh
-                bool prepare();
+                // Retains D3D9 mesh
+                bool retain();
+
+                // Discards D3D9 mesh
+                void discard();
 
         private:
                 friend class D3d9Renderer;

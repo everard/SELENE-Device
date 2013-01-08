@@ -16,7 +16,7 @@ namespace selene
         }
 
         //-------------------------
-        bool D3d9Texture::prepare()
+        bool D3d9Texture::retain()
         {
                 LPDIRECT3DDEVICE9 d3dDevice = D3d9Device::getInterface();
                 if(d3dDevice == nullptr)
@@ -153,6 +153,12 @@ namespace selene
                 SAFE_RELEASE(d3dHelperTexture);
 
                 return true;
+        }
+
+        //-------------------------
+        void D3d9Texture::discard()
+        {
+                SAFE_RELEASE(d3dTexture_);
         }
 
 }

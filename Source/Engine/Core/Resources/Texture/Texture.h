@@ -61,12 +61,6 @@ namespace selene
                 ~Texture();
 
                 /**
-                 * \brief Prepares texture.
-                 * \return true if texture has been successfully prepared for rendering
-                 */
-                bool prepare();
-
-                /**
                  * \brief Returns texture data.
                  * \return reference to the texture data
                  */

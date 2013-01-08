@@ -136,6 +136,30 @@ namespace selene
                 return true;
         }
 
+        Exporter::DummyMesh::DummyMesh(const char* name): Mesh(name) {}
+        Exporter::DummyMesh::~DummyMesh() {}
+
+        //---------------------------------------------------------
+        bool Exporter::DummyMesh::retain()
+        {
+                return true;
+        }
+
+        //---------------------------------------------------------
+        void Exporter::DummyMesh::discard() {}
+
+        Exporter::DummyTexture::DummyTexture(const char* name): Texture(name) {}
+        Exporter::DummyTexture::~DummyTexture() {}
+
+        //---------------------------------------------------------
+        bool Exporter::DummyTexture::retain()
+        {
+                return true;
+        }
+
+        //---------------------------------------------------------
+        void Exporter::DummyTexture::discard() {}
+
         Exporter::Exporter(RawMeshData* rawMeshData): mesh_(nullptr)
         {
                 rawMeshData_ = rawMeshData;
@@ -509,7 +533,7 @@ namespace selene
                         return false;
 
                 // fill subsets
-                DummyTextureFactory textureFactory;
+                DummyTextureFactory<DummyTexture> textureFactory;
 
                 for(uint32_t i = 0; i < meshData.subsets.getSize(); ++i)
                 {

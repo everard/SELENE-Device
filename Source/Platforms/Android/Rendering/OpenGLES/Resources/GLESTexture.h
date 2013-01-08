@@ -9,15 +9,18 @@
 namespace selene
 {
 
-        // Represents OpenGLES texture.
+        // Represents OpenGL ES texture.
         class GlesTexture: public Texture
         {
         public:
                 GlesTexture(const char* name = nullptr);
                 ~GlesTexture();
 
-                // Prepares OpenGLES texture
-                bool prepare();
+                // Retains OpenGL ES texture
+                bool retain();
+
+                // Discards OpenGL ES texture
+                void discard();
 
         private:
                 friend class GlesRenderer;

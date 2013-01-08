@@ -16,12 +16,6 @@ namespace selene
         MeshAnimation::~MeshAnimation() {}
 
         //-----------------------------------------------------------------------
-        bool MeshAnimation::prepare()
-        {
-                return true;
-        }
-
-        //-----------------------------------------------------------------------
         MeshAnimation::Data& MeshAnimation::getData()
         {
                 return data_;
@@ -86,5 +80,14 @@ namespace selene
         {
                 return data_.keys.getSize();
         }
+
+        //-----------------------------------------------------------------------
+        bool MeshAnimation::retain()
+        {
+                return true;
+        }
+
+        //-----------------------------------------------------------------------
+        void MeshAnimation::discard() {}
 
 }

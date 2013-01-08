@@ -6,9 +6,15 @@
 namespace selene
 {
 
-        ResourceManager::ResourceManager() {}
+        std::set<ResourceManager*> ResourceManager::resourceManagers_;
+
+        ResourceManager::ResourceManager()
+        {
+                resourceManagers_.insert(this);
+        }
         ResourceManager::~ResourceManager()
         {
+                resourceManagers_.erase(this);
                 destroyResources(true);
         }
 
@@ -33,9 +39,9 @@ namespace selene
                 if(resource.get() == nullptr)
                         return FAIL;
 
-                // prepare resource
-                if(!resource->prepare())
-                        return PREPARATION_FAILED;
+                // retain resource
+                if(!resource->retain())
+                        return RESOURCE_COULD_NOT_BE_RETAINED;
 
                 // store resource
                 std::string key = resource->getName();
@@ -85,6 +91,34 @@ namespace selene
                                 else
                                         ++it;
                         }
+                }
+        }
+
+        //----------------------------------------------------------------------------------------
+        bool ResourceManager::retainResources()
+        {
+                bool result = true;
+                for(auto m = resourceManagers_.begin(); m != resourceManagers_.end(); ++m)
+                {
+                        auto& resources = (*m)->resources_;
+                        for(auto it = resources.begin(); it != resources.end(); ++it)
+                        {
+                                if(!it->second->retain())
+                                        result = false;
+                        }
+                }
+
+                return result;
+        }
+
+        //----------------------------------------------------------------------------------------
+        void ResourceManager::discardResources()
+        {
+                for(auto m = resourceManagers_.begin(); m != resourceManagers_.end(); ++m)
+                {
+                        auto& resources = (*m)->resources_;
+                        for(auto it = resources.begin(); it != resources.end(); ++it)
+                                it->second->discard();
                 }
         }
 

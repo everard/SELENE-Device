@@ -19,7 +19,7 @@ namespace selene
         }
 
         //----------------------
-        bool D3d9Mesh::prepare()
+        bool D3d9Mesh::retain()
         {
                 LPDIRECT3DDEVICE9 d3dDevice = D3d9Device::getInterface();
                 if(d3dDevice == nullptr)
@@ -106,6 +106,12 @@ namespace selene
                 d3dIndexBuffer_->Unlock();
 
                 return true;
+        }
+
+        //----------------------
+        void D3d9Mesh::discard()
+        {
+                destroy();
         }
 
         //----------------------

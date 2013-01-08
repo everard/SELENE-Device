@@ -18,12 +18,6 @@ namespace selene
         Texture::~Texture() {}
 
         //-------------------------------
-        bool Texture::prepare()
-        {
-                return true;
-        }
-
-        //-------------------------------
         Texture::Data& Texture::getData()
         {
                 return data_;

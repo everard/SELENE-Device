@@ -9,10 +9,13 @@ namespace selene
         GlTexture::GlTexture(const char* name): Texture(name) {}
         GlTexture::~GlTexture() {}
 
-        //-----------------------
-        bool GlTexture::prepare()
+        //--------------------------
+        bool GlTexture::retain()
         {
                 return true;
         }
+
+        //--------------------------
+        void GlTexture::discard() {}
 
 }

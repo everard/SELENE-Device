@@ -7,6 +7,7 @@
 #include "ResourceFactory.h"
 #include "Resource.h"
 #include <map>
+#include <set>
 
 namespace selene
 {
@@ -23,7 +24,7 @@ namespace selene
                 SUCCESS,
                 RESOURCE_IS_USED,
                 RESOURCE_ALREADY_EXISTS,
-                PREPARATION_FAILED
+                RESOURCE_COULD_NOT_BE_RETAINED
         };
 
         /**
@@ -76,14 +77,15 @@ namespace selene
                  * \param[in] resourceFactory resource factory
                  * \return SUCCESS if resource successfully created, FAIL if resource could not be
                  * created, RESOURCE_ALREADY_EXISTS if resource with given name already exists,
-                 * PREPARATION_FAILED if resource could not be prepared for use in API
+                 * RESOURCE_COULD_NOT_BE_RETAINED if resource could not be retained for use in
+                 * corresponding subsystem.
                  */
                 RESULT createResource(const char* name, ResourceFactory& resourceFactory);
 
                 /**
                  * \brief Destroys resource.
                  * \param[in] name name of the resource
-                 * \param[in] forced flag which forces destruction of resource
+                 * \param[in] forced flag, which forces destruction of resource
                  * \return SUCCESS if resource successfully destroyed, FAIL if resource with given
                  * name does not exist, RESOURCE_IS_USED if resource with given name is used and
                  * destruction is not forced
@@ -92,7 +94,7 @@ namespace selene
 
                 /**
                  * \brief Destroys resources.
-                 * \param[in] forced flag which forces destruction of used resources
+                 * \param[in] forced flag, which forces destruction of used resources
                  */
                 void destroyResources(bool forced = false);
 
@@ -106,9 +108,24 @@ namespace selene
                         return Resource::Instance<T>(getResource(name));
                 }
 
+                /**
+                 * \brief Retains all resources in application.
+                 * \see Resource::retain
+                 * \return true if all resources have been successfully retained
+                 */
+                static bool retainResources();
+
+                /**
+                 * \brief Discards all resources in application.
+                 * \see Resource::discard
+                 */
+                static void discardResources();
+
         private:
                 std::map<std::string, std::shared_ptr<Resource>> resources_;
                 std::shared_ptr<Resource> nullSharedPointer_;
+
+                static std::set<ResourceManager*> resourceManagers_;
 
                 /**
                  * \brief Returns resource.

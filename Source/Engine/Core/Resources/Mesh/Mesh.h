@@ -75,12 +75,6 @@ namespace selene
                 ~Mesh();
 
                 /**
-                 * \brief Prepares mesh.
-                 * \return true if mesh successfully prepared for rendering
-                 */
-                bool prepare();
-
-                /**
                  * \brief Returns mesh data.
                  * \return reference to the mesh data
                  */

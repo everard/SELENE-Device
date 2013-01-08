@@ -16,8 +16,11 @@ namespace selene
                 GlesMesh(const char* name = nullptr);
                 ~GlesMesh();
 
-                // Prepares OpenGL ES mesh
-                bool prepare();
+                // Retains OpenGL ES mesh
+                bool retain();
+
+                // Discards OpenGL ES mesh
+                void discard();
 
         private:
                 friend class GlesRenderer;

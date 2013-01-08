@@ -54,6 +54,8 @@ namespace selene
                 uint32_t numFrameFaces_;
                 uint32_t numTextFaces_;
 
+                bool isRecentlyInitialized_;
+
                 static const uint32_t numVerticesPerElement_;
                 static const uint32_t cursorVertexStride_;
                 static const uint32_t vertexStride_;

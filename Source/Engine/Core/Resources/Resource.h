@@ -144,11 +144,17 @@ namespace selene
                 bool isUsed() const;
 
                 /**
-                 * \brief Prepares resource.
-                 * \return true if resource has been successfully prepared for use in
-                 * corresponding API
+                 * \brief Retains resource for use in corresponding subsystem (for example,
+                 * Direct3D or OpenGL library).
+                 * \return true if resource has been successfully retained
                  */
-                virtual bool prepare() = 0;
+                virtual bool retain() = 0;
+
+                /**
+                 * \brief Discards resource. This is reverse operation of the Resource::retain.
+                 * \see Resource::retain
+                 */
+                virtual void discard() = 0;
 
         private:
                 uint32_t numRequests_;

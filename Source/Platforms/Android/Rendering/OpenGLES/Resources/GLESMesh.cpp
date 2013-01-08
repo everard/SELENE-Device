@@ -14,12 +14,18 @@ namespace selene
         }
 
         //-------------------------
-        bool GlesMesh::prepare()
+        bool GlesMesh::retain()
         {
                 // destroy OpenGL ES mesh data if any
                 destroy();
 
                 return true;
+        }
+
+        //-------------------------
+        void GlesMesh::discard()
+        {
+                destroy();
         }
 
         //-------------------------

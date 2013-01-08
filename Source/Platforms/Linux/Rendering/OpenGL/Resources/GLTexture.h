@@ -16,8 +16,11 @@ namespace selene
                 GlTexture(const char* name = nullptr);
                 ~GlTexture();
 
-                // Prepares OpenGL texture
-                bool prepare();
+                // Retains OpenGL texture
+                bool retain();
+
+                // Discards OpenGL texture
+                void discard();
 
         private:
                 friend class GlRenderer;

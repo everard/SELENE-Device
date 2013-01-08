@@ -16,12 +16,6 @@ namespace selene
         Mesh::~Mesh() {}
 
         //----------------------------
-        bool Mesh::prepare()
-        {
-                return true;
-        }
-
-        //----------------------------
         Mesh::Data& Mesh::getData()
         {
                 return data_;

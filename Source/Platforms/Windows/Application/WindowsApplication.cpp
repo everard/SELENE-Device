@@ -12,6 +12,7 @@ namespace selene
 
                 hInstance_ = 0;
                 hWnd_ = 0;
+                isActive_ = true;
         }
         WindowsApplication::~WindowsApplication()
         {
@@ -85,6 +86,10 @@ namespace selene
                         else
                         {
                                 timer.reset();
+
+                                if(!isActive_)
+                                        continue;
+
                                 SetCursorPos(centralPoint.x, centralPoint.y);
 
                                 onUpdate(elapsedTime);
@@ -188,6 +193,13 @@ namespace selene
                 {
                         case WM_DESTROY:
                                 PostQuitMessage(0);
+                                break;
+
+                        case WM_ACTIVATE:
+                                if(LOWORD(wParam) != WA_INACTIVE)
+                                        isActive_ = true;
+                                else
+                                        isActive_ = false;
                                 break;
 
                         case WM_KEYUP:

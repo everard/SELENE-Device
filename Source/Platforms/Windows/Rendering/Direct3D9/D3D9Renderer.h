@@ -176,9 +176,17 @@ namespace selene
                 // Parameters
                 Parameters parameters_;
                 DWORD d3dMaxTextureAnisotropy_;
+                D3DPRESENT_PARAMETERS d3dPresentParameters_;
                 bool isR32fRenderTargetFormatSupported_;
                 bool isMultipleRenderTargetSupported_;
                 bool isThirdShaderModelSupported_;
+                bool isDeviceLost_;
+
+                // Initializes helpers
+                bool initializeHelpers();
+
+                // Destroys helpers
+                void destroyHelpers();
 
                 // Writes log entry
                 void writeLogEntry(const char* entry);
