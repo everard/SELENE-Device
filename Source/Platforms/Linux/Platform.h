@@ -64,7 +64,6 @@ namespace selene
                 static uint32_t getDefaultScreenHeight();
 
         private:
-                // Default screen width and height
                 static uint32_t defaultScreenWidth_;
                 static uint32_t defaultScreenHeight_;
 

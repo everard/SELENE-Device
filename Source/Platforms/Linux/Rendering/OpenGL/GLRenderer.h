@@ -15,9 +15,6 @@ namespace selene
         class GlRenderer: public Renderer, public Status
         {
         public:
-                GlRenderer();
-                ~GlRenderer();
-
                 // Initializes renderer
                 bool initialize(const Renderer::Parameters& parameters);
 
@@ -28,7 +25,8 @@ namespace selene
                 void render(const Camera& camera);
 
         private:
-                // Matrices and vectors
+                friend class LinuxApplication;
+
                 Matrix viewProjectionMatrix_;
                 Matrix projectionMatrix_;
                 Matrix viewInvMatrix_;
@@ -40,8 +38,11 @@ namespace selene
                 Vector4d unprojectionVector_;
                 Vector4d screenSize_;
 
-                // Parameters
                 Parameters parameters_;
+
+                GlRenderer();
+                GlRenderer(const GlRenderer& renderer);
+                ~GlRenderer();
 
                 // Writes log entry
                 void writeLogEntry(const char* entry);

@@ -18,9 +18,6 @@ namespace selene
         class GlesRenderer: public Renderer, public Status
         {
         public:
-                GlesRenderer();
-                ~GlesRenderer();
-
                 // Initializes renderer
                 bool initialize(const Renderer::Parameters& parameters);
 
@@ -31,6 +28,14 @@ namespace selene
                 void render(const Camera& camera);
 
         private:
+                friend class AndroidApplication;
+
+                // Capabilities
+                enum
+                {
+                        NUM_OF_VERTEX_ATTRIBUTES_REQUIRED = 6
+                };
+
                 Matrix viewProjectionMatrix_;
                 Matrix projectionMatrix_;
                 Matrix viewInvMatrix_;
@@ -47,6 +52,18 @@ namespace selene
                 EGLSurface surface_;
                 EGLContext context_;
                 EGLDisplay display_;
+
+                GLint program_, positionHandle_, colorLocation_;
+
+                GlesRenderer();
+                GlesRenderer(const GlesRenderer& renderer);
+                ~GlesRenderer();
+
+                // Creates context and retains all resources
+                bool createContext();
+
+                // Discards context and all resources
+                void discardContext();
 
                 // Writes log entry
                 void writeLogEntry(const char* entry);

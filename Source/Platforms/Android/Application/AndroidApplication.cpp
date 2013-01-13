@@ -98,7 +98,6 @@ namespace selene
 
                 switch(cmd)
                 {
-                        // initialize application
                         case APP_CMD_INIT_WINDOW:
                         {
                                 if(app->window == nullptr)
@@ -138,13 +137,23 @@ namespace selene
                         }
 
                         case APP_CMD_LOST_FOCUS:
+                        {
                                 isPaused_ = true;
+                                renderer_.discardContext();
                                 break;
+                        }
 
                         case APP_CMD_GAINED_FOCUS:
-                                timer_.reset();
-                                isPaused_ = false;
+                        {
+                                if(isPaused_)
+                                {
+                                        renderer_.createContext();
+                                        timer_.reset();
+                                        isPaused_ = false;
+                                }
+
                                 break;
+                        }
                 }
         }
 
@@ -162,7 +171,9 @@ namespace selene
                         cursorPosition_.y = 2.0f * static_cast<float>(y) / static_cast<float>(height_);
 
                         cursorShift_ = cursorPosition_ - cursorShift_;
-                        pressedControlButtons_ = CONTROL_BUTTON_0;
+
+                        if((AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK) == AMOTION_EVENT_ACTION_UP)
+                                pressedControlButtons_ = CONTROL_BUTTON_0;
 
                         return 1;
                 }

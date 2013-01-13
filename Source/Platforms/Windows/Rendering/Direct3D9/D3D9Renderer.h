@@ -29,9 +29,6 @@ namespace selene
         class D3d9Renderer: public Renderer, public Status
         {
         public:
-                D3d9Renderer();
-                ~D3d9Renderer();
-
                 // Initializes renderer
                 bool initialize(const Renderer::Parameters& parameters);
 
@@ -42,6 +39,8 @@ namespace selene
                 void render(const Camera& camera);
 
         private:
+                friend class WindowsApplication;
+
                 enum
                 {
                         // Vertex shaders
@@ -182,6 +181,10 @@ namespace selene
                 bool isThirdShaderModelSupported_;
                 bool isDeviceLost_;
 
+                D3d9Renderer();
+                D3d9Renderer(const D3d9Renderer& renderer);
+                ~D3d9Renderer();
+
                 // Initializes helpers
                 bool initializeHelpers();
 
@@ -220,15 +223,6 @@ namespace selene
                                   const std::vector<Renderer::Data::Instance>& instances,
                                   uint8_t meshRenderingUnit,
                                   uint8_t pass);
-
-                // Renders shadows
-                /*void renderShadows(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);*/
-
-                // Renders shadows
-                /*void renderShadows(const Mesh::Subset& meshSubset,
-                                   const std::vector<Actor*>& actors,
-                                   const SpotLight& spotLight,
-                                   uint8_t meshRenderingUnit);*/
 
                 // Creates shadow map
                 void createShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);

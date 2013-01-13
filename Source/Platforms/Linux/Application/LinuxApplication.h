@@ -5,6 +5,7 @@
 #define LINUX_APPLICATION_H
 
 #include "../../../Engine/Application/Application.h"
+#include "../Rendering/OpenGL/GLRenderer.h"
 #include "LinuxTimer.h"
 
 namespace selene
@@ -27,6 +28,8 @@ namespace selene
                 void halt();
 
         protected:
+                GlRenderer renderer_;
+
                 // Returns state of the given key
                 float getKeyState(uint8_t key);
 

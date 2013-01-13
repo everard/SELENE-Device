@@ -5,6 +5,7 @@
 #define WINDOWS_APPLICATION_H
 
 #include "../../../Engine/Application/Application.h"
+#include "../Rendering/Direct3D9/D3D9Renderer.h"
 #include "WindowsTimer.h"
 
 namespace selene
@@ -34,6 +35,7 @@ namespace selene
                 HINSTANCE hInstance_;
                 HWND hWnd_;
 
+                D3d9Renderer renderer_;
                 bool isActive_;
 
                 // Returns state of the given key

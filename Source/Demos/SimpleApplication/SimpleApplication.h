@@ -20,7 +20,6 @@ namespace selene
         private:
                 ResourceManager textureManager_, meshManager_;
                 Platform::FileManager fileManager_;
-                Platform::Renderer renderer_;
 
                 Scene scene_;
                 Gui gui_;

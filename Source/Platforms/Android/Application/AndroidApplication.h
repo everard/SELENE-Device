@@ -5,6 +5,7 @@
 #define ANDROID_APPLICATION_H
 
 #include "../../../Engine/Application/Application.h"
+#include "../Rendering/OpenGLES/GLESRenderer.h"
 #include "AndroidTimer.h"
 
 #include <android_native_app_glue.h>
@@ -32,13 +33,15 @@ namespace selene
                 android_app* getHandle();
 
         protected:
+                GlesRenderer renderer_;
+
                 // Returns state of the given key
                 float getKeyState(uint8_t key);
 
         private:
                 android_app* state_;
-                bool shouldRun_, isPaused_;
                 AndroidTimer timer_;
+                bool shouldRun_, isPaused_;
 
                 // Processes commands and input
                 void processCommand(android_app* app, int32_t cmd);

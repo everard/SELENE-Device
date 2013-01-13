@@ -77,40 +77,6 @@ namespace selene
                 return ++x;
         }
 
-        D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
-        {
-                d3dDevice_ = nullptr;
-
-                memset(d3dDummyTextures_, 0, sizeof(d3dDummyTextures_));
-                d3dRandomTexture_ = nullptr;
-
-                d3dMeshVertexDeclaration_ = nullptr;
-
-                memset(d3dRenderTargetTextures_, 0, sizeof(d3dRenderTargetTextures_));
-                memset(d3dRenderTargetSurfaces_, 0, sizeof(d3dRenderTargetSurfaces_));
-                memset(d3dHalfSizeRenderTargetTextures_, 0, sizeof(d3dHalfSizeRenderTargetTextures_));
-                memset(d3dHalfSizeRenderTargetSurfaces_, 0, sizeof(d3dHalfSizeRenderTargetSurfaces_));
-                memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
-                d3dBackBufferSurface_ = d3dDepthStencilSurface_ = nullptr;
-                d3dShadowMapRenderTargetSurface_ = nullptr;
-                d3dShadowMapDepthStencilSurface_ = nullptr;
-                d3dShadowMapTexture_ = nullptr;
-
-                d3dMaxTextureAnisotropy_ = 1;
-                isR32fRenderTargetFormatSupported_ = false;
-                isMultipleRenderTargetSupported_ = false;
-                isThirdShaderModelSupported_ = false;
-                isDeviceLost_ = false;
-        }
-        D3d9Renderer::~D3d9Renderer()
-        {
-                destroy();
-
-                D3d9Device* device = D3d9Device::getInstance();
-                if(device != nullptr)
-                        device->destroy();
-        }
-
         //--------------------------------------------------------------------------------------------
         bool D3d9Renderer::initialize(const Renderer::Parameters& parameters)
         {
@@ -401,6 +367,65 @@ namespace selene
                 d3dDevice_->EndScene();
                 if(d3dDevice_->Present(nullptr, nullptr, 0, nullptr) == D3DERR_DEVICELOST)
                         isDeviceLost_ = true;
+        }
+
+        D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
+        {
+                d3dDevice_ = nullptr;
+
+                memset(d3dDummyTextures_, 0, sizeof(d3dDummyTextures_));
+                d3dRandomTexture_ = nullptr;
+
+                d3dMeshVertexDeclaration_ = nullptr;
+
+                memset(d3dRenderTargetTextures_, 0, sizeof(d3dRenderTargetTextures_));
+                memset(d3dRenderTargetSurfaces_, 0, sizeof(d3dRenderTargetSurfaces_));
+                memset(d3dHalfSizeRenderTargetTextures_, 0, sizeof(d3dHalfSizeRenderTargetTextures_));
+                memset(d3dHalfSizeRenderTargetSurfaces_, 0, sizeof(d3dHalfSizeRenderTargetSurfaces_));
+                memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
+                d3dBackBufferSurface_ = d3dDepthStencilSurface_ = nullptr;
+                d3dShadowMapRenderTargetSurface_ = nullptr;
+                d3dShadowMapDepthStencilSurface_ = nullptr;
+                d3dShadowMapTexture_ = nullptr;
+
+                d3dMaxTextureAnisotropy_ = 1;
+                isR32fRenderTargetFormatSupported_ = false;
+                isMultipleRenderTargetSupported_ = false;
+                isThirdShaderModelSupported_ = false;
+                isDeviceLost_ = false;
+        }
+        D3d9Renderer::D3d9Renderer(const D3d9Renderer&): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
+        {
+                d3dDevice_ = nullptr;
+
+                memset(d3dDummyTextures_, 0, sizeof(d3dDummyTextures_));
+                d3dRandomTexture_ = nullptr;
+
+                d3dMeshVertexDeclaration_ = nullptr;
+
+                memset(d3dRenderTargetTextures_, 0, sizeof(d3dRenderTargetTextures_));
+                memset(d3dRenderTargetSurfaces_, 0, sizeof(d3dRenderTargetSurfaces_));
+                memset(d3dHalfSizeRenderTargetTextures_, 0, sizeof(d3dHalfSizeRenderTargetTextures_));
+                memset(d3dHalfSizeRenderTargetSurfaces_, 0, sizeof(d3dHalfSizeRenderTargetSurfaces_));
+                memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
+                d3dBackBufferSurface_ = d3dDepthStencilSurface_ = nullptr;
+                d3dShadowMapRenderTargetSurface_ = nullptr;
+                d3dShadowMapDepthStencilSurface_ = nullptr;
+                d3dShadowMapTexture_ = nullptr;
+
+                d3dMaxTextureAnisotropy_ = 1;
+                isR32fRenderTargetFormatSupported_ = false;
+                isMultipleRenderTargetSupported_ = false;
+                isThirdShaderModelSupported_ = false;
+                isDeviceLost_ = false;
+        }
+        D3d9Renderer::~D3d9Renderer()
+        {
+                destroy();
+
+                D3d9Device* device = D3d9Device::getInstance();
+                if(device != nullptr)
+                        device->destroy();
         }
 
         //--------------------------------------------------------------------------------------------

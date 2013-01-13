@@ -15,12 +15,6 @@
 namespace selene
 {
 
-        GlRenderer::GlRenderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
-        GlRenderer::~GlRenderer()
-        {
-                destroy();
-        }
-
         //-----------------------------------------------------------------
         bool GlRenderer::initialize(const Renderer::Parameters& parameters)
         {
@@ -54,6 +48,13 @@ namespace selene
                 unprojectionVector_.define(projectionInvMatrix.a[0][0],
                                            projectionInvMatrix.a[1][1],
                                            1.0, 0.0);
+        }
+
+        GlRenderer::GlRenderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
+        GlRenderer::GlRenderer(const GlRenderer& renderer): parameters_(renderer.parameters_) {}
+        GlRenderer::~GlRenderer()
+        {
+                destroy();
         }
 
         //-----------------------------------------------------------------
