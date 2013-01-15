@@ -179,7 +179,6 @@ namespace selene
         {
                 textureManager_.destroyResources(true);
                 meshManager_.destroyResources(true);
-                renderer_.destroy();
         }
 
         //-----------------------------------------------------------------------------

@@ -104,7 +104,7 @@ namespace selene
                 if(!IS_SET(ddsHeader_.caps.caps1, DDSCAPS_COMPLEX) &&
                    !IS_SET(ddsHeader_.caps.caps1, DDSCAPS_MIPMAP) &&
                    !IS_SET(ddsHeader_.flags, DDSD_MIPMAPCOUNT) &&
-                   ddsHeader_.mipMapCount > 0)
+                   ddsHeader_.mipMapCount > 1)
                         return false;
 
                 // get width and height

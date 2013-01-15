@@ -394,7 +394,8 @@ namespace selene
                 isThirdShaderModelSupported_ = false;
                 isDeviceLost_ = false;
         }
-        D3d9Renderer::D3d9Renderer(const D3d9Renderer&): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
+        D3d9Renderer::D3d9Renderer(const D3d9Renderer&): Renderer(), Status(),
+                                                         parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
         {
                 d3dDevice_ = nullptr;
 

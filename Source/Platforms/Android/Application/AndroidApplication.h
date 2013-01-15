@@ -41,7 +41,7 @@ namespace selene
         private:
                 android_app* state_;
                 AndroidTimer timer_;
-                bool shouldRun_, isPaused_;
+                bool shouldRun_, isPaused_, isInitialized_;
 
                 // Processes commands and input
                 void processCommand(android_app* app, int32_t cmd);

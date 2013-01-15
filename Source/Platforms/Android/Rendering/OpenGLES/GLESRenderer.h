@@ -7,9 +7,10 @@
 #include "../../../../Engine/Rendering/Renderer.h"
 #include "../../../../Engine/Core/Resources/Mesh/Mesh.h"
 #include "../../../../Engine/Core/Status/Status.h"
+#include "Helpers/GLESGUIRenderer.h"
 
-#include <EGL/egl.h>
 #include <GLES2/gl2.h>
+#include <EGL/egl.h>
 
 namespace selene
 {
@@ -27,12 +28,16 @@ namespace selene
                 // Renders scene
                 void render(const Camera& camera);
 
+                // Checks OpenGL ES error
+                static void checkGlesError(const char* operation);
+
         private:
                 friend class AndroidApplication;
 
                 // Capabilities
                 enum
                 {
+                        NUM_OF_VERTEX_SHADER_UNIFORMS_REQUIRED = 70,
                         NUM_OF_VERTEX_ATTRIBUTES_REQUIRED = 6
                 };
 
@@ -53,23 +58,38 @@ namespace selene
                 EGLContext context_;
                 EGLDisplay display_;
 
-                GLint program_, positionHandle_, colorLocation_;
+                GlesGuiRenderer guiRenderer_;
 
                 GlesRenderer();
                 GlesRenderer(const GlesRenderer& renderer);
                 ~GlesRenderer();
 
-                // Creates context and retains all resources
-                bool createContext();
-
-                // Discards context and all resources
-                void discardContext();
-
                 // Writes log entry
                 void writeLogEntry(const char* entry);
 
-                // Initializes context
-                bool initializeContext();
+                // Initializes context and retains all resources
+                bool retain();
+
+                // Discards context and all resources
+                void discard();
+
+                // Retains all helpers
+                bool retainHelpers();
+
+                // Discards all helpers
+                void discardHelpers();
+
+                // Initializes helpers
+                bool initializeHelpers();
+
+                // Destroys helpers
+                void destroyHelpers();
+
+                // Initializes OpenGL ES context
+                bool initializeGlesContext();
+
+                // Destroys OpenGL ES context
+                void destroyGlesContext();
 
         };
 

@@ -12,7 +12,10 @@
 #include "Application/AndroidTimer.h"
 
 #include <android/asset_manager.h>
+#include <android/log.h>
 #include <set>
+
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "SELENE-Device", __VA_ARGS__))
 
 namespace selene
 {
@@ -26,7 +29,6 @@ namespace selene
                 typedef AndroidApplication Application;
                 typedef AndroidTimer Timer;
 
-                typedef GlesRenderer Renderer;
                 typedef GlesTexture Texture;
                 typedef GlesMesh Mesh;
 
@@ -73,8 +75,9 @@ namespace selene
                 static uint32_t getDefaultScreenHeight();
 
         private:
-                friend class AndroidApplication;
                 friend void ::android_main(android_app* state);
+                friend class AndroidApplication;
+                friend class GlesRenderer;
 
                 static android_app* state_;
                 static uint32_t defaultScreenWidth_;

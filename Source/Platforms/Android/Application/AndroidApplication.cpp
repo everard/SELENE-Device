@@ -12,6 +12,7 @@ namespace selene
                 state_ = nullptr;
                 shouldRun_ = true;
                 isPaused_  = false;
+                isInitialized_ = false;
         }
         AndroidApplication::~AndroidApplication() {}
 
@@ -56,7 +57,7 @@ namespace selene
                                 }
                         }
 
-                        if(!isPaused_)
+                        if(!isPaused_ && isInitialized_)
                         {
                                 timer_.reset();
 
@@ -84,9 +85,8 @@ namespace selene
         }
 
         //---------------------------------------------------------------------------------------
-        float AndroidApplication::getKeyState(uint8_t key)
+        float AndroidApplication::getKeyState(uint8_t)
         {
-                key = 0;
                 return 0.0f;
         }
 
@@ -106,17 +106,23 @@ namespace selene
                                         return;
                                 }
 
-                                int32_t width  = ANativeWindow_getWidth(app->window);
-                                int32_t height = ANativeWindow_getHeight(app->window);
-
-                                if(width <= 0 || height <= 0)
+                                if(!renderer_.initializeGlesContext())
                                 {
                                         shouldRun_ = false;
                                         return;
                                 }
 
-                                Platform::defaultScreenWidth_  = static_cast<uint32_t>(width);
-                                Platform::defaultScreenHeight_ = static_cast<uint32_t>(height);
+                                int32_t nativeWindowWidth  = ANativeWindow_getWidth(state_->window);
+                                int32_t nativeWindowHeight = ANativeWindow_getHeight(state_->window);
+
+                                if(nativeWindowWidth <= 1 || nativeWindowHeight <= 1)
+                                {
+                                        shouldRun_ = false;
+                                        return;
+                                }
+
+                                Platform::defaultScreenWidth_  = static_cast<uint32_t>(nativeWindowWidth);
+                                Platform::defaultScreenHeight_ = static_cast<uint32_t>(nativeWindowHeight);
 
                                 width_  = Platform::defaultScreenWidth_;
                                 height_ = Platform::defaultScreenHeight_;
@@ -127,19 +133,22 @@ namespace selene
                                         return;
                                 }
 
+                                isInitialized_ = true;
                                 break;
                         }
 
                         case APP_CMD_TERM_WINDOW:
                         {
+                                isInitialized_ = false;
                                 onDestroy();
+                                renderer_.destroy();
                                 break;
                         }
 
                         case APP_CMD_LOST_FOCUS:
                         {
                                 isPaused_ = true;
-                                renderer_.discardContext();
+                                renderer_.discard();
                                 break;
                         }
 
@@ -147,7 +156,7 @@ namespace selene
                         {
                                 if(isPaused_)
                                 {
-                                        renderer_.createContext();
+                                        renderer_.retain();
                                         timer_.reset();
                                         isPaused_ = false;
                                 }

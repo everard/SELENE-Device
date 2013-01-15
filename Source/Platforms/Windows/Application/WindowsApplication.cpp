@@ -177,6 +177,8 @@ namespace selene
         //-------------------------------------------------------------------------------------
         void WindowsApplication::destroy()
         {
+                renderer_.destroy();
+
                 if(hWnd_ == 0)
                         return;
 

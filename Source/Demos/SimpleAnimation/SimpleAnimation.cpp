@@ -244,9 +244,9 @@ namespace selene
         //--------------------------------------------------------------------------------
         void SimpleAnimation::onDestroy()
         {
+                meshAnimationManager_.destroyResources(true);
                 textureManager_.destroyResources(true);
                 meshManager_.destroyResources(true);
-                renderer_.destroy();
         }
 
         //--------------------------------------------------------------------------------

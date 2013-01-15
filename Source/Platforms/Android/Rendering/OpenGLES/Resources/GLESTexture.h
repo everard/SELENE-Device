@@ -5,6 +5,7 @@
 #define GLES_TEXTURE_H
 
 #include "../../../../../Engine/Core/Resources/Texture/Texture.h"
+#include <GLES2/gl2.h>
 
 namespace selene
 {
@@ -23,7 +24,10 @@ namespace selene
                 void discard();
 
         private:
+                friend class GlesGuiRenderer;
                 friend class GlesRenderer;
+
+                GLuint texture_;
 
         };
 
