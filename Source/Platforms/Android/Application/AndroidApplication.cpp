@@ -167,7 +167,7 @@ namespace selene
         }
 
         //---------------------------------------------------------------------------------------
-        int32_t AndroidApplication::processInputEvent(android_app* app, AInputEvent* event)
+        int32_t AndroidApplication::processInputEvent(android_app*, AInputEvent* event)
         {
                 if(AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
                 {

@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Nezametdinov E. Ildus
+// Licensed under the MIT License (see LICENSE.txt for details)
+
 #ifndef GLES_GUI_RENDERER_H
 #define GLES_GUI_RENDERER_H
 

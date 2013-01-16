@@ -122,12 +122,8 @@ namespace selene
         }
 
         //------------------------------------------------------------------------------
-        void Gui::Element::process(const Vector2d& cursorPosition,
-                                   uint8_t pressedControlButtons,
-                                   uint8_t key)
+        void Gui::Element::process(const Vector2d& cursorPosition, uint8_t, uint8_t)
         {
-                pressedControlButtons = key = 0;
-
                 RELATION relation = determineRelation(cursorPosition);
 
                 if(relation == OUTSIDE && is(GUI_ELEMENT_TOUCHED))

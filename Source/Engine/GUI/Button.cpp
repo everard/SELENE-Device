@@ -19,10 +19,8 @@ namespace selene
         //--------------------------------------------------
         void Button::process(const Vector2d& cursorPosition,
                              uint8_t pressedControlButtons,
-                             uint8_t key)
+                             uint8_t)
         {
-                key = 0;
-
                 if(determineRelation(cursorPosition) != OUTSIDE)
                 {
                         if(!is(GUI_ELEMENT_TOUCHED))

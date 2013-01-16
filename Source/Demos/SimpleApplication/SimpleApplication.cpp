@@ -50,7 +50,7 @@ namespace selene
         }
         SimpleApplication::~SimpleApplication() {}
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         bool SimpleApplication::onInitialize()
         {
                 // initialize renderer
@@ -174,34 +174,34 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         void SimpleApplication::onDestroy()
         {
                 textureManager_.destroyResources(true);
                 meshManager_.destroyResources(true);
         }
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         void SimpleApplication::onKeyPress(uint8_t key)
         {
                 gui_.process(cursorPosition_, pressedControlButtons_, key);
         }
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         void SimpleApplication::onControlButtonPress(uint8_t button)
         {
-                if(IS_SET(button, CONTROL_BUTTON_1))
+                if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = true;
         }
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         void SimpleApplication::onControlButtonRelease(uint8_t button)
         {
-                if(IS_SET(button, CONTROL_BUTTON_1))
+                if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = false;
         }
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         void SimpleApplication::onUpdate(float elapsedTime)
         {
                 if(isCameraRotationEnabled_)
@@ -222,29 +222,23 @@ namespace selene
                 elapsedTime = 0.0f;
         }
 
-        //-----------------------------------------------------------------------------
+        //------------------------------------------------------------
         void SimpleApplication::onRender(float elapsedTime)
         {
                 // render scene
                 scene_.updateAndRender(elapsedTime, renderer_);
         }
 
-        //-----------------------------------------------------------------------------
-        void SimpleApplication::onButtonMessageExit(int32_t elementId, uint8_t message)
+        //------------------------------------------------------------
+        void SimpleApplication::onButtonMessageExit(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 // halt application
                 halt();
         }
 
-        //-----------------------------------------------------------------------------
-        void SimpleApplication::onButtonMessageCopy(int32_t elementId, uint8_t message)
+        //------------------------------------------------------------
+        void SimpleApplication::onButtonMessageCopy(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 auto weakLabel   = gui_.getElement(labelId_);
                 auto weakTextBox = gui_.getElement(textBoxId_);
                 if(weakLabel.expired() || weakTextBox.expired())

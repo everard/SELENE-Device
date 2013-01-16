@@ -55,7 +55,7 @@ namespace selene
         }
         SimpleAnimation::~SimpleAnimation() {}
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         bool SimpleAnimation::onInitialize()
         {
                 // initialize renderer
@@ -241,7 +241,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         void SimpleAnimation::onDestroy()
         {
                 meshAnimationManager_.destroyResources(true);
@@ -249,27 +249,27 @@ namespace selene
                 meshManager_.destroyResources(true);
         }
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         void SimpleAnimation::onKeyPress(uint8_t key)
         {
                 gui_.process(cursorPosition_, pressedControlButtons_, key);
         }
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         void SimpleAnimation::onControlButtonPress(uint8_t button)
         {
-                if(IS_SET(button, CONTROL_BUTTON_1))
+                if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = true;
         }
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         void SimpleAnimation::onControlButtonRelease(uint8_t button)
         {
-                if(IS_SET(button, CONTROL_BUTTON_1))
+                if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = false;
         }
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         void SimpleAnimation::onUpdate(float elapsedTime)
         {
                 // rotate camera
@@ -291,29 +291,23 @@ namespace selene
                 elapsedTime = 0.0f;
         }
 
-        //--------------------------------------------------------------------------------
+        //--------------------------------------------------------------
         void SimpleAnimation::onRender(float elapsedTime)
         {
                 // render scene
                 scene_.updateAndRender(elapsedTime, renderer_);
         }
 
-        //--------------------------------------------------------------------------------
-        void SimpleAnimation::onButtonMessageExit(int32_t elementId, uint8_t message)
+        //--------------------------------------------------------------
+        void SimpleAnimation::onButtonMessageExit(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 // halt application
                 halt();
         }
 
-        //--------------------------------------------------------------------------------
-        void SimpleAnimation::onButtonMessageWalk(int32_t elementId, uint8_t message)
+        //--------------------------------------------------------------
+        void SimpleAnimation::onButtonMessageWalk(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 auto weakObject = scene_.getActor("object");
                 if(!weakObject.expired())
                 {
@@ -322,12 +316,9 @@ namespace selene
                 }
         }
 
-        //--------------------------------------------------------------------------------
-        void SimpleAnimation::onButtonMessageShoot(int32_t elementId, uint8_t message)
+        //--------------------------------------------------------------
+        void SimpleAnimation::onButtonMessageShoot(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 auto weakObject = scene_.getActor("object");
                 if(!weakObject.expired())
                 {
@@ -336,12 +327,9 @@ namespace selene
                 }
         }
 
-        //--------------------------------------------------------------------------------
-        void SimpleAnimation::onButtonMessageLookLeft(int32_t elementId, uint8_t message)
+        //--------------------------------------------------------------
+        void SimpleAnimation::onButtonMessageLookLeft(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 auto weakObject = scene_.getActor("object");
                 if(!weakObject.expired())
                 {
@@ -351,12 +339,9 @@ namespace selene
                 }
         }
 
-        //--------------------------------------------------------------------------------
-        void SimpleAnimation::onButtonMessageLookRight(int32_t elementId, uint8_t message)
+        //--------------------------------------------------------------
+        void SimpleAnimation::onButtonMessageLookRight(int32_t, uint8_t)
         {
-                // to prevent compilation warning we should use all parameters
-                elementId = message = 0;
-
                 auto weakObject = scene_.getActor("object");
                 if(!weakObject.expired())
                 {
