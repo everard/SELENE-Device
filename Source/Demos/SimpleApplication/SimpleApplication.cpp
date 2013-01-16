@@ -202,7 +202,7 @@ namespace selene
         }
 
         //------------------------------------------------------------
-        void SimpleApplication::onUpdate(float elapsedTime)
+        void SimpleApplication::onUpdate(float)
         {
                 if(isCameraRotationEnabled_)
                 {
@@ -217,9 +217,6 @@ namespace selene
 
                 // process GUI
                 gui_.process(cursorPosition_, pressedControlButtons_, 0);
-
-                // prevent compiler warning
-                elapsedTime = 0.0f;
         }
 
         //------------------------------------------------------------
