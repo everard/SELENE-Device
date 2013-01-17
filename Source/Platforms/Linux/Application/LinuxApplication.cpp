@@ -12,7 +12,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------
+        //------------------------------------------
         bool LinuxApplication::initialize()
         {
                 if(!onInitialize())
@@ -24,24 +24,23 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------
+        //------------------------------------------
         bool LinuxApplication::run()
         {
                 onDestroy();
                 return true;
         }
 
-        //----------------------------------------------
+        //------------------------------------------
         void LinuxApplication::halt() {}
 
-        //----------------------------------------------
-        float LinuxApplication::getKeyState(uint8_t key)
+        //------------------------------------------
+        float LinuxApplication::getKeyState(uint8_t)
         {
-                key = 0;
                 return 0.0f;
         }
 
-        //----------------------------------------------
+        //------------------------------------------
         void LinuxApplication::destroy() {}
 
 }

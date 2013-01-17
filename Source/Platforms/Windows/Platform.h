@@ -23,7 +23,6 @@ namespace selene
                 typedef WindowsApplication Application;
                 typedef WindowsTimer Timer;
 
-                typedef D3d9Renderer Renderer;
                 typedef D3d9Texture Texture;
                 typedef D3d9Mesh Mesh;
 

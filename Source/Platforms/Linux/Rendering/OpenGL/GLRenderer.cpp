@@ -51,7 +51,8 @@ namespace selene
         }
 
         GlRenderer::GlRenderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
-        GlRenderer::GlRenderer(const GlRenderer& renderer): parameters_(renderer.parameters_) {}
+        GlRenderer::GlRenderer(const GlRenderer& renderer): Renderer(), Status(),
+                                                            parameters_(renderer.parameters_) {}
         GlRenderer::~GlRenderer()
         {
                 destroy();

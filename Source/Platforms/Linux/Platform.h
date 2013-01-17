@@ -23,7 +23,6 @@ namespace selene
                 typedef LinuxApplication Application;
                 typedef LinuxTimer Timer;
 
-                typedef GlRenderer Renderer;
                 typedef GlTexture Texture;
                 typedef GlMesh Mesh;
 

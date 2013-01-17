@@ -5,6 +5,7 @@
 #define GLES_MESH_H
 
 #include "../../../../../Engine/Core/Resources/Mesh/Mesh.h"
+#include <GLES2/gl2.h>
 
 namespace selene
 {
@@ -24,6 +25,9 @@ namespace selene
 
         private:
                 friend class GlesRenderer;
+
+                GLuint vertexBuffers_[NUM_OF_VERTEX_STREAMS];
+                GLuint indexBuffer_;
 
                 // Destroys OpenGL ES mesh data
                 void destroy();

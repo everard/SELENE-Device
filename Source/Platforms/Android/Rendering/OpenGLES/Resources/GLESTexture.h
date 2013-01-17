@@ -29,6 +29,9 @@ namespace selene
 
                 GLuint texture_;
 
+                // Destroys OpenGL ES texture data
+                void destroy();
+
         };
 
 }

@@ -169,20 +169,38 @@ namespace selene
         //---------------------------------------------------------------------------------------
         int32_t AndroidApplication::processInputEvent(android_app*, AInputEvent* event)
         {
+                static int32_t previousX = 0;
+                static int32_t previousY = 0;
+
                 if(AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
                 {
                         int32_t x = AMotionEvent_getX(event, 0);
                         int32_t y = AMotionEvent_getY(event, 0);
 
-                        cursorShift_ = cursorPosition_;
-
                         cursorPosition_.x = 2.0f * static_cast<float>(x) / static_cast<float>(width_);
                         cursorPosition_.y = 2.0f * static_cast<float>(y) / static_cast<float>(height_);
 
-                        cursorShift_ = cursorPosition_ - cursorShift_;
-
-                        if((AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK) == AMOTION_EVENT_ACTION_UP)
+                        int32_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
+                        if(action == AMOTION_EVENT_ACTION_UP)
+                        {
+                                cursorShift_.define(0.0f);
                                 pressedControlButtons_ = CONTROL_BUTTON_0;
+                                onControlButtonRelease(CONTROL_BUTTON_0);
+                        }
+                        else if(action == AMOTION_EVENT_ACTION_DOWN)
+                        {
+                                previousX = x;
+                                previousY = y;
+                                onControlButtonPress(CONTROL_BUTTON_0);
+                        }
+                        else
+                        {
+                                cursorShift_.x = static_cast<float>(x - previousX) / static_cast<float>(width_);//cursorPosition_ - cursorShift_;
+                                cursorShift_.y = static_cast<float>(y - previousY) / static_cast<float>(height_);//cursorPosition_ - cursorShift_;
+
+                                previousX = x;
+                                previousY = y;
+                        }
 
                         return 1;
                 }

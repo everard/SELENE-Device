@@ -15,19 +15,19 @@ namespace selene
         }
         GlesTexture::~GlesTexture()
         {
-                if(texture_ != 0)
-                        glDeleteTextures(1, &texture_);
+                destroy();
         }
 
         //-------------------------
         bool GlesTexture::retain()
         {
+                destroy();
+
+                LOGI("----------------------- Retaining Texture '%s'", getName());
+
                 // validate
                 if(data_.pixels.isEmpty())
-                {
-                        LOGI("--------------------- No texture data");
                         return false;
-                }
 
                 // get texture format
                 GLint format = GL_RGB;
@@ -43,7 +43,6 @@ namespace selene
 
                         // unknown format
                         default:
-                                LOGI("--------------------- Texture format is not supported");
                                 return false;
                 }
 
@@ -70,11 +69,19 @@ namespace selene
                 glBindTexture(GL_TEXTURE_2D, 0);
                 GlesRenderer::checkGlesError("glBindTexture");
 
+                LOGI("----------------------- Retained Texture '%s'", getName());
+
                 return true;
         }
 
         //-------------------------
         void GlesTexture::discard()
+        {
+                destroy();
+        }
+
+        //-------------------------
+        void GlesTexture::destroy()
         {
                 if(texture_ != 0)
                 {

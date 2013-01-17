@@ -57,6 +57,7 @@ namespace selene
         //-------------------------------------------------------------------
         std::istream* Platform::FileManager::open(const char* fileName) const
         {
+                LOGI("------------------------------------------- OPENING FILE %s", fileName);
                 const char* fullFileName = find(fileName);
                 if(fullFileName == nullptr || assetManager_ == nullptr)
                         return nullptr;
@@ -84,6 +85,7 @@ namespace selene
                 if(!stream->good())
                         return nullptr;
 
+                LOGI("------------------------------------------- SUCCESS");
                 return stream.release();
         }
 
