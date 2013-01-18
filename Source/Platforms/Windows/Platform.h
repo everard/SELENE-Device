@@ -15,6 +15,12 @@ namespace selene
 {
 
         /**
+         * \addtogroup Windows
+         * \brief Implementation of platform-dependent layer for MS Windows OS.
+         * @{
+         */
+
+        /**
          * Represents platform. Holds platform-dependent functions and application entry point.
          */
         class Platform
@@ -67,6 +73,10 @@ namespace selene
                 static uint32_t defaultScreenHeight_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

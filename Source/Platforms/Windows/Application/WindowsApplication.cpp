@@ -10,8 +10,8 @@ namespace selene
         {
                 windowClassName_ = "SELENE Device window class";
 
-                hInstance_ = 0;
-                hWnd_ = 0;
+                hInstance_ = nullptr;
+                hWnd_ = nullptr;
                 isActive_ = true;
         }
         WindowsApplication::~WindowsApplication()
@@ -35,7 +35,7 @@ namespace selene
                         return false;
                 }
 
-                SetWindowLongPtr(hWnd_, GWL_USERDATA, (LONG)this);
+                SetWindowLongPtr(hWnd_, GWL_USERDATA, reinterpret_cast<LONG>(this));
 
                 if(!onInitialize())
                 {
@@ -49,7 +49,7 @@ namespace selene
         //-------------------------------------------------------------------------------------
         bool WindowsApplication::run()
         {
-                if(hWnd_ == 0)
+                if(hWnd_ == nullptr)
                         return false;
 
                 ShowWindow(hWnd_, SW_SHOW);
@@ -149,7 +149,7 @@ namespace selene
         LRESULT CALLBACK windowProcedure(HWND hWnd, UINT message,
                                          WPARAM wParam, LPARAM lParam)
         {
-                WindowsApplication* windowsApplication = (WindowsApplication*)GetWindowLongPtr(hWnd, GWL_USERDATA);
+                WindowsApplication* windowsApplication = reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
                 if(windowsApplication != nullptr)
                         return windowsApplication->processMessages(message, wParam, lParam);
                 return DefWindowProc(hWnd, message, wParam, lParam);
@@ -161,15 +161,15 @@ namespace selene
                 WNDCLASS windowClass;
                 ZeroMemory(&windowClass, sizeof(windowClass));
 
-                windowClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+                windowClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW);
                 windowClass.lpszClassName = windowClassName_.c_str();
-                windowClass.lpfnWndProc = (WNDPROC)windowProcedure;
+                windowClass.lpfnWndProc = reinterpret_cast<WNDPROC>(windowProcedure);
 
                 windowClass.hCursor = LoadCursor(0, IDC_ARROW);
                 windowClass.style = CS_VREDRAW | CS_HREDRAW;
 
                 windowClass.hInstance = hInstance_;
-                windowClass.hIcon = 0;
+                windowClass.hIcon = nullptr;
 
                 return RegisterClass(&windowClass);
         }
@@ -179,13 +179,13 @@ namespace selene
         {
                 renderer_.destroy();
 
-                if(hWnd_ == 0)
+                if(hWnd_ == nullptr)
                         return;
 
                 DestroyWindow(hWnd_);
                 UnregisterClass(windowClassName_.c_str(), hInstance_);
-                hInstance_ = 0;
-                hWnd_ = 0;
+                hInstance_ = nullptr;
+                hWnd_ = nullptr;
         }
 
         //-------------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ namespace selene
                                 break;
 
                         case WM_KEYUP:
-                                onKeyPress((uint8_t)wParam);
+                                onKeyPress(static_cast<uint8_t>(wParam));
                                 break;
 
                         case WM_LBUTTONDOWN:

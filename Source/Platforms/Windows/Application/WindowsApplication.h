@@ -11,23 +11,35 @@
 namespace selene
 {
 
-        // Represents windows application.
+        /**
+         * \addtogroup Windows
+         * @{
+         */
+
+        /**
+         * Represents Windows application.
+         */
         class WindowsApplication: public Application
         {
         public:
+                /**
+                 * \brief Constructs Windows application with given name and size of the rendering area.
+                 * \param[in] name name of the application
+                 * \param[in] width width of the rendering area in pixels
+                 * \param[in] height height of the rendering area in pixels
+                 */
                 WindowsApplication(const char* name, uint32_t width, uint32_t height);
                 ~WindowsApplication();
 
-                // Initializes application
+                // Application interface implementation
                 bool initialize();
-
-                // Runs application
                 bool run();
-
-                // Halts application
                 void halt();
 
-                // Returns window handle
+                /**
+                 * \brief Returns window handle.
+                 * \return handle to the application window
+                 */
                 HWND getWindowHandle();
 
         protected:
@@ -38,27 +50,58 @@ namespace selene
                 D3d9Renderer renderer_;
                 bool isActive_;
 
-                // Returns state of the given key
+                // Application interface implementation
                 float getKeyState(uint8_t key);
 
-                // Windows message event callback
+                /**
+                 * \brief Windows message receive event callback.
+                 *
+                 * May be overridden in actual application, but doing so will make application
+                 * platform-dependent.
+                 * \param[in] message message code
+                 * \param[in] wParam WPARAM of the Windows message
+                 * \param[in] lParam LPARAM of the Windows message
+                 * \return result of the Windows message processing
+                 */
                 virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
         private:
-                // Window procedure
+                /**
+                 * \brief Window procedure. Calls WindowsApplication::processMessages.
+                 * \param[in] hWnd window handle
+                 * \param[in] message message code
+                 * \param[in] wParam WPARAM of the Windows message
+                 * \param[in] lParam LPARAM of the Windows message
+                 * \return result of the Windows message processing
+                 */
                 static friend LRESULT CALLBACK windowProcedure(HWND hWnd, UINT message,
                                                                WPARAM wParam, LPARAM lParam);
 
-                // Registers window class
+                /**
+                 * \brief Registers window class.
+                 * \return non-zero value if window class has been successfully registered
+                 */
                 ATOM registerWindowClass();
 
-                // Destroys window
+                /**
+                 * \brief Destroys application.
+                 */
                 void destroy();
 
-                // Processes messages
+                /**
+                 * \brief Processes Windows messages.
+                 * \param[in] message message code
+                 * \param[in] wParam WPARAM of the Windows message
+                 * \param[in] lParam LPARAM of the Windows message
+                 * \return result of the Windows message processing
+                 */
                 LRESULT processMessages(UINT message, WPARAM wParam, LPARAM lParam);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

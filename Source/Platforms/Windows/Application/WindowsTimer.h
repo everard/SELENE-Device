@@ -10,17 +10,22 @@
 namespace selene
 {
 
-        // Represents windows timer.
+        /**
+         * \addtogroup Windows
+         * @{
+         */
+
+        /**
+         * Represents Windows timer.
+         */
         class WindowsTimer: public Timer
         {
         public:
                 WindowsTimer();
                 ~WindowsTimer();
 
-                // Resets timer
+                // Timer interface implementation
                 void reset();
-
-                // Returns elapsed time
                 float getElapsedTime();
 
         private:
@@ -29,6 +34,10 @@ namespace selene
                 LONGLONG ticks_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
