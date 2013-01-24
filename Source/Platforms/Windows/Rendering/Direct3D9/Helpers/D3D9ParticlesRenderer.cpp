@@ -5,6 +5,7 @@
 
 #include "../../../../../Engine/Scene/Nodes/ParticleSystem.h"
 #include "../../../../../Engine/Core/Helpers/Bag.h"
+#include "../D3D9Renderer.h"
 
 namespace selene
 {
@@ -37,7 +38,7 @@ namespace selene
         //---------------------------------------------------------------------------
         bool D3d9ParticlesRenderer::initialize()
         {
-                d3dDevice_ = D3d9Device::getInterface();
+                d3dDevice_ = D3d9Renderer::getDevice();
                 if(d3dDevice_ == nullptr)
                         return false;
 

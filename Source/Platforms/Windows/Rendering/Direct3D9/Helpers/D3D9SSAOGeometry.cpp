@@ -2,6 +2,7 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "D3D9SSAOGeometry.h"
+#include "../D3D9Renderer.h"
 
 namespace selene
 {
@@ -239,7 +240,7 @@ namespace selene
         //---------------------------------
         bool D3d9SsaoGeometry::initialize()
         {
-                d3dDevice_ = D3d9Device::getInterface();
+                d3dDevice_ = D3d9Renderer::getDevice();
                 if(d3dDevice_ == nullptr)
                         return false;
 

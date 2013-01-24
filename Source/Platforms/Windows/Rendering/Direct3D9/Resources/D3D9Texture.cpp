@@ -2,6 +2,7 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "D3D9Texture.h"
+#include "../D3D9Renderer.h"
 
 namespace selene
 {
@@ -18,7 +19,7 @@ namespace selene
         //-------------------------
         bool D3d9Texture::retain()
         {
-                LPDIRECT3DDEVICE9 d3dDevice = D3d9Device::getInterface();
+                LPDIRECT3DDEVICE9 d3dDevice = D3d9Renderer::getDevice();
                 if(d3dDevice == nullptr)
                         return false;
 

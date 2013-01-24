@@ -2,6 +2,8 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "D3D9Mesh.h"
+#include "../D3D9Renderer.h"
+
 #include <new>
 
 namespace selene
@@ -21,7 +23,7 @@ namespace selene
         //----------------------
         bool D3d9Mesh::retain()
         {
-                LPDIRECT3DDEVICE9 d3dDevice = D3d9Device::getInterface();
+                LPDIRECT3DDEVICE9 d3dDevice = D3d9Renderer::getDevice();
                 if(d3dDevice == nullptr)
                         return false;
 

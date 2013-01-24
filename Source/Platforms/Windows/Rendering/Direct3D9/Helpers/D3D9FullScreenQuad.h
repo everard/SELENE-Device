@@ -5,7 +5,7 @@
 #define D3D9_FULL_SCREEN_QUAD_H
 
 #include "../../../../../Engine/Core/Macros/Macros.h"
-#include "../D3D9Device.h"
+#include "D3D9Shader.h"
 
 namespace selene
 {

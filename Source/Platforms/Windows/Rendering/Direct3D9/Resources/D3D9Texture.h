@@ -5,7 +5,7 @@
 #define D3D9_TEXTURE_H
 
 #include "../../../../../Engine/Core/Resources/Texture/Texture.h"
-#include "../D3D9Device.h"
+#include <d3d9.h>
 
 namespace selene
 {
@@ -17,14 +17,11 @@ namespace selene
                 D3d9Texture(const char* name = nullptr);
                 ~D3d9Texture();
 
-                // Retains D3D9 texture
                 bool retain();
-
-                // Discards D3D9 texture
                 void discard();
 
         private:
-                friend class D3d9Renderer;
+                friend class D3d9TextureHandler;
 
                 LPDIRECT3DTEXTURE9 d3dTexture_;
 

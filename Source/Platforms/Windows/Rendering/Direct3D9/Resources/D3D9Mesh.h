@@ -5,7 +5,7 @@
 #define D3D9_MESH_H
 
 #include "../../../../../Engine/Core/Resources/Mesh/Mesh.h"
-#include "../D3D9Device.h"
+#include <d3d9.h>
 
 namespace selene
 {
@@ -17,14 +17,11 @@ namespace selene
                 D3d9Mesh(const char* name = nullptr);
                 ~D3d9Mesh();
 
-                // Retains D3D9 mesh
                 bool retain();
-
-                // Discards D3D9 mesh
                 void discard();
 
         private:
-                friend class D3d9Renderer;
+                friend class D3d9ActorsRenderer;
 
                 LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffers_[NUM_OF_VERTEX_STREAMS];
                 LPDIRECT3DINDEXBUFFER9 d3dIndexBuffer_;
