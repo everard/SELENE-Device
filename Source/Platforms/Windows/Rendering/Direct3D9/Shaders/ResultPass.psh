@@ -1,4 +1,5 @@
 sampler2D Result: register(s0);
+float4 texCoordsAdjustment: register(c0);
 
 struct PS_INPUT
 {
@@ -7,5 +8,6 @@ struct PS_INPUT
 
 float4 main(PS_INPUT In): COLOR0
 {
+        In.textureCoords += texCoordsAdjustment.zw;
         return tex2D(Result, In.textureCoords);
 }

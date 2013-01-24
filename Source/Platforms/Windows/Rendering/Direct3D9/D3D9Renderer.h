@@ -14,7 +14,7 @@
 #include "Helpers/D3D9ActorsRenderer.h"
 #include "Helpers/D3D9FullScreenQuad.h"
 #include "Helpers/D3D9TextureHandler.h"
-#include "Helpers/D3D9SSAOGeometry.h"
+#include "Helpers/D3D9SSAORenderer.h"
 #include "Helpers/D3D9GUIRenderer.h"
 #include "Helpers/D3D9Shader.h"
 
@@ -48,9 +48,6 @@ namespace selene
                 enum
                 {
                         VERTEX_SHADER_RESULT_PASS = 0,
-                        VERTEX_SHADER_SSAO_PASS,
-                        VERTEX_SHADER_SSAO_BLUR_X_PASS,
-                        VERTEX_SHADER_SSAO_BLUR_Y_PASS,
                         VERTEX_SHADER_EDGE_DETECTION,
                         VERTEX_SHADER_GUI_FRAMES_PASS,
                         VERTEX_SHADER_GUI_TEXT_PASS,
@@ -62,9 +59,6 @@ namespace selene
                         NUM_OF_VERTEX_SHADERS,
 
                         PIXEL_SHADER_RESULT_PASS = 0,
-                        PIXEL_SHADER_SSAO_PASS,
-                        PIXEL_SHADER_SSAO_BLUR_X_PASS,
-                        PIXEL_SHADER_SSAO_BLUR_Y_PASS,
                         PIXEL_SHADER_EDGE_DETECTION,
                         PIXEL_SHADER_GUI_FRAMES_PASS,
                         PIXEL_SHADER_GUI_TEXT_PASS,
@@ -74,20 +68,12 @@ namespace selene
                         PIXEL_SHADER_BLOOM_Y_PASS,
                         PIXEL_SHADER_COMBINE_PASS,
                         PIXEL_SHADER_PARTICLES_PASS,
-                        NUM_OF_PIXEL_SHADERS,
-
-                        OPTIONAL_VERTEX_SHADER_SSAO_PASS = 0,
-                        NUM_OF_OPTIONAL_VERTEX_SHADERS,
-
-                        OPTIONAL_PIXEL_SHADER_SSAO_PASS = 0,
-                        NUM_OF_OPTIONAL_PIXEL_SHADERS
+                        NUM_OF_PIXEL_SHADERS
                 };
 
                 static LPDIRECT3DDEVICE9 d3dDevice_;
                 LPDIRECT3D9 d3d_;
 
-                D3d9VertexShader optionalVertexShaders_[NUM_OF_OPTIONAL_VERTEX_SHADERS];
-                D3d9PixelShader  optionalPixelShaders_[NUM_OF_OPTIONAL_PIXEL_SHADERS];
                 D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];
                 D3d9PixelShader  pixelShaders_[NUM_OF_PIXEL_SHADERS];
 
@@ -97,10 +83,8 @@ namespace selene
                 D3d9ActorsRenderer actorsRenderer_;
                 D3d9TextureHandler textureHandler_;
                 D3d9FullScreenQuad fullScreenQuad_;
-                D3d9SsaoGeometry ssaoGeometry_;
+                D3d9SsaoRenderer ssaoRenderer_;
                 D3d9GuiRenderer guiRenderer_;
-
-                LPDIRECT3DTEXTURE9 d3dRandomTexture_;
 
                 D3DPRESENT_PARAMETERS d3dPresentParameters_;
                 D3d9FrameParameters frameParameters_;

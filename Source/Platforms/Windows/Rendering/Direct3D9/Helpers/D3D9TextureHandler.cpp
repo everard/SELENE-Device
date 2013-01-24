@@ -8,22 +8,14 @@ namespace selene
 {
 
         // Fills white dummy texture
-        VOID WINAPI fillWhiteTexture(D3DXVECTOR4* output, const D3DXVECTOR2* textureCoordinates,
-                                     const D3DXVECTOR2* texelSize, LPVOID data)
+        VOID WINAPI fillWhiteTexture(D3DXVECTOR4* output, const D3DXVECTOR2*, const D3DXVECTOR2*, LPVOID)
         {
-                D3DXVECTOR2 dummy = *textureCoordinates;
-                dummy = *texelSize;
-                data  = nullptr;
                 *output = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
         // Fills dummy normal map
-        VOID WINAPI fillNormalMap(D3DXVECTOR4* output, const D3DXVECTOR2* textureCoordinates,
-                                  const D3DXVECTOR2* texelSize, LPVOID data)
+        VOID WINAPI fillNormalMap(D3DXVECTOR4* output, const D3DXVECTOR2*, const D3DXVECTOR2*, LPVOID)
         {
-                D3DXVECTOR2 dummy = *textureCoordinates;
-                dummy = *texelSize;
-                data  = nullptr;
                 *output = D3DXVECTOR4(0.5f, 0.5f, 1.0f, 1.0f);
         }
 

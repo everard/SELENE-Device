@@ -16,26 +16,27 @@ namespace selene
          * @{
          */
 
+        /// Render target types
+        enum RENDER_TARGET
+        {
+                RENDER_TARGET_POSITIONS = 0,
+                RENDER_TARGET_NORMALS,
+                RENDER_TARGET_LIGHT_BUFFER,
+                RENDER_TARGET_SSAO_BUFFER,
+                RENDER_TARGET_BLURRED_SSAO_BUFFER,
+                RENDER_TARGET_RESULT,
+                RENDER_TARGET_HALF_SIZE_SSAO_BUFFER,
+                RENDER_TARGET_HALF_SIZE_BLOOM,
+                RENDER_TARGET_HALF_SIZE_BLURRED_BLOOM,
+                NUM_OF_RENDER_TARGETS
+        };
+
         /**
          * Represents render target container.
          */
         class D3d9RenderTargetContainer
         {
         public:
-                enum
-                {
-                        RENDER_TARGET_POSITIONS = 0,
-                        RENDER_TARGET_NORMALS,
-                        RENDER_TARGET_LIGHT_BUFFER,
-                        RENDER_TARGET_SSAO_BUFFER,
-                        RENDER_TARGET_BLURRED_SSAO_BUFFER,
-                        RENDER_TARGET_RESULT,
-                        RENDER_TARGET_HALF_SIZE_SSAO_BUFFER,
-                        RENDER_TARGET_HALF_SIZE_BLOOM,
-                        RENDER_TARGET_HALF_SIZE_BLURRED_BLOOM,
-                        NUM_OF_RENDER_TARGETS
-                };
-
                 /**
                  * \brief Initializes render target container.
                  * \param[in] parameters rendering parameters

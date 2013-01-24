@@ -40,7 +40,17 @@ namespace selene
                         nearestPowerOfTwo += nearestPowerOfTwo;
 
                 uint32_t shadowMapSize = nearestPowerOfTwo / 2;
+
                 frameParameters_.shadowMapKernelSize.define(1.0f / static_cast<float>(shadowMapSize));
+                frameParameters_.screenSize.define(static_cast<float>(parameters_.getWidth()),
+                                                   static_cast<float>(parameters_.getHeight()),
+                                                   static_cast<float>(halfWidth),
+                                                   static_cast<float>(halfHeight));
+
+                frameParameters_.textureCoordinatesAdjustment.define( 1.0f / static_cast<float>(parameters_.getWidth()),
+                                                                     -1.0f / static_cast<float>(parameters_.getHeight()),
+                                                                      0.5f / static_cast<float>(parameters_.getWidth()),
+                                                                      0.5f / static_cast<float>(parameters_.getHeight()));
 
                 D3DFORMAT renderTargetFormats[NUM_OF_RENDER_TARGETS];
                 for(uint8_t i = 0; i < NUM_OF_RENDER_TARGETS; ++i)

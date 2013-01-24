@@ -136,8 +136,8 @@ namespace selene
 
                 LPDIRECT3DSURFACE9 renderTargets[] =
                 {
-                        renderTargetContainer_.getRenderTarget(D3d9RenderTargetContainer::RENDER_TARGET_POSITIONS).getSurface(),
-                        renderTargetContainer_.getRenderTarget(D3d9RenderTargetContainer::RENDER_TARGET_NORMALS).getSurface()
+                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS).getSurface(),
+                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_NORMALS).getSurface()
                 };
                 DWORD    d3dClearFlags[]  = {D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET, D3DCLEAR_TARGET};
                 D3DCOLOR d3dClearColors[] = {D3DCOLOR_XRGB(0, 0, 0), D3DCOLOR_XRGB(128, 128, 128)};
@@ -206,16 +206,16 @@ namespace selene
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET,
                                   D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
 
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
                 d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
 
                 textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
+
+                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
                 pixelShaders_[PIXEL_SHADER_POSITIONS_PASS].set();
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
@@ -230,8 +230,7 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return;
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget
-                                            (D3d9RenderTargetContainer::RENDER_TARGET_RESULT).getSurface());
+                d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT).getSurface());
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
@@ -253,15 +252,13 @@ namespace selene
 
                 textureHandler_.setStageState(3, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(3, renderTargetContainer_.getRenderTarget
-                                       (D3d9RenderTargetContainer::RENDER_TARGET_LIGHT_BUFFER).getTexture());
+                d3dDevice_->SetTexture(3, renderTargetContainer_.getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
 
                 if(isSsaoEnabled)
                 {
                         textureHandler_.setStageState(4, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
                                                       D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(4, renderTargetContainer_.getRenderTarget
-                                               (D3d9RenderTargetContainer::RENDER_TARGET_SSAO_BUFFER).getTexture());
+                        d3dDevice_->SetTexture(4, renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getTexture());
 
                         pixelShaders_[PIXEL_SHADER_SHADING_PASS_WITH_SSAO].set();
                 }

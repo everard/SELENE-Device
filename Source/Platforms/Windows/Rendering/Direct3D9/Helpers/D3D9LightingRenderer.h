@@ -83,7 +83,24 @@ namespace selene
 
                         LOCATION_SPOT_LIGHT_POSITION  = 12,
                         LOCATION_SPOT_LIGHT_DIRECTION = LOCATION_SPOT_LIGHT_POSITION + BATCH_SIZE,
-                        LOCATION_SPOT_LIGHT_COLOR = LOCATION_SPOT_LIGHT_DIRECTION + BATCH_SIZE
+                        LOCATION_SPOT_LIGHT_COLOR = LOCATION_SPOT_LIGHT_DIRECTION + BATCH_SIZE,
+
+                        LOCATION_VIEW_PROJECTION_MATRIX = 0,
+                        LOCATION_NORMALS_MATRIX = 4,
+                        LOCATION_VIEW_MATRIX = 8,
+
+                        LOCATION_LIGHT_POSITION = 12,
+                        LOCATION_LIGHT_DIRECTION = 13,
+
+                        LOCATION_TEXTURE_COORDINATES_ADJUSTMENT = 0,
+                        LOCATION_UNPROJECTION_VECTOR = 1,
+                        LOCATION_PROJECTION_PARAMETERS = 2,
+
+                        LOCATION_LIGHT_PROJECTION_PARAMETERS = 3,
+                        LOCATION_LIGHT_VIEW_MATRIX = 4,
+                        LOCATION_LIGHT_TEXTURE_MATRIX = 8,
+                        LOCATION_SHADOW_MAP_BIAS = 12,
+                        LOCATION_SHADOW_MAP_KERNEL_SIZE = 13
                 };
 
                 D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];

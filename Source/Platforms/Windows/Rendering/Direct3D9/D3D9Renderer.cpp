@@ -17,36 +17,6 @@ namespace selene
 
         LPDIRECT3DDEVICE9 D3d9Renderer::d3dDevice_ = nullptr;
 
-        // Fills random texture
-        VOID WINAPI fillRandomTexture(D3DXVECTOR4* output, const D3DXVECTOR2* textureCoordinates,
-                                      const D3DXVECTOR2* texelSize, LPVOID data)
-        {
-                static D3DXVECTOR4 colors[16] =
-                {
-                        D3DXVECTOR4(138.0f / 255.0f, 106.0f / 255.0f, 241.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(119.0f / 255.0f, 37.0f / 255.0f, 111.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(149.0f / 255.0f, 208.0f / 255.0f, 90.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(138.0f / 255.0f, 184.0f / 255.0f, 23.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(57.0f / 255.0f, 105.0f / 255.0f, 205.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(20.0f / 255.0f, 134.0f / 255.0f, 144.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(46.0f / 255.0f, 87.0f / 255.0f, 83.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(75.0f / 255.0f, 160.0f / 255.0f, 33.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(81.0f / 255.0f, 208.0f / 255.0f, 127.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(156.0f / 255.0f, 202.0f / 255.0f, 199.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(90.0f / 255.0f, 174.0f / 255.0f, 200.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(208.0f / 255.0f, 155.0f / 255.0f, 77.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(215.0f / 255.0f, 72.0f / 255.0f, 92.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(229.0f / 255.0f, 89.0f / 255.0f, 196.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(139.0f / 255.0f, 43.0f / 255.0f, 194.0f / 255.0f, 1.0f),
-                        D3DXVECTOR4(129.0f / 255.0f, 75.0f / 255.0f, 28.0f / 255.0f, 1.0f)
-                };
-
-                D3DXVECTOR2 dummy = *textureCoordinates;
-                dummy = *texelSize;
-                data  = nullptr;
-                *output = colors[rand() % 16];
-        }
-
         //--------------------------------------------------------------------------------------------
         bool D3d9Renderer::initialize(const Renderer::Parameters& parameters)
         {
@@ -225,6 +195,9 @@ namespace selene
                                                            projectionInvMatrix.a[1][1],
                                                            1.0, 0.0);
 
+                frameParameters_.ssaoParameters.define(2.5f, -0.2f, 1.0f, 1.0f);
+                frameParameters_.edgeDetectionParameters.define(2.5f, 0.99f, 0.0f, 0.0f);
+
                 // begin rendering
                 if(FAILED(d3dDevice_->BeginScene()))
                         return;
@@ -233,11 +206,11 @@ namespace selene
                 lightingRenderer_.renderLighting(renderingData.getLightNode());
 
                 bool isSsaoEnabled = false;
-                /*if(is(RENDERING_SSAO_ENABLED))
+                if(is(RENDERING_SSAO_ENABLED))
                 {
-                        renderSsao();
+                        ssaoRenderer_.renderSsao();
                         isSsaoEnabled = true;
-                }*/
+                }
 
                 actorsRenderer_.renderShading(renderingData.getActorNode(), isSsaoEnabled);
                 /*renderParticles(renderingData.getParticleSystemNode());
@@ -260,18 +233,15 @@ namespace selene
                 vertexShaders_[VERTEX_SHADER_RESULT_PASS].set();
                 pixelShaders_[PIXEL_SHADER_RESULT_PASS].set();
 
-                d3dDevice_->SetVertexShaderConstantF(0, static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment), 1);
+                d3dDevice_->SetPixelShaderConstantF(0, static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment), 1);
 
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_.getRenderTarget
-                                       (D3d9RenderTargetContainer::RENDER_TARGET_RESULT).getTexture());
+                textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                              D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                d3dDevice_->SetTexture(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT).getTexture());
 
                 fullScreenQuad_.render();
 
@@ -340,27 +310,49 @@ namespace selene
         }
 
         D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0),
-                                      renderTargetContainer_(parameters_, capabilities_, frameParameters_),
-                                      lightingRenderer_(renderTargetContainer_, frameParameters_, capabilities_,
-                                                        actorsRenderer_, textureHandler_),
-                                      actorsRenderer_(renderTargetContainer_, frameParameters_,
-                                                      capabilities_, textureHandler_)
+                                      renderTargetContainer_(parameters_,
+                                                             capabilities_,
+                                                             frameParameters_),
+                                      lightingRenderer_(renderTargetContainer_,
+                                                        frameParameters_,
+                                                        capabilities_,
+                                                        actorsRenderer_,
+                                                        textureHandler_),
+                                      actorsRenderer_(renderTargetContainer_,
+                                                      frameParameters_,
+                                                      capabilities_,
+                                                      textureHandler_),
+                                      ssaoRenderer_(renderTargetContainer_,
+                                                    frameParameters_,
+                                                    capabilities_,
+                                                    fullScreenQuad_,
+                                                    textureHandler_)
         {
                 d3dDevice_ = nullptr;
                 d3d_ = nullptr;
 
-                d3dRandomTexture_ = nullptr;
                 memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
-
                 isDeviceLost_ = false;
         }
         D3d9Renderer::D3d9Renderer(const D3d9Renderer&): Renderer(), Status(),
                                                          parameters_(nullptr, nullptr, 0, 0, nullptr, 0),
-                                                         renderTargetContainer_(parameters_, capabilities_, frameParameters_),
-                                                         lightingRenderer_(renderTargetContainer_, frameParameters_, capabilities_,
-                                                                           actorsRenderer_, textureHandler_),
-                                                         actorsRenderer_(renderTargetContainer_, frameParameters_,
-                                                                         capabilities_, textureHandler_) {}
+                                                         renderTargetContainer_(parameters_,
+                                                                                capabilities_,
+                                                                                frameParameters_),
+                                                         lightingRenderer_(renderTargetContainer_,
+                                                                           frameParameters_,
+                                                                           capabilities_,
+                                                                           actorsRenderer_,
+                                                                           textureHandler_),
+                                                         actorsRenderer_(renderTargetContainer_,
+                                                                         frameParameters_,
+                                                                         capabilities_,
+                                                                         textureHandler_),
+                                                         ssaoRenderer_(renderTargetContainer_,
+                                                                       frameParameters_,
+                                                                       capabilities_,
+                                                                       fullScreenQuad_,
+                                                                       textureHandler_) {}
         D3d9Renderer::~D3d9Renderer()
         {
                 destroy();
@@ -377,9 +369,6 @@ namespace selene
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
                         D3d9Shader("ResultPass.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SSAOPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SSAOBlurX.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SSAOBlurY.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
                         D3d9Shader("EdgeDetect.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
                         D3d9Shader("GUIFramesPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
                         D3d9Shader("GUITextPass.vsh",   "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
@@ -392,10 +381,7 @@ namespace selene
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("ResultPass.psh",    "ps_1_1", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("SSAOPass.psh",      "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("SSAOBlurX.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("SSAOBlurY.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
+                        D3d9Shader("ResultPass.psh",    "ps_1_4", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("EdgeDetect.psh",    "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("GUIFramesPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("GUITextPass.psh",   "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
@@ -425,40 +411,6 @@ namespace selene
                         }
                 }
 
-                // create optional shaders
-                if(capabilities_.isThirdShaderModelSupported)
-                {
-                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_);
-                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh",  "ps_3_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_);
-
-                        if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].create(d3dOptionalVertexShader))
-                        {
-                                writeLogEntry("ERROR: Could not create optional vertex shader");
-                                return false;
-                        }
-
-                        if(!optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_SSAO_PASS].create(d3dOptionalPixelShader))
-                        {
-                                writeLogEntry("ERROR: Could not create optional pixel shader");
-                                return false;
-                        }
-                }
-
-                // create random texture
-                if(FAILED(d3dDevice_->CreateTexture(64, 64, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-                                                    &d3dRandomTexture_, nullptr)))
-                {
-                        writeLogEntry("ERROR: Could not create random texture");
-                        return false;
-                }
-
-                srand(0);
-                if(FAILED(D3DXFillTexture(d3dRandomTexture_, fillRandomTexture, nullptr)))
-                {
-                        writeLogEntry("ERROR: Could not fill random texture");
-                        return false;
-                }
-
                 // create helpers
                 FileManager* fileManager = parameters_.getFileManager();
 
@@ -468,26 +420,12 @@ namespace selene
                    !actorsRenderer_.initialize() ||
                    !textureHandler_.initialize() ||
                    !fullScreenQuad_.initialize() ||
-                   !ssaoGeometry_.initialize()   ||
+                   !ssaoRenderer_.initialize()   ||
                    !guiRenderer_.initialize(fileManager))
                 {
                         writeLogEntry("ERROR: Could not initialize helpers");
                         return false;
                 }
-
-                // set screen size
-                uint32_t halfWidth  = parameters_.getWidth()  / 2;
-                uint32_t halfHeight = parameters_.getHeight() / 2;
-                frameParameters_.screenSize.define(static_cast<float>(parameters_.getWidth()),
-                                                   static_cast<float>(parameters_.getHeight()),
-                                                   static_cast<float>(halfWidth),
-                                                   static_cast<float>(halfHeight));
-
-                // compute texture coordinates adjustment to directly map texels to pixels
-                frameParameters_.textureCoordinatesAdjustment.define( 1.0f / static_cast<float>(parameters_.getWidth()),
-                                                                     -1.0f / static_cast<float>(parameters_.getHeight()),
-                                                                      0.5f / static_cast<float>(parameters_.getWidth()),
-                                                                      0.5f / static_cast<float>(parameters_.getHeight()));
 
                 d3dDevice_->SetRenderState(D3DRS_LIGHTING, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -499,12 +437,6 @@ namespace selene
         //--------------------------------------------------------------------------------------------
         void D3d9Renderer::destroyHelpers()
         {
-                for(uint32_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
-                        optionalVertexShaders_[i].destroy();
-
-                for(uint32_t i = 0; i < NUM_OF_OPTIONAL_PIXEL_SHADERS; ++i)
-                        optionalPixelShaders_[i].destroy();
-
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
                         vertexShaders_[i].destroy();
 
@@ -517,10 +449,8 @@ namespace selene
                 actorsRenderer_.destroy();
                 textureHandler_.destroy();
                 fullScreenQuad_.destroy();
-                ssaoGeometry_.destroy();
+                ssaoRenderer_.destroy();
                 guiRenderer_.destroy();
-
-                SAFE_RELEASE(d3dRandomTexture_);
         }
 
         //--------------------------------------------------------------------------------------------
@@ -529,186 +459,6 @@ namespace selene
                 if(parameters_.getLog() != nullptr)
                         (*parameters_.getLog()) << entry << std::endl;
         }
-
-        /*//--------------------------------------------------------------------------------------------
-        void D3d9Renderer::blurSsao(const Vector4d& edgeDetectionParameters, bool shouldUpscale)
-        {
-                d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_BLURRED_SSAO]);
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-
-                vertexShaders_[VERTEX_SHADER_SSAO_BLUR_X_PASS].set();
-                pixelShaders_[PIXEL_SHADER_SSAO_BLUR_X_PASS].set();
-
-                d3dDevice_->SetPixelShaderConstantF(0, (const float*)unprojectionVector_, 1);
-                d3dDevice_->SetPixelShaderConstantF(1, (const float*)projectionParameters_, 1);
-                d3dDevice_->SetPixelShaderConstantF(2, (const float*)edgeDetectionParameters, 1);
-                d3dDevice_->SetPixelShaderConstantF(3, (const float*)screenSize_, 1);
-                d3dDevice_->SetPixelShaderConstantF(4, (const float*)textureCoordinatesAdjustment_, 1);
-
-                // set positions at sampler 0
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, d3dRenderTargetTextures_[RENDER_TARGET_POSITIONS]);
-
-                // set normals at sampler 1
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, d3dRenderTargetTextures_[RENDER_TARGET_NORMALS]);
-
-                // set SSAO at sampler 2
-                if(shouldUpscale)
-                {
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(2, d3dHalfSizeRenderTargetTextures_[HALF_SIZE_RENDER_TARGET_SSAO]);
-                }
-                else
-                {
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(2, d3dRenderTargetTextures_[RENDER_TARGET_SSAO]);
-                }
-
-                fullScreenQuad_.render();
-
-                d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_SSAO]);
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-
-                vertexShaders_[VERTEX_SHADER_SSAO_BLUR_Y_PASS].set();
-                pixelShaders_[PIXEL_SHADER_SSAO_BLUR_Y_PASS].set();
-
-                d3dDevice_->SetPixelShaderConstantF(0, (const float*)unprojectionVector_, 1);
-                d3dDevice_->SetPixelShaderConstantF(1, (const float*)projectionParameters_, 1);
-                d3dDevice_->SetPixelShaderConstantF(2, (const float*)edgeDetectionParameters, 1);
-                d3dDevice_->SetPixelShaderConstantF(3, (const float*)screenSize_, 1);
-                d3dDevice_->SetPixelShaderConstantF(4, (const float*)textureCoordinatesAdjustment_, 1);
-
-                // set positions at sampler 0
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, d3dRenderTargetTextures_[RENDER_TARGET_POSITIONS]);
-
-                // set normals at sampler 1
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, d3dRenderTargetTextures_[RENDER_TARGET_NORMALS]);
-
-                // set SSAO at sampler 2
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(2, d3dRenderTargetTextures_[RENDER_TARGET_BLURRED_SSAO]);
-                fullScreenQuad_.render();
-        }
-
-        //--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderSsao()
-        {
-                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
-
-                if(capabilities_.isThirdShaderModelSupported)
-                        d3dDevice_->SetRenderTarget(0, d3dRenderTargetSurfaces_[RENDER_TARGET_SSAO]);
-                else
-                        d3dDevice_->SetRenderTarget(0, d3dHalfSizeRenderTargetSurfaces_[HALF_SIZE_RENDER_TARGET_SSAO]);
-
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-
-                d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-
-                Vector4d ssaoParameters(2.5f, -0.2f, 1.0f, 1.0f);
-                Vector4d edgeDetectionParameters(2.5f, 0.99f, 4.0f / screenSize_.x, 4.0f / screenSize_.y);
-
-                if(capabilities_.isThirdShaderModelSupported)
-                {
-                        optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].set();
-                        optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_SSAO_PASS].set();
-                }
-                else
-                {
-                        vertexShaders_[VERTEX_SHADER_SSAO_PASS].set();
-                        pixelShaders_[PIXEL_SHADER_SSAO_PASS].set();
-                }
-
-                d3dDevice_->SetPixelShaderConstantF(0, (const float*)unprojectionVector_, 1);
-                d3dDevice_->SetPixelShaderConstantF(1, (const float*)projectionParameters_, 1);
-                d3dDevice_->SetPixelShaderConstantF(2, (const float*)ssaoParameters, 1);
-
-                d3dDevice_->SetVertexShaderConstantF(0, (const float*)screenSize_, 1);
-
-                // set positions at sampler 0
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, d3dRenderTargetTextures_[RENDER_TARGET_POSITIONS]);
-
-                // set normals at sampler 1
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, d3dRenderTargetTextures_[RENDER_TARGET_NORMALS]);
-
-                // set helper texture at sampler 2
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU,  D3DTADDRESS_WRAP);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV,  D3DTADDRESS_WRAP);
-                d3dDevice_->SetTexture(2, d3dRandomTexture_);
-
-                if(capabilities_.isThirdShaderModelSupported)
-                {
-                        fullScreenQuad_.render();
-                }
-                else
-                {
-                        // setup alpha blend parameters
-                        d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
-                        d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-                        // render SSAO
-                        ssaoGeometry_.render();
-
-                        // disable alpha blend
-                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-                }
-
-                // blur SSAO
-                blurSsao(edgeDetectionParameters, !capabilities_.isThirdShaderModelSupported);
-                edgeDetectionParameters.z = 2.0f / screenSize_.x;
-                edgeDetectionParameters.w = 2.0f / screenSize_.y;
-                blurSsao(edgeDetectionParameters);
-                edgeDetectionParameters.z = 1.0f / screenSize_.x;
-                edgeDetectionParameters.w = 1.0f / screenSize_.y;
-                blurSsao(edgeDetectionParameters);
-        }*/
 
         /*//--------------------------------------------------------------------------------------------
         void D3d9Renderer::renderParticles(Renderer::Data::ParticleSystemNode& particleSystemNode)
