@@ -4,8 +4,7 @@
 #ifndef D3D9_SHADER_H
 #define D3D9_SHADER_H
 
-#include "../../../../../Engine/Core/Math/Matrix.h"
-#include "../../../../../Engine/Core/Math/Vector.h"
+#include "../../../../../Engine/Core/Macros/Macros.h"
 #include <d3dx9.h>
 #include <d3d9.h>
 #include <string>
@@ -14,46 +13,8 @@ namespace selene
 {
 
         // Forward declaration of classes
+        class D3d9Capabilities;
         class FileManager;
-
-        // Represents capabilities.
-        class D3d9Capabilities
-        {
-        public:
-                bool isR32fRenderTargetFormatSupported;
-                bool isMultipleRenderTargetSupported;
-                bool isThirdShaderModelSupported;
-                DWORD maxTextureAnisotropy;
-
-                D3d9Capabilities();
-                ~D3d9Capabilities();
-
-        };
-
-        // Represents frame parameters.
-        class D3d9FrameParameters
-        {
-        public:
-                Matrix viewProjectionMatrix;
-                Matrix projectionMatrix;
-                Matrix viewInvMatrix;
-                Matrix normalsMatrix;
-                Matrix viewMatrix;
-
-                Vector4d textureCoordinatesAdjustment;
-                Vector4d edgeDetectionParameters;
-                Vector4d projectionParameters;
-                Vector4d shadowMapKernelSize;
-                Vector4d unprojectionVector;
-                Vector4d ssaoParameters;
-                Vector4d screenSize;
-
-                uint8_t resultRenderTarget;
-
-                D3d9FrameParameters();
-                ~D3d9FrameParameters();
-
-        };
 
         // Represents D3D9 shader.
         class D3d9Shader

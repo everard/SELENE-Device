@@ -16,18 +16,21 @@ namespace selene
          * @{
          */
 
+        // Forward declaration of classes
+        class D3d9FrameParameters;
+        class D3d9Capabilities;
+
         /// Render target types
         enum RENDER_TARGET
         {
                 RENDER_TARGET_POSITIONS = 0,
                 RENDER_TARGET_NORMALS,
                 RENDER_TARGET_LIGHT_BUFFER,
-                RENDER_TARGET_SSAO_BUFFER,
-                RENDER_TARGET_BLURRED_SSAO_BUFFER,
+                RENDER_TARGET_HELPER_0,
+                RENDER_TARGET_HELPER_1,
                 RENDER_TARGET_RESULT,
-                RENDER_TARGET_HALF_SIZE_SSAO_BUFFER,
-                RENDER_TARGET_HALF_SIZE_BLOOM,
-                RENDER_TARGET_HALF_SIZE_BLURRED_BLOOM,
+                RENDER_TARGET_HALF_SIZE_HELPER_0,
+                RENDER_TARGET_HALF_SIZE_HELPER_1,
                 NUM_OF_RENDER_TARGETS
         };
 
@@ -37,13 +40,19 @@ namespace selene
         class D3d9RenderTargetContainer
         {
         public:
+                D3d9RenderTargetContainer();
+                ~D3d9RenderTargetContainer();
+
                 /**
                  * \brief Initializes render target container.
+                 * \param[in] frameParameters frame parameters
                  * \param[in] parameters rendering parameters
                  * \param[in] capabilities capabilities
                  * \return true if render target container has been successfully initialized
                  */
-                bool initialize();
+                bool initialize(D3d9FrameParameters& frameParameters,
+                                Renderer::Parameters& parameters,
+                                D3d9Capabilities& capabilities);
 
                 /**
                  * \brief Destroys render target container.
@@ -70,23 +79,14 @@ namespace selene
                 const D3d9RenderTarget& getShadowMap() const;
 
         private:
-                friend class D3d9Renderer;
-
                 D3d9RenderTarget renderTargets_[NUM_OF_RENDER_TARGETS];
                 D3d9RenderTarget dummyRenderTarget_;
                 D3d9RenderTarget backBuffer_;
                 D3d9RenderTarget shadowMap_;
 
-                const Renderer::Parameters& parameters_;
-                const D3d9Capabilities& capabilities_;
-                D3d9FrameParameters& frameParameters_;
-
-                D3d9RenderTargetContainer(const Renderer::Parameters& parameters,
-                                          const D3d9Capabilities& capabilities,
-                                          D3d9FrameParameters& frameParameters);
-                D3d9RenderTargetContainer(const D3d9RenderTargetContainer& renderTargetContainer);
-                ~D3d9RenderTargetContainer();
-                D3d9RenderTargetContainer& operator =(const D3d9RenderTargetContainer&);
+                D3d9FrameParameters* frameParameters_;
+                Renderer::Parameters* parameters_;
+                D3d9Capabilities* capabilities_;
 
         };
 

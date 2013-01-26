@@ -18,7 +18,9 @@ namespace selene
 
         // Forward declaration of classes
         class D3d9RenderTargetContainer;
+        class D3d9FrameParameters;
         class D3d9TextureHandler;
+        class D3d9Capabilities;
 
         /**
          * Represents actors renderer. Renders actors with different shaders. This class can be
@@ -27,11 +29,21 @@ namespace selene
         class D3d9ActorsRenderer
         {
         public:
+                D3d9ActorsRenderer();
+                ~D3d9ActorsRenderer();
+
                 /**
                  * \brief Initializes actors renderer.
+                 * \param[in] renderTargetContainer render target container
+                 * \param[in] frameParameters frame parameters
+                 * \param[in] textureHandler texture handler
+                 * \param[in] capabilities D3D capabilities
                  * \return true if actors renderer has been successfully initialized
                  */
-                bool initialize();
+                bool initialize(D3d9RenderTargetContainer& renderTargetContainer,
+                                D3d9FrameParameters& frameParameters,
+                                D3d9TextureHandler& textureHandler,
+                                D3d9Capabilities& capabilities);
 
                 /**
                  * \brief Destroys actors renderer.
@@ -62,8 +74,6 @@ namespace selene
                 void renderShading(Renderer::Data::ActorNode& actorNode, bool isSsaoEnabled);
 
         private:
-                friend class D3d9Renderer;
-
                 /// Helper constants
                 enum
                 {
@@ -128,18 +138,10 @@ namespace selene
                 LPDIRECT3DVERTEXDECLARATION9 d3dMeshVertexDeclaration_;
                 LPDIRECT3DDEVICE9 d3dDevice_;
 
-                const D3d9RenderTargetContainer& renderTargetContainer_;
-                const D3d9FrameParameters& frameParameters_;
-                const D3d9Capabilities& capabilities_;
-                D3d9TextureHandler& textureHandler_;
-
-                D3d9ActorsRenderer(const D3d9RenderTargetContainer& renderTargetContainer,
-                                   const D3d9FrameParameters& frameParameters,
-                                   const D3d9Capabilities& capabilities,
-                                   D3d9TextureHandler& textureHandler);
-                D3d9ActorsRenderer(const D3d9ActorsRenderer& actorsRenderer);
-                ~D3d9ActorsRenderer();
-                D3d9ActorsRenderer& operator =(const D3d9ActorsRenderer&);
+                D3d9RenderTargetContainer* renderTargetContainer_;
+                D3d9FrameParameters* frameParameters_;
+                D3d9TextureHandler* textureHandler_;
+                D3d9Capabilities* capabilities_;
 
                 /**
                  * \brief Sets material.

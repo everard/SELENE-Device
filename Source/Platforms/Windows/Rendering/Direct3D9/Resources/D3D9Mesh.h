@@ -10,13 +10,21 @@
 namespace selene
 {
 
-        // Represents D3D9 mesh.
+        /**
+         * \addtogroup Windows
+         * @{
+         */
+
+        /**
+         * Represents D3D9 mesh.
+         */
         class D3d9Mesh: public Mesh
         {
         public:
                 D3d9Mesh(const char* name = nullptr);
                 ~D3d9Mesh();
 
+                // Mesh interface implementation
                 bool retain();
                 void discard();
 
@@ -26,10 +34,16 @@ namespace selene
                 LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffers_[NUM_OF_VERTEX_STREAMS];
                 LPDIRECT3DINDEXBUFFER9 d3dIndexBuffer_;
 
-                // Destroys D3D9 mesh data
+                /**
+                 * \brief Destroys D3D9 mesh data.
+                 */
                 void destroy();
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

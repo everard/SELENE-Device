@@ -9,10 +9,33 @@
 namespace selene
 {
 
-        //--------------------------------------------------------------------------------------------------------
-        bool D3d9ActorsRenderer::initialize()
+        D3d9ActorsRenderer::D3d9ActorsRenderer()
+        {
+                d3dMeshVertexDeclaration_ = nullptr;
+                d3dDevice_ = nullptr;
+
+                renderTargetContainer_ = nullptr;
+                frameParameters_ = nullptr;
+                textureHandler_ = nullptr;
+                capabilities_ = nullptr;
+        }
+        D3d9ActorsRenderer::~D3d9ActorsRenderer()
         {
                 destroy();
+        }
+
+        //--------------------------------------------------------------------------------------------------------
+        bool D3d9ActorsRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
+                                            D3d9FrameParameters& frameParameters,
+                                            D3d9TextureHandler& textureHandler,
+                                            D3d9Capabilities& capabilities)
+        {
+                destroy();
+
+                renderTargetContainer_ = &renderTargetContainer;
+                frameParameters_ = &frameParameters;
+                textureHandler_ = &textureHandler;
+                capabilities_ = &capabilities;
 
                 d3dDevice_ = D3d9Renderer::getDevice();
                 if(d3dDevice_ == nullptr)
@@ -21,20 +44,20 @@ namespace selene
                 // load vertex and pixel shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("PositionPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SkinPositionPass.vsh", "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_),
-                        D3d9Shader("NormalsPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SkinNormalsPass.vsh",  "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_),
-                        D3d9Shader("ShadingPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SkinShadingPass.vsh",  "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_)
+                        D3d9Shader("PositionPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SkinPositionPass.vsh", "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
+                        D3d9Shader("NormalsPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SkinNormalsPass.vsh",  "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
+                        D3d9Shader("ShadingPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SkinShadingPass.vsh",  "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("PositionPass.psh",    "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("NormalsPass.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("ShadingPass.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("ShadingPassSSAO.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_)
+                        D3d9Shader("PositionPass.psh",    "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("NormalsPass.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("ShadingPass.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("ShadingPassSSAO.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -56,15 +79,15 @@ namespace selene
                 }
 
                 // load optional vertex and pixel shaders
-                if(capabilities_.isMultipleRenderTargetSupported)
+                if(capabilities_->isMultipleRenderTargetSupported())
                 {
                         D3d9Shader d3dOptionalVertexShaders[NUM_OF_OPTIONAL_VERTEX_SHADERS] =
                         {
-                                D3d9Shader("PositionNormalsPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_),
-                                D3d9Shader("SkinPositionNormalsPass.vsh", "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_)
+                                D3d9Shader("PositionNormalsPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
+                                D3d9Shader("SkinPositionNormalsPass.vsh", "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_)
                         };
 
-                        D3d9Shader d3dOptionalPixelShader("PositionNormalsPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_);
+                        D3d9Shader d3dOptionalPixelShader("PositionNormalsPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
 
                         for(uint32_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
                         {
@@ -120,6 +143,11 @@ namespace selene
 
                 SAFE_RELEASE(d3dMeshVertexDeclaration_);
                 d3dDevice_ = nullptr;
+
+                renderTargetContainer_ = nullptr;
+                frameParameters_ = nullptr;
+                textureHandler_ = nullptr;
+                capabilities_ = nullptr;
         }
 
         //--------------------------------------------------------------------------------------------------------
@@ -136,14 +164,14 @@ namespace selene
 
                 LPDIRECT3DSURFACE9 renderTargets[] =
                 {
-                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS).getSurface(),
-                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_NORMALS).getSurface()
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getSurface(),
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getSurface()
                 };
                 DWORD    d3dClearFlags[]  = {D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET, D3DCLEAR_TARGET};
                 D3DCOLOR d3dClearColors[] = {D3DCOLOR_XRGB(0, 0, 0), D3DCOLOR_XRGB(128, 128, 128)};
                 const uint8_t numRenderTargets = 2;
 
-                if(capabilities_.isMultipleRenderTargetSupported)
+                if(capabilities_->isMultipleRenderTargetSupported())
                 {
                         d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
                         d3dDevice_->SetRenderState(D3DRS_ZFUNC,        D3DCMP_LESSEQUAL);
@@ -157,12 +185,12 @@ namespace selene
                         for(uint8_t i = 0; i < numRenderTargets; ++i)
                                 d3dDevice_->SetRenderTarget(i, renderTargets[i]);
 
-                        textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
-                        textureHandler_.setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
+                        textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
+                        textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
 
                         optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS].set();
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                            static_cast<const float*>(frameParameters_.projectionParameters), 1);
+                                                            static_cast<const float*>(frameParameters_->projectionParameters), 1);
 
                         renderActors(actorNode, RENDERING_PASS_POSITIONS_AND_NORMALS);
                         d3dDevice_->SetRenderTarget(1, nullptr);
@@ -181,12 +209,12 @@ namespace selene
                                 d3dDevice_->SetRenderTarget(0, renderTargets[pass]);
                                 d3dDevice_->Clear(0, nullptr, d3dClearFlags[pass], d3dClearColors[pass], 1.0f, 0);
 
-                                textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
-                                textureHandler_.setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
+                                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
+                                textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
 
                                 pixelShaders_[pixelShaderNo[pass]].set();
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                                    static_cast<const float*>(frameParameters_.projectionParameters), 1);
+                                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
 
                                 renderActors(actorNode, pass);
                         }
@@ -200,8 +228,8 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return;
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getShadowMap().getSurface());
-                d3dDevice_->SetDepthStencilSurface(renderTargetContainer_.getShadowMap().getDepthStencilSurface());
+                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getShadowMap().getSurface());
+                d3dDevice_->SetDepthStencilSurface(renderTargetContainer_->getShadowMap().getDepthStencilSurface());
 
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET,
                                   D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
@@ -211,7 +239,7 @@ namespace selene
                 d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
 
-                textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
+                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
 
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
@@ -230,7 +258,7 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return;
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT).getSurface());
+                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getSurface());
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
@@ -241,24 +269,24 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
 
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, capabilities_.maxTextureAnisotropy);
-                textureHandler_.setStageState(0, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
+                d3dDevice_->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
+                textureHandler_->setStageState(0, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
 
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, capabilities_.maxTextureAnisotropy);
-                textureHandler_.setStageState(1, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
+                d3dDevice_->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
+                textureHandler_->setStageState(1, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
 
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MAXANISOTROPY, capabilities_.maxTextureAnisotropy);
-                textureHandler_.setStageState(2, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
+                d3dDevice_->SetSamplerState(2, D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
+                textureHandler_->setStageState(2, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
 
-                textureHandler_.setStageState(3, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
-                                              D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(3, renderTargetContainer_.getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
+                textureHandler_->setStageState(3, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
+                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                d3dDevice_->SetTexture(3, renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
 
                 if(isSsaoEnabled)
                 {
-                        textureHandler_.setStageState(4, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
-                                                      D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(4, renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getTexture());
+                        textureHandler_->setStageState(4, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
+                                                       D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetTexture(4, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getTexture());
 
                         pixelShaders_[PIXEL_SHADER_SHADING_PASS_WITH_SSAO].set();
                 }
@@ -266,33 +294,9 @@ namespace selene
                         pixelShaders_[PIXEL_SHADER_SHADING_PASS].set();
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment), 1);
+                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
 
                 renderActors(actorNode, RENDERING_PASS_SHADING);
-        }
-
-        D3d9ActorsRenderer::D3d9ActorsRenderer(const D3d9RenderTargetContainer& renderTargetContainer,
-                                               const D3d9FrameParameters& frameParameters,
-                                               const D3d9Capabilities& capabilities,
-                                               D3d9TextureHandler& textureHandler): renderTargetContainer_(renderTargetContainer),
-                                                                                    frameParameters_(frameParameters),
-                                                                                    capabilities_(capabilities),
-                                                                                    textureHandler_(textureHandler)
-        {
-                d3dMeshVertexDeclaration_ = nullptr;
-                d3dDevice_ = nullptr;
-        }
-        D3d9ActorsRenderer::D3d9ActorsRenderer(const D3d9ActorsRenderer& actorsRenderer): renderTargetContainer_(actorsRenderer.renderTargetContainer_),
-                                                                                          frameParameters_(actorsRenderer.frameParameters_),
-                                                                                          capabilities_(actorsRenderer.capabilities_),
-                                                                                          textureHandler_(actorsRenderer.textureHandler_) {}
-        D3d9ActorsRenderer::~D3d9ActorsRenderer()
-        {
-                destroy();
-        }
-        D3d9ActorsRenderer& D3d9ActorsRenderer::operator =(const D3d9ActorsRenderer&)
-        {
-                return *this;
         }
 
         //--------------------------------------------------------------------------------------------------------
@@ -305,12 +309,12 @@ namespace selene
                         {
                                 Vector4d specularParameters(material.getGlossiness() * 0.005f);
 
-                                textureHandler_.setTexture(material.getTextureMap(TEXTURE_MAP_NORMAL),
-                                                           LOCATION_NORMAL_MAP_NORMALS_PASS,
-                                                           D3d9TextureHandler::DUMMY_TEXTURE_NORMAL_MAP);
-                                textureHandler_.setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR),
-                                                           LOCATION_SPECULAR_MAP_NORMALS_PASS,
-                                                           D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_NORMAL),
+                                                            LOCATION_NORMAL_MAP_NORMALS_PASS,
+                                                            D3d9TextureHandler::DUMMY_TEXTURE_NORMAL_MAP);
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR),
+                                                            LOCATION_SPECULAR_MAP_NORMALS_PASS,
+                                                            D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SPECULAR_PARAMETERS_NORMALS_PASS,
                                                                     static_cast<const float*>(specularParameters), 1);
@@ -324,15 +328,15 @@ namespace selene
                                 Vector4d specularColor(material.getColor(MATERIAL_COLOR_SPECULAR), 1.0);
                                 Vector4d specularParameters(material.getSpecularLevel(), material.getGlossiness());
 
-                                textureHandler_.setTexture(material.getTextureMap(TEXTURE_MAP_AMBIENT),
-                                                           LOCATION_AMBIENT_MAP_SHADING_PASS,
-                                                           D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
-                                textureHandler_.setTexture(material.getTextureMap(TEXTURE_MAP_DIFFUSE),
-                                                           LOCATION_DIFFUSE_MAP_SHADING_PASS,
-                                                           D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
-                                textureHandler_.setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR),
-                                                           LOCATION_SPECULAR_MAP_SHADING_PASS,
-                                                           D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_AMBIENT),
+                                                            LOCATION_AMBIENT_MAP_SHADING_PASS,
+                                                            D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_DIFFUSE),
+                                                            LOCATION_DIFFUSE_MAP_SHADING_PASS,
+                                                            D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR),
+                                                            LOCATION_SPECULAR_MAP_SHADING_PASS,
+                                                            D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_AMBIENT_COLOR_SHADING_PASS,
                                                                     static_cast<const float*>(ambientColor), 1);
@@ -410,7 +414,7 @@ namespace selene
                                 break;
 
                         case RENDERING_PASS_POSITIONS_AND_NORMALS:
-                                if(!capabilities_.isMultipleRenderTargetSupported)
+                                if(!capabilities_->isMultipleRenderTargetSupported())
                                         return;
                                 vertexShaders = &optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS];
                                 break;

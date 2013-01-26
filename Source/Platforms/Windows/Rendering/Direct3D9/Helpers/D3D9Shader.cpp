@@ -47,21 +47,6 @@ namespace selene
                 "        return orig.xyz;"
                 "}";
 
-        D3d9Capabilities::D3d9Capabilities()
-        {
-                isR32fRenderTargetFormatSupported = false;
-                isMultipleRenderTargetSupported   = false;
-                isThirdShaderModelSupported       = false;
-                maxTextureAnisotropy = 1;
-        }
-        D3d9Capabilities::~D3d9Capabilities() {}
-
-        D3d9FrameParameters::D3d9FrameParameters()
-        {
-                resultRenderTarget = 0;
-        }
-        D3d9FrameParameters::~D3d9FrameParameters() {}
-
         D3d9Shader::D3d9Shader(const char* name, const std::string& version, DWORD flags,
                                uint8_t libraryType, const D3d9Capabilities& capabilities)
         {
@@ -126,7 +111,7 @@ namespace selene
                                         "{"
                                         "        return 2.0 * enc - 1.0;"
                                         "}";
-                                if(capabilities.isR32fRenderTargetFormatSupported)
+                                if(capabilities.isR32fRenderTargetFormatSupported())
                                         library += pixelShaderPositionDecodingFromR32f;
                                 else
                                         library += pixelShaderPositionDecodingFromRGBA8;

@@ -23,15 +23,8 @@ namespace selene
                 destroy();
 
                 parameters_ = parameters;
-                WindowsApplication* windowsApplication = dynamic_cast<WindowsApplication*>(parameters_.getApplication());
 
                 writeLogEntry("--- Initializing Direct3D 9 renderer ---");
-                if(windowsApplication == nullptr)
-                {
-                        writeLogEntry("ERROR: Could not get windows application");
-                        return false;
-                }
-
                 setFlags(parameters_.getFlags());
 
                 // check parameters
@@ -50,98 +43,21 @@ namespace selene
                         return false;
                 }
 
-                // get display mode
-                D3DDISPLAYMODE d3dDisplayMode;
-                if(FAILED(d3d_->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3dDisplayMode)))
+                if(!capabilities_.createCompatibleDevice(d3d_, parameters_, d3dPresentParameters_, d3dDevice_))
                 {
-                        writeLogEntry("ERROR: Could not get display mode");
                         destroy();
+                        writeLogEntry("ERROR: Could not create compatible device");
                         return false;
                 }
 
-                memset(&d3dPresentParameters_, 0, sizeof(D3DPRESENT_PARAMETERS));
-
-                d3dPresentParameters_.SwapEffect = D3DSWAPEFFECT_DISCARD;
-                d3dPresentParameters_.BackBufferFormat = d3dDisplayMode.Format;
-                if(is(RENDERING_FULL_SCREEN_ENABLED))
-                        d3dPresentParameters_.Windowed = FALSE;
-                else
-                        d3dPresentParameters_.Windowed = TRUE;
-
-                d3dPresentParameters_.BackBufferWidth  = parameters_.getWidth();
-                d3dPresentParameters_.BackBufferHeight = parameters_.getHeight();
-                d3dPresentParameters_.EnableAutoDepthStencil = TRUE;
-                d3dPresentParameters_.AutoDepthStencilFormat = D3DFMT_D24S8;
-                d3dPresentParameters_.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-                d3dPresentParameters_.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-
-                // check device capabilities
-                D3DCAPS9 d3dCaps;
-                d3d_->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &d3dCaps);
-                capabilities_.maxTextureAnisotropy = d3dCaps.MaxAnisotropy;
-                if(capabilities_.maxTextureAnisotropy < 1)
-                        capabilities_.maxTextureAnisotropy = 1;
-                else if(capabilities_.maxTextureAnisotropy > 8)
-                        capabilities_.maxTextureAnisotropy = 8;
-
-                if(d3dCaps.PixelShaderVersion < D3DPS_VERSION(2, 0))
-                {
-                        destroy();
-                        return false;
-                }
-
-                capabilities_.isThirdShaderModelSupported = false;
-                if(d3dCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0))
-                {
+                if(capabilities_.isThirdShaderModelSupported())
                         writeLogEntry("PS 3.0 is supported");
-                        capabilities_.isThirdShaderModelSupported = true;
-                }
 
-                capabilities_.isMultipleRenderTargetSupported = false;
-                if(d3dCaps.NumSimultaneousRTs > 1)
-                {
+                if(capabilities_.isMultipleRenderTargetSupported())
                         writeLogEntry("MRT is supported");
-                        capabilities_.isMultipleRenderTargetSupported = true;
-                }
 
-                DWORD d3dFlags = 0;
-                if(IS_SET(d3dCaps.DevCaps, D3DDEVCAPS_HWTRANSFORMANDLIGHT) &&
-                   d3dCaps.VertexShaderVersion >= D3DVS_VERSION(1,1))
-                        d3dFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
-                else
-                        d3dFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-
-                if(IS_SET(d3dCaps.DevCaps, D3DDEVCAPS_PUREDEVICE) &&
-                   IS_SET(d3dFlags, D3DCREATE_HARDWARE_VERTEXPROCESSING))
-                        d3dFlags |= D3DCREATE_PUREDEVICE;
-
-                // create D3D9 device
-                if(FAILED(d3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, windowsApplication->getWindowHandle(),
-                                             d3dFlags, &d3dPresentParameters_, &d3dDevice_)))
-                {
-                        writeLogEntry("ERROR: Could not create Direct3D device");
-                        destroy();
-                        return false;
-                }
-
-                if(FAILED(d3d_->CheckDeviceFormat(d3dCaps.AdapterOrdinal, d3dCaps.DeviceType,
-                                                  d3dDisplayMode.Format, D3DUSAGE_RENDERTARGET,
-                                                  D3DRTYPE_TEXTURE, D3DFMT_R32F)))
-                {
-                        capabilities_.isR32fRenderTargetFormatSupported = false;
-                }
-                else
-                {
+                if(capabilities_.isR32fRenderTargetFormatSupported())
                         writeLogEntry("R32F texture format is supported");
-                        capabilities_.isR32fRenderTargetFormatSupported = true;
-                }
-
-                if(d3dDevice_ == nullptr)
-                {
-                        writeLogEntry("ERROR: Direct3D device is not created");
-                        destroy();
-                        return false;
-                }
 
                 return initializeHelpers();
         }
@@ -175,8 +91,6 @@ namespace selene
                 }
 
                 auto& renderingData = const_cast<Renderer::Data&>(camera.getRenderingData());
-                Gui* gui = camera.getGui();
-                guiRenderer_.setGui(gui);
 
                 // get matrices
                 frameParameters_.viewProjectionMatrix = camera.getViewProjectionMatrix();
@@ -213,9 +127,9 @@ namespace selene
                 }
 
                 actorsRenderer_.renderShading(renderingData.getActorNode(), isSsaoEnabled);
-                /*renderParticles(renderingData.getParticleSystemNode());
+                particlesRenderer_.renderParticleSystems(renderingData.getParticleSystemNode());
 
-                uint8_t resultRenderTarget = RENDER_TARGET_NORMALS;
+                /*uint8_t resultRenderTarget = RENDER_TARGET_NORMALS;
                 if(is(RENDERING_BLOOM_ENABLED))
                 {
                         renderBloom();
@@ -246,41 +160,7 @@ namespace selene
                 fullScreenQuad_.render();
 
                 // render GUI
-                if(guiRenderer_.prepare())
-                {
-                        d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                        d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-                        d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-
-                        d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
-                        d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-                        vertexShaders_[VERTEX_SHADER_GUI_FRAMES_PASS].set();
-                        pixelShaders_[PIXEL_SHADER_GUI_FRAMES_PASS].set();
-
-                        guiRenderer_.renderFrames();
-
-                        vertexShaders_[VERTEX_SHADER_GUI_TEXT_PASS].set();
-                        pixelShaders_[PIXEL_SHADER_GUI_TEXT_PASS].set();
-
-                        d3dDevice_->SetRenderState(D3DRS_ALPHAREF, (DWORD)0x000000AA);
-                        d3dDevice_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-                        d3dDevice_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-
-                        guiRenderer_.renderText();
-
-                        if(!gui->is(GUI_DISABLED))
-                        {
-                                vertexShaders_[VERTEX_SHADER_GUI_CURSOR_PASS].set();
-                                pixelShaders_[PIXEL_SHADER_GUI_CURSOR_PASS].set();
-
-                                guiRenderer_.renderCursor();
-                        }
-
-                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-                        d3dDevice_->SetRenderState(D3DRS_ALPHATESTENABLE,  FALSE);
-                }
+                guiRenderer_.renderGui(camera.getGui());
 
                 // end rendering
                 d3dDevice_->SetStreamSource(0, nullptr, 0, 0);
@@ -309,24 +189,7 @@ namespace selene
                 return d3dDevice_;
         }
 
-        D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0),
-                                      renderTargetContainer_(parameters_,
-                                                             capabilities_,
-                                                             frameParameters_),
-                                      lightingRenderer_(renderTargetContainer_,
-                                                        frameParameters_,
-                                                        capabilities_,
-                                                        actorsRenderer_,
-                                                        textureHandler_),
-                                      actorsRenderer_(renderTargetContainer_,
-                                                      frameParameters_,
-                                                      capabilities_,
-                                                      textureHandler_),
-                                      ssaoRenderer_(renderTargetContainer_,
-                                                    frameParameters_,
-                                                    capabilities_,
-                                                    fullScreenQuad_,
-                                                    textureHandler_)
+        D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
         {
                 d3dDevice_ = nullptr;
                 d3d_ = nullptr;
@@ -335,24 +198,7 @@ namespace selene
                 isDeviceLost_ = false;
         }
         D3d9Renderer::D3d9Renderer(const D3d9Renderer&): Renderer(), Status(),
-                                                         parameters_(nullptr, nullptr, 0, 0, nullptr, 0),
-                                                         renderTargetContainer_(parameters_,
-                                                                                capabilities_,
-                                                                                frameParameters_),
-                                                         lightingRenderer_(renderTargetContainer_,
-                                                                           frameParameters_,
-                                                                           capabilities_,
-                                                                           actorsRenderer_,
-                                                                           textureHandler_),
-                                                         actorsRenderer_(renderTargetContainer_,
-                                                                         frameParameters_,
-                                                                         capabilities_,
-                                                                         textureHandler_),
-                                                         ssaoRenderer_(renderTargetContainer_,
-                                                                       frameParameters_,
-                                                                       capabilities_,
-                                                                       fullScreenQuad_,
-                                                                       textureHandler_) {}
+                                                         parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
         D3d9Renderer::~D3d9Renderer()
         {
                 destroy();
@@ -370,27 +216,19 @@ namespace selene
                 {
                         D3d9Shader("ResultPass.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
                         D3d9Shader("EdgeDetect.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("GUIFramesPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("GUITextPass.vsh",   "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("GUICursorPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
                         D3d9Shader("BrightPass.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
                         D3d9Shader("Bloom.vsh",         "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("CombinePass.vsh",   "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("ParticlesPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_)
+                        D3d9Shader("CombinePass.vsh",   "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
                         D3d9Shader("ResultPass.psh",    "ps_1_4", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("EdgeDetect.psh",    "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("GUIFramesPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("GUITextPass.psh",   "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("GUICursorPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("BrightPass.psh",    "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("BloomX.psh",        "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
                         D3d9Shader("BloomY.psh",        "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("CombinePass.psh",   "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("ParticlesPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_)
+                        D3d9Shader("CombinePass.psh",   "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -414,16 +252,68 @@ namespace selene
                 // create helpers
                 FileManager* fileManager = parameters_.getFileManager();
 
-                if(!renderTargetContainer_.initialize() ||
-                   !particlesRenderer_.initialize() ||
-                   !lightingRenderer_.initialize() ||
-                   !actorsRenderer_.initialize() ||
-                   !textureHandler_.initialize() ||
-                   !fullScreenQuad_.initialize() ||
-                   !ssaoRenderer_.initialize()   ||
-                   !guiRenderer_.initialize(fileManager))
+                if(!renderTargetContainer_.initialize(frameParameters_, parameters_, capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize helpers");
+                        writeLogEntry("ERROR: Could not initialize render target container");
+                        return false;
+                }
+
+                if(!particlesRenderer_.initialize(renderTargetContainer_,
+                                                  frameParameters_,
+                                                  textureHandler_,
+                                                  capabilities_))
+                {
+                        writeLogEntry("ERROR: Could not initialize particles renderer");
+                        return false;
+                }
+
+                if(!lightingRenderer_.initialize(renderTargetContainer_,
+                                                 frameParameters_,
+                                                 actorsRenderer_,
+                                                 textureHandler_,
+                                                 capabilities_))
+                {
+                        writeLogEntry("ERROR: Could not initialize lighting renderer");
+                        return false;
+                }
+
+                if(!actorsRenderer_.initialize(renderTargetContainer_,
+                                               frameParameters_,
+                                               textureHandler_,
+                                               capabilities_))
+                {
+                        writeLogEntry("ERROR: Could not initialize actors renderer");
+                        return false;
+                }
+
+                if(!textureHandler_.initialize())
+                {
+                        writeLogEntry("ERROR: Could not initialize texture handler");
+                        return false;
+                }
+
+                if(!fullScreenQuad_.initialize())
+                {
+                        writeLogEntry("ERROR: Could not initialize full-screen quad");
+                        return false;
+                }
+
+                if(!ssaoRenderer_.initialize(renderTargetContainer_,
+                                             frameParameters_,
+                                             fullScreenQuad_,
+                                             textureHandler_,
+                                             capabilities_))
+                {
+                        writeLogEntry("ERROR: Could not initialize SSAO renderer");
+                        return false;
+                }
+
+                if(!guiRenderer_.initialize(fullScreenQuad_,
+                                            textureHandler_,
+                                            capabilities_,
+                                            fileManager))
+                {
+                        writeLogEntry("ERROR: Could not initialize GUI renderer");
                         return false;
                 }
 
@@ -461,67 +351,6 @@ namespace selene
         }
 
         /*//--------------------------------------------------------------------------------------------
-        void D3d9Renderer::renderParticles(Renderer::Data::ParticleSystemNode& particleSystemNode)
-        {
-                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
-
-                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-                d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
-                vertexShaders_[VERTEX_SHADER_PARTICLES_PASS].set();
-                pixelShaders_[PIXEL_SHADER_PARTICLES_PASS].set();
-
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, d3dRenderTargetTextures_[RENDER_TARGET_POSITIONS]);
-
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSU,  D3DTADDRESS_WRAP);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSV,  D3DTADDRESS_WRAP);
-
-                d3dDevice_->SetVertexShaderConstantF(0, (const float*)projectionMatrix_, 4);
-                d3dDevice_->SetVertexShaderConstantF(4, (const float*)viewMatrix_, 4);
-
-                d3dDevice_->SetPixelShaderConstantF(0, (const float*)textureCoordinatesAdjustment_, 1);
-                d3dDevice_->SetPixelShaderConstantF(1, (const float*)unprojectionVector_, 1);
-                d3dDevice_->SetPixelShaderConstantF(2, (const float*)projectionParameters_, 1);
-
-                d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
-                d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-                for(bool result = particleSystemNode.readFirstElement(Renderer::Data::UNIT_PARTICLE_SYSTEM); result;
-                         result = particleSystemNode.readNextElement())
-                {
-                        auto texture = particleSystemNode.getCurrentKey();
-                        auto particleSystems = particleSystemNode.getCurrentData();
-
-                        if(particleSystems == nullptr)
-                                continue;
-
-                        setTexture(texture, 1, DUMMY_TEXTURE_WHITE);
-
-                        for(auto it = particleSystems->begin(); it != particleSystems->end(); ++it)
-                        {
-                                particlesRenderer_.setParticleSystem(*it);
-
-                                if(particlesRenderer_.prepare())
-                                        particlesRenderer_.render();
-                        }
-                }
-
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-        }
-
-        //--------------------------------------------------------------------------------------------
         void D3d9Renderer::blurBloom(const Vector4d& kernelSize)
         {
                 // blur x

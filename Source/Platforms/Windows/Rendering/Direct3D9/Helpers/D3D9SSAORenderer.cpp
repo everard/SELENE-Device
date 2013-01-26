@@ -10,217 +10,121 @@ namespace selene
         static float ssaoGeometryBuffer[] =
         {
                 // radius 1.0
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, -0.5f, -0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, -0.5f, -0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, -0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, 0.5f, -0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, -0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, -0.5f, 0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, -0.5f, 0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, 0.5f, 0.5f, 1.0f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f,
 
                 // radius 0.5
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, -0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, -0.5f, -0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, -0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, -0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, -0.5f, -0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, 0.5f, -0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, 0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, -0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, 0.5f, -0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, -0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, 0.5f, -0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, 0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, -0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, -0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, -0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, 0.5f, -0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, -0.5f, 0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, -0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, -0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, -0.5f, 0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, -0.5f, 0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, -0.5f, 0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, -0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, -0.5f, 0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, -0.5f, 0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                -0.5f, 0.5f, 0.5f, 0.5f,
+                -1.0f, -1.0f, 0.0f, 1.0f, -0.5f, 0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, -0.5f, 0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, -0.5f, 0.5f, 0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, -0.5f, 0.5f, 0.5f, 0.5f,
 
-                -1.0f, -1.0f, 0.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 0.5f,
-                1.0f, -1.0f, 1.0f, 1.0f,
-                0.5f, 0.5f, 0.5f, 0.5f,
-                -1.0f, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 0.5f,
-                1.0f, 1.0f, 1.0f, 0.0f,
-                0.5f, 0.5f, 0.5f, 0.5f
+                -1.0f, -1.0f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.5f,
+                 1.0f, -1.0f, 1.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.5f,
+                -1.0f,  1.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.5f,
+                 1.0f,  1.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.5f
         };
 
-        static const uint32_t ssaoGeometryVertexStride = 8 * sizeof(float);
+        static const uint32_t ssaoGeometryVertexStride = 2 * sizeof(Vector4d);
         static const uint32_t ssaoGeometryNumVertices = 96;
         static const uint32_t ssaoGeometryNumFaces = 32;
         static const uint32_t ssaoGeometryBufferSize = ssaoGeometryVertexStride * ssaoGeometryNumVertices;
@@ -251,10 +155,38 @@ namespace selene
                 *output = colors[rand() % 16];
         }
 
-        //-------------------------------------------------
-        bool D3d9SsaoRenderer::initialize()
+        D3d9SsaoRenderer::D3d9SsaoRenderer()
+        {
+                d3dVertexDeclaration_ = nullptr;
+                d3dRandomTexture_ = nullptr;
+                d3dVertexBuffer_  = nullptr;
+                d3dDevice_ = nullptr;
+
+                renderTargetContainer_ = nullptr;
+                frameParameters_ = nullptr;
+                fullScreenQuad_ = nullptr;
+                textureHandler_ = nullptr;
+                capabilities_ = nullptr;
+        }
+        D3d9SsaoRenderer::~D3d9SsaoRenderer()
         {
                 destroy();
+        }
+
+        //---------------------------------------------------------------------------------
+        bool D3d9SsaoRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
+                                          D3d9FrameParameters& frameParameters,
+                                          D3d9FullScreenQuad& fullScreenQuad,
+                                          D3d9TextureHandler& textureHandler,
+                                          D3d9Capabilities& capabilities)
+        {
+                destroy();
+
+                renderTargetContainer_ = &renderTargetContainer;
+                frameParameters_ = &frameParameters;
+                fullScreenQuad_ = &fullScreenQuad;
+                textureHandler_ = &textureHandler;
+                capabilities_ = &capabilities;
 
                 d3dDevice_ = D3d9Renderer::getDevice();
                 if(d3dDevice_ == nullptr)
@@ -263,16 +195,16 @@ namespace selene
                 // load vertex and pixel shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("SSAOPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SSAOBlurX.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_),
-                        D3d9Shader("SSAOBlurY.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_)
+                        D3d9Shader("SSAOPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SSAOBlurX.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SSAOBlurY.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("SSAOPass.psh",      "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("SSAOBlurX.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_),
-                        D3d9Shader("SSAOBlurY.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_)
+                        D3d9Shader("SSAOPass.psh",      "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SSAOBlurX.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SSAOBlurY.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -293,10 +225,10 @@ namespace selene
                         }
                 }
 
-                if(capabilities_.isThirdShaderModelSupported)
+                if(capabilities_->isThirdShaderModelSupported())
                 {
-                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, capabilities_);
-                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh",  "ps_3_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_);
+                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_);
+                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh",  "ps_3_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
 
                         if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].create(d3dOptionalVertexShader) ||
                            !optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_SSAO_PASS].create(d3dOptionalPixelShader))
@@ -354,7 +286,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------
+        //---------------------------------------------------------------------------------
         void D3d9SsaoRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
@@ -374,9 +306,15 @@ namespace selene
                 SAFE_RELEASE(d3dRandomTexture_);
 
                 d3dDevice_ = nullptr;
+
+                renderTargetContainer_ = nullptr;
+                frameParameters_ = nullptr;
+                fullScreenQuad_ = nullptr;
+                textureHandler_ = nullptr;
+                capabilities_ = nullptr;
         }
 
-        //-------------------------------------------------
+        //---------------------------------------------------------------------------------
         void D3d9SsaoRenderer::renderSsao()
         {
                 if(d3dDevice_ == nullptr)
@@ -386,9 +324,9 @@ namespace selene
                 d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
                 d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
 
-                if(capabilities_.isThirdShaderModelSupported)
+                if(capabilities_->isThirdShaderModelSupported())
                 {
-                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getSurface());
+                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getSurface());
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                         optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].set();
@@ -396,7 +334,7 @@ namespace selene
                 }
                 else
                 {
-                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_HALF_SIZE_SSAO_BUFFER).getSurface());
+                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER_0).getSurface());
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                         vertexShaders_[VERTEX_SHADER_SSAO_PASS].set();
@@ -407,32 +345,32 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                    static_cast<const float*>(frameParameters_.unprojectionVector), 1);
+                                                    static_cast<const float*>(frameParameters_->unprojectionVector), 1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_.projectionParameters), 1);
+                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SSAO_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_.ssaoParameters), 1);
+                                                    static_cast<const float*>(frameParameters_->ssaoParameters), 1);
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_SCREEN_SIZE_SSAO_PASS,
-                                                     static_cast<const float*>(frameParameters_.screenSize), 1);
+                                                     static_cast<const float*>(frameParameters_->screenSize), 1);
 
                 // set positions at sampler 0
-                textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                              D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
                 // set normals at sampler 1
-                textureHandler_.setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                              D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, renderTargetContainer_.getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
+                textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                d3dDevice_->SetTexture(1, renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
 
                 // set helper texture at sampler 2
-                textureHandler_.setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
+                textureHandler_->setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
                 d3dDevice_->SetTexture(2, d3dRandomTexture_);
 
-                if(capabilities_.isThirdShaderModelSupported)
+                if(capabilities_->isThirdShaderModelSupported())
                 {
-                        fullScreenQuad_.render();
+                        fullScreenQuad_->render();
                 }
                 else
                 {
@@ -448,62 +386,33 @@ namespace selene
                 }
 
                 // blur SSAO
-                Vector4d edgeDetectionParameters = frameParameters_.edgeDetectionParameters;
-                edgeDetectionParameters.z = 4.0f / frameParameters_.screenSize.x;
-                edgeDetectionParameters.w = 4.0f / frameParameters_.screenSize.y;
+                Vector4d edgeDetectionParameters = frameParameters_->edgeDetectionParameters;
+                edgeDetectionParameters.z = 4.0f / frameParameters_->screenSize.x;
+                edgeDetectionParameters.w = 4.0f / frameParameters_->screenSize.y;
 
-                blurSsao(edgeDetectionParameters, !capabilities_.isThirdShaderModelSupported);
-                edgeDetectionParameters.z = 2.0f / frameParameters_.screenSize.x;
-                edgeDetectionParameters.w = 2.0f / frameParameters_.screenSize.y;
+                blurSsao(edgeDetectionParameters, !capabilities_->isThirdShaderModelSupported());
+                edgeDetectionParameters.z = 2.0f / frameParameters_->screenSize.x;
+                edgeDetectionParameters.w = 2.0f / frameParameters_->screenSize.y;
                 blurSsao(edgeDetectionParameters);
-                edgeDetectionParameters.z = 1.0f / frameParameters_.screenSize.x;
-                edgeDetectionParameters.w = 1.0f / frameParameters_.screenSize.y;
+                edgeDetectionParameters.z = 1.0f / frameParameters_->screenSize.x;
+                edgeDetectionParameters.w = 1.0f / frameParameters_->screenSize.y;
                 blurSsao(edgeDetectionParameters);
         }
 
-        D3d9SsaoRenderer::D3d9SsaoRenderer(const D3d9RenderTargetContainer& renderTargetContainer,
-                                           const D3d9FrameParameters& frameParameters,
-                                           const D3d9Capabilities& capabilities,
-                                           D3d9FullScreenQuad& fullScreenQuad,
-                                           D3d9TextureHandler& textureHandler): renderTargetContainer_(renderTargetContainer),
-                                                                                frameParameters_(frameParameters),
-                                                                                capabilities_(capabilities),
-                                                                                fullScreenQuad_(fullScreenQuad),
-                                                                                textureHandler_(textureHandler)
-        {
-                d3dVertexDeclaration_ = nullptr;
-                d3dVertexBuffer_  = nullptr;
-                d3dRandomTexture_ = nullptr;
-                d3dDevice_ = nullptr;
-        }
-        D3d9SsaoRenderer::D3d9SsaoRenderer(const D3d9SsaoRenderer& ssaoRenderer): renderTargetContainer_(ssaoRenderer.renderTargetContainer_),
-                                                                                  frameParameters_(ssaoRenderer.frameParameters_),
-                                                                                  capabilities_(ssaoRenderer.capabilities_),
-                                                                                  fullScreenQuad_(ssaoRenderer.fullScreenQuad_),
-                                                                                  textureHandler_(ssaoRenderer.textureHandler_) {}
-        D3d9SsaoRenderer::~D3d9SsaoRenderer()
-        {
-                destroy();
-        }
-        D3d9SsaoRenderer& D3d9SsaoRenderer::operator =(const D3d9SsaoRenderer&)
-        {
-                return *this;
-        }
-
-        //----------------------------------------------------------------------
+        //---------------------------------------------------------------------------------
         void D3d9SsaoRenderer::blurSsao(const Vector4d& edgeDetectionParameters,
                                         bool shouldUpscale)
         {
-                /*LPDIRECT3DSURFACE9 renderTargets[] =
+                LPDIRECT3DSURFACE9 renderTargets[] =
                 {
-                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_BLURRED_SSAO_BUFFER).getSurface(),
-                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getSurface()
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_1).getSurface(),
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getSurface()
                 };
 
                 LPDIRECT3DTEXTURE9 textures[] =
                 {
-                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getTexture(),
-                        renderTargetContainer_.getRenderTarget(RENDER_TARGET_BLURRED_SSAO_BUFFER).getTexture()
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getTexture(),
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_1).getTexture()
                 };
 
                 for(uint8_t i = 0; i < 2; ++i)
@@ -515,129 +424,43 @@ namespace selene
                         pixelShaders_[PIXEL_SHADER_SSAO_BLUR_X_PASS + i].set();
 
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                            static_cast<const float*>(frameParameters_.unprojectionVector), 1);
+                                                            static_cast<const float*>(frameParameters_->unprojectionVector), 1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                            static_cast<const float*>(frameParameters_.projectionParameters), 1);
+                                                            static_cast<const float*>(frameParameters_->projectionParameters), 1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_EDGE_DETECTION_PARAMETERS,
                                                             static_cast<const float*>(edgeDetectionParameters), 1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_SCREEN_SIZE_BLUR_PASS,
-                                                            static_cast<const float*>(frameParameters_.screenSize), 1);
+                                                            static_cast<const float*>(frameParameters_->screenSize), 1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                            static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment), 1);
+                                                            static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
 
                         // set positions at sampler 0
-                        textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                                      D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                        textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                                       D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
                         // set normals at sampler 1
-                        textureHandler_.setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                                      D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(1, renderTargetContainer_.getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
+                        textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                                       D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                        d3dDevice_->SetTexture(1, renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
 
                         // set SSAO at sampler 2
                         if(shouldUpscale)
                         {
-                                textureHandler_.setStageState(2, D3DTEXF_LINEAR, D3DTEXF_POINT, D3DTEXF_LINEAR,
-                                                              D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetTexture(2, renderTargetContainer_.getRenderTarget(RENDER_TARGET_HALF_SIZE_SSAO_BUFFER).getTexture());
+                                textureHandler_->setStageState(2, D3DTEXF_LINEAR, D3DTEXF_POINT, D3DTEXF_LINEAR,
+                                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                                d3dDevice_->SetTexture(2, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER_0).getTexture());
                                 shouldUpscale = false;
                         }
                         else
                         {
-                                textureHandler_.setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                                              D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
+                                textureHandler_->setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
                                 d3dDevice_->SetTexture(2, textures[i]);
                         }
 
-                        fullScreenQuad_.render();
-                }*/
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_BLURRED_SSAO_BUFFER).getSurface());
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-
-                vertexShaders_[VERTEX_SHADER_SSAO_BLUR_X_PASS].set();
-                pixelShaders_[PIXEL_SHADER_SSAO_BLUR_X_PASS].set();
-
-                d3dDevice_->SetPixelShaderConstantF(0, (const float*)frameParameters_.unprojectionVector, 1);
-                d3dDevice_->SetPixelShaderConstantF(1, (const float*)frameParameters_.projectionParameters, 1);
-                d3dDevice_->SetPixelShaderConstantF(2, (const float*)edgeDetectionParameters, 1);
-                d3dDevice_->SetPixelShaderConstantF(3, (const float*)frameParameters_.screenSize, 1);
-                d3dDevice_->SetPixelShaderConstantF(4, (const float*)frameParameters_.textureCoordinatesAdjustment, 1);
-
-                // set positions at sampler 0
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
-
-                // set normals at sampler 1
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, renderTargetContainer_.getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
-
-                // set SSAO at sampler 2
-                if(shouldUpscale)
-                {
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(2, renderTargetContainer_.getRenderTarget(RENDER_TARGET_HALF_SIZE_SSAO_BUFFER).getTexture());
+                        fullScreenQuad_->render();
                 }
-                else
-                {
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(2, renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getTexture());
-                }
-
-                fullScreenQuad_.render();
-
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_SSAO_BUFFER).getSurface());
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-
-                vertexShaders_[VERTEX_SHADER_SSAO_BLUR_Y_PASS].set();
-                pixelShaders_[PIXEL_SHADER_SSAO_BLUR_Y_PASS].set();
-
-                d3dDevice_->SetPixelShaderConstantF(0, (const float*)frameParameters_.unprojectionVector, 1);
-                d3dDevice_->SetPixelShaderConstantF(1, (const float*)frameParameters_.projectionParameters, 1);
-                d3dDevice_->SetPixelShaderConstantF(2, (const float*)edgeDetectionParameters, 1);
-                d3dDevice_->SetPixelShaderConstantF(3, (const float*)frameParameters_.screenSize, 1);
-                d3dDevice_->SetPixelShaderConstantF(4, (const float*)frameParameters_.textureCoordinatesAdjustment, 1);
-
-                // set positions at sampler 0
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
-
-                // set normals at sampler 1
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, renderTargetContainer_.getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
-
-                // set SSAO at sampler 2
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(2, renderTargetContainer_.getRenderTarget(RENDER_TARGET_BLURRED_SSAO_BUFFER).getTexture());
-                fullScreenQuad_.render();
         }
 
 }

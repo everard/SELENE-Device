@@ -5,6 +5,7 @@
 #define D3D9_SSAO_RENDERER_H
 
 #include "../../../../../Engine/Core/Macros/Macros.h"
+#include "../../../../../Engine/Core/Math/Vector.h"
 #include "D3D9Shader.h"
 
 namespace selene
@@ -17,8 +18,10 @@ namespace selene
 
         // Forward declaration of classes
         class D3d9RenderTargetContainer;
+        class D3d9FrameParameters;
         class D3d9FullScreenQuad;
         class D3d9TextureHandler;
+        class D3d9Capabilities;
 
         /**
          * Represents D3D9 SSAO renderer.
@@ -26,11 +29,23 @@ namespace selene
         class D3d9SsaoRenderer
         {
         public:
+                D3d9SsaoRenderer();
+                ~D3d9SsaoRenderer();
+
                 /**
                  * \brief Initializes SSAO renderer.
+                 * \param[in] renderTargetContainer render target container
+                 * \param[in] frameParameters frame parameters
+                 * \param[in] fullScreenQuad full screen quad
+                 * \param[in] textureHandler texture handler
+                 * \param[in] capabilities D3D capabilities
                  * \return true if SSAO renderer has been successfully initialized
                  */
-                bool initialize();
+                bool initialize(D3d9RenderTargetContainer& renderTargetContainer,
+                                D3d9FrameParameters& frameParameters,
+                                D3d9FullScreenQuad& fullScreenQuad,
+                                D3d9TextureHandler& textureHandler,
+                                D3d9Capabilities& capabilities);
 
                 /**
                  * \brief Destroys SSAO renderer.
@@ -43,8 +58,6 @@ namespace selene
                 void renderSsao();
 
         private:
-                friend class D3d9Renderer;
-
                 /// Helper constants
                 enum
                 {
@@ -84,20 +97,11 @@ namespace selene
                 LPDIRECT3DTEXTURE9 d3dRandomTexture_;
                 LPDIRECT3DDEVICE9 d3dDevice_;
 
-                const D3d9RenderTargetContainer& renderTargetContainer_;
-                const D3d9FrameParameters& frameParameters_;
-                const D3d9Capabilities& capabilities_;
-                D3d9FullScreenQuad& fullScreenQuad_;
-                D3d9TextureHandler& textureHandler_;
-
-                D3d9SsaoRenderer(const D3d9RenderTargetContainer& renderTargetContainer,
-                                 const D3d9FrameParameters& frameParameters,
-                                 const D3d9Capabilities& capabilities,
-                                 D3d9FullScreenQuad& fullScreenQuad,
-                                 D3d9TextureHandler& textureHandler);
-                D3d9SsaoRenderer(const D3d9SsaoRenderer& ssaoRenderer);
-                ~D3d9SsaoRenderer();
-                D3d9SsaoRenderer& operator =(const D3d9SsaoRenderer&);
+                D3d9RenderTargetContainer* renderTargetContainer_;
+                D3d9FrameParameters* frameParameters_;
+                D3d9FullScreenQuad* fullScreenQuad_;
+                D3d9TextureHandler* textureHandler_;
+                D3d9Capabilities* capabilities_;
 
                 /**
                  * \brief Blurs SSAO.

@@ -10,13 +10,21 @@
 namespace selene
 {
 
-        // Represents D3D9 texture.
+        /**
+         * \addtogroup Windows
+         * @{
+         */
+
+        /**
+         * Represents D3D9 texture.
+         */
         class D3d9Texture: public Texture
         {
         public:
                 D3d9Texture(const char* name = nullptr);
                 ~D3d9Texture();
 
+                // Texture interface implementation
                 bool retain();
                 void discard();
 
@@ -26,6 +34,10 @@ namespace selene
                 LPDIRECT3DTEXTURE9 d3dTexture_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

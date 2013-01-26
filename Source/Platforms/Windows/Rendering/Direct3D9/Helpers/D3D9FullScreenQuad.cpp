@@ -7,7 +7,10 @@
 namespace selene
 {
 
-        const uint32_t D3d9FullScreenQuad::vertexStride_ = 4 * sizeof(float);
+        static const uint32_t fullScreenQuadVertexStride = sizeof(Vector4d);
+        static const uint32_t fullScreenQuadNumVertices  = 4;
+        static const uint32_t fullScreenQuadVertexBufferSize = fullScreenQuadNumVertices *
+                                                               fullScreenQuadVertexStride;
 
         D3d9FullScreenQuad::D3d9FullScreenQuad()
         {
@@ -23,6 +26,8 @@ namespace selene
         //-----------------------------------
         bool D3d9FullScreenQuad::initialize()
         {
+                destroy();
+
                 d3dDevice_ = D3d9Renderer::getDevice();
                 if(d3dDevice_ == nullptr)
                         return false;
@@ -36,12 +41,10 @@ namespace selene
                 static float vertices[] =
                 {
                         -1.0f, -1.0f, 0.0f, 1.0f,
-                        -1.0f, 1.0f, 0.0f, 0.0f,
-                        1.0f, -1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 0.0f,
+                        -1.0f,  1.0f, 0.0f, 0.0f,
+                         1.0f, -1.0f, 1.0f, 1.0f,
+                         1.0f,  1.0f, 1.0f, 0.0f
                 };
-
-                destroy();
 
                 if(FAILED(d3dDevice_->CreateVertexDeclaration(d3dVertexElements,
                                                               &d3dVertexDeclaration_)))
@@ -50,7 +53,7 @@ namespace selene
                         return false;
                 }
 
-                if(FAILED(d3dDevice_->CreateVertexBuffer(4 * vertexStride_, 0, 0, D3DPOOL_DEFAULT,
+                if(FAILED(d3dDevice_->CreateVertexBuffer(fullScreenQuadVertexBufferSize, 0, 0, D3DPOOL_DEFAULT,
                                                          &d3dVertexBuffer_, nullptr)))
                 {
                         destroy();
@@ -58,12 +61,13 @@ namespace selene
                 }
 
                 void* destinationBuffer = nullptr;
-                if(FAILED(d3dVertexBuffer_->Lock(0, 4 * vertexStride_, &destinationBuffer, 0)))
+                if(FAILED(d3dVertexBuffer_->Lock(0, fullScreenQuadVertexBufferSize, &destinationBuffer, 0)))
                 {
                         destroy();
                         return false;
                 }
-                memcpy(destinationBuffer, (void*)vertices, 4 * vertexStride_);
+
+                memcpy(destinationBuffer, reinterpret_cast<void*>(vertices), fullScreenQuadVertexBufferSize);
                 d3dVertexBuffer_->Unlock();
 
                 return true;
@@ -74,19 +78,19 @@ namespace selene
         {
                 SAFE_RELEASE(d3dVertexDeclaration_);
                 SAFE_RELEASE(d3dVertexBuffer_);
+
+                d3dDevice_ = nullptr;
         }
 
         //-----------------------------------
-        bool D3d9FullScreenQuad::render()
+        void D3d9FullScreenQuad::render()
         {
-                if(d3dDevice_ == nullptr || d3dVertexBuffer_ == nullptr ||
-                   d3dVertexDeclaration_ == nullptr)
-                        return false;
+                if(d3dDevice_ == nullptr)
+                        return;
 
                 d3dDevice_->SetVertexDeclaration(d3dVertexDeclaration_);
-                d3dDevice_->SetStreamSource(0, d3dVertexBuffer_, 0, vertexStride_);
+                d3dDevice_->SetStreamSource(0, d3dVertexBuffer_, 0, fullScreenQuadVertexStride);
                 d3dDevice_->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-                return true;
         }
 
 }
