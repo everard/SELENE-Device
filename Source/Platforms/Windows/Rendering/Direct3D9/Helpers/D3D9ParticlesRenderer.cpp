@@ -119,7 +119,7 @@ namespace selene
                         return false;
                 }
 
-                if(FAILED(d3dDevice_->CreateVertexBuffer(particlesGeometryBufferSize, D3DUSAGE_WRITEONLY,
+                if(FAILED(d3dDevice_->CreateVertexBuffer(particlesGeometryBufferSize, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC,
                                                          0, D3DPOOL_DEFAULT, &d3dVertexBuffer_, nullptr)))
                 {
                         destroy();

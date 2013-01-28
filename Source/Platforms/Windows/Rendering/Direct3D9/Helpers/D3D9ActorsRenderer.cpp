@@ -41,7 +41,7 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
-                // load vertex and pixel shaders
+                // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
                         D3d9Shader("PositionPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
@@ -78,7 +78,7 @@ namespace selene
                         }
                 }
 
-                // load optional vertex and pixel shaders
+                // load optional shaders
                 if(capabilities_->isMultipleRenderTargetSupported())
                 {
                         D3d9Shader d3dOptionalVertexShaders[NUM_OF_OPTIONAL_VERTEX_SHADERS] =
@@ -199,7 +199,7 @@ namespace selene
                 {
                         DWORD d3dDepthWriteFlags[] = {TRUE, FALSE};
                         DWORD d3dDepthFunctions[]  = {D3DCMP_LESSEQUAL, D3DCMP_EQUAL};
-                        uint8_t pixelShaderNo[]  = {PIXEL_SHADER_POSITIONS_PASS, PIXEL_SHADER_NORMALS_PASS};
+                        uint8_t pixelShaderNo[]    = {PIXEL_SHADER_POSITIONS_PASS, PIXEL_SHADER_NORMALS_PASS};
 
                         for(uint8_t pass = RENDERING_PASS_POSITIONS; pass <= RENDERING_PASS_NORMALS; ++pass)
                         {
@@ -269,24 +269,34 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
 
-                d3dDevice_->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
-                textureHandler_->setStageState(0, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
+                d3dDevice_->SetSamplerState(LOCATION_AMBIENT_MAP_SHADING_PASS,
+                                            D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
+                textureHandler_->setStageState(LOCATION_AMBIENT_MAP_SHADING_PASS,
+                                               D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
 
-                d3dDevice_->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
-                textureHandler_->setStageState(1, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
+                d3dDevice_->SetSamplerState(LOCATION_DIFFUSE_MAP_SHADING_PASS,
+                                            D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
+                textureHandler_->setStageState(LOCATION_DIFFUSE_MAP_SHADING_PASS,
+                                               D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
 
-                d3dDevice_->SetSamplerState(2, D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
-                textureHandler_->setStageState(2, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_LINEAR);
+                d3dDevice_->SetSamplerState(LOCATION_SPECULAR_MAP_SHADING_PASS,
+                                            D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
+                textureHandler_->setStageState(LOCATION_SPECULAR_MAP_SHADING_PASS,
+                                               D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
 
-                textureHandler_->setStageState(3, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
+                textureHandler_->setStageState(LOCATION_LIGHT_BUFFER_SHADING_PASS,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(3, renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
+                d3dDevice_->SetTexture(LOCATION_LIGHT_BUFFER_SHADING_PASS,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
 
                 if(isSsaoEnabled)
                 {
-                        textureHandler_->setStageState(4, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
+                        textureHandler_->setStageState(LOCATION_SSAO_BUFFER_SHADING_PASS,
+                                                       D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(4, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getTexture());
+                        d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER_SHADING_PASS,
+                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getTexture());
 
                         pixelShaders_[PIXEL_SHADER_SHADING_PASS_WITH_SSAO].set();
                 }

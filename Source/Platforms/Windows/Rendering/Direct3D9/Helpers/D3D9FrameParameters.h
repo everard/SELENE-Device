@@ -34,6 +34,7 @@ namespace selene
                 Vector4d projectionParameters;
                 Vector4d shadowMapKernelSize;
                 Vector4d unprojectionVector;
+                Vector4d bloomParameters;
                 Vector4d ssaoParameters;
                 Vector4d screenSize;
 

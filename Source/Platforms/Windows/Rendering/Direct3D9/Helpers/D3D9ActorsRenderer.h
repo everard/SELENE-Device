@@ -23,8 +23,7 @@ namespace selene
         class D3d9Capabilities;
 
         /**
-         * Represents actors renderer. Renders actors with different shaders. This class can be
-         * instanciated only inside D3d9Renderer.
+         * Represents actors renderer. Renders positions map, normals map, shadow map and shading.
          */
         class D3d9ActorsRenderer
         {
@@ -51,15 +50,13 @@ namespace selene
                 void destroy();
 
                 /**
-                 * \brief Renders positions and normals from given actor node to the given render surfaces.
+                 * \brief Renders positions and normals from given actor node.
                  * \param[in] actorNode actor node
-                 * \param[in] projectionParameters camera projection parameters
-                 * \param[in] renderTargets render targets
                  */
                 void renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode);
 
                 /**
-                 * \brief Renders shadow map from given actor node to the given render surfaces.
+                 * \brief Renders shadow map from given actor node with given projection parameters of the light.
                  * \param[in] actorNode actor node
                  * \param[in] projectionParameters light projection parameters
                  */
@@ -69,7 +66,7 @@ namespace selene
                 /**
                  * \brief Renders shading.
                  * \param[in] actorNode actor node
-                 * \param[in] isSsaoEnabled flag, which shows if SSAO is enabled or not
+                 * \param[in] isSsaoEnabled if set to true, then SSAO buffer will be used in shading
                  */
                 void renderShading(Renderer::Data::ActorNode& actorNode, bool isSsaoEnabled);
 
@@ -123,6 +120,9 @@ namespace selene
                         LOCATION_AMBIENT_MAP_SHADING_PASS  = 0,
                         LOCATION_DIFFUSE_MAP_SHADING_PASS  = 1,
                         LOCATION_SPECULAR_MAP_SHADING_PASS = 2,
+                        LOCATION_LIGHT_BUFFER_SHADING_PASS = 3,
+                        LOCATION_SSAO_BUFFER_SHADING_PASS  = 4,
+
                         LOCATION_AMBIENT_COLOR_SHADING_PASS = 0,
                         LOCATION_DIFFUSE_COLOR_SHADING_PASS = 1,
                         LOCATION_SPECULAR_COLOR_SHADING_PASS = 2,

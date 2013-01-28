@@ -15,6 +15,7 @@
 #include "Helpers/D3D9ActorsRenderer.h"
 #include "Helpers/D3D9FullScreenQuad.h"
 #include "Helpers/D3D9TextureHandler.h"
+#include "Helpers/D3D9BloomRenderer.h"
 #include "Helpers/D3D9Capabilities.h"
 #include "Helpers/D3D9SSAORenderer.h"
 #include "Helpers/D3D9GUIRenderer.h"
@@ -53,29 +54,11 @@ namespace selene
         private:
                 friend class WindowsApplication;
 
-                enum
-                {
-                        VERTEX_SHADER_RESULT_PASS = 0,
-                        VERTEX_SHADER_EDGE_DETECTION,
-                        VERTEX_SHADER_BRIGHT_PASS,
-                        VERTEX_SHADER_BLOOM_PASS,
-                        VERTEX_SHADER_COMBINE_PASS,
-                        NUM_OF_VERTEX_SHADERS,
-
-                        PIXEL_SHADER_RESULT_PASS = 0,
-                        PIXEL_SHADER_EDGE_DETECTION,
-                        PIXEL_SHADER_BRIGHT_PASS,
-                        PIXEL_SHADER_BLOOM_X_PASS,
-                        PIXEL_SHADER_BLOOM_Y_PASS,
-                        PIXEL_SHADER_COMBINE_PASS,
-                        NUM_OF_PIXEL_SHADERS
-                };
-
                 static LPDIRECT3DDEVICE9 d3dDevice_;
                 LPDIRECT3D9 d3d_;
 
-                D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];
-                D3d9PixelShader  pixelShaders_[NUM_OF_PIXEL_SHADERS];
+                D3d9VertexShader resultVertexShaders_;
+                D3d9PixelShader  resultPixelShaders_;
 
                 D3d9RenderTargetContainer renderTargetContainer_;
                 D3d9ParticlesRenderer particlesRenderer_;
@@ -83,6 +66,7 @@ namespace selene
                 D3d9ActorsRenderer actorsRenderer_;
                 D3d9TextureHandler textureHandler_;
                 D3d9FullScreenQuad fullScreenQuad_;
+                D3d9BloomRenderer bloomRenderer_;
                 D3d9SsaoRenderer ssaoRenderer_;
                 D3d9GuiRenderer guiRenderer_;
 
