@@ -169,7 +169,7 @@ namespace selene
                 destroy();
         }
 
-        //-------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         bool D3d9LightingRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                               D3d9FrameParameters& frameParameters,
                                               D3d9ActorsRenderer& actorsRenderer,
@@ -275,7 +275,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -299,7 +299,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //-----------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLighting(Renderer::Data::LightNode& lightNode)
         {
                 if(d3dDevice_ == nullptr)
@@ -436,13 +436,17 @@ namespace selene
         //----------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::prepareLightAccumulation()
         {
-                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
-                textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_NORMALS_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
+                d3dDevice_->SetTexture(LOCATION_NORMALS_MAP,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_PROJECTION_MATRIX,
                                                      static_cast<const float*>(frameParameters_->viewProjectionMatrix), 4);
@@ -528,15 +532,17 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
 
-                // set positions at sampler 0
-                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
-                // set shadow map at sampler 1
-                textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_SHADOW_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, renderTargetContainer_->getShadowMap().getTexture());
+                d3dDevice_->SetTexture(LOCATION_SHADOW_MAP,
+                                       renderTargetContainer_->getShadowMap().getTexture());
 
                 vertexShaders_[VERTEX_SHADER_SPOT_LIGHT_SHADOW_PASS].set();
                 pixelShaders_[PIXEL_SHADER_SPOT_LIGHT_SHADOW_PASS].set();

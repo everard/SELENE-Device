@@ -132,6 +132,12 @@ namespace selene
         //-------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::destroy()
         {
+                for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
+                        vertexShaders_[i].destroy();
+
+                for(uint32_t i = 0; i < NUM_OF_PIXEL_SHADERS; ++i)
+                        pixelShaders_[i].destroy();
+
                 SAFE_RELEASE(d3dVertexDeclaration_);
                 SAFE_RELEASE(d3dVertexBuffer_);
 
@@ -161,11 +167,14 @@ namespace selene
                 vertexShaders_[VERTEX_SHADER_PARTICLES_PASS].set();
                 pixelShaders_[PIXEL_SHADER_PARTICLES_PASS].set();
 
-                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
-                textureHandler_->setStageState(1, D3DTEXF_LINEAR, D3DTEXF_LINEAR, D3DTEXF_POINT);
+                textureHandler_->setStageState(LOCATION_PARTICLE_TEXTURE,
+                                               D3DTEXF_LINEAR, D3DTEXF_LINEAR, D3DTEXF_POINT);
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_PROJECTION_MATRIX,
                                                      static_cast<const float*>(frameParameters_->projectionMatrix), 4);
@@ -192,7 +201,8 @@ namespace selene
                         if(particleSystems == nullptr || texture == nullptr)
                                 continue;
 
-                        textureHandler_->setTexture(texture, 1, D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                        textureHandler_->setTexture(texture, LOCATION_PARTICLE_TEXTURE,
+                                                    D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
                         for(auto it = particleSystems->begin(); it != particleSystems->end(); ++it)
                                 renderParticleSystem(*it);

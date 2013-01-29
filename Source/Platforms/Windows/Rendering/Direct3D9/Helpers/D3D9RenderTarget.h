@@ -57,7 +57,7 @@ namespace selene
                 LPDIRECT3DTEXTURE9 getTexture() const;
 
                 /**
-                 * \brief Returns D3D9 rendering surface
+                 * \brief Returns D3D9 rendering surface.
                  * \return D3D9 surface
                  */
                 LPDIRECT3DSURFACE9 getSurface() const;

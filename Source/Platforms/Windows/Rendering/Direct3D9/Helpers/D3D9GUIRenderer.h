@@ -23,7 +23,9 @@ namespace selene
         class FileManager;
         class Gui;
 
-        // Represents D3D9 GUI renderer.
+        /**
+         * Represents D3D9 GUI renderer.
+         */
         class D3d9GuiRenderer
         {
         public:
@@ -36,6 +38,7 @@ namespace selene
                  * \param[in] textureHandler texture handler
                  * \param[in] capabilities D3D capabilities
                  * \param[in] fileManager file manager, which helps to load textures
+                 * \return true if GUI renderer has been successfully initialized
                  */
                 bool initialize(D3d9FullScreenQuad& fullScreenQuad,
                                 D3d9TextureHandler& textureHandler,
@@ -67,7 +70,9 @@ namespace selene
                         PIXEL_SHADER_GUI_CURSOR_PASS,
                         NUM_OF_PIXEL_SHADERS,
 
-                        LOCATION_CURSOR_POSITION_AND_SIZE = 0
+                        LOCATION_CURSOR_POSITION_AND_SIZE = 0,
+                        LOCATION_FONT_TEXTURE = 0,
+                        LOCATION_CURSOR_TEXTURE = 0
                 };
 
                 D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];

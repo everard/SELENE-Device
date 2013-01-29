@@ -21,6 +21,10 @@ namespace selene
         class D3d9Texture: public Texture
         {
         public:
+                /**
+                 * \brief Constructs D3D9 texture with given name.
+                 * \param[in] name name of the D3D9 texture
+                 */
                 D3d9Texture(const char* name = nullptr);
                 ~D3d9Texture();
 

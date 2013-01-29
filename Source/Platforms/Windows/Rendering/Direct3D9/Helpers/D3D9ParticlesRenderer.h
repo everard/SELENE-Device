@@ -55,6 +55,7 @@ namespace selene
                 void renderParticleSystems(Renderer::Data::ParticleSystemNode& particleSystemNode);
 
         private:
+                /// Helper constants
                 enum
                 {
                         VERTEX_SHADER_PARTICLES_PASS = 0,
@@ -69,6 +70,9 @@ namespace selene
                         LOCATION_TEXTURE_COORDINATES_ADJUSTMENT = 0,
                         LOCATION_UNPROJECTION_VECTOR = 1,
                         LOCATION_PROJECTION_PARAMETERS = 2,
+
+                        LOCATION_POSITIONS_MAP = 0,
+                        LOCATION_PARTICLE_TEXTURE = 1
                 };
 
                 D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];

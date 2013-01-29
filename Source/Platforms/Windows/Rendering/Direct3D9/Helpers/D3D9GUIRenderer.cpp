@@ -108,7 +108,7 @@ namespace selene
 
                 // load textures
                 TextureFactory<D3d9Texture> textureFactory(fileManager);
-                fontTexture_.reset(reinterpret_cast<D3d9Texture*>(textureFactory.createResource("Fonts/Font.dds")));
+                fontTexture_.reset(static_cast<D3d9Texture*>(textureFactory.createResource("Fonts/Font.dds")));
                 if(!fontTexture_)
                 {
                         destroy();
@@ -121,7 +121,7 @@ namespace selene
                         return false;
                 }
 
-                cursorTexture_.reset(reinterpret_cast<D3d9Texture*>(textureFactory.createResource("Cursors/Cursor.dds")));
+                cursorTexture_.reset(static_cast<D3d9Texture*>(textureFactory.createResource("Cursors/Cursor.dds")));
                 if(!cursorTexture_)
                 {
                         destroy();
@@ -257,9 +257,11 @@ namespace selene
                 vertexShaders_[VERTEX_SHADER_GUI_TEXT_PASS].set();
                 pixelShaders_[PIXEL_SHADER_GUI_TEXT_PASS].set();
 
-                textureHandler_->setStageState(0, D3DTEXF_LINEAR, D3DTEXF_LINEAR, D3DTEXF_LINEAR,
+                textureHandler_->setStageState(LOCATION_FONT_TEXTURE,
+                                               D3DTEXF_LINEAR, D3DTEXF_LINEAR, D3DTEXF_LINEAR,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                textureHandler_->setTexture(fontTexture_.get(), 0, D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                textureHandler_->setTexture(fontTexture_.get(), LOCATION_FONT_TEXTURE,
+                                            D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
                 d3dDevice_->SetRenderState(D3DRS_ALPHAREF, static_cast<DWORD>(0x000000AA));
                 d3dDevice_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
@@ -336,7 +338,8 @@ namespace selene
                         cursorPositionAndSize.y = -cursorPositionAndSize.y;
                         cursorPositionAndSize.z = 0.05f;
 
-                        textureHandler_->setTexture(cursorTexture_.get(), 0, D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
+                        textureHandler_->setTexture(cursorTexture_.get(), LOCATION_CURSOR_TEXTURE,
+                                                    D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
                         d3dDevice_->SetVertexShaderConstantF(LOCATION_CURSOR_POSITION_AND_SIZE,
                                                              static_cast<const float*>(cursorPositionAndSize), 1);
 
@@ -351,7 +354,7 @@ namespace selene
         void D3d9GuiRenderer::renderGeometry(const Vector4d* vertices, uint32_t numFrames)
         {
                 uint8_t* destinationBuffer = nullptr;
-                uint32_t size = numFrames * guiGeometryNumVerticesPerFrame* guiGeometryVertexStride;
+                uint32_t size = numFrames * guiGeometryNumVerticesPerFrame * guiGeometryVertexStride;
                 if(FAILED(d3dVertexBuffer_->Lock(0, size, reinterpret_cast<void**>(&destinationBuffer), 0)))
                         return;
 

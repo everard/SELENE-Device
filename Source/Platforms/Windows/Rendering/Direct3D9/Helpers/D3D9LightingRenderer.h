@@ -66,7 +66,6 @@ namespace selene
                 /**
                  * \brief Renders lighting.
                  * \param[in] lightNode light node
-                 * \param[in] frameParameters frame parameters
                  */
                 void renderLighting(Renderer::Data::LightNode& lightNode);
 
@@ -112,7 +111,11 @@ namespace selene
                         LOCATION_LIGHT_VIEW_MATRIX = 4,
                         LOCATION_LIGHT_TEXTURE_MATRIX = 8,
                         LOCATION_SHADOW_MAP_BIAS = 12,
-                        LOCATION_SHADOW_MAP_KERNEL_SIZE = 13
+                        LOCATION_SHADOW_MAP_KERNEL_SIZE = 13,
+
+                        LOCATION_POSITIONS_MAP = 0,
+                        LOCATION_NORMALS_MAP = 1,
+                        LOCATION_SHADOW_MAP = 1
                 };
 
                 D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];

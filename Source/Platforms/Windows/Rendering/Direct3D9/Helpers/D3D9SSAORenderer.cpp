@@ -195,16 +195,16 @@ namespace selene
                 // load vertex and pixel shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("SSAOPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SSAOBlurX.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SSAOBlurY.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
+                        D3d9Shader("SSAOPass.vsh",  "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SSAOBlurX.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SSAOBlurY.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("SSAOPass.psh",      "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SSAOBlurX.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SSAOBlurY.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader("SSAOPass.psh",  "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SSAOBlurX.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SSAOBlurY.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -334,7 +334,7 @@ namespace selene
                 }
                 else
                 {
-                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER_0).getSurface());
+                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER).getSurface());
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                         vertexShaders_[VERTEX_SHADER_SSAO_PASS].set();
@@ -449,7 +449,7 @@ namespace selene
                         {
                                 textureHandler_->setStageState(2, D3DTEXF_LINEAR, D3DTEXF_POINT, D3DTEXF_LINEAR,
                                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetTexture(2, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER_0).getTexture());
+                                d3dDevice_->SetTexture(2, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER).getTexture());
                                 shouldUpscale = false;
                         }
                         else

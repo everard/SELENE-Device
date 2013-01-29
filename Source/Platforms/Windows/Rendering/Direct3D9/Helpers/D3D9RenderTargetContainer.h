@@ -29,8 +29,7 @@ namespace selene
                 RENDER_TARGET_HELPER_0,
                 RENDER_TARGET_HELPER_1,
                 RENDER_TARGET_RESULT,
-                RENDER_TARGET_HALF_SIZE_HELPER_0,
-                RENDER_TARGET_HALF_SIZE_HELPER_1,
+                RENDER_TARGET_HALF_SIZE_HELPER,
                 NUM_OF_RENDER_TARGETS
         };
 
@@ -47,7 +46,7 @@ namespace selene
                  * \brief Initializes render target container.
                  * \param[in] frameParameters frame parameters
                  * \param[in] parameters rendering parameters
-                 * \param[in] capabilities capabilities
+                 * \param[in] capabilities D3D capabilities
                  * \return true if render target container has been successfully initialized
                  */
                 bool initialize(D3d9FrameParameters& frameParameters,
@@ -83,10 +82,6 @@ namespace selene
                 D3d9RenderTarget dummyRenderTarget_;
                 D3d9RenderTarget backBuffer_;
                 D3d9RenderTarget shadowMap_;
-
-                D3d9FrameParameters* frameParameters_;
-                Renderer::Parameters* parameters_;
-                D3d9Capabilities* capabilities_;
 
         };
 

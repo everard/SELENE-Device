@@ -21,6 +21,10 @@ namespace selene
         class D3d9Mesh: public Mesh
         {
         public:
+                /**
+                 * \brief Constructs D3D9 mesh with given name.
+                 * \param[in] name name of the D3D9 mesh
+                 */
                 D3d9Mesh(const char* name = nullptr);
                 ~D3d9Mesh();
 
