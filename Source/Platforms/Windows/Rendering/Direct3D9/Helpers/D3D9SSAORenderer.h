@@ -83,7 +83,12 @@ namespace selene
                         LOCATION_SSAO_PARAMETERS = 2,
                         LOCATION_SCREEN_SIZE_SSAO_PASS = 0,
                         LOCATION_SCREEN_SIZE_BLUR_PASS = 3,
-                        LOCATION_TEXTURE_COORDINATES_ADJUSTMENT = 4
+                        LOCATION_TEXTURE_COORDINATES_ADJUSTMENT = 4,
+
+                        LOCATION_POSITIONS_MAP = 0,
+                        LOCATION_NORMALS_MAP = 1,
+                        LOCATION_HELPER_TEXTURE = 2,
+                        LOCATION_SSAO_BUFFER = 2
                 };
 
                 D3d9VertexShader optionalVertexShaders_[NUM_OF_OPTIONAL_VERTEX_SHADERS];

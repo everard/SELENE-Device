@@ -29,13 +29,8 @@ namespace selene
          * @{
          */
 
-        // Forward declaration of classes
-        class D3d9StaticMesh;
-        class D3d9SkinMesh;
-        class Material;
-
         /**
-         * \brief Represents D3D9 renderer.
+         * Represents D3D9 renderer.
          */
         class D3d9Renderer: public Renderer, public Status
         {
@@ -57,8 +52,8 @@ namespace selene
                 static LPDIRECT3DDEVICE9 d3dDevice_;
                 LPDIRECT3D9 d3d_;
 
-                D3d9VertexShader resultVertexShaders_;
-                D3d9PixelShader  resultPixelShaders_;
+                D3d9VertexShader resultVertexShader_;
+                D3d9PixelShader  resultPixelShader_;
 
                 D3d9RenderTargetContainer renderTargetContainer_;
                 D3d9ParticlesRenderer particlesRenderer_;

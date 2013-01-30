@@ -10,46 +10,46 @@
 namespace selene
 {
 
-        static const char* pixelShaderPositionDecodingFromR32f =
-                "float4 EncodePos(float4 pos, float4 proj)"
-                "{"
-                "        return (pos.z / proj.w).xxxx;"
-                "}"
-                "float DecodeZEye(float4 ZEnc, float4 proj)"
-                "{"
-                "        return ZEnc.r * proj.w;"
-                "}"
-                "float3 DecodePos(float4 ZEnc, float2 XY, float4 proj, float4 unproj)"
-                "{"
-                "        float zv = DecodeZEye(ZEnc, proj);"
-                "        float4 p = float4(XY, 1.0, 0.0);"
-                "        float4 orig = p * unproj * zv.xxxx;"
-                "        return orig.xyz;"
-                "}";
-
-        static const char* pixelShaderPositionDecodingFromRGBA8 =
-                "float4 EncodePos(float4 pos, float4 proj)"
-                "{"
-                "        float4 enc = float4(16777216.0, 65536.0, 256.0, 1.0) * (pos.z / proj.w);"
-                "        enc  = frac(enc);"
-                "        enc -= enc.xxyz * float4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);"
-                "        return enc;"
-                "}"
-                "float DecodeZEye(float4 ZEnc, float4 proj)"
-                "{"
-                "        return dot(ZEnc, float4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0)) * proj.w;"
-                "}"
-                "float3 DecodePos(float4 ZEnc, float2 XY, float4 proj, float4 unproj)"
-                "{"
-                "        float zv = DecodeZEye(ZEnc, proj);"
-                "        float4 p = float4(XY, 1.0, 0.0);"
-                "        float4 orig = p * unproj * zv.xxxx;"
-                "        return orig.xyz;"
-                "}";
-
-        D3d9Shader::D3d9Shader(const char* name, const std::string& version, DWORD flags,
-                               uint8_t libraryType, const D3d9Capabilities& capabilities)
+        D3d9Shader::D3d9Shader(const char* name, const char* version, DWORD flags, uint8_t libraryType,
+                               const D3d9Capabilities& capabilities)
         {
+                static const char* pixelShaderPositionDecodingFromR32f =
+                        "float4 EncodePos(float4 pos, float4 proj)"
+                        "{"
+                        "        return (pos.z / proj.w).xxxx;"
+                        "}"
+                        "float DecodeZEye(float4 ZEnc, float4 proj)"
+                        "{"
+                        "        return ZEnc.r * proj.w;"
+                        "}"
+                        "float3 DecodePos(float4 ZEnc, float2 XY, float4 proj, float4 unproj)"
+                        "{"
+                        "        float zv = DecodeZEye(ZEnc, proj);"
+                        "        float4 p = float4(XY, 1.0, 0.0);"
+                        "        float4 orig = p * unproj * zv.xxxx;"
+                        "        return orig.xyz;"
+                        "}";
+
+                static const char* pixelShaderPositionDecodingFromRGBA8 =
+                        "float4 EncodePos(float4 pos, float4 proj)"
+                        "{"
+                        "        float4 enc = float4(16777216.0, 65536.0, 256.0, 1.0) * (pos.z / proj.w);"
+                        "        enc  = frac(enc);"
+                        "        enc -= enc.xxyz * float4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);"
+                        "        return enc;"
+                        "}"
+                        "float DecodeZEye(float4 ZEnc, float4 proj)"
+                        "{"
+                        "        return dot(ZEnc, float4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0)) * proj.w;"
+                        "}"
+                        "float3 DecodePos(float4 ZEnc, float2 XY, float4 proj, float4 unproj)"
+                        "{"
+                        "        float zv = DecodeZEye(ZEnc, proj);"
+                        "        float4 p = float4(XY, 1.0, 0.0);"
+                        "        float4 orig = p * unproj * zv.xxxx;"
+                        "        return orig.xyz;"
+                        "}";
+
                 code_ = nullptr;
 
                 HRSRC hResource = ::FindResource(GetModuleHandle(nullptr), name, RT_RCDATA);
@@ -121,7 +121,7 @@ namespace selene
                 sourceCode = library + sourceCode;
 
                 if(FAILED(D3DXCompileShader(sourceCode.c_str(), sourceCode.length(),
-                                            nullptr, nullptr, "main", version.c_str(),
+                                            nullptr, nullptr, "main", version,
                                             flags, &code_, nullptr, nullptr)))
                         code_ = nullptr;
         }
@@ -133,7 +133,7 @@ namespace selene
         //-----------------------------------------------------
         LPD3DXBUFFER D3d9Shader::getCode() const
         {
-                return (LPD3DXBUFFER)code_;
+                return code_;
         }
 
         D3d9VertexShader::D3d9VertexShader()
@@ -158,7 +158,7 @@ namespace selene
                 if(code == nullptr)
                         return false;
 
-                if(FAILED(d3dDevice_->CreateVertexShader((DWORD*)code->GetBufferPointer(),
+                if(FAILED(d3dDevice_->CreateVertexShader(reinterpret_cast<DWORD*>(code->GetBufferPointer()),
                                                          &d3dShader_)))
                 {
                         d3dShader_ = nullptr;
@@ -172,6 +172,7 @@ namespace selene
         void D3d9VertexShader::destroy()
         {
                 SAFE_RELEASE(d3dShader_);
+                d3dDevice_ = nullptr;
         }
 
         //-----------------------------------------------------
@@ -203,7 +204,7 @@ namespace selene
                 if(code == nullptr)
                         return false;
 
-                if(FAILED(d3dDevice_->CreatePixelShader((DWORD*)code->GetBufferPointer(),
+                if(FAILED(d3dDevice_->CreatePixelShader(reinterpret_cast<DWORD*>(code->GetBufferPointer()),
                                                         &d3dShader_)))
                 {
                         d3dShader_ = nullptr;
@@ -217,6 +218,7 @@ namespace selene
         void D3d9PixelShader::destroy()
         {
                 SAFE_RELEASE(d3dShader_);
+                d3dDevice_ = nullptr;
         }
 
         //-----------------------------------------------------

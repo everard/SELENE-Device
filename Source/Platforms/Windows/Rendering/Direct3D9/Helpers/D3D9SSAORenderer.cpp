@@ -192,7 +192,7 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
-                // load vertex and pixel shaders
+                // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
                         D3d9Shader("SSAOPass.vsh",  "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
@@ -354,19 +354,20 @@ namespace selene
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_SCREEN_SIZE_SSAO_PASS,
                                                      static_cast<const float*>(frameParameters_->screenSize), 1);
 
-                // set positions at sampler 0
-                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
-                // set normals at sampler 1
-                textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                textureHandler_->setStageState(LOCATION_NORMALS_MAP,
+                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(1, renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
+                d3dDevice_->SetTexture(LOCATION_NORMALS_MAP,
+                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
 
-                // set helper texture at sampler 2
-                textureHandler_->setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
-                d3dDevice_->SetTexture(2, d3dRandomTexture_);
+                textureHandler_->setStageState(LOCATION_HELPER_TEXTURE, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
+                d3dDevice_->SetTexture(LOCATION_HELPER_TEXTURE, d3dRandomTexture_);
 
                 if(capabilities_->isThirdShaderModelSupported())
                 {
@@ -434,29 +435,33 @@ namespace selene
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
                                                             static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
 
-                        // set positions at sampler 0
-                        textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                        textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
+                                                       D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                        d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
+                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
 
-                        // set normals at sampler 1
-                        textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                        textureHandler_->setStageState(LOCATION_NORMALS_MAP,
+                                                       D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(1, renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
+                        d3dDevice_->SetTexture(LOCATION_NORMALS_MAP,
+                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
 
-                        // set SSAO at sampler 2
                         if(shouldUpscale)
                         {
-                                textureHandler_->setStageState(2, D3DTEXF_LINEAR, D3DTEXF_POINT, D3DTEXF_LINEAR,
+                                textureHandler_->setStageState(LOCATION_SSAO_BUFFER,
+                                                               D3DTEXF_LINEAR, D3DTEXF_POINT, D3DTEXF_LINEAR,
                                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetTexture(2, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER).getTexture());
+                                d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER,
+                                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER).getTexture());
                                 shouldUpscale = false;
                         }
                         else
                         {
-                                textureHandler_->setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
+                                textureHandler_->setStageState(LOCATION_SSAO_BUFFER,
+                                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetTexture(2, textures[i]);
+                                d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER, textures[i]);
                         }
 
                         fullScreenQuad_->render();

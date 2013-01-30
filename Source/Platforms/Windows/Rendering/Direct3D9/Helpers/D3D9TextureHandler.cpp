@@ -7,7 +7,7 @@
 namespace selene
 {
 
-        // Fills white dummy texture
+        // Fills dummy white texture
         VOID WINAPI fillWhiteTexture(D3DXVECTOR4* output, const D3DXVECTOR2*, const D3DXVECTOR2*, LPVOID)
         {
                 *output = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -17,6 +17,17 @@ namespace selene
         VOID WINAPI fillNormalMap(D3DXVECTOR4* output, const D3DXVECTOR2*, const D3DXVECTOR2*, LPVOID)
         {
                 *output = D3DXVECTOR4(0.5f, 0.5f, 1.0f, 1.0f);
+        }
+
+        D3d9TextureHandler::D3d9TextureHandler()
+        {
+                for(uint8_t i = 0; i < NUM_OF_DUMMY_TEXTURES; ++i)
+                        d3dDummyTextures_[i] = nullptr;
+                d3dDevice_ = nullptr;
+        }
+        D3d9TextureHandler::~D3d9TextureHandler()
+        {
+                destroy();
         }
 
         //----------------------------------------------------------------------------------------------------
@@ -53,6 +64,7 @@ namespace selene
                 {
                         SAFE_RELEASE(d3dDummyTextures_[i]);
                 }
+                d3dDevice_ = nullptr;
         }
 
         //----------------------------------------------------------------------------------------------------
@@ -65,6 +77,9 @@ namespace selene
         //----------------------------------------------------------------------------------------------------
         void D3d9TextureHandler::setTexture(Texture* texture, DWORD stage, uint8_t dummyTextureIndex)
         {
+                if(d3dDevice_ == nullptr)
+                        return;
+
                 if(texture == nullptr)
                         d3dDevice_->SetTexture(stage, d3dDummyTextures_[dummyTextureIndex]);
                 else
@@ -78,23 +93,14 @@ namespace selene
         void D3d9TextureHandler::setStageState(DWORD stage, DWORD magFilter, DWORD minFilter, DWORD mipFilter,
                                                DWORD textureCoordinateModeU, DWORD textureCoordinateModeV)
         {
+                if(d3dDevice_ == nullptr)
+                        return;
+
                 d3dDevice_->SetSamplerState(stage, D3DSAMP_MAGFILTER, magFilter);
                 d3dDevice_->SetSamplerState(stage, D3DSAMP_MINFILTER, minFilter);
                 d3dDevice_->SetSamplerState(stage, D3DSAMP_MIPFILTER, mipFilter);
                 d3dDevice_->SetSamplerState(stage, D3DSAMP_ADDRESSU,  textureCoordinateModeU);
                 d3dDevice_->SetSamplerState(stage, D3DSAMP_ADDRESSV,  textureCoordinateModeV);
-        }
-
-        D3d9TextureHandler::D3d9TextureHandler()
-        {
-                for(uint8_t i = 0; i < NUM_OF_DUMMY_TEXTURES; ++i)
-                        d3dDummyTextures_[i] = nullptr;
-                d3dDevice_ = nullptr;
-        }
-        D3d9TextureHandler::D3d9TextureHandler(const D3d9TextureHandler&) {}
-        D3d9TextureHandler::~D3d9TextureHandler()
-        {
-                destroy();
         }
 
 }

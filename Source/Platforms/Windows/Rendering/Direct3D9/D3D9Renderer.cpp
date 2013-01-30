@@ -51,7 +51,7 @@ namespace selene
                 }
 
                 if(capabilities_.isThirdShaderModelSupported())
-                        writeLogEntry("PS 3.0 is supported");
+                        writeLogEntry("SM 3.0 is supported");
 
                 if(capabilities_.isMultipleRenderTargetSupported())
                         writeLogEntry("MRT is supported");
@@ -149,8 +149,8 @@ namespace selene
                 d3dDevice_->SetRenderTarget(0, renderTargetContainer_.getBackBuffer().getSurface());
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
-                resultVertexShaders_.set();
-                resultPixelShaders_.set();
+                resultVertexShader_.set();
+                resultPixelShader_.set();
 
                 d3dDevice_->SetPixelShaderConstantF(0, static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment), 1);
 
@@ -212,23 +212,23 @@ namespace selene
         //-------------------------------------------------------------------
         bool D3d9Renderer::initializeHelpers()
         {
-                // create shaders
+                // load shaders
                 D3d9Shader d3dVertexShader("ResultPass.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_);
                 D3d9Shader d3dPixelShader("ResultPass.psh",    "ps_1_4", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_);
 
-                if(!resultVertexShaders_.create(d3dVertexShader))
+                if(!resultVertexShader_.create(d3dVertexShader))
                 {
                         writeLogEntry("ERROR: Could not create vertex shader");
                         return false;
                 }
 
-                if(!resultPixelShaders_.create(d3dPixelShader))
+                if(!resultPixelShader_.create(d3dPixelShader))
                 {
                         writeLogEntry("ERROR: Could not create pixel shader");
                         return false;
                 }
 
-                // create helpers
+                // initialize helpers
                 FileManager* fileManager = parameters_.getFileManager();
 
                 if(!renderTargetContainer_.initialize(frameParameters_, parameters_, capabilities_))
@@ -316,8 +316,8 @@ namespace selene
         //-------------------------------------------------------------------
         void D3d9Renderer::destroyHelpers()
         {
-                resultVertexShaders_.destroy();
-                resultPixelShaders_.destroy();
+                resultVertexShader_.destroy();
+                resultPixelShader_.destroy();
 
                 renderTargetContainer_.destroy();
                 particlesRenderer_.destroy();

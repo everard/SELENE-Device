@@ -4,6 +4,10 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#ifndef PLATFORM_WINDOWS
+#define PLATFORM_WINDOWS
+#endif
+
 #include "Rendering/Direct3D9/Resources/D3D9Texture.h"
 #include "Rendering/Direct3D9/Resources/D3D9Mesh.h"
 

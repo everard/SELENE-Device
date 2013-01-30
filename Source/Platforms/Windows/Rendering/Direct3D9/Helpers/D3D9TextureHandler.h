@@ -29,6 +29,9 @@ namespace selene
                         NUM_OF_DUMMY_TEXTURES
                 };
 
+                D3d9TextureHandler();
+                ~D3d9TextureHandler();
+
                 /**
                  * \brief Initializes texture handler.
                  * \return true if texture handler has been successfully initialized
@@ -73,14 +76,8 @@ namespace selene
                                    DWORD textureCoordinateModeV = D3DTADDRESS_WRAP);
 
         private:
-                friend class D3d9Renderer;
-
                 LPDIRECT3DTEXTURE9 d3dDummyTextures_[NUM_OF_DUMMY_TEXTURES];
                 LPDIRECT3DDEVICE9 d3dDevice_;
-
-                D3d9TextureHandler();
-                D3d9TextureHandler(const D3d9TextureHandler& textureHandler_);
-                ~D3d9TextureHandler();
 
         };
 
