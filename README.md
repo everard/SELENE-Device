@@ -1,7 +1,7 @@
 SELENE Device is a 3D graphics rendering engine. It is cross-platform, but currently it has only Windows renderer. For programming style guidlines see GUIDELINES.txt.
 
-CONFIGURATION & BUILDING
-========================
+CONFIGURATION & COMPILATION
+===========================
 
 1. Create parent directory, which will contain SELENE Device:
 
@@ -11,7 +11,7 @@ CONFIGURATION & BUILDING
 
 2. Download Build.zip archive and unzip it to the SELENE-Device directory.
 
-To build and run everything out-of-box your directory tree should be like this:
+To compile and run everything out-of-box your directory tree should be like this:
 
     + SELENE-Device              <- ROOT DIRECTORY
     |\
@@ -27,15 +27,6 @@ To build and run everything out-of-box your directory tree should be like this:
     |   | Android\               <- ANDROID BUILD SCRIPTS
     |   | Linux\                 <- LINUX MAKEFILE
     |   | Windows\               <- VISUAL C++ PROJECTS
-
-LINUX
------
-
-To compile existing code under Linux you should cd to the Build/Linux directory and run:
-
-    make all
-
-Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
 
 ANDROID
 -------
@@ -65,10 +56,19 @@ WINDOWS
 
 To compile existing code under Windows, you should cd to the Build/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2010.
 
+LINUX
+-----
+
+To compile existing code under Linux you should cd to the Build/Linux directory and run:
+
+    make all
+
+Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
+
 LINKS TO DOWNLOADS
 ==================
 Download Visual Studio 2010 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
-* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUNExWeHphNW01aGM/edit)
+* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUd2xBelJtMlY2eFU/edit)
 
 LICENSE
 =======
