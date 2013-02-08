@@ -74,8 +74,8 @@ namespace selene
                  * \param[in] lParam LPARAM of the Windows message
                  * \return result of the Windows message processing
                  */
-                static friend LRESULT CALLBACK windowProcedure(HWND hWnd, UINT message,
-                                                               WPARAM wParam, LPARAM lParam);
+                static LRESULT CALLBACK windowProcedure(HWND hWnd, UINT message,
+                                                        WPARAM wParam, LPARAM lParam);
 
                 /**
                  * \brief Registers window class.

@@ -41,6 +41,26 @@ namespace selene
                 return normalsMatrix_;
         }
 
+        Actor::Instance::Instance(const Actor::ViewProjectionTransform& viewProjectionTransform,
+                                  const Skeleton::Instance* skeletonInstance)
+        {
+                viewProjectionTransform_ = viewProjectionTransform;
+                skeletonInstance_ = skeletonInstance;
+        }
+        Actor::Instance::~Instance() {}
+
+        //----------------------------------------------------------------------------------------
+        const Actor::ViewProjectionTransform& Actor::Instance::getViewProjectionTransform() const
+        {
+                return viewProjectionTransform_;
+        }
+
+        //----------------------------------------------------------------------------------------
+        const Skeleton::Instance* Actor::Instance::getSkeletonInstance() const
+        {
+                return skeletonInstance_;
+        }
+
         Actor::Actor(const char* name,
                      const Resource::Instance<Mesh>& mesh,
                      const Vector3d& position,

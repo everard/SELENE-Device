@@ -107,10 +107,10 @@ namespace selene
         //-----------------------------------------------------------------------------------------------
         void Skeleton::Instance::setInitialPose()
         {
-                if(skeleton_.expired())
+                auto skeleton = skeleton_.lock();
+                if(!skeleton)
                         return;
 
-                auto skeleton = skeleton_.lock();
                 const auto& initialLocalBoneTransforms = skeleton->initialLocalBoneTransforms_;
 
                 if(initialLocalBoneTransforms.getSize() != localBoneTransforms_.getSize())
@@ -124,13 +124,12 @@ namespace selene
         void Skeleton::Instance::blendPose(const Array<BoneTransform, uint16_t>& boneTransforms,
                                            float blendFactor)
         {
-                if(skeleton_.expired())
-                        return;
-
                 if(boneTransforms.isEmpty())
                         return;
 
                 auto skeleton = skeleton_.lock();
+                if(!skeleton)
+                        return;
 
                 if(blendFactor >= 1.0f)
                 {
@@ -170,20 +169,20 @@ namespace selene
         //-----------------------------------------------------------------------------------------------
         int32_t Skeleton::Instance::getBoneIndex(const std::string& boneName) const
         {
-                if(skeleton_.expired())
+                auto skeleton = skeleton_.lock();
+                if(!skeleton)
                         return -1;
 
-                auto skeleton = skeleton_.lock();
                 return skeleton->getBoneIndex(boneName);
         }
 
         //-----------------------------------------------------------------------------------------------
         void Skeleton::Instance::computeFinalBoneTransforms() const
         {
-                if(skeleton_.expired())
+                auto skeleton = skeleton_.lock();
+                if(!skeleton)
                         return;
 
-                auto skeleton = skeleton_.lock();
                 const auto& bones = skeleton->bones_;
 
                 if(bones.getSize() != localBoneTransforms_.getSize())
@@ -220,10 +219,19 @@ namespace selene
                 }
 
                 bonesMap_.clear();
-                for(uint16_t i = 0; i < bones_.getSize(); ++i)
+
+                try
                 {
-                        bonesMap_.insert(std::pair<std::string, uint16_t>(bones_[i].name, i));
-                        localBoneTransforms[i] = combinedBoneTransforms[i] = -bones_[i].offsetTransform;
+                        for(uint16_t i = 0; i < bones_.getSize(); ++i)
+                        {
+                                bonesMap_.insert(std::make_pair(bones_[i].name, i));
+                                localBoneTransforms[i] = combinedBoneTransforms[i] = -bones_[i].offsetTransform;
+                        }
+                }
+                catch(...)
+                {
+                        destroy();
+                        return false;
                 }
 
                 for(int32_t i = (bones_.getSize() - 1); i >= 0; --i)

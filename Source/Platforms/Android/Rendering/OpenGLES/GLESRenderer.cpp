@@ -351,7 +351,7 @@ namespace selene
 
         //--------------------------------------------------------------------------------------------
         void GlesRenderer::renderActors(const Mesh::Subset& meshSubset,
-                                        const std::vector<Renderer::Data::Instance>& instances,
+                                        const Renderer::Data::List<Actor::Instance>& renderingList,
                                         GLint worldViewProjectionMatrixLocation,
                                         GLint worldViewMatrixLocation,
                                         GLint normalsMatrixLocation,
@@ -360,9 +360,10 @@ namespace selene
                                         uint8_t meshRenderingUnit,
                                         uint8_t pass)
         {
+                const auto& instances = renderingList.getElements();
                 for(auto it = instances.begin(); it != instances.end(); ++it)
                 {
-                        const auto& transform = (*it).second;
+                        const auto& transform = (*it).getViewProjectionTransform();
 
                         glUniformMatrix4fv(worldViewProjectionMatrixLocation, 1, GL_FALSE, static_cast<const float*>(transform.getWorldViewProjectionMatrix()));
                         GlesRenderer::checkGlesError("renderActors: glUniformMatrix4fv");
@@ -379,7 +380,7 @@ namespace selene
                         }
 
                         if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                setSkeletonPose((*it).first->getFinalBoneTransforms(),
+                                setSkeletonPose((*it).getSkeletonInstance()->getFinalBoneTransforms(),
                                                 bonePositionsLocation,
                                                 boneRotationsLocation);
 

@@ -10,9 +10,9 @@
 #include "../Core/Math/Matrix.h"
 #include "../Core/Math/Sphere.h"
 
+#include <unordered_map>
+#include <unordered_set>
 #include <memory>
-#include <map>
-#include <set>
 
 namespace selene
 {
@@ -183,7 +183,7 @@ namespace selene
 
                         int32_t boneIndex_;
                         Node* parentNode_;
-                        std::set<Node*> childNodes_;
+                        std::unordered_set<Node*> childNodes_;
 
                         /**
                          * \brief Requests update operation.
@@ -346,10 +346,10 @@ namespace selene
         private:
                 std::weak_ptr<Camera> activeCamera_;
 
-                std::map<std::string, std::shared_ptr<Actor>> actors_;
-                std::map<std::string, std::shared_ptr<Light>> lights_;
-                std::map<std::string, std::shared_ptr<Camera>> cameras_;
-                std::map<std::string, std::shared_ptr<ParticleSystem>> particleSystems_;
+                std::unordered_map<std::string, std::shared_ptr<Actor>> actors_;
+                std::unordered_map<std::string, std::shared_ptr<Light>> lights_;
+                std::unordered_map<std::string, std::shared_ptr<Camera>> cameras_;
+                std::unordered_map<std::string, std::shared_ptr<ParticleSystem>> particleSystems_;
 
                 uint32_t numVisibleActors_, numVisibleLights_;
                 uint32_t numVisibleParticleSystems_;

@@ -24,7 +24,13 @@ namespace selene
                 size_ = size;
 
                 if(text != nullptr)
-                        text_ = text;
+                {
+                        try
+                        {
+                                text_ = text;
+                        }
+                        catch(...) {}
+                }
 
                 id_ = -1;
 
@@ -80,7 +86,11 @@ namespace selene
                 if(text == nullptr)
                         return;
 
-                text_ = text;
+                try
+                {
+                        text_ = text;
+                }
+                catch(...) {}
 
                 onChange();
         }
@@ -163,12 +173,19 @@ namespace selene
                 elementPointer->setId(nextElementId_);
                 elementPointer->setGui(this);
 
-                auto result =
-                        elements_.insert(std::make_pair(nextElementId_,
-                                                        std::shared_ptr<Element>(elementPointer.release())));
+                try
+                {
+                        auto result =
+                                elements_.insert(std::make_pair(nextElementId_,
+                                                                std::shared_ptr<Element>(elementPointer.release())));
 
-                if(!result.second)
+                        if(!result.second)
+                                return -1;
+                }
+                catch(...)
+                {
                         return -1;
+                }
 
                 clearFlags(GUI_UPDATED);
 

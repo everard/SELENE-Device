@@ -58,6 +58,10 @@ namespace selene
         //--------------------------------------------------------------
         bool SimpleAnimation::onInitialize()
         {
+                // initialize memory buffer of the renderer
+                if(!Renderer::initializeMemoryBuffer(1024 * 8))
+                        return false;
+
                 // initialize renderer
                 uint8_t flags = 0;
                 Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, flags);

@@ -24,7 +24,7 @@ namespace selene
                 destroy();
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9ActorsRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                             D3d9FrameParameters& frameParameters,
                                             D3d9TextureHandler& textureHandler,
@@ -126,7 +126,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
@@ -150,7 +150,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
                 if(d3dDevice_ == nullptr)
@@ -221,7 +221,7 @@ namespace selene
                 }
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode,
                                                  const Vector4d& projectionParameters)
         {
@@ -252,7 +252,7 @@ namespace selene
                 renderActors(actorNode, RENDERING_PASS_POSITIONS);
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderShading(Renderer::Data::ActorNode& actorNode, bool isSsaoEnabled)
         {
                 if(d3dDevice_ == nullptr)
@@ -309,7 +309,7 @@ namespace selene
                 renderActors(actorNode, RENDERING_PASS_SHADING);
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::setMaterial(const Material& material, uint8_t pass)
         {
                 switch(pass)
@@ -361,7 +361,7 @@ namespace selene
                 }
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::setSkeletonPose(const Array<Skeleton::Transform, uint16_t>& boneTransforms)
         {
                 if(boneTransforms.isEmpty())
@@ -383,7 +383,7 @@ namespace selene
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_BONE_POSITIONS, reinterpret_cast<const float*>(positions), numBoneTransforms);
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderActors(Renderer::Data::ActorNode& actorNode, uint8_t pass)
         {
                 static const DWORD cullModes[] = {D3DCULL_CCW, D3DCULL_NONE};
@@ -491,12 +491,12 @@ namespace selene
                                                          resultMeshSubset = meshSubsetNode->readNextElement())
                                                 {
                                                         auto meshSubset = meshSubsetNode->getCurrentKey();
-                                                        auto transforms = meshSubsetNode->getCurrentData();
+                                                        auto renderingList = meshSubsetNode->getCurrentData();
 
-                                                        if(meshSubset == nullptr || transforms == nullptr)
+                                                        if(meshSubset == nullptr || renderingList == nullptr)
                                                                 break;
 
-                                                        renderMeshSubsetInstances(*transforms, *meshSubset, meshUnit, pass);
+                                                        renderMeshSubsetInstances(*renderingList, *meshSubset, meshUnit, pass);
                                                 }
                                         }
                                 }
@@ -504,15 +504,16 @@ namespace selene
                 }
         }
 
-        //--------------------------------------------------------------------------------------------------------
-        void D3d9ActorsRenderer::renderMeshSubsetInstances(const std::vector<Renderer::Data::Instance>& instances,
+        //------------------------------------------------------------------------------------------------------------
+        void D3d9ActorsRenderer::renderMeshSubsetInstances(const Renderer::Data::List<Actor::Instance>& renderingList,
                                                            const Mesh::Subset& meshSubset,
                                                            uint8_t meshRenderingUnit,
                                                            uint8_t pass)
         {
+                const auto& instances = renderingList.getElements();
                 for(auto it = instances.begin(); it != instances.end(); ++it)
                 {
-                        const auto& transform = (*it).second;
+                        const auto& transform = (*it).getViewProjectionTransform();
                         d3dDevice_->SetVertexShaderConstantF(LOCATION_WORLD_VIEW_PROJECTION_MATRIX,
                                                              static_cast<const float*>(transform.getWorldViewProjectionMatrix()),
                                                              4);
@@ -542,7 +543,7 @@ namespace selene
                         }
 
                         if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                setSkeletonPose((*it).first->getFinalBoneTransforms());
+                                setSkeletonPose((*it).getSkeletonInstance()->getFinalBoneTransforms());
 
                         d3dDevice_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, meshSubset.vertexIndex,
                                                          meshSubset.numVertices, 3 * meshSubset.faceIndex,

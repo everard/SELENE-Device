@@ -97,7 +97,7 @@ namespace selene
 
                 // Renders actors
                 void renderActors(const Mesh::Subset& meshSubset,
-                                  const std::vector<Renderer::Data::Instance>& instances,
+                                  const Renderer::Data::List<Actor::Instance>& renderingList,
                                   GLint worldViewProjectionMatrixLocation,
                                   GLint worldViewMatrixLocation,
                                   GLint normalsMatrixLocation,

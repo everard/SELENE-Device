@@ -20,7 +20,15 @@ namespace selene
                 if(folder == nullptr)
                         return false;
 
-                folders_.push_back(std::string(folder));
+                try
+                {
+                        folders_.push_back(std::string(folder));
+                }
+                catch(...)
+                {
+                        return false;
+                }
+
                 return true;
         }
 
@@ -36,14 +44,18 @@ namespace selene
                         return fileName;
 
                 // search all folders
-                for(auto it = folders_.begin(); it != folders_.end(); ++it)
+                try
                 {
-                        fileName_ = (*it) + fileName;
+                        for(auto it = folders_.begin(); it != folders_.end(); ++it)
+                        {
+                                fileName_ = (*it) + fileName;
 
-                        // check
-                        if(fileExists_(fileName_.c_str()))
-                                return fileName_.c_str();
+                                // check
+                                if(fileExists_(fileName_.c_str()))
+                                        return fileName_.c_str();
+                        }
                 }
+                catch(...) {}
 
                 return nullptr;
         }

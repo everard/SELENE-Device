@@ -146,8 +146,8 @@ namespace selene
         }
 
         //-------------------------------------------------------------------------------------
-        LRESULT CALLBACK windowProcedure(HWND hWnd, UINT message,
-                                         WPARAM wParam, LPARAM lParam)
+        LRESULT CALLBACK WindowsApplication::windowProcedure(HWND hWnd, UINT message,
+                                                             WPARAM wParam, LPARAM lParam)
         {
                 WindowsApplication* windowsApplication = reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
                 if(windowsApplication != nullptr)

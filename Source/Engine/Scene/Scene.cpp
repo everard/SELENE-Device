@@ -90,8 +90,16 @@ namespace selene
                 parentNode_ = &node;
 
                 // add this node to children of parent
-                auto result = node.childNodes_.insert(this);
-                if(!result.second)
+                try
+                {
+                        auto result = node.childNodes_.insert(this);
+                        if(!result.second)
+                        {
+                                parentNode_ = nullptr;
+                                return false;
+                        }
+                }
+                catch(...)
                 {
                         parentNode_ = nullptr;
                         return false;
@@ -209,8 +217,10 @@ namespace selene
                         return true;
 
                 for(it = childNodes_.begin(); it != childNodes_.end(); ++it)
+                {
                         if((*it)->hasChild(childNode))
                                 return true;
+                }
 
                 return false;
         }
@@ -293,52 +303,56 @@ namespace selene
                 if(node == nullptr)
                         return false;
 
-                Actor* actor = dynamic_cast<Actor*>(node);
-                if(actor != nullptr)
+                try
                 {
-                        auto result = actors_.insert(std::make_pair(std::string(node->getName()),
-                                                                    std::shared_ptr<Actor>(actor)));
-                        if(!result.second)
-                                return false;
+                        Actor* actor = dynamic_cast<Actor*>(node);
+                        if(actor != nullptr)
+                        {
+                                auto result = actors_.insert(std::make_pair(std::string(node->getName()),
+                                                                            std::shared_ptr<Actor>(actor)));
+                                if(!result.second)
+                                        return false;
 
-                        return true;
+                                return true;
+                        }
+
+                        Light* light = dynamic_cast<Light*>(node);
+                        if(light != nullptr)
+                        {
+                                auto result = lights_.insert(std::make_pair(std::string(node->getName()),
+                                                                            std::shared_ptr<Light>(light)));
+                                if(!result.second)
+                                        return false;
+
+                                return true;
+                        }
+
+                        Camera* camera = dynamic_cast<Camera*>(node);
+                        if(camera != nullptr)
+                        {
+                                auto result = cameras_.insert(std::make_pair(std::string(node->getName()),
+                                                                             std::shared_ptr<Camera>(camera)));
+                                if(!result.second)
+                                        return false;
+
+                                if(activeCamera_.expired())
+                                        activeCamera_ = result.first->second;
+
+                                return true;
+                        }
+
+                        ParticleSystem* particleSystem = dynamic_cast<ParticleSystem*>(node);
+                        if(particleSystem != nullptr)
+                        {
+                                auto result = particleSystems_.insert(std::make_pair(std::string(node->getName()),
+                                                                                     std::shared_ptr<ParticleSystem>(particleSystem)));
+                                if(!result.second)
+                                        return false;
+
+                                return true;
+                        }
                 }
-
-                Light* light = dynamic_cast<Light*>(node);
-                if(light != nullptr)
-                {
-                        auto result = lights_.insert(std::make_pair(std::string(node->getName()),
-                                                                    std::shared_ptr<Light>(light)));
-                        if(!result.second)
-                                return false;
-
-                        return true;
-                }
-
-                Camera* camera = dynamic_cast<Camera*>(node);
-                if(camera != nullptr)
-                {
-                        auto result = cameras_.insert(std::make_pair(std::string(node->getName()),
-                                                                     std::shared_ptr<Camera>(camera)));
-                        if(!result.second)
-                                return false;
-
-                        if(activeCamera_.expired())
-                                activeCamera_ = result.first->second;
-
-                        return true;
-                }
-
-                ParticleSystem* particleSystem = dynamic_cast<ParticleSystem*>(node);
-                if(particleSystem != nullptr)
-                {
-                        auto result = particleSystems_.insert(std::make_pair(std::string(node->getName()),
-                                                                             std::shared_ptr<ParticleSystem>(particleSystem)));
-                        if(!result.second)
-                                return false;
-
-                        return true;
-                }
+                catch(...) {}
 
                 SAFE_DELETE(node);
                 return false;
@@ -449,7 +463,9 @@ namespace selene
                 auto camera = activeCamera_.lock();
 
                 auto& renderingData = camera->getRenderingData();
+
                 renderingData.clear();
+                renderer.getMemoryBuffer().clear();
 
                 numVisibleActors_ = numVisibleLights_ = 0;
                 numVisibleParticleSystems_ = 0;
@@ -465,7 +481,8 @@ namespace selene
                                 ++numVisibleActors_;
 
                                 actor.processMeshAnimations(elapsedTime);
-                                renderingData.addActor(actor);
+                                if(!renderingData.addActor(actor))
+                                        break;
                         }
                 }
 
@@ -476,7 +493,8 @@ namespace selene
                         if(light.determineRelation(cameraFrustum) != OUTSIDE)
                         {
                                 ++numVisibleLights_;
-                                renderingData.addLight(light);
+                                if(!renderingData.addLight(light))
+                                        break;
 
                                 if(!light.is(Node::SHADOW_CASTER))
                                         continue;
@@ -489,7 +507,10 @@ namespace selene
                                                 continue;
 
                                         if(actor.determineRelation(light.getVolume()) != OUTSIDE)
-                                                renderingData.addShadow(light, actor);
+                                        {
+                                                if(!renderingData.addShadow(light, actor))
+                                                        break;
+                                        }
                                 }
                         }
                 }
@@ -502,7 +523,8 @@ namespace selene
                         {
                                 ++numVisibleParticleSystems_;
                                 particleSystem.process(elapsedTime);
-                                renderingData.addParticleSystem(particleSystem);
+                                if(!renderingData.addParticleSystem(particleSystem))
+                                        break;
                         }
                 }
 

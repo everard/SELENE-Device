@@ -6,7 +6,8 @@
 
 #include "ResourceFactory.h"
 #include "Resource.h"
-#include <map>
+
+#include <unordered_map>
 #include <set>
 
 namespace selene
@@ -122,8 +123,9 @@ namespace selene
                 static void discardResources();
 
         private:
-                std::map<std::string, std::shared_ptr<Resource>> resources_;
+                std::unordered_map<std::string, std::shared_ptr<Resource>> resources_;
                 std::shared_ptr<Resource> nullSharedPointer_;
+                bool isInitialized_;
 
                 static std::set<ResourceManager*> resourceManagers_;
 

@@ -9,12 +9,13 @@
 
 #include "../Scene/Nodes/Actor.h"
 
+#include "RenderingMemoryAllocator.h"
+#include "RenderingNode.h"
+
 #include <algorithm>
 #include <ostream>
 #include <utility>
-#include <memory>
-#include <vector>
-#include <map>
+#include <deque>
 #include <new>
 
 namespace selene
@@ -59,11 +60,11 @@ namespace selene
                  * - MeshNode, which sorts objects by meshes and
                  * - MeshSubsetNode, which sorts objects by mesh subsets.
                  *
-                 * There is also LightNode, which contains shadow casters, sorted by lights (and
-                 * lights data), and ParticleSystemNode, which sorts particle systems by type and
+                 * There is also LightNode, which contains lights, sorted by types, and shadow casters
+                 * (another ActorNode). And ParticleSystemNode, which sorts particle systems by type and
                  * particles inside them by textures.
                  *
-                 * Rendering data on the top level contains ActorNode (contains actors, which should be rendered),
+                 * Rendering data on the top level contains ActorNode (holds instances of actors, which should be rendered),
                  * LightNode (contains lights and shadow casters from each light) and ParticleSystemNode (contains
                  * particle systems, which sould be rendered).
                  *
@@ -101,16 +102,12 @@ namespace selene
                  * MeshSubsetNode contains:
                  * ------------------------
                  * - pointer to the selene::Mesh::Subset, which is sort key;
-                 * - vector of Renderer::Data::Instance s.
-                 *
-                 * Renderer::Data::Instance contains:
-                 * ----------------------------------
-                 * transform matrices and pointer to the Skeleton::Instance.
+                 * - instances of the actors, which hold mesh subsets.
                  *
                  * ParticleSystemNode contains:
                  * ----------------------------
                  * - pointer to the selene::Texture, which is sort key;
-                 * - vector of pointers to the selene::ParticleSystem, which can be in one of the following units:
+                 * - particle systems, which can be in one of the following units:
                  *   + Renderer::Data::UNIT_PARTICLE_SYSTEM.
                  */
                 class Data
@@ -140,218 +137,56 @@ namespace selene
                         };
 
                         /**
-                         * Represents rendering node. Each node contains elements, which are
-                         * sorted by given key K. During data preparation elements are added
-                         * to one or more rendering units (number of units is N). Each element
-                         * contains rendering data D, which can be anything.
+                         * Represents rendering list.
                          */
-                        template <class K, class D, uint8_t N = 1> class Node
+                        template <class T> class List
                         {
                         public:
-                                Node()
-                                {
-                                        for(uint8_t i = 0; i < N; ++i)
-                                                elements_[i].reserve(50);
+                                /**
+                                 * Represents container of the elements.
+                                 */
+                                typedef std::deque<T, RenderingMemoryAllocator<T>> ElementsContainer;
 
-                                        currentUnit_ = -1;
-                                }
-                                ~Node()
-                                {
-                                        clear(true);
-                                }
+                                List(): elements_(RenderingMemoryAllocator<T>(Renderer::getMemoryBuffer())) {}
+                                ~List() {}
 
                                 /**
-                                 * \brief Clears node.
-                                 * \param[in] freeMemory flag, which forces memory deallocation
+                                 * \brief Adds element to the rendering list.
+                                 * \param[in] element element, which should be rendered
+                                 * \return true if element has been successfully added to the rendering list
                                  */
-                                void clear(bool freeMemory = false)
+                                bool addElement(const T& element)
                                 {
-                                        currentUnit_ = -1;
-
-                                        if(freeMemory)
-                                                elementsMap_.clear();
-                                        else
+                                        try
                                         {
-                                                for(uint8_t i = 0; i < N; ++i)
-                                                        for(auto it = elements_[i].begin(); it != elements_[i].end(); ++it)
-                                                        {
-                                                                (*it)->isListed = false;
-                                                                (*it)->data.clear();
-                                                        }
+                                                elements_.push_back(element);
+                                                return true;
                                         }
+                                        catch(...) {}
 
-                                        for(uint8_t i = 0; i < N; ++i)
-                                                elements_[i].clear();
+                                        return false;
                                 }
 
                                 /**
-                                 * \brief Reads first element from specified unit.
-                                 *
-                                 * Next element from this unit can be read using readNextElement() function.
-                                 * \param[in] unit rendering unit
-                                 * \return true if first element from specified unit has been successfully read
+                                 * \brief Returns elements.
+                                 * \return const reference to the container of the elements
                                  */
-                                bool readFirstElement(uint8_t unit = 0)
+                                const ElementsContainer& getElements() const
                                 {
-                                        if(unit >= N)
-                                        {
-                                                currentUnit_ = -1;
-                                                return false;
-                                        }
-
-                                        currentUnit_ = unit;
-                                        currentElement_ = elements_[currentUnit_].begin();
-
-                                        if(currentElement_ == elements_[currentUnit_].end())
-                                        {
-                                                currentUnit_ = -1;
-                                                return false;
-                                        }
-
-                                        return true;
-                                }
-
-                                /**
-                                 * \brief Reads next element from unit.
-                                 *
-                                 * This function may only be called after using the readFirstElement() function.
-                                 * \see readFirstElement
-                                 * \return true if next element from current unit has been successfully read,
-                                 * false if reading of current unit has been ended
-                                 */
-                                bool readNextElement()
-                                {
-                                        if(currentUnit_ < 0)
-                                                return false;
-
-                                        ++currentElement_;
-
-                                        if(currentElement_ == elements_[currentUnit_].end())
-                                        {
-                                                currentUnit_ = -1;
-                                                return false;
-                                        }
-
-                                        return true;
-                                }
-
-                                /**
-                                 * \brief Returns current key.
-                                 *
-                                 * This function will return key of the current element, which has been
-                                 * read with readFirstElement() or readNextElement() functions.
-                                 * \return pointer to the current key
-                                 */
-                                K* getCurrentKey()
-                                {
-                                        if(currentUnit_ < 0)
-                                                return nullptr;
-
-                                        return (*currentElement_)->key;
-                                }
-
-                                /**
-                                 * \brief Returns current data.
-                                 *
-                                 * This function will return data of the current element, which has been
-                                 * read with readFirstElement() or readNextElement() functions.
-                                 * \return pointer to the current data
-                                 */
-                                D* getCurrentData()
-                                {
-                                        if(currentUnit_ < 0)
-                                                return nullptr;
-
-                                        return &((*currentElement_)->data);
-                                }
-
-                        protected:
-                                /**
-                                 * Represents element.
-                                 */
-                                class Element
-                                {
-                                public:
-                                        K* key;
-                                        D data;
-                                        bool isListed;
-
-                                };
-
-                                /**
-                                 * \brief Adds element to the specified unit.
-                                 * \param[in] element element, which will be added to the given unit
-                                 * \param[in] unit unit, which will contain given element
-                                 */
-                                void addElement(Element* element, uint8_t unit = 0)
-                                {
-                                        if(element->isListed || unit >= N || currentUnit_ >= 0)
-                                                return;
-
-                                        element->isListed = true;
-                                        elements_[unit].push_back(element);
-                                }
-
-                                /**
-                                 * \brief Returns element by given key (creates new if needed).
-                                 *
-                                 * Element might be created and/or returned only if currently there are
-                                 * no read operations performed, i.e. readFirstElement() function was not
-                                 * called or read operation ended with multiple calls to the readNextElement() function.
-                                 * \param[in] key key of the requested element
-                                 * \return pointer to the element
-                                 */
-                                Element* requestElement(K* key)
-                                {
-                                        // cannot write while reading
-                                        if(currentUnit_ >= 0)
-                                                return nullptr;
-
-                                        // find element
-                                        auto it = elementsMap_.find(key);
-                                        if(it != elementsMap_.end())
-                                                return it->second.get();
-
-                                        // try to create new element
-                                        std::unique_ptr<Element> element(new(std::nothrow) Element);
-                                        if(!element)
-                                                return nullptr;
-
-                                        // initialize element
-                                        element->key = key;
-                                        element->isListed = false;
-
-                                        // insert element in map
-                                        auto result = elementsMap_.insert(std::make_pair(key, std::move(element)));
-                                        if(!result.second)
-                                                return nullptr;
-
-                                        // return created element
-                                        return result.first->second.get();
+                                        return elements_;
                                 }
 
                         private:
-                                std::map<K*, std::unique_ptr<Element>> elementsMap_;
-                                std::vector<Element*> elements_[N];
-                                typename std::vector<Element*>::iterator currentElement_;
-                                int16_t currentUnit_;
+                                ElementsContainer elements_;
 
                         };
 
                         /**
-                         * Represents rendering instance. Contains pointer to the skeleton instance of the actor
-                         * and view-projection transform of the actor, which will be rendered. The vector of
-                         * instances is present inside MeshSubsetNode.
-                         * \see MeshSubsetNode
-                         */
-                        typedef std::pair<const Skeleton::Instance*, Actor::ViewProjectionTransform> Instance;
-
-                        /**
-                         * Represents mesh subset node. Contains vectors of rendering instances, sorted by
+                         * Represents mesh subset node. Contains arrays of actor instances, sorted by
                          * mesh subsets.
                          * \see Instance MeshNode
                          */
-                        class MeshSubsetNode: public Node<Mesh::Subset, std::vector<Instance>>
+                        class MeshSubsetNode: public RenderingNode<Mesh::Subset, List<Actor::Instance>>
                         {
                         public:
                                 MeshSubsetNode();
@@ -360,19 +195,19 @@ namespace selene
                                 /**
                                  * \brief Adds mesh subset.
                                  * \param[in] meshSubset mesh subset, which should be added to the node
-                                 * \param[in] instance instance of the rendered entity
+                                 * \param[in] instance instance of the rendered actor
                                  * \return true if mesh subset has been successfully added
                                  */
-                                bool add(const Mesh::Subset& meshSubset, const Instance& instance);
+                                bool add(const Mesh::Subset& meshSubset, const Actor::Instance& instance);
 
                         };
 
                         /**
-                         * Represents mesh node. Contains vectors of mesh subset nodes, sorted by
+                         * Represents mesh node. Contains arrays of mesh subset nodes, sorted by
                          * meshes.
                          * \see MeshSubsetNode MaterialNode
                          */
-                        class MeshNode: public Node<Mesh, MeshSubsetNode>
+                        class MeshNode: public RenderingNode<Mesh, MeshSubsetNode>
                         {
                         public:
                                 MeshNode();
@@ -383,20 +218,20 @@ namespace selene
                                  * \param[in] mesh mesh, which should be added to the node
                                  * \param[in] meshSubset mesh subset, which should be added
                                  * to the child nodes
-                                 * \param[in] instance instance of the rendered entity
+                                 * \param[in] instance instance of the rendered actor
                                  * \return true if mesh has been successfully added
                                  */
                                 bool add(const Mesh& mesh, const Mesh::Subset& meshSubset,
-                                         const Instance& instance);
+                                         const Actor::Instance& instance);
 
                         };
 
                         /**
-                         * Represents material node. Contains vectors of mesh nodes, sorted by
+                         * Represents material node. Contains arrays of mesh nodes, sorted by
                          * materials and ordered by material units.
                          * \see MeshNode ActorNode
                          */
-                        class MaterialNode: public Node<Material, MeshNode, NUM_OF_MATERIAL_UNITS>
+                        class MaterialNode: public RenderingNode<Material, MeshNode, NUM_OF_MATERIAL_UNITS>
                         {
                         public:
                                 MaterialNode();
@@ -408,12 +243,12 @@ namespace selene
                                  * \param[in] mesh mesh, which should be added to the child nodes
                                  * \param[in] meshSubset mesh subset, which is associated with
                                  * given material
-                                 * \param[in] instance instance of the rendered entity
+                                 * \param[in] instance instance of the rendered actor
                                  * \return true if material has been successfully added
                                  */
                                 bool add(const Material& material, const Mesh& mesh,
                                          const Mesh::Subset& meshSubset,
-                                         const Instance& instance);
+                                         const Actor::Instance& instance);
 
                         };
 
@@ -429,17 +264,16 @@ namespace selene
 
                                 /**
                                  * \brief Clears actor node.
-                                 * \param[in] freeMemory flag, which forces memory deallocation
                                  */
-                                void clear(bool freeMemory = false);
+                                void clear();
 
                                 /**
                                  * \brief Adds actor.
                                  * \param[in] actor actor, which should be added to the node
-                                 * \param[in] instance instance of the rendered entity
+                                 * \param[in] instance instance of the rendered actor
                                  * \return true if actor has been successfully added
                                  */
-                                bool add(const Actor& actor, const Instance& instance);
+                                bool add(const Actor& actor, const Actor::Instance& instance);
 
                                 /**
                                  * \brief Returns material node.
@@ -455,11 +289,11 @@ namespace selene
                         };
 
                         /**
-                         * Represents light node. Contains vectors of actor nodes (which hold shadows),
+                         * Represents light node. Contains arrays of actor nodes (which hold shadows),
                          * sorted by lights and ordered by light units.
                          * \see ActorNode
                          */
-                        class LightNode: public Node<Light, ActorNode, NUM_OF_LIGHT_UNITS>
+                        class LightNode: public RenderingNode<Light, ActorNode, NUM_OF_LIGHT_UNITS>
                         {
                         public:
                                 LightNode();
@@ -476,10 +310,10 @@ namespace selene
                         };
 
                         /**
-                         * Represents particle system node. Contains vectors of particle systems,
+                         * Represents particle system node. Contains arrays of particle systems,
                          * sorted by textures and ordered by particle system units.
                          */
-                        class ParticleSystemNode: public Node<Texture, std::vector<ParticleSystem*>, NUM_OF_PARTICLE_SYSTEM_UNITS>
+                        class ParticleSystemNode: public RenderingNode<Texture, List<ParticleSystem*>, NUM_OF_PARTICLE_SYSTEM_UNITS>
                         {
                         public:
                                 ParticleSystemNode();
@@ -498,16 +332,15 @@ namespace selene
                         ~Data();
 
                         /**
-                         * \brief Sets camera, which point of view will be used to render the scene
+                         * \brief Sets camera, which point of view will be used to render the scene.
                          * \param[in] camera camera, which point of view will be used to render the scene
                          */
                         void setCamera(const Camera& camera);
 
                         /**
                          * \brief Clears data.
-                         * \param[in] freeMemory flag, which forces memory deallocation
                          */
-                        void clear(bool freeMemory = false);
+                        void clear();
 
                         /**
                          * \brief Returns actor node.
@@ -652,6 +485,27 @@ namespace selene
                  * \param[in] camera camera
                  */
                 virtual void render(const Camera& camera) = 0;
+
+                /**
+                 * \brief Initializes memory buffer.
+                 * \param[in] size size of the memory buffer in bytes
+                 * \return true if memory buffer has been successfully initialized
+                 */
+                static bool initializeMemoryBuffer(std::size_t size);
+
+                /**
+                 * \brief Destroys memory buffer.
+                 */
+                static void destroyMemoryBuffer();
+
+                /**
+                 * \brief Returns memory buffer.
+                 * \return reference to the memory buffer
+                 */
+                static RenderingMemoryBuffer& getMemoryBuffer();
+
+        private:
+                static RenderingMemoryBuffer memoryBuffer_;
 
         };
 

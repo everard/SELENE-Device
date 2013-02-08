@@ -165,12 +165,13 @@ namespace selene
 
                 /**
                  * \brief Renders instances of the given mesh subset.
-                 * \param[in] instances instances of the mesh subset
+                 * \param[in] renderingList rendering list, which contains view-projection
+                 * transforms of the given mesh subset
                  * \param[in] meshSubset subset of the mesh
                  * \param[in] meshRenderingUnit mesh rendering unit
                  * \param[in] pass rendering pass
                  */
-                void renderMeshSubsetInstances(const std::vector<Renderer::Data::Instance>& instances,
+                void renderMeshSubsetInstances(const Renderer::Data::List<Actor::Instance>& renderingList,
                                                const Mesh::Subset& meshSubset,
                                                uint8_t meshRenderingUnit,
                                                uint8_t pass);

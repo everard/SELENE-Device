@@ -10,7 +10,16 @@ namespace selene
 
         ResourceManager::ResourceManager()
         {
-                resourceManagers_.insert(this);
+                isInitialized_ = true;
+
+                try
+                {
+                        resourceManagers_.insert(this);
+                }
+                catch(...)
+                {
+                        isInitialized_ = false;
+                }
         }
         ResourceManager::~ResourceManager()
         {
@@ -28,7 +37,7 @@ namespace selene
         RESULT ResourceManager::createResource(const char* name, ResourceFactory& resourceFactory)
         {
                 // validate
-                if(name == nullptr)
+                if(!isInitialized_ || name == nullptr)
                         return FAIL;
 
                 if(getResource(name))
@@ -44,12 +53,18 @@ namespace selene
                         return RESOURCE_COULD_NOT_BE_RETAINED;
 
                 // store resource
-                std::string key = resource->getName();
-                auto result = resources_.insert(std::make_pair(key,
-                                                std::shared_ptr<Resource>(resource.release())));
+                try
+                {
+                        auto result = resources_.insert(std::make_pair(std::string(name),
+                                                        std::shared_ptr<Resource>(resource.release())));
 
-                if(!result.second)
+                        if(!result.second)
+                                return FAIL;
+                }
+                catch(...)
+                {
                         return FAIL;
+                }
 
                 return SUCCESS;
         }

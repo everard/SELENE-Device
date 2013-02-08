@@ -196,15 +196,16 @@ namespace selene
                          result = particleSystemNode.readNextElement())
                 {
                         auto texture = particleSystemNode.getCurrentKey();
-                        auto particleSystems = particleSystemNode.getCurrentData();
+                        auto renderingList = particleSystemNode.getCurrentData();
 
-                        if(particleSystems == nullptr || texture == nullptr)
+                        if(texture == nullptr || renderingList == nullptr)
                                 continue;
 
                         textureHandler_->setTexture(texture, LOCATION_PARTICLE_TEXTURE,
                                                     D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
-                        for(auto it = particleSystems->begin(); it != particleSystems->end(); ++it)
+                        const auto& particleSystems = renderingList->getElements();
+                        for(auto it = particleSystems.begin(); it != particleSystems.end(); ++it)
                                 renderParticleSystem(*it);
                 }
 

@@ -245,7 +245,15 @@ namespace selene
                 if(!mixableMeshAnimation)
                         return false;
 
-                mixableMeshAnimations_.push_back(std::move(mixableMeshAnimation));
+                try
+                {
+                        mixableMeshAnimations_.push_back(std::move(mixableMeshAnimation));
+                }
+                catch(...)
+                {
+                        return false;
+                }
+
                 return true;
         }
 

@@ -6,9 +6,10 @@
 
 #include "../../Helpers/Array.h"
 #include "../../Math/Vector.h"
+
+#include <unordered_map>
 #include <memory>
 #include <string>
-#include <map>
 
 namespace selene
 {
@@ -202,7 +203,7 @@ namespace selene
         private:
                 Array<Bone, uint16_t> bones_;
                 Array<Transform, uint16_t> initialLocalBoneTransforms_;
-                std::map<std::string, uint16_t> bonesMap_;
+                std::unordered_map<std::string, uint16_t> bonesMap_;
 
         };
 

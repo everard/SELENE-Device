@@ -75,6 +75,40 @@ namespace selene
                 };
 
                 /**
+                 * Represents instance of the actor. Contains pointer to the skeleton instance of the actor
+                 * and view-projection transform.
+                 */
+                class Instance
+                {
+                public:
+                        /**
+                         * \brief Constructs instance with given view-projection transform and skeleton instance.
+                         * \param[in] viewProjectionTransform view-projection transform
+                         * \param[in] skeletonInstance skeleton instance
+                         */
+                        Instance(const ViewProjectionTransform& viewProjectionTransform,
+                                 const Skeleton::Instance* skeletonInstance);
+                        ~Instance();
+
+                        /**
+                         * \brief Returns view-projection transform.
+                         * \return view-projection transform
+                         */
+                        const ViewProjectionTransform& getViewProjectionTransform() const;
+
+                        /**
+                         * \brief Returns skeleton instance.
+                         * \return skeleton instance
+                         */
+                        const Skeleton::Instance* getSkeletonInstance() const;
+
+                private:
+                        ViewProjectionTransform viewProjectionTransform_;
+                        const Skeleton::Instance* skeletonInstance_;
+
+                };
+
+                /**
                  * \brief Constructs actor with given name, mesh, position, rotation and scale.
                  * \param[in] name name of the actor
                  * \param[in] mesh mesh, which represents actor in scene

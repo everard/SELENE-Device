@@ -9,7 +9,13 @@ namespace selene
         Entity::Entity(const char* name)
         {
                 if(name != nullptr)
-                        name_ = name;
+                {
+                        try
+                        {
+                                name_ = name;
+                        }
+                        catch(...) {}
+                }
         }
         Entity::~Entity() {}
 

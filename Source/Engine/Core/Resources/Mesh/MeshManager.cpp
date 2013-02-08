@@ -354,21 +354,28 @@ namespace selene
                 char boneName[MAX_STRING_LENGTH];
 
                 // read bones
-                for(register uint16_t i = 0; i < bones.getSize(); ++i)
+                try
                 {
-                        Skeleton::Bone& bone = bones[i];
+                        for(register uint16_t i = 0; i < bones.getSize(); ++i)
+                        {
+                                Skeleton::Bone& bone = bones[i];
 
-                        if(!readString(stream, boneName))
-                                return false;
+                                if(!readString(stream, boneName))
+                                        return false;
 
-                        bone.name = boneName;
-                        stream.read(reinterpret_cast<char*>(&bone.offsetTransform.rotation), sizeof(Quaternion));
-                        stream.read(reinterpret_cast<char*>(&bone.offsetTransform.position), sizeof(Vector3d));
-                        stream.read(reinterpret_cast<char*>(&bone.parent), sizeof(int32_t));
+                                bone.name = boneName;
+                                stream.read(reinterpret_cast<char*>(&bone.offsetTransform.rotation), sizeof(Quaternion));
+                                stream.read(reinterpret_cast<char*>(&bone.offsetTransform.position), sizeof(Vector3d));
+                                stream.read(reinterpret_cast<char*>(&bone.parent), sizeof(int32_t));
 
-                        // validate
-                        if(bones[i].parent >= bones.getSize())
-                                return false;
+                                // validate
+                                if(bones[i].parent >= bones.getSize())
+                                        return false;
+                        }
+                }
+                catch(...)
+                {
+                        return false;
                 }
 
                 return true;
