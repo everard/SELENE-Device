@@ -181,6 +181,8 @@ namespace selene
         //------------------------------------------------------------
         void SimpleApplication::onDestroy()
         {
+                Renderer::destroyMemoryBuffer();
+
                 textureManager_.destroyResources(true);
                 meshManager_.destroyResources(true);
         }

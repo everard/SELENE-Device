@@ -52,63 +52,64 @@ namespace selene
         {
         public:
                 /**
-                 * Represents rendering data. It is organized in tree-like structure.
-                 * Nodes of the tree are keys, which sort rendering entities, reducing
-                 * state change. There are various types of nodes:
-                 * - ActorNode, which sorts rendered objects by mesh types;
-                 * - MaterialNode, which sorts objects by materials;
-                 * - MeshNode, which sorts objects by meshes and
-                 * - MeshSubsetNode, which sorts objects by mesh subsets.
-                 *
-                 * There is also LightNode, which contains lights, sorted by types, and shadow casters
-                 * (another ActorNode). And ParticleSystemNode, which sorts particle systems by type and
-                 * particles inside them by textures.
-                 *
+                 * Represents rendering data. It is organized in tree structure, which reduces state change during rendering.
                  * Rendering data on the top level contains ActorNode (holds instances of actors, which should be rendered),
-                 * LightNode (contains lights and shadow casters from each light) and ParticleSystemNode (contains
-                 * particle systems, which sould be rendered).
+                 * LightNode (contains lights and shadow casters from each light) and ParticleSystemNode (contains particle
+                 * systems, which should be rendered).
+                 * \see RenderingNode
                  *
-                 * The following oulines the structure of rendering data nodes.
-                 *
-                 * LightNode contains:
-                 * -------------------
+                 * LightNode
+                 * ---------
+                 * Rendering element contains:
                  * - pointer to the selene::Light, which is sort key;
-                 * - ActorNode, which can be in one of the following units:
-                 *   + Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL,
-                 *   + Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT,
-                 *   + Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT,
-                 *   + Renderer::Data::UNIT_LIGHT_DIRECTIONAL,
-                 *   + Renderer::Data::UNIT_LIGHT_POINT,
-                 *   + Renderer::Data::UNIT_LIGHT_SPOT.
+                 * - ActorNode, which is data (contains shadow casters).
                  *
-                 * ActorNode contains:
-                 * -------------------
-                 * - MaterialNode(s), which can be in one of the following units:
+                 * Each element can be added to one of the following units:
+                 * - Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL,
+                 * - Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT,
+                 * - Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT,
+                 * - Renderer::Data::UNIT_LIGHT_DIRECTIONAL,
+                 * - Renderer::Data::UNIT_LIGHT_POINT,
+                 * - Renderer::Data::UNIT_LIGHT_SPOT.
+                 *
+                 * ActorNode
+                 * ---------
+                 * Contains:
+                 * - MaterialNode for each mesh unit:
                  *   + Renderer::Data::UNIT_MESH_STATIC,
                  *   + Renderer::Data::UNIT_MESH_SKIN.
                  *
-                 * MaterialNode contains:
-                 * ----------------------
+                 * MaterialNode
+                 * ------------
+                 * Rendering element contains:
                  * - pointer to the selene::Material, which is sort key;
-                 * - MeshNode, which can be in one of the following units:
-                 *   + Renderer::Data::UNIT_MATERIAL_ONE_SIDED,
-                 *   + Renderer::Data::UNIT_MATERIAL_TWO_SIDED.
+                 * - MeshNode, which is data.
                  *
-                 * MeshNode contains:
-                 * ------------------
+                 * Each element can be added to one of the following units:
+                 * - Renderer::Data::UNIT_MATERIAL_ONE_SIDED,
+                 * - Renderer::Data::UNIT_MATERIAL_TWO_SIDED.
+                 *
+                 * MeshNode
+                 * --------
+                 * Rendering element contains:
                  * - pointer to the selene::Mesh, which is sort key;
-                 * - MeshSubsetNode.
+                 * - MeshSubsetNode, which is data.
                  *
-                 * MeshSubsetNode contains:
-                 * ------------------------
+                 * There is only one unit.
+                 *
+                 * MeshSubsetNode
+                 * --------------
+                 * Rendering element contains:
                  * - pointer to the selene::Mesh::Subset, which is sort key;
-                 * - instances of the actors, which hold mesh subsets.
+                 * - List of instances of the actors, which is data.
                  *
-                 * ParticleSystemNode contains:
-                 * ----------------------------
+                 * ParticleSystemNode
+                 * ------------------
+                 * Rendering element contains:
                  * - pointer to the selene::Texture, which is sort key;
-                 * - particle systems, which can be in one of the following units:
-                 *   + Renderer::Data::UNIT_PARTICLE_SYSTEM.
+                 * - List of particle systems, which is data.
+                 *
+                 * Currently there is only one unit: Renderer::Data::UNIT_PARTICLE_SYSTEM.
                  */
                 class Data
                 {
@@ -184,7 +185,7 @@ namespace selene
                         /**
                          * Represents mesh subset node. Contains arrays of actor instances, sorted by
                          * mesh subsets.
-                         * \see Instance MeshNode
+                         * \see Actor::Instance MeshNode
                          */
                         class MeshSubsetNode: public RenderingNode<Mesh::Subset, List<Actor::Instance>>
                         {
@@ -277,7 +278,7 @@ namespace selene
 
                                 /**
                                  * \brief Returns material node.
-                                 * \param[in] unit unit of the material node
+                                 * \param[in] unit rendering unit of the material
                                  * \return reference to the material node
                                  */
                                 MaterialNode& getMaterialNode(uint8_t unit);
@@ -482,7 +483,7 @@ namespace selene
 
                 /**
                  * \brief Renders scene.
-                 * \param[in] camera camera
+                 * \param[in] camera camera, which point of view will be used in rendering
                  */
                 virtual void render(const Camera& camera) = 0;
 

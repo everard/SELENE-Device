@@ -34,30 +34,37 @@ namespace selene
 
                 char boneName[MAX_STRING_LENGTH];
 
-                for(uint32_t i = 0; i < meshAnimationKeys.getSize(); ++i)
+                try
                 {
-                        MeshAnimation::Key& meshAnimationKey = meshAnimationKeys[i];
-
-                        // read bone transforms
-                        uint16_t numBoneTransforms = 0;
-                        stream.read(reinterpret_cast<char*>(&numBoneTransforms), sizeof(uint16_t));
-
-                        if(!meshAnimationKey.create(numBoneTransforms))
-                                return false;
-
-                        for(uint16_t j = 0; j < meshAnimationKey.getSize(); ++j)
+                        for(uint32_t i = 0; i < meshAnimationKeys.getSize(); ++i)
                         {
-                                if(!readString(stream, boneName))
+                                MeshAnimation::Key& meshAnimationKey = meshAnimationKeys[i];
+
+                                // read bone transforms
+                                uint16_t numBoneTransforms = 0;
+                                stream.read(reinterpret_cast<char*>(&numBoneTransforms), sizeof(uint16_t));
+
+                                if(!meshAnimationKey.create(numBoneTransforms))
                                         return false;
 
-                                Skeleton::BoneTransform& boneTransform = meshAnimationKey[j];
-                                boneTransform.boneName = boneName;
+                                for(uint16_t j = 0; j < meshAnimationKey.getSize(); ++j)
+                                {
+                                        if(!readString(stream, boneName))
+                                                return false;
 
-                                stream.read(reinterpret_cast<char*>(&boneTransform.transform.rotation),
-                                            sizeof(Quaternion));
-                                stream.read(reinterpret_cast<char*>(&boneTransform.transform.position),
-                                            sizeof(Vector3d));
+                                        Skeleton::BoneTransform& boneTransform = meshAnimationKey[j];
+                                        boneTransform.boneName = boneName;
+
+                                        stream.read(reinterpret_cast<char*>(&boneTransform.transform.rotation),
+                                                    sizeof(Quaternion));
+                                        stream.read(reinterpret_cast<char*>(&boneTransform.transform.position),
+                                                    sizeof(Vector3d));
+                                }
                         }
+                }
+                catch(...)
+                {
+                        return false;
                 }
 
                 meshAnimationData.length = static_cast<float>(meshAnimationKeys.getSize());
