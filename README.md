@@ -68,7 +68,7 @@ Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
 LINKS TO DOWNLOADS
 ==================
 Download Visual Studio 2010 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
-* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUd2xBelJtMlY2eFU/edit)
+* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUd25LQ2d6X2NEWFk/edit)
 
 LICENSE
 =======
