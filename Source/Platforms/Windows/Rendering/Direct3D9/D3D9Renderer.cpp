@@ -213,8 +213,8 @@ namespace selene
         bool D3d9Renderer::initializeHelpers()
         {
                 // load shaders
-                D3d9Shader d3dVertexShader("ResultPass.vsh",    "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_);
-                D3d9Shader d3dPixelShader("ResultPass.psh",    "ps_1_4", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, capabilities_);
+                D3d9Shader d3dVertexShader("ResultPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_);
+                D3d9Shader d3dPixelShader("ResultPass.psh",  "ps_2_0", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_);
 
                 if(!resultVertexShader_.create(d3dVertexShader))
                 {

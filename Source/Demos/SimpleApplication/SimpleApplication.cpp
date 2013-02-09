@@ -54,7 +54,7 @@ namespace selene
         bool SimpleApplication::onInitialize()
         {
                 // initialize memory buffer of the renderer
-                if(!Renderer::initializeMemoryBuffer(1024 * 8))
+                if(!Renderer::initializeMemoryBuffer(1024 * 20))
                         return false;
 
                 // initialize renderer
