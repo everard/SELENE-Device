@@ -7,46 +7,47 @@
 #include "../../../../Engine/Rendering/Renderer.h"
 #include "../../../../Engine/Core/Resources/Mesh/Mesh.h"
 #include "../../../../Engine/Core/Status/Status.h"
-#include "Helpers/GLESGUIRenderer.h"
 
-#include <GLES2/gl2.h>
-#include <EGL/egl.h>
+#include "Helpers/GLESFrameParameters.h"
+#include "Helpers/GLESActorsRenderer.h"
+#include "Helpers/GLESTextureHandler.h"
+#include "Helpers/GLESCapabilities.h"
+#include "Helpers/GLESGUIRenderer.h"
 
 namespace selene
 {
 
-        // Represents OpenGL ES renderer.
+        /**
+         * \addtogroup Android
+         * @{
+         */
+
+        /**
+         * Represents OpenGL ES renderer.
+         */
         class GlesRenderer: public Renderer, public Status
         {
         public:
-                // Initializes renderer
+                // Renderer interface implementation
                 bool initialize(const Renderer::Parameters& parameters);
-
-                // Destroys renderer
                 void destroy();
-
-                // Renders scene
                 void render(const Camera& camera);
-
-                // Checks OpenGL ES error
-                static void checkGlesError(const char* operation);
 
         private:
                 friend class AndroidApplication;
 
+                /// Helper constants
                 enum
                 {
                         MAX_NUM_OF_BONES = 50,
                         MAX_NUM_MATRICES = 3,
 
-                        // Capabilities
                         NUM_OF_VERTEX_SHADER_UNIFORMS_REQUIRED = (MAX_NUM_MATRICES * 4 + 2 * MAX_NUM_OF_BONES),
                         NUM_OF_VERTEX_ATTRIBUTES_REQUIRED = 6,
 
-                        // Rendering passes
                         RENDERING_PASS_POSITIONS = 0,
                         RENDERING_PASS_NORMALS,
-                        RENDERING_PASS_SHADING,
+                        RENDERING_PASS_SHADING
                 };
 
                 Matrix viewProjectionMatrix_;
@@ -60,29 +61,23 @@ namespace selene
                 Vector4d unprojectionVector_;
                 Vector4d screenSize_;
 
-                Parameters parameters_;
-
-                EGLSurface surface_;
-                EGLContext context_;
-                EGLDisplay display_;
-
-                GlesTexture dummyTexture_;
-                GlesGlslProgram programs_[2];
+                GlesActorsRenderer actorsRenderer_;
+                GlesTextureHandler textureHandler_;
                 GlesGuiRenderer guiRenderer_;
+
+                GlesFrameParameters frameParameters_;
+                GlesCapabilities capabilities_;
+                Parameters parameters_;
 
                 GlesRenderer();
                 GlesRenderer(const GlesRenderer& renderer);
                 ~GlesRenderer();
 
-                // Writes log entry
+                /**
+                 * \brief Writes log entry.
+                 * \param[in] entry string, which should be written to the log
+                 */
                 void writeLogEntry(const char* entry);
-
-                // Sets texture
-                void setTexture(const Resource::Instance<Texture>& texture, uint8_t sampler,
-                                uint8_t dummyTextureIndex);
-
-                // Sets texture
-                void setTexture(Texture* texture, uint8_t sampler, uint8_t dummyTextureIndex);
 
                 // Sets skeleton pose
                 void setSkeletonPose(const Array<Skeleton::Transform, uint16_t>& boneTransforms,
@@ -106,31 +101,23 @@ namespace selene
                                   uint8_t meshRenderingUnit,
                                   uint8_t pass);
 
-                // Initializes context and retains all resources
+                /**
+                 * \brief Initializes context and retains all resources.
+                 * \return true if context has been successfully initialized and
+                 * all resources have been retained
+                 */
                 bool retain();
 
-                // Discards context and all resources
+                /**
+                 * \brief Discards context and all resources.
+                 */
                 void discard();
 
-                // Retains all helpers
-                bool retainHelpers();
-
-                // Discards all helpers
-                void discardHelpers();
-
-                // Initializes helpers
-                bool initializeHelpers();
-
-                // Destroys helpers
-                void destroyHelpers();
-
-                // Initializes OpenGL ES context
-                bool initializeGlesContext();
-
-                // Destroys OpenGL ES context
-                void destroyGlesContext();
-
         };
+
+        /**
+         * @}
+         */
 
 }
 

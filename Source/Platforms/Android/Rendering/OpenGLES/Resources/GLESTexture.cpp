@@ -23,7 +23,7 @@ namespace selene
         {
                 destroy();
 
-                LOGI("----------------------- Retaining Texture '%s'", getName());
+                LOGI("****************************** Retaining Texture '%s'", getName());
 
                 // validate
                 if(data_.pixels.isEmpty())
@@ -51,25 +51,25 @@ namespace selene
                 if(texture_ == 0)
                         return false;
 
-                GlesRenderer::checkGlesError("glGenTextures");
+                CHECK_GLES_ERROR("glGenTextures");
 
                 glActiveTexture(GL_TEXTURE0);
-                GlesRenderer::checkGlesError("glActiveTexture");
+                CHECK_GLES_ERROR("glActiveTexture");
 
                 glBindTexture(GL_TEXTURE_2D, texture_);
-                GlesRenderer::checkGlesError("glBindTexture");
+                CHECK_GLES_ERROR("glBindTexture");
 
                 glTexImage2D(GL_TEXTURE_2D, 0, format, data_.width, data_.height, 0,
                              format, GL_UNSIGNED_BYTE, &data_.pixels[0]);
-                GlesRenderer::checkGlesError("glTexImage2D");
+                CHECK_GLES_ERROR("glTexImage2D");
 
                 glGenerateMipmap(GL_TEXTURE_2D);
-                GlesRenderer::checkGlesError("glGenerateMipmap");
+                CHECK_GLES_ERROR("glGenerateMipmap");
 
                 glBindTexture(GL_TEXTURE_2D, 0);
-                GlesRenderer::checkGlesError("glBindTexture");
+                CHECK_GLES_ERROR("glBindTexture");
 
-                LOGI("----------------------- Retained Texture '%s'", getName());
+                LOGI("****************************** Texture '%s' has been successfully retained", getName());
 
                 return true;
         }

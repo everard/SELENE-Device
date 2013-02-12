@@ -24,7 +24,7 @@ namespace selene
         {
                 destroy();
 
-                LOGI("----------------------- Retaining Mesh '%s'", getName());
+                LOGI("****************************** Retaining Mesh '%s'", getName());
 
                 // OpenGL ES does not allow 4-byte indices
                 if(data_.faces.getStride() == 4)
@@ -43,42 +43,42 @@ namespace selene
                 else
                         glGenBuffers(NUM_OF_VERTEX_STREAMS - 1, vertexBuffers_);
 
-                GlesRenderer::checkGlesError("glGenBuffers");
+                CHECK_GLES_ERROR("glGenBuffers");
 
                 for(uint8_t i = VERTEX_STREAM_POSITIONS; i <= VERTEX_STREAM_TEXTURE_COORDINATES; ++i)
                 {
                         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[i]);
-                        GlesRenderer::checkGlesError("glBindBuffer");
+                        CHECK_GLES_ERROR("glBindBuffer");
 
                         glBufferData(GL_ARRAY_BUFFER, vertexBufferSizes[i], &data_.vertices[i][0], GL_STATIC_DRAW);
-                        GlesRenderer::checkGlesError("glBufferData");
+                        CHECK_GLES_ERROR("glBufferData");
                 }
 
                 if(hasSkeleton())
                 {
                         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS]);
-                        GlesRenderer::checkGlesError("glGenBuffers");
+                        CHECK_GLES_ERROR("glGenBuffers");
 
                         glBufferData(GL_ARRAY_BUFFER, vertexBufferSizes[VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS],
                                      &data_.vertices[VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS][0], GL_STATIC_DRAW);
-                        GlesRenderer::checkGlesError("glBufferData");
+                        CHECK_GLES_ERROR("glBufferData");
                 }
 
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
 
                 // create index buffer
                 glGenBuffers(1, &indexBuffer_);
-                GlesRenderer::checkGlesError("glGenBuffers");
+                CHECK_GLES_ERROR("glGenBuffers");
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer_);
-                GlesRenderer::checkGlesError("glBindBuffer");
+                CHECK_GLES_ERROR("glBindBuffer");
 
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBufferSize, &data_.faces[0], GL_STATIC_DRAW);
-                GlesRenderer::checkGlesError("glBufferData");
+                CHECK_GLES_ERROR("glBufferData");
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-                LOGI("----------------------- Retained Mesh '%s'", getName());
+                LOGI("****************************** Retained Mesh '%s'", getName());
 
                 return true;
         }

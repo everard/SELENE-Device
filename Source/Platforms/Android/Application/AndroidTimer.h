@@ -12,23 +12,31 @@
 namespace selene
 {
 
-        // Represents android timer.
+        /**
+         * \addtogroup Android
+         * @{
+         */
+
+        /**
+         * Represents Android timer.
+         */
         class AndroidTimer: public Timer
         {
         public:
                 AndroidTimer();
                 ~AndroidTimer();
 
-                // Resets timer
                 void reset();
-
-                // Returns elapsed time
                 float getElapsedTime();
 
         private:
                 timespec currentTime_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

@@ -39,17 +39,21 @@ namespace selene
                 }
 
                 // search all folders
-                for(auto it = folders_.begin(); it != folders_.end(); ++it)
+                try
                 {
-                        fileName_ = (*it) + fileName;
-
-                        asset = AAssetManager_open(assetManager_, fileName_.c_str(), AASSET_MODE_STREAMING);
-                        if(asset != nullptr)
+                        for(auto it = folders_.begin(); it != folders_.end(); ++it)
                         {
-                                AAsset_close(asset);
-                                return fileName_.c_str();
+                                fileName_ = (*it) + fileName;
+
+                                asset = AAssetManager_open(assetManager_, fileName_.c_str(), AASSET_MODE_STREAMING);
+                                if(asset != nullptr)
+                                {
+                                        AAsset_close(asset);
+                                        return fileName_.c_str();
+                                }
                         }
                 }
+                catch(...) {}
 
                 return nullptr;
         }
@@ -57,7 +61,7 @@ namespace selene
         //-------------------------------------------------------------------
         std::istream* Platform::FileManager::open(const char* fileName) const
         {
-                LOGI("------------------------------------------- OPENING FILE %s", fileName);
+                LOGI("****************************** OPENING FILE %s", fileName);
                 const char* fullFileName = find(fileName);
                 if(fullFileName == nullptr || assetManager_ == nullptr)
                         return nullptr;
@@ -85,7 +89,7 @@ namespace selene
                 if(!stream->good())
                         return nullptr;
 
-                LOGI("------------------------------------------- SUCCESS");
+                LOGI("****************************** SUCCESS");
                 return stream.release();
         }
 

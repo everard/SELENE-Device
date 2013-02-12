@@ -10,29 +10,43 @@
 namespace selene
 {
 
-        // Represents OpenGL ES texture.
+        /**
+         * \addtogroup Android
+         * @{
+         */
+
+        /**
+         * Represents OpenGL ES texture.
+         */
         class GlesTexture: public Texture
         {
         public:
+                /**
+                 * \brief Constructs OpenGL ES texture with given name.
+                 * \param[in] name name of the texture
+                 */
                 GlesTexture(const char* name = nullptr);
                 ~GlesTexture();
 
-                // Retains OpenGL ES texture
+                // Texture interface implementation
                 bool retain();
-
-                // Discards OpenGL ES texture
                 void discard();
 
         private:
-                friend class GlesGuiRenderer;
-                friend class GlesRenderer;
+                friend class GlesTextureHandler;
 
                 GLuint texture_;
 
-                // Destroys OpenGL ES texture data
+                /**
+                 * \brief Destroys OpenGL ES texture data.
+                 */
                 void destroy();
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

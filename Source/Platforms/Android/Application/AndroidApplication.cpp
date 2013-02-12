@@ -106,7 +106,8 @@ namespace selene
                                         return;
                                 }
 
-                                if(!renderer_.initializeGlesContext())
+                                Renderer::Parameters parameters(this, nullptr, 0, 0, nullptr, 0);
+                                if(!renderer_.capabilities_.createCompatibleContext(parameters))
                                 {
                                         shouldRun_ = false;
                                         return;

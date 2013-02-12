@@ -16,9 +16,21 @@
 #include <set>
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "SELENE-Device", __VA_ARGS__))
+#define CHECK_GLES_ERROR(...) {\
+                                      for(GLint error = glGetError(); error; error = glGetError())\
+                                      {\
+                                              LOGI("****************************** after %s() glError (0x%x)\n", __VA_ARGS__, error);\
+                                      }\
+                              }
 
 namespace selene
 {
+
+        /**
+         * \addtogroup Android
+         * \brief Implementation of platform-dependent layer for Android OS.
+         * @{
+         */
 
         /**
          * Represents platform. Holds platform-dependent functions and application entry point.
@@ -84,6 +96,10 @@ namespace selene
                 static uint32_t defaultScreenHeight_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

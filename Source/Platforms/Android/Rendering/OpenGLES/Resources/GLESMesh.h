@@ -10,29 +10,44 @@
 namespace selene
 {
 
-        // Represents OpenGL ES mesh.
+        /**
+         * \addtogroup Android
+         * @{
+         */
+
+        /**
+         * Represents OpenGL ES mesh.
+         */
         class GlesMesh: public Mesh
         {
         public:
+                /**
+                 * \brief Constructs OpenGL ES mesh with given name.
+                 * \param[in] name name of the mesh
+                 */
                 GlesMesh(const char* name = nullptr);
                 ~GlesMesh();
 
-                // Retains OpenGL ES mesh
+                // Mesh interface implementation
                 bool retain();
-
-                // Discards OpenGL ES mesh
                 void discard();
 
         private:
-                friend class GlesRenderer;
+                friend class GlesActorsRenderer;
 
                 GLuint vertexBuffers_[NUM_OF_VERTEX_STREAMS];
                 GLuint indexBuffer_;
 
-                // Destroys OpenGL ES mesh data
+                /**
+                 * \brief Destroys OpenGL ES mesh data.
+                 */
                 void destroy();
 
         };
+
+        /**
+         * @}
+         */
 
 }
 

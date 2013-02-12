@@ -13,20 +13,23 @@
 namespace selene
 {
 
-        // Represents android application.
+        /**
+         * \addtogroup Android
+         * @{
+         */
+
+        /**
+         * Represents Android application.
+         */
         class AndroidApplication: public Application
         {
         public:
                 AndroidApplication(const char* name, uint32_t width, uint32_t height);
                 ~AndroidApplication();
 
-                // Initializes application
+                // Application interface implementation
                 bool initialize();
-
-                // Runs application
                 bool run();
-
-                // Halts application
                 void halt();
 
                 // Returns android application handle
@@ -35,7 +38,7 @@ namespace selene
         protected:
                 GlesRenderer renderer_;
 
-                // Returns state of the given key
+                // Application interface implementation
                 float getKeyState(uint8_t key);
 
         private:
@@ -52,6 +55,10 @@ namespace selene
                 static int32_t inputProcessingCallback(android_app* app, AInputEvent* event);
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
