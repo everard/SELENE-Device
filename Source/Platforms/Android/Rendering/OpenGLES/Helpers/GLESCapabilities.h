@@ -23,13 +23,6 @@ namespace selene
         class GlesCapabilities
         {
         public:
-                /// Helper constants
-                enum
-                {
-                        MAX_NUM_OF_BONES = 50,
-                        MAX_NUM_MATRICES = 3
-                };
-
                 GlesCapabilities();
                 ~GlesCapabilities();
 

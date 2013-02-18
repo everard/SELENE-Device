@@ -14,6 +14,9 @@ namespace selene
          * @{
          */
 
+        // Forward declaration of classes
+        class GlesRenderTarget;
+
         /**
          * Represents OpenGL ES texture handler.
          */
@@ -60,6 +63,13 @@ namespace selene
                  * set if texture equals to nullptr
                  */
                 void setTexture(Texture* texture, GLenum sampler, uint8_t dummyTextureIndex);
+
+                /**
+                 * \brief Sets given texture on the given stage.
+                 * \param[in] renderTarget render target, which contains texture
+                 * \param[in] sampler texture sampler
+                 */
+                void setTexture(const GlesRenderTarget& renderTarget, GLenum sampler);
 
                 /**
                  * \brief Sets texture sampler state.

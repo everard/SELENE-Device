@@ -1,72 +1,108 @@
 // Copyright (c) 2012 Nezametdinov E. Ildus
 // Licensed under the MIT License (see LICENSE.txt for details)
 
-/*#include "D3D9RenderTarget.h"
-#include "../D3D9Renderer.h"
+#include "GLESRenderTarget.h"
+#include "../GLESRenderer.h"
+
+#include "../../../Platform.h"
 
 namespace selene
 {
 
-        D3d9RenderTarget::D3d9RenderTarget()
+        GlesRenderTarget::GlesRenderTarget()
         {
-                d3dTexture_ = nullptr;
-                d3dSurface_ = nullptr;
-                d3dDepthStencilSurface_ = nullptr;
+                renderableTexture_ = 0;
+                framebufferObject_ = 0;
+                depthRenderBuffer_ = 0;
+                isDepthRenderbufferShared_ = true;
         }
-        D3d9RenderTarget::~D3d9RenderTarget()
+        GlesRenderTarget::~GlesRenderTarget()
         {
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------
-        bool D3d9RenderTarget::initialize(uint32_t width, uint32_t height, D3DFORMAT format,
-                                          D3DSURFACE_DESC* depthStencilSurfaceDescriptor)
+        //------------------------------------------------------------------------------------------
+        bool GlesRenderTarget::initialize(uint32_t width, uint32_t height, GLuint depthRenderBuffer)
         {
-                LPDIRECT3DDEVICE9 d3dDevice = D3d9Renderer::getDevice();
-                if(d3dDevice == nullptr)
-                        return false;
-
                 destroy();
 
-                if(FAILED(d3dDevice->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, format,
-                                                   D3DPOOL_DEFAULT, &d3dTexture_, nullptr)))
+                // create renderable textures
+                glGenTextures(1, &renderableTexture_);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glGenTextures");
+
+                glBindTexture(GL_TEXTURE_2D, renderableTexture_);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glBindTexture");
+
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glTexImage2D");
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glTexParameteri");
+
+                // create depth renderbuffer if needed
+                if(depthRenderBuffer == 0)
                 {
-                        destroy();
-                        return false;
+                        depthRenderBuffer_ = createRenderbuffer(width, height, GL_DEPTH_COMPONENT16);
+                        isDepthRenderbufferShared_ = false;
+                }
+                else
+                {
+                        isDepthRenderbufferShared_ = true;
+                        depthRenderBuffer_ = depthRenderBuffer;
                 }
 
-                if(d3dTexture_ == nullptr)
-                        return false;
+                // create framebuffer object
+                glGenFramebuffers(1, &framebufferObject_);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glGenFramebuffers");
 
-                if(FAILED(d3dTexture_->GetSurfaceLevel(0, &d3dSurface_)))
+                glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject_);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glBindFramebuffer");
+
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderableTexture_, 0);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glFramebufferTexture2D");
+
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer_);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glFramebufferRenderbuffer");
+
+                GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glCheckFramebufferStatus");
+
+                glBindTexture(GL_TEXTURE_2D, 0);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glBindTexture");
+
+                glBindRenderbuffer(GL_RENDERBUFFER, 0);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glBindRenderbuffer");
+
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                CHECK_GLES_ERROR("GlesRenderTarget::initialize: glBindFramebuffer");
+
+                if(status != GL_FRAMEBUFFER_COMPLETE)
                 {
-                        destroy();
-                        return false;
-                }
+                        switch(status)
+                        {
+                                case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                                        LOGI("****************************** FBO error: FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+                                        break;
 
-                if(d3dSurface_ == nullptr)
-                {
-                        destroy();
-                        return false;
-                }
+                                case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                                        LOGI("****************************** FBO error: FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+                                        break;
 
-                if(depthStencilSurfaceDescriptor == nullptr)
-                        return true;
+                                case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+                                        LOGI("****************************** FBO error: FRAMEBUFFER_INCOMPLETE_DIMENSIONS");
+                                        break;
 
-                if(FAILED(d3dDevice->CreateDepthStencilSurface(width, height,
-                                                               depthStencilSurfaceDescriptor->Format,
-                                                               depthStencilSurfaceDescriptor->MultiSampleType,
-                                                               depthStencilSurfaceDescriptor->MultiSampleQuality,
-                                                               FALSE,
-                                                               &d3dDepthStencilSurface_,
-                                                               nullptr)))
-                {
-                        destroy();
-                        return false;
-                }
+                                case GL_FRAMEBUFFER_UNSUPPORTED:
+                                        LOGI("****************************** FBO error: FRAMEBUFFER_UNSUPPORTED");
+                                        break;
 
-                if(d3dDepthStencilSurface_ == nullptr)
-                {
+                                default:
+                                        LOGI("****************************** Unknown FBO error");
+                        }
+
                         destroy();
                         return false;
                 }
@@ -75,38 +111,57 @@ namespace selene
         }
 
         //---------------------------------------------------------------------------------------------
-        void D3d9RenderTarget::initialize(LPDIRECT3DTEXTURE9 d3dTexture, LPDIRECT3DSURFACE9 d3dSurface,
-                                          LPDIRECT3DSURFACE9 d3dDepthStencilSurface)
+        void GlesRenderTarget::destroy()
         {
-                d3dTexture_ = d3dTexture;
-                d3dSurface_ = d3dSurface;
-                d3dDepthStencilSurface_ = d3dDepthStencilSurface;
+                if(framebufferObject_ != 0)
+                {
+                        glDeleteFramebuffers(1, &framebufferObject_);
+                        framebufferObject_ = 0;
+                }
+
+                if(renderableTexture_ != 0)
+                {
+                        glDeleteTextures(1, &renderableTexture_);
+                        renderableTexture_ = 0;
+                }
+
+                if(!isDepthRenderbufferShared_)
+                {
+                        if(depthRenderBuffer_ != 0)
+                        {
+                                glDeleteRenderbuffers(1, &depthRenderBuffer_);
+                                depthRenderBuffer_ = 0;
+                        }
+                }
+
+                isDepthRenderbufferShared_ = true;
         }
 
         //---------------------------------------------------------------------------------------------
-        void D3d9RenderTarget::destroy()
+        void GlesRenderTarget::set() const
         {
-                SAFE_RELEASE(d3dTexture_);
-                SAFE_RELEASE(d3dSurface_);
-                SAFE_RELEASE(d3dDepthStencilSurface_);
+                glBindFramebuffer(GL_FRAMEBUFFER, framebufferObject_);
+                CHECK_GLES_ERROR("GlesRenderTarget::set: glBindFramebuffer");
         }
 
         //---------------------------------------------------------------------------------------------
-        LPDIRECT3DTEXTURE9 D3d9RenderTarget::getTexture() const
+        GLuint GlesRenderTarget::createRenderbuffer(uint32_t width, uint32_t height, GLenum format)
         {
-                return d3dTexture_;
+                GLuint renderbuffer;
+
+                glGenRenderbuffers(1, &renderbuffer);
+                CHECK_GLES_ERROR("GlesRenderTarget::createRenderbuffer: glGenRenderbuffers");
+
+                glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+                CHECK_GLES_ERROR("GlesRenderTarget::createRenderbuffer: glBindRenderbuffer");
+
+                glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+                CHECK_GLES_ERROR("GlesRenderTarget::createRenderbuffer: glRenderbufferStorage");
+
+                glBindRenderbuffer(GL_RENDERBUFFER, 0);
+                CHECK_GLES_ERROR("GlesRenderTarget::createRenderbuffer: glBindRenderbuffer");
+
+                return renderbuffer;
         }
 
-        //---------------------------------------------------------------------------------------------
-        LPDIRECT3DSURFACE9 D3d9RenderTarget::getSurface() const
-        {
-                return d3dSurface_;
-        }
-
-        //---------------------------------------------------------------------------------------------
-        LPDIRECT3DSURFACE9 D3d9RenderTarget::getDepthStencilSurface() const
-        {
-                return d3dDepthStencilSurface_;
-        }
-
-}*/
+}

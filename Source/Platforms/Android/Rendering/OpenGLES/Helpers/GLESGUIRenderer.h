@@ -45,17 +45,6 @@ namespace selene
                 void destroy();
 
                 /**
-                 * \brief Retains GUI renderer.
-                 * \return true if helper resources of GUI renderer has been successfully retained
-                 */
-                bool retain();
-
-                /**
-                 * \brief Discards GUI renderer.
-                 */
-                void discard();
-
-                /**
                  * \brief Renders GUI.
                  * \param[in] gui GUI, which will be rendered
                  */
@@ -65,8 +54,8 @@ namespace selene
                 /// Helper constants
                 enum
                 {
-                        LOCATION_POSITION = 0,
-                        LOCATION_COLOR = 1
+                        LOCATION_ATTRIBUTE_POSITION = 0,
+                        LOCATION_ATTRIBUTE_COLOR
                 };
 
                 GlesGlslProgram framesRenderingProgram_;

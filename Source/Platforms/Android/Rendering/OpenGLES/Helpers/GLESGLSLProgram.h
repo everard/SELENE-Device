@@ -22,21 +22,21 @@ namespace selene
         {
         public:
                 /**
-                 * Represents attribute of GLSL program.
+                 * Represents vertex attribute of GLSL program.
                  */
-                class Attribute: public Entity
+                class VertexAttribute: public Entity
                 {
                 public:
                         /**
-                         * \brief Constructs attribute with given name and locaiton.
+                         * \brief Constructs vertex attribute with given name and locaiton.
                          * \param[in] name name of the attribute
                          * \param[in] location location of the attribute
                          */
-                        Attribute(const char* name, GLuint location);
-                        ~Attribute();
+                        VertexAttribute(const char* name, GLuint location);
+                        ~VertexAttribute();
 
                         /**
-                         * \brief Returns location of the attribute.
+                         * \brief Returns location of the vertex attribute in GLSL program.
                          * \return location of the attribute
                          */
                         GLuint getLocation() const;
@@ -53,14 +53,17 @@ namespace selene
                  * \brief Initializes program.
                  * \param[in] vertexShaderSourceCode source code of the vertex shader
                  * \param[in] fragmentShaderSourceCode source code of the fragment shader
+                 * \param[in] vertexAttributes array of vertex attributes, which specifies their locations
+                 * in GLSL program
+                 * \param[in] numVertexAttributes number of vertex attributes
                  * \param[in] useVertexShaderLibrary flag, which shows the need to use vertex shader library
                  * \param[in] useFragmentShaderLibrary flag, which shows the need to use fragment shader library
                  * \return true if shaders has been successfully compiled and program linked
                  */
                 bool initialize(const char* vertexShaderSourceCode,
                                 const char* fragmentShaderSourceCode,
-                                const Attribute* attributes = nullptr,
-                                uint8_t numAttributes = 0,
+                                const VertexAttribute* vertexAttributes = nullptr,
+                                uint8_t numVertexAttributes = 0,
                                 bool useVertexShaderLibrary = false,
                                 bool useFragmentShaderLibrary = false);
 
@@ -70,20 +73,20 @@ namespace selene
                 void destroy();
 
                 /**
-                 * \brief Uses program.
-                 * \return true if program has been successfully used
+                 * \brief Sets GLSL program.
+                 * \return true if program has been successfully set
                  */
-                bool use();
+                bool set();
 
                 /**
-                 * \brief Returns attribute location.
+                 * \brief Returns location of the attribute with given name.
                  * \param[in] attributeName name of the attribute
                  * \return location of the attribute, -1 if attribute with given name does not exist
                  */
                 GLint getAttributeLocation(const GLchar* attributeName);
 
                 /**
-                 * \brief Returns uniform location.
+                 * \brief Returns location of the uniform with given name.
                  * \param[in] uniformName name of the uniform
                  * \return location of the uniform, -1 if uniform with given name does not exist
                  */
@@ -91,7 +94,8 @@ namespace selene
 
                 /**
                  * \brief Loads shader from source code.
-                 * \param[in] shaderType type of the shader (vertex or fragment shader)
+                 * \param[in] shaderType type of the shader (may be one of the following:
+                 * GL_VERTEX_SHADER or GL_FRAGMENT_SHADER)
                  * \param[in] sourceCode source code of the shader
                  * \return ID of the loaded shader, -1 if shader could not be loaded
                  */

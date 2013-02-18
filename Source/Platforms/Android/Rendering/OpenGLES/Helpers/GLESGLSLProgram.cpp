@@ -11,14 +11,14 @@
 namespace selene
 {
 
-        GlesGlslProgram::Attribute::Attribute(const char* name, GLuint location): Entity(name)
+        GlesGlslProgram::VertexAttribute::VertexAttribute(const char* name, GLuint location): Entity(name)
         {
                 location_ = location;
         }
-        GlesGlslProgram::Attribute::~Attribute() {}
+        GlesGlslProgram::VertexAttribute::~VertexAttribute() {}
 
         //---------------------------------------------------------------------------
-        GLuint GlesGlslProgram::Attribute::getLocation() const
+        GLuint GlesGlslProgram::VertexAttribute::getLocation() const
         {
                 return location_;
         }
@@ -35,8 +35,8 @@ namespace selene
         //---------------------------------------------------------------------------
         bool GlesGlslProgram::initialize(const char* vertexShaderSourceCode,
                                          const char* fragmentShaderSourceCode,
-                                         const Attribute* attributes,
-                                         uint8_t numAttributes,
+                                         const VertexAttribute* vertexAttributes,
+                                         uint8_t numVertexAttributes,
                                          bool useVertexShaderLibrary,
                                          bool useFragmentShaderLibrary)
         {
@@ -122,24 +122,23 @@ namespace selene
                 if(program_ == 0)
                         return false;
 
-                if(attributes != nullptr)
+                if(vertexAttributes != nullptr)
                 {
-                        LOGI("****************************** GLSL program has %i attribute locations specified", numAttributes);
-
-                        for(uint32_t i = 0; i < numAttributes; ++i)
+                        for(uint32_t i = 0; i < numVertexAttributes; ++i)
                         {
-                                glBindAttribLocation(program_, attributes[i].getLocation(), attributes[i].getName());
-                                CHECK_GLES_ERROR("GLSL Program: initialize: glBindAttribLocation");
+                                glBindAttribLocation(program_, vertexAttributes[i].getLocation(), vertexAttributes[i].getName());
+                                CHECK_GLES_ERROR("GlesGlslProgram::initialize: glBindAttribLocation");
                         }
                 }
 
                 glAttachShader(program_, vertexShader);
-                CHECK_GLES_ERROR("GLSL Program: initialize: glAttachShader");
+                CHECK_GLES_ERROR("GlesGlslProgram::initialize: glAttachShader");
 
                 glAttachShader(program_, fragmentShader);
-                CHECK_GLES_ERROR("GLSL Program: initialize: glAttachShader");
+                CHECK_GLES_ERROR("GlesGlslProgram::initialize: glAttachShader");
 
                 glLinkProgram(program_);
+                CHECK_GLES_ERROR("GlesGlslProgram::initialize: glLinkProgram");
 
                 GLint isLinked = GL_FALSE;
                 glGetProgramiv(program_, GL_LINK_STATUS, &isLinked);
@@ -148,19 +147,24 @@ namespace selene
                 {
                         GLint infoStringLength = 0;
                         glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &infoStringLength);
+                        CHECK_GLES_ERROR("GlesGlslProgram::initialize: glGetProgramiv");
 
                         if(infoStringLength > 0)
                         {
                                 char* buffer = new(std::nothrow) char[infoStringLength];
                                 if(buffer != nullptr)
                                 {
-                                        glGetProgramInfoLog(program_, infoStringLength, NULL, buffer);
+                                        glGetProgramInfoLog(program_, infoStringLength, nullptr, buffer);
+                                        CHECK_GLES_ERROR("GlesGlslProgram::initialize: glGetProgramInfoLog");
+
                                         LOGI("****************************** Failed linking GLSL program: %s", buffer);
                                         SAFE_DELETE_ARRAY(buffer);
                                 }
                         }
 
                         glDeleteProgram(program_);
+                        CHECK_GLES_ERROR("GlesGlslProgram::initialize: glDeleteProgram");
+
                         program_ = 0;
 
                         return false;
@@ -180,7 +184,7 @@ namespace selene
         }
 
         //---------------------------------------------------------------------------
-        bool GlesGlslProgram::use()
+        bool GlesGlslProgram::set()
         {
                 if(program_ == 0)
                         return false;
@@ -216,15 +220,20 @@ namespace selene
                         return 0;
 
                 glShaderSource(shader, 1, &sourceCode, nullptr);
+                CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glShaderSource");
+
                 glCompileShader(shader);
+                CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glCompileShader");
 
                 GLint isCompiled = 0;
                 glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+                CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glGetShaderiv");
 
                 if(isCompiled == 0)
                 {
                         GLint infoStringLength = 0;
                         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoStringLength);
+                        CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glGetShaderiv");
 
                         if(infoStringLength > 0)
                         {
@@ -232,12 +241,16 @@ namespace selene
                                 if(buffer != nullptr)
                                 {
                                         glGetShaderInfoLog(shader, infoStringLength, nullptr, buffer);
+                                        CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glGetShaderInfoLog");
+
                                         LOGI("****************************** Failed loading shader: %s", buffer);
                                         SAFE_DELETE_ARRAY(buffer);
                                 }
                         }
 
                         glDeleteShader(shader);
+                        CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glDeleteShader");
+
                         shader = 0;
                 }
 

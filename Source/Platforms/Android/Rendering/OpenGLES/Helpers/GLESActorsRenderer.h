@@ -17,6 +17,7 @@ namespace selene
          */
 
         // Forward declaration of classes
+        class GlesRenderTargetContainer;
         class GlesFrameParameters;
         class GlesTextureHandler;
         class GlesCapabilities;
@@ -38,7 +39,8 @@ namespace selene
                  * \param[in] capabilities D3D capabilities
                  * \return true if actors renderer has been successfully initialized
                  */
-                bool initialize(GlesFrameParameters& frameParameters,
+                bool initialize(GlesRenderTargetContainer& renderTargetContainer,
+                                GlesFrameParameters& frameParameters,
                                 GlesTextureHandler& textureHandler,
                                 GlesCapabilities& capabilities);
 
@@ -128,17 +130,16 @@ namespace selene
 
                         /**
                          * \brief Obtains locations of variables.
-                         * \param[in] program GLSL program, from which locations are obtained
+                         * \param[in] program GLSL program, which is source of the locations
                          */
                         void obtainLocations(GlesGlslProgram& program);
 
                 };
 
                 GlesGlslProgram programs_[NUM_OF_GLSL_PROGRAMS];
-
                 Variables variables_[NUM_OF_GLSL_PROGRAMS];
 
-                //GlesRenderTargetContainer* renderTargetContainer_;
+                GlesRenderTargetContainer* renderTargetContainer_;
                 GlesFrameParameters* frameParameters_;
                 GlesTextureHandler* textureHandler_;
                 GlesCapabilities* capabilities_;

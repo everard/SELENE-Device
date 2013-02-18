@@ -2,6 +2,8 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "GLESTextureHandler.h"
+#include "GLESRenderTarget.h"
+
 #include "../../../Platform.h"
 
 namespace selene
@@ -9,19 +11,19 @@ namespace selene
 
         GlesTextureHandler::GlesTextureHandler()
         {
-                uint8_t pixels[NUM_OF_DUMMY_TEXTURES][4] =
+                const uint32_t numBytesPerPixel = 4;
+                uint8_t pixels[NUM_OF_DUMMY_TEXTURES][numBytesPerPixel] =
                 {
                         {255, 255, 255, 255},
                         {127, 127, 255, 255}
                 };
-                const uint32_t numBytesPerPixel = 4;
 
                 for(uint32_t i = 0; i < NUM_OF_DUMMY_TEXTURES; ++i)
                 {
                         auto& textureData = dummyTextures_[i].getData();
-                        textureData.bpp = numBytesPerPixel;
+                        textureData.bpp   = numBytesPerPixel;
                         textureData.format = TEXTURE_FORMAT_NOT_COMPRESSED;
-                        textureData.width = textureData.height = 1;
+                        textureData.width  = textureData.height = 1;
                         textureData.numMipMaps = 1;
                         if(!textureData.pixels.create(numBytesPerPixel))
                                 return;
@@ -79,6 +81,16 @@ namespace selene
                         glBindTexture(GL_TEXTURE_2D, glesTexture->texture_);
                 }
 
+                CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glBindTexture");
+        }
+
+        //----------------------------------------------------------------------------------------------
+        void GlesTextureHandler::setTexture(const GlesRenderTarget& renderTarget, GLenum sampler)
+        {
+                glActiveTexture(GL_TEXTURE0 + sampler);
+                CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glActiveTexture");
+
+                glBindTexture(GL_TEXTURE_2D, renderTarget.renderableTexture_);
                 CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glBindTexture");
         }
 
