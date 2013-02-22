@@ -74,14 +74,11 @@ namespace selene
                 /// Helper constants
                 enum
                 {
-                        RENDERING_PASS_POSITIONS = 0,
-                        RENDERING_PASS_NORMALS,
+                        RENDERING_PASS_NORMALS = 0,
                         RENDERING_PASS_SHADING,
                         NUM_OF_RENDERING_PASSES,
 
-                        GLSL_PROGRAM_POSITIONS_PASS = 0,
-                        GLSL_PROGRAM_SKIN_POSITIONS_PASS,
-                        GLSL_PROGRAM_NORMALS_PASS,
+                        GLSL_PROGRAM_NORMALS_PASS = 0,
                         GLSL_PROGRAM_SKIN_NORMALS_PASS,
                         GLSL_PROGRAM_SHADING_PASS,
                         GLSL_PROGRAM_SKIN_SHADING_PASS,
@@ -110,7 +107,7 @@ namespace selene
                         GLint locationBoneRotations;
                         GLint locationBonePositions;
 
-                        GLint locationProjectionParameters;
+                        GLint locationTextureCoordinatesAdjustment;
                         GLint locationSpecularParameters;
 
                         GLint locationAmbientMap;

@@ -29,11 +29,11 @@ namespace selene
                  * \brief Initializes render target.
                  * \param[in] width width of the render target
                  * \param[in] height height of the render target
-                 * \param[in] depthRenderBuffer ID of the depth renderbuffer (if set to zero, then
-                 * new depth renderbuffer is created)
+                 * \param[in] depthRenderbuffer depth renderbuffer
+                 * \param[in] depthTexture depth texture
                  * \return true if render target has been successfully initialized
                  */
-                bool initialize(uint32_t width, uint32_t height, GLuint depthRenderBuffer = 0);
+                bool initialize(uint32_t width, uint32_t height);
 
                 /**
                  * \brief Destroys render target.
@@ -41,27 +41,13 @@ namespace selene
                 void destroy();
 
                 /**
-                 * \brief Sets render target.
+                 * \brief Returns renderable texture.
+                 * \return renderable texture
                  */
-                void set() const;
-
-                /**
-                 * \brief Creates renderbuffer with given dimentions and format.
-                 * \param[in] width width of the render target
-                 * \param[in] height height of the render target
-                 * \param[in] format format of the renderbuffer
-                 * \return renderbuffer ID
-                 */
-                static GLuint createRenderbuffer(uint32_t width, uint32_t height, GLenum format);
+                GLuint getRenderableTexture() const;
 
         private:
-                friend class GlesTextureHandler;
-
                 GLuint renderableTexture_;
-                GLuint framebufferObject_;
-                GLuint depthRenderBuffer_;
-
-                bool isDepthRenderbufferShared_;
 
         };
 

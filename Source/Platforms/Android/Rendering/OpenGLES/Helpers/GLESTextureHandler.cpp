@@ -70,27 +70,28 @@ namespace selene
         //----------------------------------------------------------------------------------------------
         void GlesTextureHandler::setTexture(Texture* texture, GLenum sampler, uint8_t dummyTextureIndex)
         {
-                glActiveTexture(GL_TEXTURE0 + sampler);
-                CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glActiveTexture");
-
                 if(texture == nullptr)
-                        glBindTexture(GL_TEXTURE_2D, dummyTextures_[dummyTextureIndex].texture_);
+                        setTexture(dummyTextures_[dummyTextureIndex].texture_, sampler);
                 else
                 {
                         GlesTexture* glesTexture = static_cast<GlesTexture*>(texture);
-                        glBindTexture(GL_TEXTURE_2D, glesTexture->texture_);
+                        setTexture(glesTexture->texture_, sampler);
                 }
-
-                CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glBindTexture");
         }
 
         //----------------------------------------------------------------------------------------------
         void GlesTextureHandler::setTexture(const GlesRenderTarget& renderTarget, GLenum sampler)
         {
+                setTexture(renderTarget.getRenderableTexture(), sampler);
+        }
+
+        //----------------------------------------------------------------------------------------------
+        void GlesTextureHandler::setTexture(GLuint texture, GLenum sampler)
+        {
                 glActiveTexture(GL_TEXTURE0 + sampler);
                 CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glActiveTexture");
 
-                glBindTexture(GL_TEXTURE_2D, renderTarget.renderableTexture_);
+                glBindTexture(GL_TEXTURE_2D, texture);
                 CHECK_GLES_ERROR("GlesTextureHandler::setTexture: glBindTexture");
         }
 

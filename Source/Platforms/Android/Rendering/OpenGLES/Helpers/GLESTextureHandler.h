@@ -72,6 +72,13 @@ namespace selene
                 void setTexture(const GlesRenderTarget& renderTarget, GLenum sampler);
 
                 /**
+                 * \brief Sets given texture on the given stage.
+                 * \param[in] texture OpenGL texture name
+                 * \param[in] sampler texture sampler
+                 */
+                void setTexture(GLuint texture, GLenum sampler);
+
+                /**
                  * \brief Sets texture sampler state.
                  * \param[in] sampler texture sampler
                  * \param[in] magFilter texture magnification filter

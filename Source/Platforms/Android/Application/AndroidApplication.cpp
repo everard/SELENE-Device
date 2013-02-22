@@ -114,8 +114,8 @@ namespace selene
                                         return;
                                 }
 
-                                int32_t nativeWindowWidth  = ANativeWindow_getWidth(state_->window);
-                                int32_t nativeWindowHeight = ANativeWindow_getHeight(state_->window);
+                                EGLint nativeWindowWidth  = renderer_.capabilities_.getSurfaceWidth();
+                                EGLint nativeWindowHeight = renderer_.capabilities_.getSurfaceHeight();
 
                                 if(nativeWindowWidth <= 1 || nativeWindowHeight <= 1)
                                 {

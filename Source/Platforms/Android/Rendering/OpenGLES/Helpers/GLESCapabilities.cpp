@@ -14,6 +14,7 @@ namespace selene
                 surface_ = EGL_NO_SURFACE;
                 context_ = EGL_NO_CONTEXT;
                 display_ = EGL_NO_DISPLAY;
+                surfaceWidth_ = surfaceHeight_ = 0;
         }
         GlesCapabilities::~GlesCapabilities()
         {
@@ -35,7 +36,7 @@ namespace selene
                         EGL_GREEN_SIZE, 8,
                         EGL_RED_SIZE,   8,
                         EGL_ALPHA_SIZE, 8,
-                        EGL_DEPTH_SIZE, 24,
+                        EGL_DEPTH_SIZE, 16,
                         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                         EGL_NONE
                 };
@@ -80,6 +81,9 @@ namespace selene
                 if(eglMakeCurrent(display_, surface_, surface_, context_) == EGL_FALSE)
                         return false;
 
+                eglQuerySurface(display_, surface_, EGL_WIDTH,  &surfaceWidth_);
+                eglQuerySurface(display_, surface_, EGL_HEIGHT, &surfaceHeight_);
+
                 return true;
         }
 
@@ -123,6 +127,18 @@ namespace selene
         EGLDisplay GlesCapabilities::getDisplay()
         {
                 return display_;
+        }
+
+        //------------------------------------------------------------------------------------
+        EGLint GlesCapabilities::getSurfaceWidth()
+        {
+                return surfaceWidth_;
+        }
+
+        //------------------------------------------------------------------------------------
+        EGLint GlesCapabilities::getSurfaceHeight()
+        {
+                return surfaceHeight_;
         }
 
 }

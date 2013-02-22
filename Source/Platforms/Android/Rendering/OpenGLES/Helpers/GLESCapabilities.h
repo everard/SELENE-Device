@@ -57,10 +57,24 @@ namespace selene
                  */
                 EGLDisplay getDisplay();
 
+                /**
+                 * \brief Returns EGL surface width.
+                 * \return EGL surface width
+                 */
+                EGLint getSurfaceWidth();
+
+                /**
+                 * \brief Returns EGL surface height.
+                 * \return EGL surface height
+                 */
+                EGLint getSurfaceHeight();
+
         private:
                 EGLSurface surface_;
                 EGLContext context_;
                 EGLDisplay display_;
+
+                EGLint surfaceWidth_, surfaceHeight_;
 
         };
 

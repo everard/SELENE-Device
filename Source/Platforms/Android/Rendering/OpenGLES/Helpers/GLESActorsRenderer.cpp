@@ -36,46 +36,95 @@ namespace selene
                 textureHandler_ = &textureHandler;
                 capabilities_ = &capabilities;
 
-                static const char vertexShader[] =
-                        "attribute vec4 vertexPosition;"
-                        "attribute vec4 vertexTextureCoordinates;"
-                        "uniform mat4 worldViewProjectionMatrix;"
-                        "varying vec4 vTextureCoordinates;"
-                        "void main()"
-                        "{"
-                        "        gl_Position = worldViewProjectionMatrix * vertexPosition;"
-                        "        vTextureCoordinates  = vertexTextureCoordinates;"
-                        "}\n";
-
-                static const char fragmentShader[] =
-                        "precision mediump float;"
-                        "varying vec4 vTextureCoordinates;"
-                        "uniform vec4 ambientColor;"
-                        "uniform sampler2D ambientMap;"
-                        "void main()"
-                        "{"
-                        "        gl_FragColor = ambientColor * texture2D(ambientMap, vTextureCoordinates.xy);"
-                        "}\n";
-
-                static const char skinVertexShader[] =
+                // normals pass shaders
+                static const char vertexShaderNormalsPass[] =
+                        "invariant gl_Position;\n"
                         "attribute vec4 vertexPosition;\n"
+                        "attribute vec4 vertexNormal;\n"
+                        "attribute vec4 vertexTangent;\n"
+                        "attribute vec4 vertexTextureCoordinates;\n"
+                        "uniform mat4 worldViewProjectionMatrix;\n"
+                        "uniform mat4 normalsMatrix;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec3 vNormal;\n"
+                        "varying vec3 vTangent;\n"
+                        "varying vec3 vBitangent;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        gl_Position = worldViewProjectionMatrix * vertexPosition;\n"
+                        "        vTextureCoordinates = vertexTextureCoordinates;\n"
+                        "        vNormal  = mat3(normalsMatrix) * vertexNormal.xyz;\n"
+                        "        vTangent = mat3(normalsMatrix) * vertexTangent.xyz;\n"
+                        "        vBitangent = vertexTangent.w * cross(vTangent, vNormal);\n"
+                        "}\n";
+
+                static const char vertexShaderSkinNormalsPass[] =
+                        "invariant gl_Position;\n"
+                        "attribute vec4 vertexPosition;\n"
+                        "attribute vec4 vertexNormal;\n"
+                        "attribute vec4 vertexTangent;\n"
                         "attribute vec4 vertexTextureCoordinates;\n"
                         "attribute vec4 vertexBoneWeights;\n"
                         "attribute vec4 vertexBoneIndices;\n"
                         "uniform mat4 worldViewProjectionMatrix;\n"
+                        "uniform mat4 normalsMatrix;\n"
                         "uniform vec4 bonePositions[50];\n"
                         "uniform vec4 boneRotations[50];\n"
                         "varying vec4 vTextureCoordinates;\n"
+                        "varying vec3 vNormal;\n"
+                        "varying vec3 vTangent;\n"
+                        "varying vec3 vBitangent;\n"
                         "void main()\n"
                         "{\n"
-                        "        vec3 P = vec3(0.0, 0.0, 0.0);\n"
-                        "        P += vertexBoneWeights.x * Transform(bonePositions[int(vertexBoneIndices.x)], boneRotations[int(vertexBoneIndices.x)], vertexPosition.xyz);\n"
-                        "        P += vertexBoneWeights.y * Transform(bonePositions[int(vertexBoneIndices.y)], boneRotations[int(vertexBoneIndices.y)], vertexPosition.xyz);\n"
-                        "        P += vertexBoneWeights.z * Transform(bonePositions[int(vertexBoneIndices.z)], boneRotations[int(vertexBoneIndices.z)], vertexPosition.xyz);\n"
-                        "        P += vertexBoneWeights.w * Transform(bonePositions[int(vertexBoneIndices.w)], boneRotations[int(vertexBoneIndices.w)], vertexPosition.xyz);\n"
-                        "        gl_Position = worldViewProjectionMatrix * vec4(P, 1.0);\n"
-                        "        vTextureCoordinates  = vertexTextureCoordinates;\n"
+                        "        vec3 position = vec3(0.0, 0.0, 0.0);\n"
+                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y), int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
+                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x], boneRotations[indices.x], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y], boneRotations[indices.y], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z], boneRotations[indices.z], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w], boneRotations[indices.w], vertexPosition.xyz);\n"
+                        "        gl_Position = worldViewProjectionMatrix * vec4(position, 1.0);\n"
+                        "        vec3 tangent  = vec3(0.0, 0.0, 0.0);\n"
+                        "        vec3 normal   = vec3(0.0, 0.0, 0.0);\n"
+                        "        tangent += vertexBoneWeights.x * rotateVector(vertexTangent.xyz, boneRotations[indices.x]).xyz;\n"
+                        "        tangent += vertexBoneWeights.y * rotateVector(vertexTangent.xyz, boneRotations[indices.y]).xyz;\n"
+                        "        tangent += vertexBoneWeights.z * rotateVector(vertexTangent.xyz, boneRotations[indices.z]).xyz;\n"
+                        "        tangent += vertexBoneWeights.w * rotateVector(vertexTangent.xyz, boneRotations[indices.w]).xyz;\n"
+                        "        normal += vertexBoneWeights.x * rotateVector(vertexNormal.xyz, boneRotations[indices.x]).xyz;\n"
+                        "        normal += vertexBoneWeights.y * rotateVector(vertexNormal.xyz, boneRotations[indices.y]).xyz;\n"
+                        "        normal += vertexBoneWeights.z * rotateVector(vertexNormal.xyz, boneRotations[indices.z]).xyz;\n"
+                        "        normal += vertexBoneWeights.w * rotateVector(vertexNormal.xyz, boneRotations[indices.w]).xyz;\n"
+                        "        vTextureCoordinates = vertexTextureCoordinates;\n"
+                        "        vNormal  = mat3(normalsMatrix) * normal;\n"
+                        "        vTangent = mat3(normalsMatrix) * tangent;\n"
+                        "        vBitangent = vertexTangent.w * cross(vTangent, vNormal);\n"
                         "}\n";
+
+                static const char fragmentShaderNormalsPass[] =
+                        "uniform sampler2D normalMap;\n"
+                        "uniform sampler2D specularMap;\n"
+                        "uniform vec4 specularParameters;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec3 vNormal;\n"
+                        "varying vec3 vTangent;\n"
+                        "varying vec3 vBitangent;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec3 normal = 2.0 * texture2D(normalMap, vTextureCoordinates.xy).xyz - vec3(1.0, 1.0, 1.0);\n"
+                        "        vec3 normalizedNormal = normalize(normal.x * vTangent + normal.y * vBitangent + normal.z * vNormal);\n"
+                        "        gl_FragColor = vec4(encodeNormal(normalizedNormal), specularParameters.x * texture2D(specularMap, vTextureCoordinates.xy).a);\n"
+                        "}\n";
+
+                static const char* vertexShaderSources[NUM_OF_GLSL_PROGRAMS] =
+                {
+                        vertexShaderNormalsPass, vertexShaderSkinNormalsPass,
+                        vertexShaderNormalsPass, vertexShaderNormalsPass
+                };
+
+                static const char* fragmentShaderSources[NUM_OF_GLSL_PROGRAMS] =
+                {
+                        fragmentShaderNormalsPass, fragmentShaderNormalsPass,
+                        fragmentShaderNormalsPass, fragmentShaderNormalsPass
+                };
 
                 // load GLSL programs
                 GlesGlslProgram::VertexAttribute vertexAttributes[] =
@@ -89,15 +138,9 @@ namespace selene
                 };
                 const uint8_t numVertexAttributes = sizeof(vertexAttributes) / sizeof(vertexAttributes[0]);
 
-                for(uint8_t i = 0; i < NUM_OF_RENDERING_PASSES; ++i)
+                for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
                 {
-                        if(!programs_[2 * i].initialize(vertexShader, fragmentShader, vertexAttributes, numVertexAttributes))
-                        {
-                                destroy();
-                                return false;
-                        }
-
-                        if(!programs_[2 * i + 1].initialize(skinVertexShader, fragmentShader, vertexAttributes, numVertexAttributes, true))
+                        if(!programs_[i].initialize(vertexShaderSources[i], fragmentShaderSources[i], vertexAttributes, numVertexAttributes, true, true))
                         {
                                 destroy();
                                 return false;
@@ -125,51 +168,30 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
-                /*d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
-                LPDIRECT3DSURFACE9 renderTargets[] =
-                {
-                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getSurface(),
-                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getSurface()
-                };
-                DWORD    d3dClearFlags[]  = {D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET, D3DCLEAR_TARGET};
-                D3DCOLOR d3dClearColors[] = {D3DCOLOR_XRGB(0, 0, 0), D3DCOLOR_XRGB(128, 128, 128)};
-                const uint8_t numRenderTargets = 2;
-
-                DWORD d3dDepthWriteFlags[] = {TRUE, FALSE};
-                DWORD d3dDepthFunctions[]  = {D3DCMP_LESSEQUAL, D3DCMP_EQUAL};
-                uint8_t pixelShaderNo[]    = {PIXEL_SHADER_POSITIONS_PASS, PIXEL_SHADER_NORMALS_PASS};
-
-                for(uint8_t pass = RENDERING_PASS_POSITIONS; pass <= RENDERING_PASS_NORMALS; ++pass)
-                {
-                        d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, d3dDepthWriteFlags[pass]);
-                        d3dDevice_->SetRenderState(D3DRS_ZFUNC,        d3dDepthFunctions[pass]);
-
-                        d3dDevice_->SetRenderTarget(0, renderTargets[pass]);
-                        d3dDevice_->Clear(0, nullptr, d3dClearFlags[pass], d3dClearColors[pass], 1.0f, 0);
-
-                        textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
-                        textureHandler_->setStageState(1, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT);
-
-                        d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                            static_cast<const float*>(frameParameters_->projectionParameters), 1);
-
-                        renderActors(actorNode, pass);
-                }*/
-
                 glCullFace(GL_FRONT);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderPositionsAndNormals: glCullFace");
 
-                renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).set();
+                glDepthMask(GL_TRUE);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderPositionsAndNormals: glDepthMask");
+
+                glDepthFunc(GL_LESS);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderPositionsAndNormals: glDepthFunc");
+
+                if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_NORMALS))
+                {
+                        LOGI("****************************** FAILED: GlesActorsRenderer::renderPositionsAndNormals: setRenderTarget(RENDER_TARGET_NORMALS)");
+                        return;
+                }
 
                 glViewport(0, 0,
                            static_cast<GLsizei>(frameParameters_->screenSize.x),
                            static_cast<GLsizei>(frameParameters_->screenSize.y));
-                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+                glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderPositionsAndNormals: glClear");
 
-                renderActors(actorNode, RENDERING_PASS_SHADING);
+                renderActors(actorNode, RENDERING_PASS_NORMALS);
         }
 
         //------------------------------------------------------------------------------------------------------------
@@ -262,7 +284,7 @@ namespace selene
                 locationBoneRotations = -1;
                 locationBonePositions = -1;
 
-                locationProjectionParameters = -1;
+                locationTextureCoordinatesAdjustment = -1;
                 locationSpecularParameters = -1;
 
                 locationAmbientMap = -1;
@@ -288,7 +310,7 @@ namespace selene
                 locationBoneRotations = program.getUniformLocation("boneRotations");
                 locationBonePositions = program.getUniformLocation("bonePositions");
 
-                locationProjectionParameters = program.getUniformLocation("projectionParameters");
+                locationTextureCoordinatesAdjustment = program.getUniformLocation("textureCoordinatesAdjustment");
                 locationSpecularParameters   = program.getUniformLocation("specularParameters");
 
                 locationAmbientMap  = program.getUniformLocation("ambientMap");
@@ -316,13 +338,11 @@ namespace selene
 
                                 glUniform1i(variables.locationNormalMap, 0);
                                 CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform1i");
-
                                 textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_NORMAL), 0,
                                                             GlesTextureHandler::DUMMY_TEXTURE_NORMAL_MAP);
 
                                 glUniform1i(variables.locationSpecularMap, 1);
                                 CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform1i");
-
                                 textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR), 1,
                                                             GlesTextureHandler::DUMMY_TEXTURE_WHITE);
 
@@ -333,37 +353,31 @@ namespace selene
 
                         case RENDERING_PASS_SHADING:
                         {
-                                /*Vector4d ambientColor( material.getColor(MATERIAL_COLOR_AMBIENT),  1.0);
+                                Vector4d ambientColor( material.getColor(MATERIAL_COLOR_AMBIENT),  1.0);
                                 Vector4d diffuseColor( material.getColor(MATERIAL_COLOR_DIFFUSE),  1.0);
                                 Vector4d specularColor(material.getColor(MATERIAL_COLOR_SPECULAR), 1.0);
                                 Vector4d specularParameters(material.getSpecularLevel(), material.getGlossiness());
 
                                 glUniform1i(variables.locationAmbientMap, 0);
-                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_AMBIENT), GL_TEXTURE0,
+                                CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform1i");
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_AMBIENT), 0,
                                                             GlesTextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 glUniform1i(variables.locationDiffuseMap, 1);
-                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_DIFFUSE), GL_TEXTURE1,
+                                CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform1i");
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_DIFFUSE), 1,
                                                             GlesTextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 glUniform1i(variables.locationSpecularMap, 2);
-                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR), GL_TEXTURE2,
+                                CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform1i");
+                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR), 2,
                                                             GlesTextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 glUniform4fv(variables.locationAmbientColor, 1, static_cast<const float*>(ambientColor));
                                 glUniform4fv(variables.locationDiffuseColor, 1, static_cast<const float*>(diffuseColor));
                                 glUniform4fv(variables.locationSpecularColor, 1, static_cast<const float*>(specularColor));
                                 glUniform4fv(variables.locationSpecularParameters, 1, static_cast<const float*>(specularParameters));
-                                CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform4fv");*/
-
-                                Vector4d ambientColor( material.getColor(MATERIAL_COLOR_AMBIENT), 1.0);
-                                glUniform4fv(variables.locationAmbientColor, 1, static_cast<const float*>(ambientColor));
-
-                                glUniform1i(variables.locationAmbientMap, 0);
-                                CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform1i");
-
-                                textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_AMBIENT), 0,
-                                                            GlesTextureHandler::DUMMY_TEXTURE_WHITE);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform4fv");
                                 break;
                         }
                 }
@@ -401,7 +415,6 @@ namespace selene
 
                 static const uint8_t vertexBufferObjectIndices[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
                 {
-                        {Mesh::VERTEX_STREAM_POSITIONS, 0, 0, 0},
                         {
                                 Mesh::VERTEX_STREAM_POSITIONS,
                                 Mesh::VERTEX_STREAM_TBN_BASES,
@@ -415,7 +428,6 @@ namespace selene
                 };
                 static const uint8_t vertexAttributeLocations[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
                 {
-                        {LOCATION_ATTRIBUTE_POSITION, 0, 0, 0},
                         {
                                 LOCATION_ATTRIBUTE_POSITION,
                                 LOCATION_ATTRIBUTE_NORMAL,
@@ -429,18 +441,13 @@ namespace selene
                 };
                 static const uint8_t vertexAttributeSizes[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
                 {
-                        {3, 0, 0, 0},
                         {3, 3, 4, 2},
                         {3, 2, 0, 0}
                 };
-                static const uint8_t numVertexAttributes[NUM_OF_RENDERING_PASSES] = {1, 4, 2};
+                static const uint8_t numVertexAttributes[NUM_OF_RENDERING_PASSES] = {4, 2};
 
                 switch(pass)
                 {
-                        case RENDERING_PASS_POSITIONS:
-                                programs = &programs_[GLSL_PROGRAM_POSITIONS_PASS];
-                                break;
-
                         case RENDERING_PASS_NORMALS:
                                 programs = &programs_[GLSL_PROGRAM_NORMALS_PASS];
                                 break;
@@ -459,6 +466,13 @@ namespace selene
                         auto& materialNode = actorNode.getMaterialNode(meshUnit);
                         const auto& variables = variables_[Renderer::Data::NUM_OF_MESH_UNITS * pass + meshUnit];
                         programs[meshUnit].set();
+
+                        if(pass == RENDERING_PASS_SHADING)
+                        {
+                                glUniform4fv(variables.locationTextureCoordinatesAdjustment, 1,
+                                             static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment));
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glUniform4fv");
+                        }
 
                         // walk through all material units
                         for(uint8_t materialUnit = 0; materialUnit < Renderer::Data::NUM_OF_MATERIAL_UNITS; ++materialUnit)
@@ -564,7 +578,6 @@ namespace selene
                         glDisableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_INDICES);
                         glDisableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_WEIGHTS);
                         CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glDisableVertexAttribArray");
-
                 }
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -585,24 +598,18 @@ namespace selene
                         glUniformMatrix4fv(variables.locationWorldViewProjectionMatrix, 1, GL_FALSE,
                                            static_cast<const float*>(transform.getWorldViewProjectionMatrix()));
 
-                        switch(pass)
+                        if(pass == RENDERING_PASS_NORMALS)
                         {
-                                case RENDERING_PASS_POSITIONS:
-                                        glUniformMatrix4fv(variables.locationWorldViewMatrix, 1, GL_FALSE,
-                                                           static_cast<const float*>(transform.getWorldViewMatrix()));
-                                        break;
-
-                                case RENDERING_PASS_NORMALS:
-                                        glUniformMatrix4fv(variables.locationNormalsMatrix, 1, GL_FALSE,
-                                                           static_cast<const float*>(transform.getNormalsMatrix()));
-                                        break;
+                                glUniformMatrix4fv(variables.locationNormalsMatrix, 1, GL_FALSE,
+                                                   static_cast<const float*>(transform.getNormalsMatrix()));
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderMeshSubsetInstances: glUniformMatrix4fv");
                         }
-                        CHECK_GLES_ERROR("GlesActorsRenderer::renderMeshSubsetInstances: glUniformMatrix4fv");
 
                         if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
                                 setSkeletonPose((*it).getSkeletonInstance()->getFinalBoneTransforms(), variables);
 
-                        glDrawElements(GL_TRIANGLES, 3 * meshSubset.numFaces, GL_UNSIGNED_SHORT, reinterpret_cast<uint8_t*>(3 * meshSubset.faceIndex * sizeof(uint16_t)));
+                        glDrawElements(GL_TRIANGLES, 3 * meshSubset.numFaces, GL_UNSIGNED_SHORT,
+                                       reinterpret_cast<uint8_t*>(3 * meshSubset.faceIndex * sizeof(uint16_t)));
                         CHECK_GLES_ERROR("GlesActorsRenderer::renderMeshSubsetInstances: glDrawElements");
                 }
         }

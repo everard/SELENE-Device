@@ -58,11 +58,15 @@ namespace selene
                 frameParameters_.normalsMatrix.transpose();
 
                 // get vectors
-                const Matrix& projectionInvMatrix = camera.getProjectionInvMatrix();
+                const auto& projectionInvMatrix = camera.getProjectionInvMatrix();
                 frameParameters_.projectionParameters = camera.getProjectionParameters();
                 frameParameters_.unprojectionVector.define(projectionInvMatrix.a[0][0],
                                                            projectionInvMatrix.a[1][1],
-                                                           1.0, 0.0);
+                                                           1.0f, 0.0);
+
+                frameParameters_.conversionParameters.define(frameParameters_.projectionParameters.w * frameParameters_.projectionParameters.z,
+                                                             frameParameters_.projectionParameters.z - frameParameters_.projectionParameters.w,
+                                                             frameParameters_.projectionParameters.w, 1.0f);
 
                 frameParameters_.bloomParameters.define(0.08f, 0.18f, 0.64f, 1.5f);
                 frameParameters_.ssaoParameters.define(2.5f, -0.2f, 1.0f, 1.0f);
@@ -70,34 +74,37 @@ namespace selene
 
                 // set viewport
                 glViewport(0, 0, parameters_.getWidth(), parameters_.getHeight());
-
-                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glEnable(GL_DEPTH_TEST);
 
                 actorsRenderer_.renderPositionsAndNormals(renderingData.getActorNode());
-
-                // output result to screen
-                renderTargetContainer_.setBackBuffer();
-                resultRenderingProgram_.set();
-
-                glUniform4fv(textureCoordinatesAdjustmentLocation_, 1,
-                             static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment));
-                CHECK_GLES_ERROR("GlesRenderer::render: glUniform4fv");
-
-                glUniform1i(resultTextureLocation_, 0);
-                CHECK_GLES_ERROR("GlesRenderer::render: glUniform1i");
-
-                textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_POSITIONS), 0);
+                lightingRenderer_.renderLighting(renderingData.getLightNode());
 
                 glDisable(GL_DEPTH_TEST);
                 glDisable(GL_CULL_FACE);
                 CHECK_GLES_ERROR("GlesRenderer::render: glDisable");
 
-                fullScreenQuad_.render();
+                for(uint8_t i = 0; i < 2; ++i)
+                {
+                        // output result to screen
+                        if(i == 0)
+                                renderTargetContainer_.setRenderTarget(RENDER_TARGET_HELPER_0);
+                        else
+                                renderTargetContainer_.setBackBuffer();
+                        resultRenderingProgram_.set();
 
-                // unbind texture
-                textureHandler_.setTexture(nullptr, 0, GlesTextureHandler::DUMMY_TEXTURE_WHITE);
+                        glUniform4fv(textureCoordinatesAdjustmentLocation_, 1,
+                                     static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment));
+                        CHECK_GLES_ERROR("GlesRenderer::render: glUniform4fv");
+
+                        glUniform1i(resultTextureLocation_, 0);
+                        CHECK_GLES_ERROR("GlesRenderer::render: glUniform1i");
+
+                        textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_LIGHT_BUFFER), 0);
+
+                        fullScreenQuad_.render();
+                        // unbind texture
+                        textureHandler_.setTexture(0, 0);
+                }
 
                 // render GUI
                 Gui* gui = camera.getGui();
@@ -158,12 +165,12 @@ namespace selene
                         "}\n";
 
                 static const char* resultFragmentShader =
-                        "precision mediump float;"
-                        "varying vec2 textureCoordinates;"
-                        "uniform sampler2D resultTexture;"
-                        "void main()"
-                        "{"
-                        "        gl_FragColor = texture2D(resultTexture, textureCoordinates);"
+                        "precision mediump float;\n"
+                        "varying vec2 textureCoordinates;\n"
+                        "uniform sampler2D resultTexture;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        gl_FragColor = texture2D(resultTexture, textureCoordinates);\n"
                         "}\n";
 
                 GlesGlslProgram::VertexAttribute vertexAttributes[] =
@@ -182,7 +189,7 @@ namespace selene
                 textureCoordinatesAdjustmentLocation_ = resultRenderingProgram_.getUniformLocation("textureCoordinatesAdjustment");
                 resultTextureLocation_ = resultRenderingProgram_.getUniformLocation("resultTexture");
 
-                if(!renderTargetContainer_.initialize(frameParameters_, parameters_, capabilities_))
+                if(!renderTargetContainer_.initialize(frameParameters_, parameters_))
                 {
                         writeLogEntry("ERROR: Could not initialize render target container.");
                         return false;
@@ -191,6 +198,12 @@ namespace selene
                 if(!actorsRenderer_.initialize(renderTargetContainer_, frameParameters_, textureHandler_, capabilities_))
                 {
                         writeLogEntry("ERROR: Could not initialize actors renderer.");
+                        return false;
+                }
+
+                if(!lightingRenderer_.initialize(renderTargetContainer_, frameParameters_, actorsRenderer_, textureHandler_))
+                {
+                        writeLogEntry("ERROR: Could not initialize lighting renderer.");
                         return false;
                 }
 
@@ -223,6 +236,7 @@ namespace selene
                 resultTextureLocation_ = -1;
 
                 renderTargetContainer_.destroy();
+                lightingRenderer_.destroy();
                 actorsRenderer_.destroy();
                 fullScreenQuad_.destroy();
                 textureHandler_.destroy();

@@ -1,36 +1,35 @@
 // Copyright (c) 2012 Nezametdinov E. Ildus
 // Licensed under the MIT License (see LICENSE.txt for details)
 
-/*#ifndef D3D9_LIGHTING_RENDERER_H
-#define D3D9_LIGHTING_RENDERER_H
+#ifndef GLES_LIGHTING_RENDERER_H
+#define GLES_LIGHTING_RENDERER_H
 
 #include "../../../../../Engine/Rendering/Renderer.h"
 #include "../../../../../Engine/Scene/Nodes/Light.h"
-#include "D3D9Shader.h"
+#include "GLESGLSLProgram.h"
 
 namespace selene
-{*/
+{
 
         /**
-         * \addtogroup Windows
+         * \addtogroup Android
          * @{
          */
 
         // Forward declaration of classes
-        /*class D3d9RenderTargetContainer;
-        class D3d9FrameParameters;
-        class D3d9ActorsRenderer;
-        class D3d9TextureHandler;
-        class D3d9Capabilities;*/
+        class GlesRenderTargetContainer;
+        class GlesFrameParameters;
+        class GlesActorsRenderer;
+        class GlesTextureHandler;
 
         /**
          * Represents lighting renderer. Renders lights and shadows.
          */
-        /*class D3d9LightingRenderer
+        class GlesLightingRenderer
         {
-        public:*/
+        public:
                 /// Light types and batch size
-                /*enum
+                enum
                 {
                         LIGHT_DIRECTIONAL = 0,
                         LIGHT_POINT,
@@ -40,8 +39,8 @@ namespace selene
                         BATCH_SIZE = 30
                 };
 
-                D3d9LightingRenderer();
-                ~D3d9LightingRenderer();*/
+                GlesLightingRenderer();
+                ~GlesLightingRenderer();
 
                 /**
                  * \brief Initializes lighting renderer.
@@ -49,92 +48,82 @@ namespace selene
                  * \param[in] frameParameters frame parameters
                  * \param[in] actorsRenderer actors renderer
                  * \param[in] textureHandler texture handler
-                 * \param[in] capabilities D3D capabilities
                  * \return true if lighting renderer has been successfully initialized
                  */
-                /*bool initialize(D3d9RenderTargetContainer& renderTargetContainer,
-                                D3d9FrameParameters& frameParameters,
-                                D3d9ActorsRenderer& actorsRenderer,
-                                D3d9TextureHandler& textureHandler,
-                                D3d9Capabilities& capabilities);*/
+                bool initialize(GlesRenderTargetContainer& renderTargetContainer,
+                                GlesFrameParameters& frameParameters,
+                                GlesActorsRenderer& actorsRenderer,
+                                GlesTextureHandler& textureHandler);
 
                 /**
                  * \brief Destroys lighting renderer.
                  */
-                //void destroy();
+                void destroy();
 
                 /**
                  * \brief Renders lighting.
                  * \param[in] lightNode light node
                  */
-                //void renderLighting(Renderer::Data::LightNode& lightNode);
+                void renderLighting(Renderer::Data::LightNode& lightNode);
 
-        //private:
+        private:
                 /// Helper constants
-                /*enum
+                enum
                 {
-                        VERTEX_SHADER_DIRECTIONAL_LIGHT_ACCUMULATION = 0,
-                        VERTEX_SHADER_POINT_LIGHT_ACCUMULATION,
-                        VERTEX_SHADER_SPOT_LIGHT_ACCUMULATION,
-                        VERTEX_SHADER_SPOT_LIGHT_SHADOW_PASS,
-                        NUM_OF_VERTEX_SHADERS,
+                        GLSL_PROGRAM_DIRECTIONAL_LIGHT_ACCUMULATION = 0,
+                        GLSL_PROGRAM_POINT_LIGHT_ACCUMULATION,
+                        GLSL_PROGRAM_SPOT_LIGHT_ACCUMULATION,
+                        NUM_OF_GLSL_PROGRAMS,
 
-                        PIXEL_SHADER_DIRECTIONAL_LIGHT_ACCUMULATION = 0,
-                        PIXEL_SHADER_POINT_LIGHT_ACCUMULATION,
-                        PIXEL_SHADER_SPOT_LIGHT_ACCUMULATION,
-                        PIXEL_SHADER_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS,
-                        PIXEL_SHADER_SPOT_LIGHT_SHADOW_PASS,
-                        NUM_OF_PIXEL_SHADERS,
-
-                        LOCATION_DIRECTIONAL_LIGHT_DIRECTION = 12,
-                        LOCATION_DIRECTIONAL_LIGHT_COLOR = LOCATION_DIRECTIONAL_LIGHT_DIRECTION + BATCH_SIZE,
-
-                        LOCATION_POINT_LIGHT_POSITION = 12,
-                        LOCATION_POINT_LIGHT_COLOR = LOCATION_POINT_LIGHT_POSITION + BATCH_SIZE,
-
-                        LOCATION_SPOT_LIGHT_POSITION  = 12,
-                        LOCATION_SPOT_LIGHT_DIRECTION = LOCATION_SPOT_LIGHT_POSITION + BATCH_SIZE,
-                        LOCATION_SPOT_LIGHT_COLOR = LOCATION_SPOT_LIGHT_DIRECTION + BATCH_SIZE,
-
-                        LOCATION_VIEW_PROJECTION_MATRIX = 0,
-                        LOCATION_NORMALS_MATRIX = 4,
-                        LOCATION_VIEW_MATRIX = 8,
-
-                        LOCATION_LIGHT_POSITION = 12,
-                        LOCATION_LIGHT_DIRECTION = 13,
-
-                        LOCATION_TEXTURE_COORDINATES_ADJUSTMENT = 0,
-                        LOCATION_UNPROJECTION_VECTOR = 1,
-                        LOCATION_PROJECTION_PARAMETERS = 2,
-
-                        LOCATION_LIGHT_PROJECTION_PARAMETERS = 3,
-                        LOCATION_LIGHT_VIEW_MATRIX = 4,
-                        LOCATION_LIGHT_TEXTURE_MATRIX = 8,
-                        LOCATION_SHADOW_MAP_BIAS = 12,
-                        LOCATION_SHADOW_MAP_KERNEL_SIZE = 13,
-
-                        LOCATION_POSITIONS_MAP = 0,
-                        LOCATION_NORMALS_MAP = 1,
-                        LOCATION_SHADOW_MAP = 1
+                        LOCATION_ATTRIBUTE_POSITION = 0
                 };
 
-                D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];
-                D3d9PixelShader pixelShaders_[NUM_OF_PIXEL_SHADERS];
+                /**
+                 * Represents container of the GLSL program's locations of variables.
+                 */
+                class Variables
+                {
+                public:
+                        GLint locationViewProjectionMatrix;
+                        GLint locationNormalsMatrix;
+                        GLint locationViewMatrix;
 
-                LPDIRECT3DVERTEXBUFFER9 d3dVertexBuffers_[NUM_OF_LIGHT_TYPES];
-                LPDIRECT3DVERTEXDECLARATION9 d3dVertexDeclaration_;
-                LPDIRECT3DDEVICE9 d3dDevice_;
+                        GLint locationLightColors;
+                        GLint locationLightPositions;
+                        GLint locationLightDirections;
 
-                D3d9RenderTargetContainer* renderTargetContainer_;
-                D3d9FrameParameters* frameParameters_;
-                D3d9ActorsRenderer* actorsRenderer_;
-                D3d9TextureHandler* textureHandler_;
-                D3d9Capabilities* capabilities_;*/
+                        GLint locationTextureCoordinatesAdjustment;
+                        GLint locationConversionParameters;
+                        GLint locationUnprojectionVector;
+
+                        GLint locationDepthBuffer;
+                        GLint locationNormalsBuffer;
+
+                        Variables();
+                        ~Variables();
+
+                        /**
+                         * \brief Obtains locations of variables.
+                         * \param[in] program GLSL program, which is source of the locations
+                         */
+                        void obtainLocations(GlesGlslProgram& program);
+
+                };
+
+                GlesGlslProgram programs_[NUM_OF_GLSL_PROGRAMS];
+                Variables variables_[NUM_OF_GLSL_PROGRAMS];
+
+                GLuint vertexBuffers_[NUM_OF_LIGHT_TYPES];
+
+                GlesRenderTargetContainer* renderTargetContainer_;
+                GlesFrameParameters* frameParameters_;
+                GlesActorsRenderer* actorsRenderer_;
+                GlesTextureHandler* textureHandler_;
 
                 /**
                  * \brief Prepares light accumulation.
                  */
-                //void prepareLightAccumulation();
+                void prepareLightAccumulation(const GlesLightingRenderer::Variables& variables);
 
                 /**
                  * \brief Renders light geometry.
@@ -144,10 +133,11 @@ namespace selene
                  * \param[in] directions light directions
                  * \param[in] colors light colors
                  */
-                /*void renderLightGeometry(uint8_t type, uint32_t numLights,
+                void renderLightGeometry(const GlesLightingRenderer::Variables& variables,
+                                         uint8_t type, uint32_t numLights,
+                                         Vector4d* colors,
                                          Vector4d* positions,
-                                         Vector4d* directions,
-                                         Vector4d* colors);*/
+                                         Vector4d* directions);
 
                 /**
                  * \brief Renders shadow map.
@@ -156,12 +146,12 @@ namespace selene
                  */
                 //void renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
 
-        //};
+        };
 
         /**
          * @}
          */
 
-/*}
+}
 
-#endif*/
+#endif

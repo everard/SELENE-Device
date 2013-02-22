@@ -9,6 +9,7 @@
 #include "../../../../Engine/Core/Status/Status.h"
 
 #include "Helpers/GLESRenderTargetContainer.h"
+#include "Helpers/GLESLightingRenderer.h"
 #include "Helpers/GLESFrameParameters.h"
 #include "Helpers/GLESActorsRenderer.h"
 #include "Helpers/GLESFullScreenQuad.h"
@@ -43,6 +44,7 @@ namespace selene
                 GLint resultTextureLocation_;
 
                 GlesRenderTargetContainer renderTargetContainer_;
+                GlesLightingRenderer lightingRenderer_;
                 GlesActorsRenderer actorsRenderer_;
                 GlesFullScreenQuad fullScreenQuad_;
                 GlesTextureHandler textureHandler_;

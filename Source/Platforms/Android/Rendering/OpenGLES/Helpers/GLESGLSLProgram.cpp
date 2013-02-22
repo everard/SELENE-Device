@@ -41,49 +41,66 @@ namespace selene
                                          bool useFragmentShaderLibrary)
         {
                 static const char* vertexShaderLibrary =
-                        "vec4 QuatMul(vec4 q1, vec4 q2)\n"
-                        "{"
-                        "        vec3 im = q1.w * q2.xyz + q1.xyz * q2.w + cross(q1.xyz, q2.xyz);\n"
-                        "        vec4 dt = q1 * q2;\n"
+                        "vec4 multiplyQuaternions(mediump vec4 quaternion0, vec4 quaternion1)\n"
+                        "{\n"
+                        "        vec3 im = quaternion0.w * quaternion1.xyz + quaternion0.xyz * quaternion1.w + cross(quaternion0.xyz, quaternion1.xyz);\n"
+                        "        vec4 dt = quaternion0 * quaternion1;\n"
                         "        float re = dot(dt, vec4(-1.0, -1.0, -1.0, 1.0));\n"
                         "        return vec4(im, re);\n"
                         "}\n"
-                        "vec4 QuatRotate(vec3 p, vec4 q)\n"
+                        "vec4 rotateVector(vec3 vector, vec4 quaternion)\n"
                         "{\n"
-                        "        vec4 temp = QuatMul(q, vec4(p, 0.0));\n"
-                        "        return QuatMul(temp, vec4(-q.x, -q.y, -q.z, q.w));\n"
+                        "        vec4 temp = multiplyQuaternions(quaternion, vec4(vector, 0.0));\n"
+                        "        return multiplyQuaternions(temp, vec4(-quaternion.x, -quaternion.y, -quaternion.z, quaternion.w));\n"
                         "}\n"
-                        "vec3 Transform(vec4 offset, vec4 rot, vec3 pos)\n"
+                        "vec3 transformPosition(vec4 offset, vec4 rotation, vec3 position)\n"
                         "{\n"
-                        "        return offset.xyz + QuatRotate(pos, rot).xyz;\n"
+                        "        return offset.xyz + rotateVector(position, rotation).xyz;\n"
                         "}\n";
 
                 static const char* fragmentShaderLibrary =
-                        "vec4 EncodePos(vec4 pos, vec4 proj)\n"
+                        "precision highp float;\n"
+                        "precision highp sampler2D;\n"
+                        /*"vec4 encodePosition(vec4 position, vec4 projectionParameters)\n"
                         "{\n"
-                        "        float4 enc = vec4(16777216.0, 65536.0, 256.0, 1.0) * (pos.z / proj.w);\n"
-                        "        enc  = frac(enc);\n"
+                        "        vec4 enc = vec4(16777216.0, 65536.0, 256.0, 1.0) * (position.z / projectionParameters.w);\n"
+                        "        enc  = fract(enc);\n"
                         "        enc -= enc.xxyz * vec4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);\n"
                         "        return enc;\n"
-                        "}"
-                        "float DecodeZEye(vec4 ZEnc, vec4 proj)\n"
-                        "{\n"
-                        "        return dot(ZEnc, float4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0)) * proj.w;\n"
                         "}\n"
-                        "vec3 DecodePos(vec4 ZEnc, vec2 XY, vec4 proj, vec4 unproj)\n"
+                        "float decodeEyeZ(vec4 encodedEyeZ, vec4 projectionParameters)\n"
                         "{\n"
-                        "        float zv = DecodeZEye(ZEnc, proj);\n"
-                        "        float4 p = float4(XY, 1.0, 0.0);\n"
-                        "        float4 orig = p * unproj * zv.xxxx;\n"
+                        "        return dot(encodedEyeZ, vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0)) * projectionParameters.w;\n"
+                        "}\n"*/
+                        "float convertDepthToEyeZ(float depth, vec4 conversionParameters)\n"
+                        "{\n"
+                        "        return conversionParameters.x / (depth * conversionParameters.y + conversionParameters.z);\n"
+                        "}\n"
+                        /*"vec3 decodePosition(vec4 encodedEyeZ, vec2 position, vec4 projectionParameters, vec4 unprojectionVector)\n"
+                        "{\n"
+                        "        float zv = decodeEyeZ(encodedEyeZ, projectionParameters);\n"
+                        "        vec4 p = vec4(position, 1.0, 0.0);\n"
+                        "        vec4 orig = p * unprojectionVector * vec4(zv, zv, zv, zv);\n"
                         "        return orig.xyz;\n"
-                        "}\n"
-                        "vec3 EncodeNormal(vec3 n)\n"
+                        "}\n"*/
+                        "vec3 decodePosition(vec2 position, float depth, vec4 conversionParameters, vec4 unprojectionVector)\n"
+                        //"vec3 decodePosition(vec4 position, mat4 projectionInvMatrix)\n"
                         "{\n"
-                        "        return 0.5 * n + vec3(0.5, 0.5, 0.5);\n"
+                        "        float zv = convertDepthToEyeZ(depth, conversionParameters);\n"
+                        "        vec4 p = vec4(position, 1.0, 0.0);\n"
+                        "        vec4 orig = p * unprojectionVector * vec4(zv, zv, zv, zv);\n"
+                        "        return orig.xyz;\n"
+                        /*"        vec4 result = projectionInvMatrix * position;\n"
+                        "        result.xyz /= result.w;\n"
+                        "        return result.xyz;\n"*/
                         "}\n"
-                        "vec3 DecodeNormal(vec3 enc)\n"
+                        "vec3 encodeNormal(vec3 normal)\n"
                         "{\n"
-                        "        return 2.0 * enc - vec3(1.0, 1.0, 1.0);\n"
+                        "        return 0.5 * normal + vec3(0.5, 0.5, 0.5);\n"
+                        "}\n"
+                        "vec3 decodeNormal(vec3 encodedNormal)\n"
+                        "{\n"
+                        "        return 2.0 * encodedNormal - vec3(1.0, 1.0, 1.0);\n"
                         "}\n";
 
                 // compile vertex shader
@@ -108,7 +125,7 @@ namespace selene
                 {
                         std::string sourceCode = fragmentShaderLibrary;
                         sourceCode += fragmentShaderSourceCode;
-                        fragmentShader = vertexShader = loadShader(GL_FRAGMENT_SHADER, sourceCode.c_str());
+                        fragmentShader = loadShader(GL_FRAGMENT_SHADER, sourceCode.c_str());
                 }
                 else
                 {
@@ -156,7 +173,6 @@ namespace selene
                                 {
                                         glGetProgramInfoLog(program_, infoStringLength, nullptr, buffer);
                                         CHECK_GLES_ERROR("GlesGlslProgram::initialize: glGetProgramInfoLog");
-
                                         LOGI("****************************** Failed linking GLSL program: %s", buffer);
                                         SAFE_DELETE_ARRAY(buffer);
                                 }
@@ -242,7 +258,6 @@ namespace selene
                                 {
                                         glGetShaderInfoLog(shader, infoStringLength, nullptr, buffer);
                                         CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glGetShaderInfoLog");
-
                                         LOGI("****************************** Failed loading shader: %s", buffer);
                                         SAFE_DELETE_ARRAY(buffer);
                                 }

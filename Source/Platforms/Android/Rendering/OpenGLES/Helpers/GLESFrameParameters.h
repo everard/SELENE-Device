@@ -31,6 +31,7 @@ namespace selene
 
                 Vector4d textureCoordinatesAdjustment;
                 Vector4d edgeDetectionParameters;
+                Vector4d conversionParameters;
                 Vector4d projectionParameters;
                 Vector4d shadowMapKernelSize;
                 Vector4d unprojectionVector;
