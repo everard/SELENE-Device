@@ -190,6 +190,10 @@ namespace selene
                                                        Quaternion(),
                                                        Vector3d(0.08f, 0.08f, 0.08f)));
 
+                scene_.addNode(new(std::nothrow) DirectionalLight("directional light",
+                                                                  Vector3d(-1.0f, 0.0f, 0.0f),
+                                                                  Vector3d( 1.0f, 1.0f, 0.0f)));
+
                 scene_.addNode(new(std::nothrow) SpotLight("spot light",
                                                            Vector3d(0.0f, 10.f, 0.0f),
                                                            Vector3d(0.0f, -20.0f, 0.0f),
@@ -197,8 +201,8 @@ namespace selene
                                                            1.0f, 30.0f));
 
                 scene_.addNode(new(std::nothrow) PointLight("point light",
-                                                            Vector3d(0.0f, 5.0f, -4.0f),
-                                                            Vector3d(1.0f, 1.0f, 1.0f),
+                                                            Vector3d(-5.0f, 5.0f, -4.0f),
+                                                            Vector3d(0.3f, 0.3f, 0.8f),
                                                             1.0f, 30.0f));
 
                 scene_.addNode(new(std::nothrow) Camera("Camera",

@@ -215,7 +215,55 @@ namespace selene
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 CHECK_GLES_ERROR("GlesFullScreenQuad::initialize: glBindBuffer");
 
-                // load GLSL programs
+                // directional light shaders
+                static const char vertexShaderDirectionalLightAccumulation[] =
+                        "invariant gl_Position;\n"
+                        "attribute vec4 vertexPosition;\n"
+                        "uniform mat4 normalsMatrix;\n"
+                        "uniform vec4 lightColors[30];\n"
+                        "uniform vec4 lightDirections[30];\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vLightColor;\n"
+                        "varying vec4 vLightDirection;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        int lightIndex = int(vertexPosition.w);\n"
+                        "        vLightColor = lightColors[lightIndex];\n"
+                        "        vec4 lightDirection = lightDirections[lightIndex];\n"
+                        "        gl_Position = vTextureCoordinates = vec4(vertexPosition.xyz, 1.0);\n"
+                        "        vLightDirection = vec4(mat3(normalsMatrix) * lightDirection.xyz, 1.0);\n"
+                        "}\n";
+
+                static const char fragmentShaderDirectionalLightAccumulation[] =
+                        "uniform sampler2D depthBuffer;\n"
+                        "uniform sampler2D normalsBuffer;\n"
+                        "uniform vec4 textureCoordinatesAdjustment;\n"
+                        "uniform vec4 conversionParameters;\n"
+                        "uniform vec4 unprojectionVector;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vLightColor;\n"
+                        "varying vec4 vLightDirection;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec3 postProjectionCoordinates = vTextureCoordinates.xyz / vTextureCoordinates.w;\n"
+                        "        vec2 textureCoordinates = 0.5 * (postProjectionCoordinates.xy + vec2(1.0, 1.0));\n"
+                        "        textureCoordinates *= textureCoordinatesAdjustment.xy;\n"
+                        "        float depth = 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0;"
+                        "        if(depth >= postProjectionCoordinates.z)\n"
+                        "                discard;\n"
+                        "        vec4 encodedNormal = texture2D(normalsBuffer, textureCoordinates);\n"
+                        "        encodedNormal.w *= 200.0;\n"
+                        "        vec3 normal = normalize(decodeNormal(encodedNormal.xyz));\n"
+                        "        vec3 position = decodePosition(postProjectionCoordinates.xy, depth,\n"
+                        "                                       conversionParameters, unprojectionVector);\n"
+                        "        vec3 toLightNormalized = normalize(-vLightDirection.xyz);\n"
+                        "        float nDotL = dot(normal, toLightNormalized);\n"
+                        "        vec3 v = normalize(-position);\n"
+                        "        vec3 h = normalize(toLightNormalized + v);\n"
+                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
+                        "}\n";
+
+                // point light shaders
                 static const char vertexShaderPointLightAccumulation[] =
                         "invariant gl_Position;\n"
                         "attribute vec4 vertexPosition;\n"
@@ -249,23 +297,27 @@ namespace selene
                         "varying vec4 vLightPosition;\n"
                         "void main()\n"
                         "{\n"
-                        "        vec2 xAndY = vTextureCoordinates.xy / vTextureCoordinates.w;\n"
-                        "        vec2 textureCoordinates = 0.5 * (xAndY + vec2(1.0, 1.0));\n"
+                        "        vec3 postProjectionCoordinates = vTextureCoordinates.xyz / vTextureCoordinates.w;\n"
+                        "        vec2 textureCoordinates = 0.5 * (postProjectionCoordinates.xy + vec2(1.0, 1.0));\n"
                         "        textureCoordinates *= textureCoordinatesAdjustment.xy;\n"
+                        "        float depth = 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0;"
+                        "        if(depth > postProjectionCoordinates.z)\n"
+                        "                discard;\n"
                         "        vec4 encodedNormal = texture2D(normalsBuffer, textureCoordinates);\n"
                         "        encodedNormal.w *= 200.0;\n"
                         "        vec3 normal = normalize(decodeNormal(encodedNormal.xyz));\n"
-                        "        vec3 position = decodePosition(xAndY, 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0,\n"
+                        "        vec3 position = decodePosition(postProjectionCoordinates.xy, depth,\n"
                         "                                       conversionParameters, unprojectionVector);\n"
                         "        vec3 toLight = vLightPosition.xyz - position;\n"
                         "        vec3 toLightNormalized = normalize(toLight);\n"
                         "        float attenuation = clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0);\n"
+                        "        float nDotL = dot(normal, toLightNormalized) * attenuation;\n"
                         "        vec3 v = normalize(-position);\n"
                         "        vec3 h = normalize(toLightNormalized + v);\n"
-                        "        float nDotL = dot(normal, toLightNormalized) * attenuation;\n"
                         "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
+                // spot light shaders
                 static const char vertexShaderSpotLightAccumulation[] =
                         "attribute vec4 vertexPosition;\n"
                         "uniform mat4 viewProjectionMatrix;\n"
@@ -316,13 +368,16 @@ namespace selene
                         "varying vec4 vLightDirection;\n"
                         "void main()\n"
                         "{\n"
-                        "        vec2 xAndY = vTextureCoordinates.xy / vTextureCoordinates.w;\n"
-                        "        vec2 textureCoordinates = 0.5 * (xAndY + vec2(1.0, 1.0));\n"
+                        "        vec3 postProjectionCoordinates = vTextureCoordinates.xyz / vTextureCoordinates.w;\n"
+                        "        vec2 textureCoordinates = 0.5 * (postProjectionCoordinates.xy + vec2(1.0, 1.0));\n"
                         "        textureCoordinates *= textureCoordinatesAdjustment.xy;\n"
+                        "        float depth = 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0;"
+                        "        if(depth > postProjectionCoordinates.z)\n"
+                        "                discard;\n"
                         "        vec4 encodedNormal = texture2D(normalsBuffer, textureCoordinates);\n"
                         "        encodedNormal.w *= 200.0;\n"
                         "        vec3 normal = normalize(decodeNormal(encodedNormal.xyz));\n"
-                        "        vec3 position = decodePosition(xAndY, 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0,\n"
+                        "        vec3 position = decodePosition(postProjectionCoordinates.xy, depth,\n"
                         "                                       conversionParameters, unprojectionVector);\n"
                         "        vec3 toLight = vLightPosition.xyz - position;\n"
                         "        vec3 toLightNormalized = normalize(toLight);\n"
@@ -330,13 +385,13 @@ namespace selene
                         "        float factor = 1.0 - dot(toLightNormalized, lightDirectionNormalized);"
                         "        float attenuation = clamp(1.0 - factor * factor * vLightDirection.w, 0.0, 1.0);\n"
                         "        attenuation = min(attenuation, clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0));\n"
-                        "        clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0);\n"
                         "        vec3 v = normalize(-position);\n"
                         "        vec3 h = normalize(toLightNormalized + v);\n"
                         "        float nDotL = dot(normal, toLightNormalized) * attenuation;\n"
                         "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
+                // load GLSL programs
                 GlesGlslProgram::VertexAttribute vertexAttributes[] =
                 {
                         GlesGlslProgram::VertexAttribute("vertexPosition", LOCATION_ATTRIBUTE_POSITION)
@@ -345,14 +400,14 @@ namespace selene
 
                 static const char* vertexShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
-                        vertexShaderPointLightAccumulation,
+                        vertexShaderDirectionalLightAccumulation,
                         vertexShaderPointLightAccumulation,
                         vertexShaderSpotLightAccumulation
                 };
 
                 static const char* fragmentShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
-                        fragmentShaderPointLightAccumulation,
+                        fragmentShaderDirectionalLightAccumulation,
                         fragmentShaderPointLightAccumulation,
                         fragmentShaderSpotLightAccumulation
                 };
@@ -416,33 +471,33 @@ namespace selene
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnable");
 
                 glBlendFunc(GL_ONE, GL_ONE);
-                CHECK_GLES_ERROR("GlesGuiRenderer::renderGui: glBlendFunc");
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBlendFunc");
 
                 // render without shadows
-                uint8_t programNo = GLSL_PROGRAM_POINT_LIGHT_ACCUMULATION;
-                uint8_t lightUnit = Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT;
+                uint8_t programNo = GLSL_PROGRAM_DIRECTIONAL_LIGHT_ACCUMULATION;
+                uint8_t lightUnit = Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL;
 
                 static Vector4d colors[BATCH_SIZE];
                 static Vector4d positions[BATCH_SIZE];
                 static Vector4d directions[BATCH_SIZE];
 
-                for(uint8_t lightType = LIGHT_POINT; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
+                for(uint8_t lightType = LIGHT_DIRECTIONAL; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
                 {
                         const auto& variables = variables_[programNo];
                         programs_[programNo].set();
                         prepareLightAccumulation(variables);
 
                         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[lightType]);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting glBindBuffer");
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
 
                         glEnableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting glEnableVertexAttribArray");
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnableVertexAttribArray");
 
                         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, lightVolumeGeometryVertexStride, nullptr);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting glVertexAttribPointer");
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glVertexAttribPointer");
 
                         glBindBuffer(GL_ARRAY_BUFFER, 0);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting glBindBuffer");
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
 
                         uint32_t numLights = 0;
 
@@ -497,12 +552,15 @@ namespace selene
                                 renderLightGeometry(variables, lightType, numLights, colors, positions, directions);
                 }
 
-                // unbind textures
+                // unbind everything
+                glDisableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisableVertexAttribArray");
+
                 textureHandler_->setTexture(0, 0);
                 textureHandler_->setTexture(0, 1);
 
                 glDisable(GL_BLEND);
-                CHECK_GLES_ERROR("GlesGuiRenderer::renderGui: glBlendFunc");
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBlendFunc");
 
                 // render with shadows
                 /*for(bool result = lightNode.readFirstElement(Renderer::Data::UNIT_LIGHT_SPOT); result;
@@ -583,21 +641,6 @@ namespace selene
 
                 locationDepthBuffer   = program.getUniformLocation("depthBuffer");
                 locationNormalsBuffer = program.getUniformLocation("normalsBuffer");
-
-                /*LOGI("locationViewProjectionMatrix = %d", locationViewProjectionMatrix);
-                LOGI("locationNormalsMatrix = %d", locationNormalsMatrix);
-                LOGI("locationViewMatrix = %d", locationViewMatrix);
-
-                LOGI("locationLightColors = %d", locationLightColors);
-                LOGI("locationLightPositions = %d", locationLightPositions);
-                LOGI("locationLightDirections = %d", locationLightDirections);
-
-                LOGI("locationTextureCoordinatesAdjustment = %d", locationTextureCoordinatesAdjustment);
-                LOGI("locationConversionParameters = %d", locationConversionParameters);
-                LOGI("locationUnprojectionVector = %d", locationUnprojectionVector);
-
-                LOGI("locationDepthBuffer = %d", locationDepthBuffer);
-                LOGI("locationNormalsBuffer = %d", locationNormalsBuffer);*/
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -628,6 +671,7 @@ namespace selene
 
                 glUniform4fv(variables.locationUnprojectionVector, 1,
                              static_cast<const float*>(frameParameters_->unprojectionVector));
+                CHECK_GLES_ERROR("GlesLightingRenderer::prepareLightAccumulation: glUniform4fv");
         }
 
         //----------------------------------------------------------------------------------------------------------

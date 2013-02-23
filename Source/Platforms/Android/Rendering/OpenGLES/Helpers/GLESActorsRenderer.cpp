@@ -114,16 +114,77 @@ namespace selene
                         "        gl_FragColor = vec4(encodeNormal(normalizedNormal), specularParameters.x * texture2D(specularMap, vTextureCoordinates.xy).a);\n"
                         "}\n";
 
+                // shading pass shaders
+                static const char vertexShaderShadingPass[] =
+                        "invariant gl_Position;\n"
+                        "attribute vec4 vertexPosition;\n"
+                        "attribute vec4 vertexTextureCoordinates;\n"
+                        "uniform mat4 worldViewProjectionMatrix;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vPosition;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        gl_Position = vPosition = worldViewProjectionMatrix * vertexPosition;\n"
+                        "        vTextureCoordinates = vertexTextureCoordinates;\n"
+                        "}\n";
+
+                static const char vertexShaderSkinShadingPass[] =
+                        "invariant gl_Position;\n"
+                        "attribute vec4 vertexPosition;\n"
+                        "attribute vec4 vertexTextureCoordinates;\n"
+                        "attribute vec4 vertexBoneWeights;\n"
+                        "attribute vec4 vertexBoneIndices;\n"
+                        "uniform mat4 worldViewProjectionMatrix;\n"
+                        "uniform vec4 bonePositions[50];\n"
+                        "uniform vec4 boneRotations[50];\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vPosition;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec3 position = vec3(0.0, 0.0, 0.0);\n"
+                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y), int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
+                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x], boneRotations[indices.x], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y], boneRotations[indices.y], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z], boneRotations[indices.z], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w], boneRotations[indices.w], vertexPosition.xyz);\n"
+                        "        gl_Position = vPosition = worldViewProjectionMatrix * vec4(position, 1.0);\n"
+                        "        vTextureCoordinates = vertexTextureCoordinates;\n"
+                        "}\n";
+
+                static const char fragmentShaderShadingPass[] =
+                        "uniform sampler2D ambientMap;\n"
+                        "uniform sampler2D diffuseMap;\n"
+                        "uniform sampler2D specularMap;\n"
+                        "uniform sampler2D lightBuffer;\n"
+                        "uniform vec4 ambientColor;\n"
+                        "uniform vec4 diffuseColor;\n"
+                        "uniform vec4 specularColor;\n"
+                        "uniform vec4 specularParameters;\n"
+                        "uniform vec4 textureCoordinatesAdjustment;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vPosition;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec2 textureCoordinatesForLightBuffer = vec2(0.5, 0.5) * (vPosition.xy / vPosition.w) + vec2(0.5, 0.5);\n"
+                        "        textureCoordinatesForLightBuffer *= textureCoordinatesAdjustment.xy;\n"
+                        "        vec4 lightBufferValue = texture2D(lightBuffer, textureCoordinatesForLightBuffer);\n"
+                        "        vec4 ambient = ambientColor * texture2D(ambientMap, vTextureCoordinates.xy);\n"
+                        "        vec4 diffuse = diffuseColor * texture2D(diffuseMap, vTextureCoordinates.xy);\n"
+                        "        vec4 specular = specularColor * texture2D(specularMap, vTextureCoordinates.xy) * specularParameters.x * lightBufferValue.w;\n"
+                        "        specular *= vec4(lightBufferValue.xyz, 1.0);\n"
+                        "        gl_FragColor = ambient + diffuse * vec4(lightBufferValue.xyz, 1.0) + specular;\n"
+                        "}\n";
+
                 static const char* vertexShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
                         vertexShaderNormalsPass, vertexShaderSkinNormalsPass,
-                        vertexShaderNormalsPass, vertexShaderNormalsPass
+                        vertexShaderShadingPass, vertexShaderSkinShadingPass
                 };
 
                 static const char* fragmentShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
                         fragmentShaderNormalsPass, fragmentShaderNormalsPass,
-                        fragmentShaderNormalsPass, fragmentShaderNormalsPass
+                        fragmentShaderShadingPass, fragmentShaderShadingPass
                 };
 
                 // load GLSL programs
@@ -168,6 +229,9 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
+                glEnable(GL_DEPTH_TEST);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderPositionsAndNormals: glEnable");
+
                 glCullFace(GL_FRONT);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderPositionsAndNormals: glCullFace");
 
@@ -223,57 +287,35 @@ namespace selene
         }
 
         //------------------------------------------------------------------------------------------------------------
-        void GlesActorsRenderer::renderShading(Renderer::Data::ActorNode& actorNode, bool isSsaoEnabled)
+        void GlesActorsRenderer::renderShading(Renderer::Data::ActorNode& actorNode)
         {
-                /*d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getSurface());
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+                glEnable(GL_DEPTH_TEST);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShading: glEnable");
 
-                d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
-                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+                glCullFace(GL_FRONT);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShading: glCullFace");
 
-                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
+                glDepthMask(GL_TRUE);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShading: glDepthMask");
 
-                d3dDevice_->SetSamplerState(LOCATION_AMBIENT_MAP_SHADING_PASS,
-                                            D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
-                textureHandler_->setStageState(LOCATION_AMBIENT_MAP_SHADING_PASS,
-                                               D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
+                glDepthFunc(GL_LESS);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShading: glDepthFunc");
 
-                d3dDevice_->SetSamplerState(LOCATION_DIFFUSE_MAP_SHADING_PASS,
-                                            D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
-                textureHandler_->setStageState(LOCATION_DIFFUSE_MAP_SHADING_PASS,
-                                               D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
-
-                d3dDevice_->SetSamplerState(LOCATION_SPECULAR_MAP_SHADING_PASS,
-                                            D3DSAMP_MAXANISOTROPY, capabilities_->getMaxTextureAnisotropy());
-                textureHandler_->setStageState(LOCATION_SPECULAR_MAP_SHADING_PASS,
-                                               D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
-
-                textureHandler_->setStageState(LOCATION_LIGHT_BUFFER_SHADING_PASS,
-                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
-                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(LOCATION_LIGHT_BUFFER_SHADING_PASS,
-                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
-
-                if(isSsaoEnabled)
+                if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_RESULT))
                 {
-                        textureHandler_->setStageState(LOCATION_SSAO_BUFFER_SHADING_PASS,
-                                                       D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
-                                                       D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER_SHADING_PASS,
-                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getTexture());
-
-                        pixelShaders_[PIXEL_SHADER_SHADING_PASS_WITH_SSAO].set();
+                        LOGI("****************************** FAILED: GlesActorsRenderer::renderShading: setRenderTarget(RENDER_TARGET_RESULT)");
+                        return;
                 }
-                else
-                        pixelShaders_[PIXEL_SHADER_SHADING_PASS].set();
 
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                glViewport(0, 0,
+                           static_cast<GLsizei>(frameParameters_->screenSize.x),
+                           static_cast<GLsizei>(frameParameters_->screenSize.y));
 
-                renderActors(actorNode, RENDERING_PASS_SHADING);*/
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShading: glClear");
+
+                renderActors(actorNode, RENDERING_PASS_SHADING);
         }
 
         GlesActorsRenderer::Variables::Variables()
@@ -293,7 +335,6 @@ namespace selene
                 locationNormalMap = -1;
 
                 locationLightBuffer = -1;
-                locationSsaoBuffer = -1;
 
                 locationAmbientColor = -1;
                 locationDiffuseColor = -1;
@@ -319,7 +360,6 @@ namespace selene
                 locationNormalMap   = program.getUniformLocation("normalMap");
 
                 locationLightBuffer = program.getUniformLocation("lightBuffer");
-                locationSsaoBuffer  = program.getUniformLocation("ssaoBuffer");
 
                 locationAmbientColor  = program.getUniformLocation("ambientColor");
                 locationDiffuseColor  = program.getUniformLocation("diffuseColor");
@@ -472,6 +512,10 @@ namespace selene
                                 glUniform4fv(variables.locationTextureCoordinatesAdjustment, 1,
                                              static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment));
                                 CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glUniform4fv");
+
+                                glUniform1i(variables.locationLightBuffer, 3);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glUniform1i");
+                                textureHandler_->setTexture(renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER), 3);
                         }
 
                         // walk through all material units

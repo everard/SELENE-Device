@@ -66,9 +66,8 @@ namespace selene
                 /**
                  * \brief Renders shading.
                  * \param[in] actorNode actor node
-                 * \param[in] isSsaoEnabled if set to true, then SSAO buffer will be used in shading
                  */
-                void renderShading(Renderer::Data::ActorNode& actorNode, bool isSsaoEnabled);
+                void renderShading(Renderer::Data::ActorNode& actorNode);
 
         private:
                 /// Helper constants
@@ -116,7 +115,6 @@ namespace selene
                         GLint locationNormalMap;
 
                         GLint locationLightBuffer;
-                        GLint locationSsaoBuffer;
 
                         GLint locationAmbientColor;
                         GLint locationDiffuseColor;

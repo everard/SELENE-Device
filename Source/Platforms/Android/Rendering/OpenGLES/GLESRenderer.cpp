@@ -78,6 +78,7 @@ namespace selene
 
                 actorsRenderer_.renderPositionsAndNormals(renderingData.getActorNode());
                 lightingRenderer_.renderLighting(renderingData.getLightNode());
+                actorsRenderer_.renderShading(renderingData.getActorNode());
 
                 glDisable(GL_DEPTH_TEST);
                 glDisable(GL_CULL_FACE);
@@ -99,7 +100,7 @@ namespace selene
                         glUniform1i(resultTextureLocation_, 0);
                         CHECK_GLES_ERROR("GlesRenderer::render: glUniform1i");
 
-                        textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_LIGHT_BUFFER), 0);
+                        textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT), 0);
 
                         fullScreenQuad_.render();
                         // unbind texture
