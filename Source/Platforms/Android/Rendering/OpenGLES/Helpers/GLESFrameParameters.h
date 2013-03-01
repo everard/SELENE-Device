@@ -33,10 +33,10 @@ namespace selene
                 Vector4d edgeDetectionParameters;
                 Vector4d conversionParameters;
                 Vector4d projectionParameters;
-                Vector4d shadowMapKernelSize;
                 Vector4d unprojectionVector;
                 Vector4d bloomParameters;
                 Vector4d ssaoParameters;
+                Vector4d shadowMapSize;
                 Vector4d screenSize;
 
                 GlesFrameParameters();

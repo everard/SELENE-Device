@@ -1,4 +1,4 @@
-SELENE Device is a 3D graphics rendering engine. It is cross-platform, but currently it has only Windows renderer. For programming style guidlines see GUIDELINES.txt.
+SELENE Device is a 3D graphics rendering engine. It is cross-platform, and currently has Windows and Android renderers. For programming style guidlines see GUIDELINES.txt.
 
 CONFIGURATION & COMPILATION
 ===========================
@@ -54,7 +54,7 @@ This applications will run on your android device, but will not render, because 
 WINDOWS
 -------
 
-To compile existing code under Windows, you should cd to the Build/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2010.
+To compile existing code under Windows, you should cd to the Build/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2012.
 
 LINUX
 -----
@@ -67,8 +67,8 @@ Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
 
 LINKS TO DOWNLOADS
 ==================
-Download Visual Studio 2010 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
-* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUd25LQ2d6X2NEWFk/edit)
+Download Visual Studio 2012 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
+* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUcFM3QVAwUlVhQm8/edit)
 
 LICENSE
 =======

@@ -391,6 +391,80 @@ namespace selene
                         "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
+                static const char fragmentShaderSpotLightAccumulationWithShadows[] =
+                        "uniform sampler2D depthBuffer;\n"
+                        "uniform sampler2D normalsBuffer;\n"
+                        "uniform sampler2D shadowsBuffer;\n"
+                        "uniform vec4 textureCoordinatesAdjustment;\n"
+                        "uniform vec4 conversionParameters;\n"
+                        "uniform vec4 unprojectionVector;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vLightColor;\n"
+                        "varying vec4 vLightPosition;\n"
+                        "varying vec4 vLightDirection;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec3 postProjectionCoordinates = vTextureCoordinates.xyz / vTextureCoordinates.w;\n"
+                        "        vec2 textureCoordinates = 0.5 * (postProjectionCoordinates.xy + vec2(1.0, 1.0));\n"
+                        "        textureCoordinates *= textureCoordinatesAdjustment.xy;\n"
+                        "        float depth = 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0;"
+                        "        if(depth > postProjectionCoordinates.z)\n"
+                        "                discard;\n"
+                        "        vec4 encodedNormal = texture2D(normalsBuffer, textureCoordinates);\n"
+                        "        encodedNormal.w *= 200.0;\n"
+                        "        vec3 normal = normalize(decodeNormal(encodedNormal.xyz));\n"
+                        "        vec3 position = decodePosition(postProjectionCoordinates.xy, depth,\n"
+                        "                                       conversionParameters, unprojectionVector);\n"
+                        "        vec3 toLight = vLightPosition.xyz - position;\n"
+                        "        vec3 toLightNormalized = normalize(toLight);\n"
+                        "        vec3 lightDirectionNormalized = normalize(vLightDirection.xyz);\n"
+                        "        float factor = 1.0 - dot(toLightNormalized, lightDirectionNormalized);"
+                        "        float attenuation = clamp(1.0 - factor * factor * vLightDirection.w, 0.0, 1.0);\n"
+                        "        attenuation = min(attenuation, clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0));\n"
+                        "        vec3 v = normalize(-position);\n"
+                        "        vec3 h = normalize(toLightNormalized + v);\n"
+                        "        float nDotL = dot(normal, toLightNormalized) * attenuation * texture2D(shadowsBuffer, textureCoordinates).x;\n"
+                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
+                        "}\n";
+
+                static const char fragmentShaderSpotLightShadowsPass[] =
+                        "uniform sampler2D depthBuffer;\n"
+                        "uniform sampler2D shadowMap;\n"
+                        "uniform vec4 shadowMapConversionParameters;\n"
+                        "uniform vec4 textureCoordinatesAdjustment;\n"
+                        "uniform vec4 conversionParameters;\n"
+                        "uniform vec4 unprojectionVector;\n"
+                        "uniform vec4 bias;\n"
+                        "uniform mat4 lightTextureMatrix;\n"
+                        "uniform mat4 lightViewMatrix;\n"
+                        "varying vec4 vTextureCoordinates;\n"
+                        "varying vec4 vLightColor;\n"
+                        "varying vec4 vLightPosition;\n"
+                        "varying vec4 vLightDirection;\n"
+                        "float computeShadow(vec2 textureCoordinates, float eyeZ)\n"
+                        "{\n"
+                        "        float shadowMapEyeZ = convertDepthToEyeZ(2.0 * texture2D(shadowMap, textureCoordinates).x - 1.0,\n"
+                        "                                                 shadowMapConversionParameters) + bias.x;\n"
+                        "        return (eyeZ >= shadowMapEyeZ) ? 0.0 : 1.0;\n"
+                        "}\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec3 postProjectionCoordinates = vTextureCoordinates.xyz / vTextureCoordinates.w;\n"
+                        "        vec2 textureCoordinates = 0.5 * (postProjectionCoordinates.xy + vec2(1.0, 1.0));\n"
+                        "        textureCoordinates *= textureCoordinatesAdjustment.xy;\n"
+                        "        float depth = 2.0 * texture2D(depthBuffer, textureCoordinates).x - 1.0;"
+                        "        if(depth > postProjectionCoordinates.z)\n"
+                        "                discard;\n"
+                        "        vec3 position = decodePosition(postProjectionCoordinates.xy, depth,\n"
+                        "                                       conversionParameters, unprojectionVector);\n"
+                        "        vec4 lightTextureCoordinates = lightTextureMatrix * vec4(position, 1.0);\n"
+                        "        lightTextureCoordinates.xyz /= lightTextureCoordinates.w;\n"
+                        "        lightTextureCoordinates.xy = 0.5 * (lightTextureCoordinates.xy + vec2(1.0, 1.0));\n"
+                        "        vec4 lightSpacePosition = lightViewMatrix * vec4(position, 1.0);\n"
+                        "        lightSpacePosition.xyz /= lightSpacePosition.w;\n"
+                        "        gl_FragColor = vec4(computeShadow(lightTextureCoordinates.xy, lightSpacePosition.z));"
+                        "}\n";
+
                 // load GLSL programs
                 GlesGlslProgram::VertexAttribute vertexAttributes[] =
                 {
@@ -402,6 +476,8 @@ namespace selene
                 {
                         vertexShaderDirectionalLightAccumulation,
                         vertexShaderPointLightAccumulation,
+                        vertexShaderSpotLightAccumulation,
+                        vertexShaderSpotLightAccumulation,
                         vertexShaderSpotLightAccumulation
                 };
 
@@ -409,7 +485,9 @@ namespace selene
                 {
                         fragmentShaderDirectionalLightAccumulation,
                         fragmentShaderPointLightAccumulation,
-                        fragmentShaderSpotLightAccumulation
+                        fragmentShaderSpotLightAccumulation,
+                        fragmentShaderSpotLightAccumulationWithShadows,
+                        fragmentShaderSpotLightShadowsPass
                 };
 
                 for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -457,6 +535,11 @@ namespace selene
                         LOGI("****************************** FAILED: GlesLightingRenderer::renderLighting: setRenderTarget(RENDER_TARGET_LIGHT_BUFFER)");
                         return;
                 }
+
+                glViewport(0, 0,
+                           static_cast<GLsizei>(frameParameters_->screenSize.x),
+                           static_cast<GLsizei>(frameParameters_->screenSize.y));
+
                 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glClear");
@@ -556,53 +639,85 @@ namespace selene
                 glDisableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisableVertexAttribArray");
 
+                // unbind textures
                 textureHandler_->setTexture(0, 0);
                 textureHandler_->setTexture(0, 1);
-
-                glDisable(GL_BLEND);
-                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBlendFunc");
+                textureHandler_->setTexture(0, 2);
 
                 // render with shadows
-                /*for(bool result = lightNode.readFirstElement(Renderer::Data::UNIT_LIGHT_SPOT); result;
-                         result = lightNode.readNextElement())
+                programNo = GLSL_PROGRAM_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS;
+                lightUnit = Renderer::Data::UNIT_LIGHT_SPOT;
+
+                for(uint8_t lightType = LIGHT_SPOT; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
                 {
-                        auto actorNode = lightNode.getCurrentData();
-                        auto spotLight = static_cast<SpotLight*>(lightNode.getCurrentKey());
+                        for(bool result = lightNode.readFirstElement(lightUnit); result;
+                                 result = lightNode.readNextElement())
+                        {
+                                auto light = lightNode.getCurrentKey();
+                                auto actorNode = lightNode.getCurrentData();
 
-                        if(actorNode == nullptr || spotLight == nullptr)
-                                break;
+                                if(light == nullptr || actorNode == nullptr)
+                                        break;
 
-                        renderShadowMap(*actorNode, *spotLight);
-                        prepareLightAccumulation();
+                                colors[0].define(light->getColor(), light->getIntensity());
 
-                        // set shadow map at sampler 2
-                        textureHandler_->setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                                       D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(2, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getTexture());
+                                switch(light->getRenderingUnit())
+                                {
+                                        case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
+                                        {
+                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
+                                                directions[0].define(directionalLight->getDirection(), directionalLight->getSize());
+                                                break;
+                                        }
+                                        case Renderer::Data::UNIT_LIGHT_POINT:
+                                        {
+                                                PointLight* pointLight = static_cast<PointLight*>(light);
+                                                positions[0].define(pointLight->getPosition(), pointLight->getRadius());
+                                                break;
+                                        }
 
-                        d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-                        d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-                        d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
+                                        case Renderer::Data::UNIT_LIGHT_SPOT:
+                                        {
+                                                SpotLight* spotLight = static_cast<SpotLight*>(light);
 
-                        vertexShaders_[VERTEX_SHADER_SPOT_LIGHT_ACCUMULATION].set();
-                        pixelShaders_[PIXEL_SHADER_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS].set();
+                                                positions[0].define(spotLight->getPosition(),   spotLight->getRadius());
+                                                directions[0].define(spotLight->getDirection(), spotLight->getCosTheta());
 
-                        d3dDevice_->SetVertexDeclaration(d3dVertexDeclaration_);
-                        d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[LIGHT_SPOT],
-                                                    0, lightVolumeGeometryVertexStride);
-                        d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
-                        d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
-                        d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
-                        d3dDevice_->SetIndices(nullptr);
+                                                renderShadowMap(*actorNode, *spotLight);
+                                                break;
+                                        }
 
-                        positions[0].define(spotLight->getPosition(), spotLight->getRadius());
-                        directions[0].define(spotLight->getDirection(), spotLight->getCosTheta());
-                        colors[0].define(spotLight->getColor(), spotLight->getIntensity());
+                                        default:
+                                                break;
+                                }
 
-                        renderLightGeometry(LIGHT_SPOT, 1, positions, directions, colors);
+                                const auto& variables = variables_[programNo];
+                                programs_[programNo].set();
+                                prepareLightAccumulation(variables);
+
+                                glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[lightType]);
+                                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
+
+                                glEnableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
+                                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnableVertexAttribArray");
+
+                                glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, lightVolumeGeometryVertexStride, nullptr);
+                                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glVertexAttribPointer");
+
+                                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
+
+                                renderLightGeometry(variables, lightType, 1, colors, positions, directions);
+                        }
                 }
 
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);*/
+                glDisable(GL_BLEND);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisable(GL_BLEND)");
+
+                // unbind textures
+                textureHandler_->setTexture(0, 0);
+                textureHandler_->setTexture(0, 1);
+                textureHandler_->setTexture(0, 2);
         }
 
         GlesLightingRenderer::Variables::Variables()
@@ -611,16 +726,23 @@ namespace selene
                 locationNormalsMatrix = -1;
                 locationViewMatrix = -1;
 
+                locationLightTextureMatrix = -1;
+                locationLightViewMatrix    = -1;
+
                 locationLightColors = -1;
                 locationLightPositions = -1;
                 locationLightDirections = -1;
 
+                locationShadowMapConversionParameters = -1;
                 locationTextureCoordinatesAdjustment = -1;
                 locationConversionParameters = -1;
                 locationUnprojectionVector = -1;
+                locationBias = -1;
 
                 locationDepthBuffer = -1;
                 locationNormalsBuffer = -1;
+                locationShadowsBuffer = -1;
+                locationShadowMap = -1;
         }
         GlesLightingRenderer::Variables::~Variables() {}
 
@@ -631,16 +753,23 @@ namespace selene
                 locationNormalsMatrix        = program.getUniformLocation("normalsMatrix");
                 locationViewMatrix           = program.getUniformLocation("viewMatrix");
 
+                locationLightTextureMatrix = program.getUniformLocation("lightTextureMatrix");
+                locationLightViewMatrix    = program.getUniformLocation("lightViewMatrix");
+
                 locationLightColors     = program.getUniformLocation("lightColors");
                 locationLightPositions  = program.getUniformLocation("lightPositions");
                 locationLightDirections = program.getUniformLocation("lightDirections");
 
-                locationTextureCoordinatesAdjustment = program.getUniformLocation("textureCoordinatesAdjustment");
-                locationConversionParameters         = program.getUniformLocation("conversionParameters");
-                locationUnprojectionVector           = program.getUniformLocation("unprojectionVector");
+                locationShadowMapConversionParameters = program.getUniformLocation("shadowMapConversionParameters");
+                locationTextureCoordinatesAdjustment  = program.getUniformLocation("textureCoordinatesAdjustment");
+                locationConversionParameters          = program.getUniformLocation("conversionParameters");
+                locationUnprojectionVector            = program.getUniformLocation("unprojectionVector");
+                locationBias                          = program.getUniformLocation("bias");
 
                 locationDepthBuffer   = program.getUniformLocation("depthBuffer");
                 locationNormalsBuffer = program.getUniformLocation("normalsBuffer");
+                locationShadowsBuffer = program.getUniformLocation("shadowsBuffer");
+                locationShadowMap = program.getUniformLocation("shadowMap");
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -648,10 +777,12 @@ namespace selene
         {
                 glUniform1i(variables.locationDepthBuffer, 0);
                 glUniform1i(variables.locationNormalsBuffer, 1);
+                glUniform1i(variables.locationShadowsBuffer, 2);
                 CHECK_GLES_ERROR("GlesLightingRenderer::prepareLightAccumulation: glUniform1i");
 
                 textureHandler_->setTexture(renderTargetContainer_->getDepthBuffer(DEPTH_BUFFER_NORMALS_PASS), 0);
-                textureHandler_->setTexture(renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS), 1);
+                textureHandler_->setTexture(renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS),    1);
+                textureHandler_->setTexture(renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0),   2);
 
                 glUniformMatrix4fv(variables.locationViewProjectionMatrix, 1, GL_FALSE,
                                    static_cast<const float*>(frameParameters_->viewProjectionMatrix));
@@ -672,6 +803,37 @@ namespace selene
                 glUniform4fv(variables.locationUnprojectionVector, 1,
                              static_cast<const float*>(frameParameters_->unprojectionVector));
                 CHECK_GLES_ERROR("GlesLightingRenderer::prepareLightAccumulation: glUniform4fv");
+        }
+
+        //----------------------------------------------------------------------------------------------------------
+        void GlesLightingRenderer::prepareShadowsPass(const GlesLightingRenderer::Variables& variables)
+        {
+                glUniform1i(variables.locationDepthBuffer, 0);
+                glUniform1i(variables.locationShadowMap, 1);
+                CHECK_GLES_ERROR("GlesLightingRenderer::prepareShadowsPass: glUniform1i");
+
+                textureHandler_->setTexture(renderTargetContainer_->getDepthBuffer(DEPTH_BUFFER_NORMALS_PASS), 0);
+                textureHandler_->setTexture(renderTargetContainer_->getDepthBuffer(DEPTH_BUFFER_SHADOW_MAP), 1);
+
+                glUniformMatrix4fv(variables.locationViewProjectionMatrix, 1, GL_FALSE,
+                                   static_cast<const float*>(frameParameters_->viewProjectionMatrix));
+
+                glUniformMatrix4fv(variables.locationNormalsMatrix, 1, GL_FALSE,
+                                   static_cast<const float*>(frameParameters_->normalsMatrix));
+
+                glUniformMatrix4fv(variables.locationViewMatrix, 1, GL_FALSE,
+                                   static_cast<const float*>(frameParameters_->viewMatrix));
+                CHECK_GLES_ERROR("GlesLightingRenderer::prepareShadowsPass: glUniformMatrix4fv");
+
+                glUniform4fv(variables.locationTextureCoordinatesAdjustment, 1,
+                             static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment));
+
+                glUniform4fv(variables.locationConversionParameters, 1,
+                             static_cast<const float*>(frameParameters_->conversionParameters));
+
+                glUniform4fv(variables.locationUnprojectionVector, 1,
+                             static_cast<const float*>(frameParameters_->unprojectionVector));
+                CHECK_GLES_ERROR("GlesLightingRenderer::prepareShadowsPass: glUniform4fv");
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -712,86 +874,94 @@ namespace selene
         }
 
         //----------------------------------------------------------------------------------------------------------
-        /*void D3d9LightingRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
+        void GlesLightingRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
         {
-                actorsRenderer_->renderShadowMap(actorNode, spotLight.getProjectionParameters());
+                // render shadow map
+                actorsRenderer_->renderShadowMap(actorNode);
 
                 // render shadow
+                if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_HELPER_0))
+                {
+                        LOGI("****************************** FAILED: GlesLightingRenderer::renderShadowMap: setRenderTarget(RENDER_TARGET_HELPER_0)");
+                        return;
+                }
+
+                glViewport(0, 0,
+                           static_cast<GLsizei>(frameParameters_->screenSize.x),
+                           static_cast<GLsizei>(frameParameters_->screenSize.y));
+
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glClear");
+
+                glDisable(GL_DEPTH_TEST);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glDisable");
+
+                glCullFace(GL_FRONT);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glCullFace");
+
+                glDisable(GL_BLEND);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glDisable");
+
+                programs_[GLSL_PROGRAM_SPOT_LIGHT_SHADOWS_PASS].set();
+                const auto& variables = variables_[GLSL_PROGRAM_SPOT_LIGHT_SHADOWS_PASS];
+                prepareShadowsPass(variables);
+
+                glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[LIGHT_SPOT]);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glBindBuffer");
+
+                glEnableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glEnableVertexAttribArray");
+
+                glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, lightVolumeGeometryVertexStride, nullptr);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glVertexAttribPointer");
+
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glBindBuffer");
+
                 Matrix lightTextureMatrix, lightViewMatrix;
 
-                lightViewMatrix    = frameParameters_->viewInvMatrix * spotLight.getViewMatrix();
                 lightTextureMatrix = frameParameters_->viewInvMatrix * spotLight.getViewProjectionMatrix();
+                lightViewMatrix    = frameParameters_->viewInvMatrix * spotLight.getViewMatrix();
 
-                // restore original depth stencil surface
-                d3dDevice_->SetDepthStencilSurface(renderTargetContainer_->getBackBuffer().getDepthStencilSurface());
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getSurface());
+                glUniformMatrix4fv(variables.locationLightTextureMatrix, 1, GL_FALSE,
+                                   static_cast<const float*>(lightTextureMatrix));
 
-                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-                d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
+                glUniformMatrix4fv(variables.locationLightViewMatrix, 1, GL_FALSE,
+                                   static_cast<const float*>(lightViewMatrix));
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glUniformMatrix4fv");
 
-                textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
-                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
-                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
-
-                textureHandler_->setStageState(LOCATION_SHADOW_MAP,
-                                               D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
-                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(LOCATION_SHADOW_MAP,
-                                       renderTargetContainer_->getShadowMap().getTexture());
-
-                vertexShaders_[VERTEX_SHADER_SPOT_LIGHT_SHADOW_PASS].set();
-                pixelShaders_[PIXEL_SHADER_SPOT_LIGHT_SHADOW_PASS].set();
-
-                const Vector4d& lightProjectionParameters = spotLight.getProjectionParameters();
+                const auto& lightProjectionParameters = spotLight.getProjectionParameters();
+                Vector4d shadowMapConversionParameters(lightProjectionParameters.w * lightProjectionParameters.z,
+                                                       lightProjectionParameters.z - lightProjectionParameters.w,
+                                                       lightProjectionParameters.w, 1.0f);
                 Vector4d bias(lightProjectionParameters.w * 0.0375f);
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_PROJECTION_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewProjectionMatrix), 4);
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_NORMALS_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->normalsMatrix), 4);
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewMatrix), 4);
+                glUniform4fv(variables.locationShadowMapConversionParameters, 1,
+                             static_cast<const float*>(shadowMapConversionParameters));
 
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                    static_cast<const float*>(frameParameters_->unprojectionVector), 1);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                glUniform4fv(variables.locationBias, 1,
+                             static_cast<const float*>(bias));
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glUniform4fv");
 
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_LIGHT_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(lightProjectionParameters), 1);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_LIGHT_VIEW_MATRIX,
-                                                    static_cast<const float*>(lightViewMatrix), 4);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_LIGHT_TEXTURE_MATRIX,
-                                                    static_cast<const float*>(lightTextureMatrix), 4);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_SHADOW_MAP_BIAS,
-                                                    static_cast<const float*>(bias), 1);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_SHADOW_MAP_KERNEL_SIZE,
-                                                    static_cast<const float*>(frameParameters_->shadowMapKernelSize), 1);
-
-                d3dDevice_->SetVertexDeclaration(d3dVertexDeclaration_);
-                d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[LIGHT_SPOT],
-                                            0, lightVolumeGeometryVertexStride);
-                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
-                d3dDevice_->SetIndices(nullptr);
-
+                Vector4d lightColor;
                 Vector4d lightPosition(spotLight.getPosition(), spotLight.getRadius());
                 Vector4d lightDirection(spotLight.getDirection(), spotLight.getCosTheta());
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_LIGHT_POSITION,
-                                                     static_cast<const float*>(lightPosition),  1);
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_LIGHT_DIRECTION,
-                                                     static_cast<const float*>(lightDirection), 1);
+                renderLightGeometry(variables, LIGHT_SPOT, 1, &lightColor, &lightPosition, &lightDirection);
 
-                d3dDevice_->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, lightVolumeGeometryNumVertices[LIGHT_SPOT] - 2);
+                // restore light buffer render target
+                if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_LIGHT_BUFFER))
+                {
+                        LOGI("****************************** FAILED: GlesLightingRenderer::renderShadowMap: setRenderTarget(RENDER_TARGET_LIGHT_BUFFER)");
+                        return;
+                }
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getSurface());
-        }*/
+                glEnable(GL_BLEND);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glEnable");
+
+                glBlendFunc(GL_ONE, GL_ONE);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glBlendFunc");
+        }
 
 }

@@ -16,7 +16,6 @@ namespace selene
                 renderTargetContainer_ = nullptr;
                 frameParameters_ = nullptr;
                 textureHandler_ = nullptr;
-                capabilities_ = nullptr;
         }
         GlesActorsRenderer::~GlesActorsRenderer()
         {
@@ -26,15 +25,13 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         bool GlesActorsRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                             GlesFrameParameters& frameParameters,
-                                            GlesTextureHandler& textureHandler,
-                                            GlesCapabilities& capabilities)
+                                            GlesTextureHandler& textureHandler)
         {
                 destroy();
 
                 renderTargetContainer_ = &renderTargetContainer;
                 frameParameters_ = &frameParameters;
                 textureHandler_ = &textureHandler;
-                capabilities_ = &capabilities;
 
                 // normals pass shaders
                 static const char vertexShaderNormalsPass[] =
@@ -175,16 +172,53 @@ namespace selene
                         "        gl_FragColor = ambient + diffuse * vec4(lightBufferValue.xyz, 1.0) + specular;\n"
                         "}\n";
 
+                // shadow pass shaders
+                static const char vertexShaderShadowPass[] =
+                        "invariant gl_Position;\n"
+                        "attribute vec4 vertexPosition;\n"
+                        "uniform mat4 worldViewProjectionMatrix;\n"
+                        "void main()\n"
+                        "{\n"
+                        "        gl_Position = worldViewProjectionMatrix * vertexPosition;\n"
+                        "}\n";
+
+                static const char vertexShaderSkinShadowPass[] =
+                        "invariant gl_Position;\n"
+                        "attribute vec4 vertexPosition;\n"
+                        "attribute vec4 vertexBoneWeights;\n"
+                        "attribute vec4 vertexBoneIndices;\n"
+                        "uniform mat4 worldViewProjectionMatrix;\n"
+                        "uniform vec4 bonePositions[50];\n"
+                        "uniform vec4 boneRotations[50];\n"
+                        "void main()\n"
+                        "{\n"
+                        "        vec3 position = vec3(0.0, 0.0, 0.0);\n"
+                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y), int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
+                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x], boneRotations[indices.x], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y], boneRotations[indices.y], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z], boneRotations[indices.z], vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w], boneRotations[indices.w], vertexPosition.xyz);\n"
+                        "        gl_Position = worldViewProjectionMatrix * vec4(position, 1.0);\n"
+                        "}\n";
+
+                static const char fragmentShaderShadowPass[] =
+                        "void main()\n"
+                        "{\n"
+                        "        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);\n"
+                        "}\n";
+
                 static const char* vertexShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
                         vertexShaderNormalsPass, vertexShaderSkinNormalsPass,
-                        vertexShaderShadingPass, vertexShaderSkinShadingPass
+                        vertexShaderShadingPass, vertexShaderSkinShadingPass,
+                        vertexShaderShadowPass,  vertexShaderSkinShadowPass
                 };
 
                 static const char* fragmentShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
                         fragmentShaderNormalsPass, fragmentShaderNormalsPass,
-                        fragmentShaderShadingPass, fragmentShaderShadingPass
+                        fragmentShaderShadingPass, fragmentShaderShadingPass,
+                        fragmentShaderShadowPass,  fragmentShaderShadowPass
                 };
 
                 // load GLSL programs
@@ -223,7 +257,6 @@ namespace selene
                 renderTargetContainer_ = nullptr;
                 frameParameters_ = nullptr;
                 textureHandler_ = nullptr;
-                capabilities_ = nullptr;
         }
 
         //------------------------------------------------------------------------------------------------------------
@@ -259,31 +292,40 @@ namespace selene
         }
 
         //------------------------------------------------------------------------------------------------------------
-        void GlesActorsRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode,
-                                                 const Vector4d& projectionParameters)
+        void GlesActorsRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode)
         {
-                /*d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getShadowMap().getSurface());
-                d3dDevice_->SetDepthStencilSurface(renderTargetContainer_->getShadowMap().getDepthStencilSurface());
+                renderTargetContainer_->setShadowMap();
 
-                d3dDevice_->Clear(0, nullptr, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET,
-                                  D3DCOLOR_XRGB(255, 255, 255), 1.0f, 0);
+                glEnable(GL_DEPTH_TEST);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glEnable(GL_DEPTH_TEST)");
 
-                d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
-                d3dDevice_->SetStreamSource(1, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(2, nullptr, 0, 0);
-                d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
+                glCullFace(GL_FRONT);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glCullFace(GL_FRONT)");
 
-                textureHandler_->setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE);
+                glDepthMask(GL_TRUE);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glDepthMask(GL_TRUE)");
 
-                d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+                glDepthFunc(GL_LESS);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glDepthFunc(GL_LESS)");
 
-                pixelShaders_[PIXEL_SHADER_POSITIONS_PASS].set();
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(projectionParameters), 1);
+                glDisable(GL_BLEND);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glDisable(GL_BLEND)");
 
-                renderActors(actorNode, RENDERING_PASS_POSITIONS);*/
+                glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glColorMask");
+
+                glViewport(0, 0,
+                           static_cast<GLsizei>(frameParameters_->shadowMapSize.x),
+                           static_cast<GLsizei>(frameParameters_->shadowMapSize.x));
+
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glClear");
+
+                renderActors(actorNode, RENDERING_PASS_SHADOW);
+
+                glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glColorMask");
         }
 
         //------------------------------------------------------------------------------------------------------------
@@ -321,7 +363,6 @@ namespace selene
         GlesActorsRenderer::Variables::Variables()
         {
                 locationWorldViewProjectionMatrix = -1;
-                locationWorldViewMatrix = -1;
                 locationNormalsMatrix = -1;
                 locationBoneRotations = -1;
                 locationBonePositions = -1;
@@ -346,7 +387,6 @@ namespace selene
         void GlesActorsRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationWorldViewProjectionMatrix = program.getUniformLocation("worldViewProjectionMatrix");
-                locationWorldViewMatrix = program.getUniformLocation("worldViewMatrix");
                 locationNormalsMatrix = program.getUniformLocation("normalsMatrix");
                 locationBoneRotations = program.getUniformLocation("boneRotations");
                 locationBonePositions = program.getUniformLocation("bonePositions");
@@ -464,6 +504,9 @@ namespace selene
                         {
                                 Mesh::VERTEX_STREAM_POSITIONS,
                                 Mesh::VERTEX_STREAM_TEXTURE_COORDINATES, 0, 0
+                        },
+                        {
+                                Mesh::VERTEX_STREAM_POSITIONS, 0, 0, 0
                         }
                 };
                 static const uint8_t vertexAttributeLocations[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
@@ -477,14 +520,18 @@ namespace selene
                         {
                                 LOCATION_ATTRIBUTE_POSITION,
                                 LOCATION_ATTRIBUTE_TEXTURE_COORDINATES, 0, 0
+                        },
+                        {
+                                LOCATION_ATTRIBUTE_POSITION, 0, 0, 0
                         }
                 };
                 static const uint8_t vertexAttributeSizes[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
                 {
                         {3, 3, 4, 2},
-                        {3, 2, 0, 0}
+                        {3, 2, 0, 0},
+                        {3, 0, 0, 0}
                 };
-                static const uint8_t numVertexAttributes[NUM_OF_RENDERING_PASSES] = {4, 2};
+                static const uint8_t numVertexAttributes[NUM_OF_RENDERING_PASSES] = {4, 2, 1};
 
                 switch(pass)
                 {
@@ -494,6 +541,10 @@ namespace selene
 
                         case RENDERING_PASS_SHADING:
                                 programs = &programs_[GLSL_PROGRAM_SHADING_PASS];
+                                break;
+
+                        case RENDERING_PASS_SHADOW:
+                                programs = &programs_[GLSL_PROGRAM_SHADOW_PASS];
                                 break;
 
                         default:

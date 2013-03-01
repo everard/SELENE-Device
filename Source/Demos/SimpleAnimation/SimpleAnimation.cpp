@@ -162,11 +162,20 @@ namespace selene
                 meshFactory.setResourceFactory(&textureFactory);
                 meshFactory.setResourceManager(&textureManager_);
 
-                std::cout << "Loading mesh...";
-                if(meshManager_.createResource("girl.sle", meshFactory) != SUCCESS)
-                        std::cout << "FAILED" << std::endl;
-                else
-                        std::cout << "SUCCEEDED" << std::endl;
+                const char* meshes[] =
+                {
+                        "girl.sle", "floor.sle"
+                };
+                const uint32_t numMeshes = sizeof(meshes) / sizeof(meshes[0]);
+
+                for(uint32_t i = 0; i < numMeshes; ++i)
+                {
+                        std::cout << "Loading mesh '" << meshes[i] << "'...";
+                        if(meshManager_.createResource(meshes[i], meshFactory) != SUCCESS)
+                                std::cout << "FAILED" << std::endl;
+                        else
+                                std::cout << "SUCCEEDED" << std::endl;
+                }
 
                 const char* meshAnimations[] =
                 {
@@ -186,28 +195,39 @@ namespace selene
                 // create scene objects
                 scene_.addNode(new(std::nothrow) Actor("object",
                                                        meshManager_.requestResource<Mesh>("girl.sle"),
-                                                       Vector3d(0.0f, -5.0f),
+                                                       Vector3d(0.0f, 0.0f),
                                                        Quaternion(),
                                                        Vector3d(0.08f, 0.08f, 0.08f)));
 
+                scene_.addNode(new(std::nothrow) Actor("floor",
+                                                       meshManager_.requestResource<Mesh>("floor.sle"),
+                                                       Vector3d(0.0f, 0.0f),
+                                                       Quaternion(Vector3d(-1.0f, 0.0f, 0.0f) * std::sin(SELENE_PI * 0.25f),
+                                                                  std::cos(SELENE_PI * 0.25f))));
+
                 scene_.addNode(new(std::nothrow) DirectionalLight("directional light",
-                                                                  Vector3d(-1.0f, 0.0f, 0.0f),
-                                                                  Vector3d( 1.0f, 1.0f, 0.0f)));
+                                                                  Vector3d(-1.0f, -0.3f, 0.0f),
+                                                                  Vector3d( 1.0f, 1.0f, 0.0f),
+                                                                  0.5f));
 
                 scene_.addNode(new(std::nothrow) SpotLight("spot light",
-                                                           Vector3d(0.0f, 10.f, 0.0f),
-                                                           Vector3d(0.0f, -20.0f, 0.0f),
+                                                           Vector3d(2.0f, 11.0f, 0.0f),
+                                                           Vector3d(-5.0f, -17.0f, 0.0f),
                                                            Vector3d(1.0f, 1.0f, 1.0f),
                                                            1.0f, 30.0f));
 
+                auto light = scene_.getLight("spot light").lock();
+                if(light)
+                        light->setFlags(Light::SHADOW_CASTER);
+
                 scene_.addNode(new(std::nothrow) PointLight("point light",
-                                                            Vector3d(-5.0f, 5.0f, -4.0f),
+                                                            Vector3d(-5.0f, 10.0f, -4.0f),
                                                             Vector3d(0.3f, 0.3f, 0.8f),
                                                             1.0f, 30.0f));
 
                 scene_.addNode(new(std::nothrow) Camera("Camera",
-                                                        Vector3d(),
-                                                        Vector3d(0.0f, -0.5f, 1.0f),
+                                                        Vector3d(0.0f, 5.0f),
+                                                        Vector3d(0.0f, 0.0f, 1.0f),
                                                         Vector3d(0.0f, 1.0f),
                                                         Vector4d(45.0f,
                                                                  static_cast<float>(height_) / static_cast<float>(width_),
@@ -218,9 +238,10 @@ namespace selene
                 camera_ = scene_.getCamera("Camera");
 
                 auto weakObject = scene_.getActor("object");
-                if(!weakObject.expired())
+                auto object = weakObject.lock();
+                if(object)
                 {
-                        auto object = weakObject.lock();
+                        object->setFlags(Actor::SHADOW_CASTER);
 
                         // animations must be added to the actor
 

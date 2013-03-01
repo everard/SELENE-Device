@@ -84,28 +84,23 @@ namespace selene
                 glDisable(GL_CULL_FACE);
                 CHECK_GLES_ERROR("GlesRenderer::render: glDisable");
 
-                for(uint8_t i = 0; i < 2; ++i)
-                {
-                        // output result to screen
-                        if(i == 0)
-                                renderTargetContainer_.setRenderTarget(RENDER_TARGET_HELPER_0);
-                        else
-                                renderTargetContainer_.setBackBuffer();
-                        resultRenderingProgram_.set();
+                // output result to screen
+                renderTargetContainer_.setBackBuffer();
+                resultRenderingProgram_.set();
 
-                        glUniform4fv(textureCoordinatesAdjustmentLocation_, 1,
-                                     static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment));
-                        CHECK_GLES_ERROR("GlesRenderer::render: glUniform4fv");
+                glUniform4fv(textureCoordinatesAdjustmentLocation_, 1,
+                             static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment));
+                CHECK_GLES_ERROR("GlesRenderer::render: glUniform4fv");
 
-                        glUniform1i(resultTextureLocation_, 0);
-                        CHECK_GLES_ERROR("GlesRenderer::render: glUniform1i");
+                glUniform1i(resultTextureLocation_, 0);
+                CHECK_GLES_ERROR("GlesRenderer::render: glUniform1i");
 
-                        textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT), 0);
+                textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT), 0);
 
-                        fullScreenQuad_.render();
-                        // unbind texture
-                        textureHandler_.setTexture(0, 0);
-                }
+                fullScreenQuad_.render();
+
+                // unbind texture
+                textureHandler_.setTexture(0, 0);
 
                 // render GUI
                 Gui* gui = camera.getGui();
@@ -196,7 +191,7 @@ namespace selene
                         return false;
                 }
 
-                if(!actorsRenderer_.initialize(renderTargetContainer_, frameParameters_, textureHandler_, capabilities_))
+                if(!actorsRenderer_.initialize(renderTargetContainer_, frameParameters_, textureHandler_))
                 {
                         writeLogEntry("ERROR: Could not initialize actors renderer.");
                         return false;

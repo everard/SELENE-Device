@@ -35,8 +35,8 @@ namespace selene
         enum
         {
                 DEPTH_BUFFER_NORMALS_PASS = 0,
-                DEPTH_BUFFER_SHADING_PASS = 1,
-                DEPTH_BUFFER_SHADOW_MAP = DEPTH_BUFFER_SHADING_PASS,
+                DEPTH_BUFFER_SHADING_PASS = DEPTH_BUFFER_NORMALS_PASS,
+                DEPTH_BUFFER_SHADOW_MAP,
                 NUM_OF_DEPTH_BUFFERS
         };
 
@@ -78,6 +78,11 @@ namespace selene
                 const GlesRenderTarget& getRenderTarget(uint8_t type) const;
 
                 /**
+                 * \brief Sets shadow map.
+                 */
+                void setShadowMap() const;
+
+                /**
                  * \brief Sets back buffer.
                  */
                 void setBackBuffer() const;
@@ -97,17 +102,12 @@ namespace selene
                  */
                 static GLuint createDepthBuffer(uint32_t width, uint32_t height);
 
-                /**
-                 * \brief Sets shadow map.
-                 * \return true if shadow map has been successfully set
-                 */
-                //const GlesRenderTarget& getShadowMap() const;
-
         private:
                 GlesRenderTarget renderTargets_[NUM_OF_RENDER_TARGETS];
                 GlesRenderTarget dummyRenderTarget_;
 
                 GLuint frameBuffer_;
+                GLuint shadowMapFrameBuffer_;
                 GLuint depthBuffers_[NUM_OF_DEPTH_BUFFERS];
 
                 mutable bool isFrameBufferBound_;

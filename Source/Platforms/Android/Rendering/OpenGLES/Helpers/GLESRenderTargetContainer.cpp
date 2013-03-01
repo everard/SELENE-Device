@@ -51,9 +51,9 @@ namespace selene
                    nearestPowerOfTwo < parameters.getHeight())
                         nearestPowerOfTwo += nearestPowerOfTwo;
 
-                uint32_t shadowMapSize = nearestPowerOfTwo / 2;
+                uint32_t shadowMapSize = nearestPowerOfTwo;
 
-                frameParameters.shadowMapKernelSize.define(1.0f / static_cast<float>(shadowMapSize));
+                frameParameters.shadowMapSize.define(static_cast<float>(shadowMapSize));
                 frameParameters.screenSize.define(static_cast<float>(parameters.getWidth()),
                                                   static_cast<float>(parameters.getHeight()),
                                                   static_cast<float>(halfWidth),
@@ -90,10 +90,28 @@ namespace selene
                 glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer_);
                 CHECK_GLES_ERROR("GlesRenderTargetContainer::initialize: glBindFramebuffer");
 
+                glGenFramebuffers(1, &shadowMapFrameBuffer_);
+                CHECK_GLES_ERROR("GlesRenderTargetContainer::initialize: glGenFramebuffers");
+
+                glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFrameBuffer_);
+                CHECK_GLES_ERROR("GlesRenderTargetContainer::initialize: glBindFramebuffer");
+
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffers_[DEPTH_BUFFER_SHADOW_MAP], 0);
+                CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
+
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTargets_[RENDER_TARGET_HELPER_1].getRenderableTexture(), 0);
+                CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
+
+                if(!isFramebufferComplete())
+                {
+                        destroy();
+                        return false;
+                }
+
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 CHECK_GLES_ERROR("GlesRenderTargetContainer::initialize: glBindFramebuffer");
 
-                if(frameBuffer_ == 0)
+                if(frameBuffer_ == 0 || shadowMapFrameBuffer_ == 0)
                 {
                         destroy();
                         return false;
@@ -109,6 +127,12 @@ namespace selene
                 {
                         glDeleteFramebuffers(1, &frameBuffer_);
                         frameBuffer_ = 0;
+                }
+
+                if(shadowMapFrameBuffer_ != 0)
+                {
+                        glDeleteFramebuffers(1, &shadowMapFrameBuffer_);
+                        shadowMapFrameBuffer_ = 0;
                 }
 
                 for(uint8_t i = 0; i < NUM_OF_RENDER_TARGETS; ++i)
@@ -173,6 +197,14 @@ namespace selene
                         return dummyRenderTarget_;
 
                 return renderTargets_[type];
+        }
+
+        //---------------------------------------------------------------------------------------------
+        void GlesRenderTargetContainer::setShadowMap() const
+        {
+                glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFrameBuffer_);
+                CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glBindFramebuffer");
+                isFrameBufferBound_ = false;
         }
 
         //---------------------------------------------------------------------------------------------
@@ -254,11 +286,5 @@ namespace selene
 
                 return true;
         }
-
-        //------------------------------------------------------------------------------------
-        /*const D3d9RenderTarget& D3d9RenderTargetContainer::getShadowMap() const
-        {
-                return shadowMap_;
-        }*/
 
 }

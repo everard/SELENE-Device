@@ -20,7 +20,6 @@ namespace selene
         class GlesRenderTargetContainer;
         class GlesFrameParameters;
         class GlesTextureHandler;
-        class GlesCapabilities;
 
         /**
          * Represents actors renderer. Renders positions map, normals map, shadow map and shading.
@@ -36,13 +35,11 @@ namespace selene
                  * \param[in] renderTargetContainer render target container
                  * \param[in] frameParameters frame parameters
                  * \param[in] textureHandler texture handler
-                 * \param[in] capabilities D3D capabilities
                  * \return true if actors renderer has been successfully initialized
                  */
                 bool initialize(GlesRenderTargetContainer& renderTargetContainer,
                                 GlesFrameParameters& frameParameters,
-                                GlesTextureHandler& textureHandler,
-                                GlesCapabilities& capabilities);
+                                GlesTextureHandler& textureHandler);
 
                 /**
                  * \brief Destroys actors renderer.
@@ -56,15 +53,13 @@ namespace selene
                 void renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode);
 
                 /**
-                 * \brief Renders shadow map from given actor node with given projection parameters of the light.
+                 * \brief Renders shadow map from given actor node.
                  * \param[in] actorNode actor node
-                 * \param[in] projectionParameters light projection parameters
                  */
-                void renderShadowMap(Renderer::Data::ActorNode& actorNode,
-                                     const Vector4d& projectionParameters);
+                void renderShadowMap(Renderer::Data::ActorNode& actorNode);
 
                 /**
-                 * \brief Renders shading.
+                 * \brief Renders shading from given actor node.
                  * \param[in] actorNode actor node
                  */
                 void renderShading(Renderer::Data::ActorNode& actorNode);
@@ -75,12 +70,15 @@ namespace selene
                 {
                         RENDERING_PASS_NORMALS = 0,
                         RENDERING_PASS_SHADING,
+                        RENDERING_PASS_SHADOW,
                         NUM_OF_RENDERING_PASSES,
 
                         GLSL_PROGRAM_NORMALS_PASS = 0,
                         GLSL_PROGRAM_SKIN_NORMALS_PASS,
                         GLSL_PROGRAM_SHADING_PASS,
                         GLSL_PROGRAM_SKIN_SHADING_PASS,
+                        GLSL_PROGRAM_SHADOW_PASS,
+                        GLSL_PROGRAM_SKIN_SHADOW_PASS,
                         NUM_OF_GLSL_PROGRAMS,
 
                         MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS = 4,
@@ -101,7 +99,6 @@ namespace selene
                 {
                 public:
                         GLint locationWorldViewProjectionMatrix;
-                        GLint locationWorldViewMatrix;
                         GLint locationNormalsMatrix;
                         GLint locationBoneRotations;
                         GLint locationBonePositions;
@@ -137,7 +134,6 @@ namespace selene
                 GlesRenderTargetContainer* renderTargetContainer_;
                 GlesFrameParameters* frameParameters_;
                 GlesTextureHandler* textureHandler_;
-                GlesCapabilities* capabilities_;
 
                 /**
                  * \brief Sets material.

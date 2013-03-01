@@ -73,6 +73,8 @@ namespace selene
                         GLSL_PROGRAM_DIRECTIONAL_LIGHT_ACCUMULATION = 0,
                         GLSL_PROGRAM_POINT_LIGHT_ACCUMULATION,
                         GLSL_PROGRAM_SPOT_LIGHT_ACCUMULATION,
+                        GLSL_PROGRAM_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS,
+                        GLSL_PROGRAM_SPOT_LIGHT_SHADOWS_PASS,
                         NUM_OF_GLSL_PROGRAMS,
 
                         LOCATION_ATTRIBUTE_POSITION = 0
@@ -88,16 +90,23 @@ namespace selene
                         GLint locationNormalsMatrix;
                         GLint locationViewMatrix;
 
+                        GLint locationLightTextureMatrix;
+                        GLint locationLightViewMatrix;
+
                         GLint locationLightColors;
                         GLint locationLightPositions;
                         GLint locationLightDirections;
 
+                        GLint locationShadowMapConversionParameters;
                         GLint locationTextureCoordinatesAdjustment;
                         GLint locationConversionParameters;
                         GLint locationUnprojectionVector;
+                        GLint locationBias;
 
                         GLint locationDepthBuffer;
                         GLint locationNormalsBuffer;
+                        GLint locationShadowsBuffer;
+                        GLint locationShadowMap;
 
                         Variables();
                         ~Variables();
@@ -122,8 +131,15 @@ namespace selene
 
                 /**
                  * \brief Prepares light accumulation.
+                 * \param[in] variables container of the GLSL program's locations of variables
                  */
                 void prepareLightAccumulation(const GlesLightingRenderer::Variables& variables);
+
+                /**
+                 * \brief Prepares shadows pass.
+                 * \param[in] variables container of the GLSL program's locations of variables
+                 */
+                void prepareShadowsPass(const GlesLightingRenderer::Variables& variables);
 
                 /**
                  * \brief Renders light geometry.
@@ -144,7 +160,7 @@ namespace selene
                  * \param[in] actorNode actor node, which contains shadow casters
                  * \param[in] spotLight spot light
                  */
-                //void renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
+                void renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight);
 
         };
 
