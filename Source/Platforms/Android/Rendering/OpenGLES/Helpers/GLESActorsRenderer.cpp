@@ -173,7 +173,7 @@ namespace selene
                         "}\n";
 
                 // shadow pass shaders
-                static const char vertexShaderShadowPass[] =
+                static const char vertexShaderShadowsPass[] =
                         "invariant gl_Position;\n"
                         "attribute vec4 vertexPosition;\n"
                         "uniform mat4 worldViewProjectionMatrix;\n"
@@ -182,7 +182,7 @@ namespace selene
                         "        gl_Position = worldViewProjectionMatrix * vertexPosition;\n"
                         "}\n";
 
-                static const char vertexShaderSkinShadowPass[] =
+                static const char vertexShaderSkinShadowsPass[] =
                         "invariant gl_Position;\n"
                         "attribute vec4 vertexPosition;\n"
                         "attribute vec4 vertexBoneWeights;\n"
@@ -201,7 +201,7 @@ namespace selene
                         "        gl_Position = worldViewProjectionMatrix * vec4(position, 1.0);\n"
                         "}\n";
 
-                static const char fragmentShaderShadowPass[] =
+                static const char fragmentShaderShadowsPass[] =
                         "void main()\n"
                         "{\n"
                         "        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);\n"
@@ -211,14 +211,14 @@ namespace selene
                 {
                         vertexShaderNormalsPass, vertexShaderSkinNormalsPass,
                         vertexShaderShadingPass, vertexShaderSkinShadingPass,
-                        vertexShaderShadowPass,  vertexShaderSkinShadowPass
+                        vertexShaderShadowsPass, vertexShaderSkinShadowsPass
                 };
 
                 static const char* fragmentShaderSources[NUM_OF_GLSL_PROGRAMS] =
                 {
                         fragmentShaderNormalsPass, fragmentShaderNormalsPass,
                         fragmentShaderShadingPass, fragmentShaderShadingPass,
-                        fragmentShaderShadowPass,  fragmentShaderShadowPass
+                        fragmentShaderShadowsPass, fragmentShaderShadowsPass
                 };
 
                 // load GLSL programs
@@ -299,8 +299,11 @@ namespace selene
                 glEnable(GL_DEPTH_TEST);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glEnable(GL_DEPTH_TEST)");
 
-                glCullFace(GL_FRONT);
-                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glCullFace(GL_FRONT)");
+                glEnable(GL_CULL_FACE);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glEnable(GL_CULL_FACE)");
+
+                glCullFace(GL_BACK);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glCullFace(GL_BACK)");
 
                 glDepthMask(GL_TRUE);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glDepthMask(GL_TRUE)");
@@ -322,10 +325,13 @@ namespace selene
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glClear");
 
-                renderActors(actorNode, RENDERING_PASS_SHADOW);
+                renderActors(actorNode, RENDERING_PASS_SHADOWS);
 
                 glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glColorMask");
+
+                glCullFace(GL_FRONT);
+                CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glCullFace(GL_FRONT)");
         }
 
         //------------------------------------------------------------------------------------------------------------
@@ -543,8 +549,8 @@ namespace selene
                                 programs = &programs_[GLSL_PROGRAM_SHADING_PASS];
                                 break;
 
-                        case RENDERING_PASS_SHADOW:
-                                programs = &programs_[GLSL_PROGRAM_SHADOW_PASS];
+                        case RENDERING_PASS_SHADOWS:
+                                programs = &programs_[GLSL_PROGRAM_SHADOWS_PASS];
                                 break;
 
                         default:

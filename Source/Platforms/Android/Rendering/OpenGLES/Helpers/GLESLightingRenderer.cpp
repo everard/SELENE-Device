@@ -547,8 +547,8 @@ namespace selene
                 glDisable(GL_DEPTH_TEST);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisable");
 
-                glCullFace(GL_FRONT);
-                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glCullFace");
+                glEnable(GL_CULL_FACE);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glEnable");
 
                 glEnable(GL_BLEND);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnable");
@@ -563,9 +563,13 @@ namespace selene
                 static Vector4d colors[BATCH_SIZE];
                 static Vector4d positions[BATCH_SIZE];
                 static Vector4d directions[BATCH_SIZE];
+                const GLenum cullFaceModes[] = {GL_FRONT, GL_FRONT, GL_BACK};
 
                 for(uint8_t lightType = LIGHT_DIRECTIONAL; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
                 {
+                        glCullFace(cullFaceModes[lightType]);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glCullFace");
+
                         const auto& variables = variables_[programNo];
                         programs_[programNo].set();
                         prepareLightAccumulation(variables);
@@ -897,7 +901,10 @@ namespace selene
                 glDisable(GL_DEPTH_TEST);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glDisable");
 
-                glCullFace(GL_FRONT);
+                glEnable(GL_CULL_FACE);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glEnable");
+
+                glCullFace(GL_BACK);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glCullFace");
 
                 glDisable(GL_BLEND);
@@ -935,13 +942,12 @@ namespace selene
                 Vector4d shadowMapConversionParameters(lightProjectionParameters.w * lightProjectionParameters.z,
                                                        lightProjectionParameters.z - lightProjectionParameters.w,
                                                        lightProjectionParameters.w, 1.0f);
-                Vector4d bias(lightProjectionParameters.w * 0.0375f);
+                Vector4d bias(lightProjectionParameters.w * 0.001f);
 
                 glUniform4fv(variables.locationShadowMapConversionParameters, 1,
                              static_cast<const float*>(shadowMapConversionParameters));
 
-                glUniform4fv(variables.locationBias, 1,
-                             static_cast<const float*>(bias));
+                glUniform4fv(variables.locationBias, 1, static_cast<const float*>(bias));
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderShadowMap: glUniform4fv");
 
                 Vector4d lightColor;

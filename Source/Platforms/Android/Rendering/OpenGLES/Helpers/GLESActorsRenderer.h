@@ -70,15 +70,15 @@ namespace selene
                 {
                         RENDERING_PASS_NORMALS = 0,
                         RENDERING_PASS_SHADING,
-                        RENDERING_PASS_SHADOW,
+                        RENDERING_PASS_SHADOWS,
                         NUM_OF_RENDERING_PASSES,
 
                         GLSL_PROGRAM_NORMALS_PASS = 0,
                         GLSL_PROGRAM_SKIN_NORMALS_PASS,
                         GLSL_PROGRAM_SHADING_PASS,
                         GLSL_PROGRAM_SKIN_SHADING_PASS,
-                        GLSL_PROGRAM_SHADOW_PASS,
-                        GLSL_PROGRAM_SKIN_SHADOW_PASS,
+                        GLSL_PROGRAM_SHADOWS_PASS,
+                        GLSL_PROGRAM_SKIN_SHADOWS_PASS,
                         NUM_OF_GLSL_PROGRAMS,
 
                         MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS = 4,

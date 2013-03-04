@@ -51,7 +51,7 @@ namespace selene
                    nearestPowerOfTwo < parameters.getHeight())
                         nearestPowerOfTwo += nearestPowerOfTwo;
 
-                uint32_t shadowMapSize = nearestPowerOfTwo;
+                uint32_t shadowMapSize = nearestPowerOfTwo * 2;
 
                 frameParameters.shadowMapSize.define(static_cast<float>(shadowMapSize));
                 frameParameters.screenSize.define(static_cast<float>(parameters.getWidth()),
@@ -64,9 +64,10 @@ namespace selene
                                                                     0.0f, 0.0f);
 
                 // create depth buffers
+                uint32_t depthBufferSizes[] = {nearestPowerOfTwo, shadowMapSize};
                 for(uint8_t i = 0; i < NUM_OF_DEPTH_BUFFERS; ++i)
                 {
-                        depthBuffers_[i] = createDepthBuffer(nearestPowerOfTwo, nearestPowerOfTwo);
+                        depthBuffers_[i] = createDepthBuffer(depthBufferSizes[i], depthBufferSizes[i]);
                         if(depthBuffers_[i] == 0)
                         {
                                 destroy();
@@ -99,8 +100,8 @@ namespace selene
                 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffers_[DEPTH_BUFFER_SHADOW_MAP], 0);
                 CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
 
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTargets_[RENDER_TARGET_HELPER_1].getRenderableTexture(), 0);
-                CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
+                //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTargets_[RENDER_TARGET_HELPER_1].getRenderableTexture(), 0);
+                //CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
 
                 if(!isFramebufferComplete())
                 {

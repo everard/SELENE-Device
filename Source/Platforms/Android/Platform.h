@@ -4,6 +4,10 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#ifndef PLATFORM_ANDROID
+#define PLATFORM_ANDROID
+#endif
+
 #include "Rendering/OpenGLES/Resources/GLESTexture.h"
 #include "Rendering/OpenGLES/Resources/GLESMesh.h"
 
@@ -53,6 +57,7 @@ namespace selene
                         FileManager();
                         ~FileManager();
 
+                        // File manager interface implementation
                         virtual const char* find(const char* fileName) const;
                         virtual std::istream* open(const char* fileName) const;
 

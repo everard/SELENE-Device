@@ -26,6 +26,7 @@ namespace selene
                 AndroidTimer();
                 ~AndroidTimer();
 
+                // Timer interface implementation
                 void reset();
                 float getElapsedTime();
 

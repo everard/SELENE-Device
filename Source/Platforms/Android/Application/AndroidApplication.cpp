@@ -197,8 +197,8 @@ namespace selene
                         }
                         else
                         {
-                                cursorShift_.x = static_cast<float>(x - previousX) / static_cast<float>(width_);//cursorPosition_ - cursorShift_;
-                                cursorShift_.y = static_cast<float>(y - previousY) / static_cast<float>(height_);//cursorPosition_ - cursorShift_;
+                                cursorShift_.x = static_cast<float>(x - previousX) / static_cast<float>(width_);
+                                cursorShift_.y = static_cast<float>(y - previousY) / static_cast<float>(height_);
 
                                 previousX = x;
                                 previousY = y;
