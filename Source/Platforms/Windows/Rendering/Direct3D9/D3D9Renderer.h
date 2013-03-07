@@ -32,7 +32,7 @@ namespace selene
         /**
          * Represents D3D9 renderer.
          */
-        class D3d9Renderer: public Renderer, public Status
+        class D3d9Renderer: public Renderer
         {
         public:
                 // Renderer interface implementation

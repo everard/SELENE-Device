@@ -39,15 +39,20 @@ namespace selene
                 // prepare parameters
                 uint32_t halfWidth  = parameters.getWidth()  / 2;
                 uint32_t halfHeight = parameters.getHeight() / 2;
-                uint32_t nearestPowerOfTwo = parameters.getWidth() > parameters.getHeight() ?
-                                             parameters.getWidth() : parameters.getHeight();
+                uint32_t nearestSize = parameters.getWidth() > parameters.getHeight() ?
+                                       parameters.getWidth() : parameters.getHeight();
 
-                nearestPowerOfTwo = getNearestPowerOfTwo(nearestPowerOfTwo);
+                uint32_t nearestPowerOfTwo = getNearestPowerOfTwo(nearestSize);
                 if(nearestPowerOfTwo < parameters.getWidth() ||
                    nearestPowerOfTwo < parameters.getHeight())
                         nearestPowerOfTwo += nearestPowerOfTwo;
 
-                uint32_t shadowMapSize = nearestPowerOfTwo / 2;
+                uint32_t shadowMapSize = nearestPowerOfTwo;
+                if((shadowMapSize - nearestSize) < (nearestPowerOfTwo / 4))
+                        shadowMapSize += nearestPowerOfTwo;
+
+                if(shadowMapSize > capabilities.getMaxTextureSize())
+                        shadowMapSize = capabilities.getMaxTextureSize();
 
                 frameParameters.shadowMapKernelSize.define(1.0f / static_cast<float>(shadowMapSize));
                 frameParameters.screenSize.define(static_cast<float>(parameters.getWidth()),

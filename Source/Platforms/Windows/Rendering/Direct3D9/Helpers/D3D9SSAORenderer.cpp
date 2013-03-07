@@ -387,7 +387,8 @@ namespace selene
                 }
 
                 // blur SSAO
-                Vector4d edgeDetectionParameters = frameParameters_->edgeDetectionParameters;
+                Vector4d edgeDetectionParameters(frameParameters_->ssaoParameters.x,
+                                                 frameParameters_->ssaoParameters.z, 0.0f, 0.0f);
                 edgeDetectionParameters.z = 4.0f / frameParameters_->screenSize.x;
                 edgeDetectionParameters.w = 4.0f / frameParameters_->screenSize.y;
 

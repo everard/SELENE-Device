@@ -27,6 +27,12 @@ namespace selene
                 std::weak_ptr<Camera> camera_;
                 bool isCameraRotationEnabled_;
 
+                std::weak_ptr<Gui::Element> buttonToggleSsao_;
+                std::weak_ptr<Gui::Element> buttonToggleBloom_;
+                std::weak_ptr<Gui::Element> buttonToggleShadows_;
+                std::weak_ptr<Gui::Element> buttonToggleSettings_;
+                bool isSettingsMenuVisible_;
+
                 // Initialization event callback
                 bool onInitialize();
 
@@ -48,12 +54,22 @@ namespace selene
                 // Rendering event callback
                 void onRender(float elapsedTime);
 
+                // Toggles effect
+                void toggleEffect(uint8_t type);
+
+                // Toggles GUI element visibility
+                void toggleGuiElementVisibility(std::weak_ptr<Gui::Element>& element);
+
                 // GUI message callbacks
-                void onButtonMessageExit(int32_t elementId, uint8_t message);
-                void onButtonMessageWalk(int32_t elementId, uint8_t message);
-                void onButtonMessageShoot(int32_t elementId, uint8_t message);
-                void onButtonMessageLookLeft(int32_t elementId, uint8_t message);
-                void onButtonMessageLookRight(int32_t elementId, uint8_t message);
+                void onButtonMessageExit();
+                void onButtonMessageWalk();
+                void onButtonMessageShoot();
+                void onButtonMessageLookLeft();
+                void onButtonMessageLookRight();
+                void onButtonMessageToggleSsao();
+                void onButtonMessageToggleBloom();
+                void onButtonMessageToggleShadows();
+                void onButtonMessageToggleSettings();
 
         };
 

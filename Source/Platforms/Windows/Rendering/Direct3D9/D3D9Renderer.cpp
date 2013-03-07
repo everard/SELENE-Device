@@ -109,9 +109,14 @@ namespace selene
                                                            projectionInvMatrix.a[1][1],
                                                            1.0, 0.0);
 
-                frameParameters_.bloomParameters.define(0.08f, 0.18f, 0.64f, 1.5f);
-                frameParameters_.ssaoParameters.define(2.5f, -0.2f, 1.0f, 1.0f);
-                frameParameters_.edgeDetectionParameters.define(2.5f, 0.99f, 0.0f, 0.0f);
+                frameParameters_.bloomParameters = camera.getEffectParameters(Renderer::Effects::BLOOM);
+                frameParameters_.ssaoParameters  = camera.getEffectParameters(Renderer::Effects::SSAO);
+
+                frameParameters_.renderingFlags = getFlags();
+                if(!camera.isEffectEnabled(Renderer::Effects::SHADOWS))
+                {
+                        CLEAR(frameParameters_.renderingFlags, RENDERING_SHADOWS_ENABLED);
+                }
 
                 // begin rendering
                 if(FAILED(d3dDevice_->BeginScene()))
@@ -122,7 +127,7 @@ namespace selene
                 lightingRenderer_.renderLighting(renderingData.getLightNode());
 
                 bool isSsaoEnabled = false;
-                if(is(RENDERING_SSAO_ENABLED))
+                if(is(RENDERING_SSAO_ENABLED) && camera.isEffectEnabled(Renderer::Effects::SSAO))
                 {
                         ssaoRenderer_.renderSsao();
                         isSsaoEnabled = true;
@@ -131,7 +136,7 @@ namespace selene
                 actorsRenderer_.renderShading(renderingData.getActorNode(), isSsaoEnabled);
                 particlesRenderer_.renderParticleSystems(renderingData.getParticleSystemNode());
 
-                if(is(RENDERING_BLOOM_ENABLED))
+                if(is(RENDERING_BLOOM_ENABLED) && camera.isEffectEnabled(Renderer::Effects::BLOOM))
                 {
                         bloomRenderer_.renderBloom();
                         resultRenderTarget = RENDER_TARGET_HELPER_1;
@@ -198,7 +203,7 @@ namespace selene
                 memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
                 isDeviceLost_ = false;
         }
-        D3d9Renderer::D3d9Renderer(const D3d9Renderer&): Renderer(), Status(),
+        D3d9Renderer::D3d9Renderer(const D3d9Renderer&): Renderer(),
                                                          parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
         D3d9Renderer::~D3d9Renderer()
         {

@@ -23,7 +23,7 @@ namespace selene
          * Represents scene camera. Contains rendering data, which can be passed to the renderer.
          * \see Renderer::Data
          */
-        class Camera: public Scene::Node
+        class Camera: public Scene::Node, public Renderer::Effects
         {
         public:
                 /**

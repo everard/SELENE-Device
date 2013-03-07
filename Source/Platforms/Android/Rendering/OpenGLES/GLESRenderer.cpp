@@ -110,7 +110,7 @@ namespace selene
         }
 
         GlesRenderer::GlesRenderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
-        GlesRenderer::GlesRenderer(const GlesRenderer&): Renderer(), Status(),
+        GlesRenderer::GlesRenderer(const GlesRenderer&): Renderer(),
                                                          parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
         GlesRenderer::~GlesRenderer()
         {

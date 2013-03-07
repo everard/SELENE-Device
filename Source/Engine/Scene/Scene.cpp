@@ -496,6 +496,10 @@ namespace selene
                                 if(!renderingData.addLight(light))
                                         break;
 
+                                if(!camera->isEffectEnabled(Renderer::Effects::SHADOWS) ||
+                                   !renderer.is(RENDERING_SHADOWS_ENABLED))
+                                        continue;
+
                                 if(!light.is(Node::SHADOW_CASTER))
                                         continue;
 

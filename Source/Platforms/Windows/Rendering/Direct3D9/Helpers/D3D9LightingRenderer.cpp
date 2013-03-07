@@ -315,79 +315,13 @@ namespace selene
                 d3dDevice_->SetIndices(nullptr);
 
                 // render without shadows
-                prepareLightAccumulation();
-                uint8_t shaderNo = 0;
-                uint8_t lightUnit = Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL;
+                renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL);
 
-                static Vector4d positions[BATCH_SIZE];
-                static Vector4d directions[BATCH_SIZE];
-                static Vector4d colors[BATCH_SIZE];
-
-                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-                d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATER);
-
-                for(uint8_t lightType = 0; lightType < NUM_OF_LIGHT_TYPES; ++lightType, ++lightUnit)
+                if(!IS_SET(frameParameters_->renderingFlags, RENDERING_SHADOWS_ENABLED))
                 {
-                        vertexShaders_[VERTEX_SHADER_DIRECTIONAL_LIGHT_ACCUMULATION + shaderNo].set();
-                        pixelShaders_[PIXEL_SHADER_DIRECTIONAL_LIGHT_ACCUMULATION + shaderNo].set();
-
-                        d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[lightType],
-                                                    0, lightVolumeGeometryVertexStride);
-
-                        uint32_t numLights = 0;
-
-                        for(bool result = lightNode.readFirstElement(lightUnit); result;
-                                 result = lightNode.readNextElement())
-                        {
-                                auto light = lightNode.getCurrentKey();
-
-                                if(light == nullptr)
-                                        break;
-
-                                colors[numLights].define(light->getColor(), light->getIntensity());
-
-                                switch(light->getRenderingUnit())
-                                {
-                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL:
-                                        {
-                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
-                                                directions[numLights].define(directionalLight->getDirection(), directionalLight->getSize());
-                                                break;
-                                        }
-                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT:
-                                        {
-                                                PointLight* pointLight = static_cast<PointLight*>(light);
-                                                positions[numLights].define(pointLight->getPosition(), pointLight->getRadius());
-                                                break;
-                                        }
-
-                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT:
-                                        {
-                                                SpotLight* spotLight = static_cast<SpotLight*>(light);
-
-                                                positions[numLights].define(spotLight->getPosition(),   spotLight->getRadius());
-                                                directions[numLights].define(spotLight->getDirection(), spotLight->getCosTheta());
-                                                break;
-                                        }
-
-                                        default:
-                                                break;
-                                }
-
-                                ++numLights;
-
-                                if(numLights == BATCH_SIZE)
-                                {
-                                        renderLightGeometry(lightType, numLights, positions, directions, colors);
-                                        numLights = 0;
-                                }
-                        }
-
-                        if(numLights > 0)
-                                renderLightGeometry(lightType, numLights, positions, directions, colors);
-
-                        ++shaderNo;
+                        renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_DIRECTIONAL);
+                        d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+                        return;
                 }
 
                 // render with shadows
@@ -423,14 +357,96 @@ namespace selene
                         d3dDevice_->SetStreamSource(3, nullptr, 0, 0);
                         d3dDevice_->SetIndices(nullptr);
 
-                        positions[0].define(spotLight->getPosition(), spotLight->getRadius());
-                        directions[0].define(spotLight->getDirection(), spotLight->getCosTheta());
-                        colors[0].define(spotLight->getColor(), spotLight->getIntensity());
+                        Vector4d position(spotLight->getPosition(), spotLight->getRadius());
+                        Vector4d direction(spotLight->getDirection(), spotLight->getCosTheta());
+                        Vector4d color(spotLight->getColor(), spotLight->getIntensity());
 
-                        renderLightGeometry(LIGHT_SPOT, 1, positions, directions, colors);
+                        renderLightGeometry(LIGHT_SPOT, 1, &position, &direction, &color);
                 }
 
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+        }
+
+        //----------------------------------------------------------------------------------------------------------
+        void D3d9LightingRenderer::renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
+                                                                uint8_t lightUnit)
+        {
+                prepareLightAccumulation();
+                uint8_t shaderNo = 0;
+
+                static Vector4d positions[BATCH_SIZE];
+                static Vector4d directions[BATCH_SIZE];
+                static Vector4d colors[BATCH_SIZE];
+
+                d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+                d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+                d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATER);
+
+                for(uint8_t lightType = 0; lightType < NUM_OF_LIGHT_TYPES; ++lightType, ++lightUnit)
+                {
+                        vertexShaders_[VERTEX_SHADER_DIRECTIONAL_LIGHT_ACCUMULATION + shaderNo].set();
+                        pixelShaders_[PIXEL_SHADER_DIRECTIONAL_LIGHT_ACCUMULATION + shaderNo].set();
+
+                        d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[lightType],
+                                                    0, lightVolumeGeometryVertexStride);
+
+                        uint32_t numLights = 0;
+
+                        for(bool result = lightNode.readFirstElement(lightUnit); result;
+                                 result = lightNode.readNextElement())
+                        {
+                                auto light = lightNode.getCurrentKey();
+
+                                if(light == nullptr)
+                                        break;
+
+                                colors[numLights].define(light->getColor(), light->getIntensity());
+
+                                switch(light->getRenderingUnit())
+                                {
+                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL:
+                                        case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
+                                        {
+                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
+                                                directions[numLights].define(directionalLight->getDirection(), directionalLight->getSize());
+                                                break;
+                                        }
+                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT:
+                                        case Renderer::Data::UNIT_LIGHT_POINT:
+                                        {
+                                                PointLight* pointLight = static_cast<PointLight*>(light);
+                                                positions[numLights].define(pointLight->getPosition(), pointLight->getRadius());
+                                                break;
+                                        }
+
+                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT:
+                                        case Renderer::Data::UNIT_LIGHT_SPOT:
+                                        {
+                                                SpotLight* spotLight = static_cast<SpotLight*>(light);
+
+                                                positions[numLights].define(spotLight->getPosition(),   spotLight->getRadius());
+                                                directions[numLights].define(spotLight->getDirection(), spotLight->getCosTheta());
+                                                break;
+                                        }
+
+                                        default:
+                                                break;
+                                }
+
+                                ++numLights;
+
+                                if(numLights == BATCH_SIZE)
+                                {
+                                        renderLightGeometry(lightType, numLights, positions, directions, colors);
+                                        numLights = 0;
+                                }
+                        }
+
+                        if(numLights > 0)
+                                renderLightGeometry(lightType, numLights, positions, directions, colors);
+
+                        ++shaderNo;
+                }
         }
 
         //----------------------------------------------------------------------------------------------------------

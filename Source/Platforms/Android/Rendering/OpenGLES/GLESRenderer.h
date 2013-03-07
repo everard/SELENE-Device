@@ -28,7 +28,7 @@ namespace selene
         /**
          * Represents OpenGL ES renderer.
          */
-        class GlesRenderer: public Renderer, public Status
+        class GlesRenderer: public Renderer
         {
         public:
                 // Renderer interface implementation

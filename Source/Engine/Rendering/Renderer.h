@@ -39,16 +39,18 @@ namespace selene
         /// Rendering flag
         enum RENDERING_FLAG
         {
-                RENDERING_SSAO_ENABLED  = 0x01,
-                RENDERING_BLOOM_ENABLED = 0x02,
-                RENDERING_FULL_SCREEN_ENABLED = 0x04
+                RENDERING_FULL_SCREEN_ENABLED = 0x01,
+                RENDERING_DOF_ENABLED     = 0x02,
+                RENDERING_SSAO_ENABLED    = 0x04,
+                RENDERING_BLOOM_ENABLED   = 0x08,
+                RENDERING_SHADOWS_ENABLED = 0x10
         };
 
         /**
          * Represents renderer. This is base class for all renderers.
          * \see Renderer::Data to obtain information about how scene objects are passed to the renderer.
          */
-        class Renderer
+        class Renderer: public Status
         {
         public:
                 /**
@@ -395,6 +397,75 @@ namespace selene
                         LightNode lightNode_;
                         ParticleSystemNode particleSystemNode_;
                         Camera* camera_;
+
+                };
+
+                /**
+                 * Represents rendering effects.
+                 */
+                class Effects
+                {
+                public:
+                        /// Effect types
+                        enum
+                        {
+                                DOF = 0,
+                                SSAO,
+                                BLOOM,
+                                SHADOWS,
+                                NUM_OF_EFFECT_TYPES
+                        };
+
+                        Effects();
+                        ~Effects();
+
+                        /**
+                         * \brief Enables effect.
+                         * \param[in] type type of the effect
+                         */
+                        void enableEffect(uint8_t type);
+
+                        /**
+                         * \brief Disables effect.
+                         * \param[in] type type of the effect
+                         */
+                        void disableEffect(uint8_t type);
+
+                        /**
+                         * \brief Returns true if specified effect is enabled.
+                         * \param[in] type type of the effect
+                         * \return true if specified effect is enabled
+                         */
+                        bool isEffectEnabled(uint8_t type) const;
+
+                        /**
+                         * \brief Sets SSAO parameters.
+                         * \param[in] radius radius of influence
+                         * \param[in] normalInfluenceBias influence bias for normals
+                         * \param[in] minCosAlpha minimum cosine of angle between normals,
+                         * when two adjacent points are considered to be on the same surface
+                         * (used in blur)
+                         */
+                        void setSsaoParameters(float radius = 2.5f, float normalInfluenceBias = -0.2f,
+                                               float minCosAlpha = 0.99f);
+
+                        /**
+                         * \brief Sets bloom parameters.
+                         * \param[in] luminance luminance
+                         * \param[in] scale bloom scale
+                         */
+                        void setBloomParameters(float luminance = 0.08f, float scale = 1.5f);
+
+                        /**
+                         * \brief Returns parameters of given effect.
+                         * \param[in] type type of the effect
+                         * \return parameters of given effect
+                         */
+                        const Vector4d& getEffectParameters(uint8_t type) const;
+
+                private:
+                        Vector4d parameters_[NUM_OF_EFFECT_TYPES];
+                        bool isEnabled_[NUM_OF_EFFECT_TYPES];
 
                 };
 

@@ -12,7 +12,7 @@ namespace selene
 {
 
         // Represents OpenGL renderer.
-        class GlRenderer: public Renderer, public Status
+        class GlRenderer: public Renderer
         {
         public:
                 // Initializes renderer

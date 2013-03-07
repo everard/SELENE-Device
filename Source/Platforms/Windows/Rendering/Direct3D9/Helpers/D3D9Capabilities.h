@@ -61,11 +61,18 @@ namespace selene
                  */
                 DWORD getMaxTextureAnisotropy() const;
 
+                /**
+                 * \brief Returns maximum texture size.
+                 * \return maximum texture size
+                 */
+                DWORD getMaxTextureSize() const;
+
         private:
                 bool isR32fRenderTargetFormatSupported_;
                 bool isMultipleRenderTargetSupported_;
                 bool isThirdShaderModelSupported_;
                 DWORD maxTextureAnisotropy_;
+                DWORD maxTextureSize_;
 
         };
 

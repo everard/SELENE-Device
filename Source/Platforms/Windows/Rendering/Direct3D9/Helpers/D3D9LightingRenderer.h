@@ -132,6 +132,14 @@ namespace selene
                 D3d9Capabilities* capabilities_;
 
                 /**
+                 * \brief Renders lighting without shadows.
+                 * \param[in] lightNode light node
+                 * \param[in] lightUnit light unit, from which rendering will start
+                 */
+                void renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
+                                                  uint8_t lightUnit);
+
+                /**
                  * \brief Prepares light accumulation.
                  */
                 void prepareLightAccumulation();

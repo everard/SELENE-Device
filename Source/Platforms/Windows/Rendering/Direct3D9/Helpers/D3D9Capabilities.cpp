@@ -13,6 +13,7 @@ namespace selene
                 isMultipleRenderTargetSupported_ = false;
                 isThirdShaderModelSupported_ = false;
                 maxTextureAnisotropy_ = 1;
+                maxTextureSize_ = 1;
         }
         D3d9Capabilities::~D3d9Capabilities() {}
 
@@ -57,6 +58,9 @@ namespace selene
                         maxTextureAnisotropy_ = 1;
                 else if(maxTextureAnisotropy_ > 8)
                         maxTextureAnisotropy_ = 8;
+
+                maxTextureSize_ = d3dCaps.MaxTextureWidth < d3dCaps.MaxTextureHeight ?
+                                  d3dCaps.MaxTextureWidth : d3dCaps.MaxTextureHeight;
 
                 isThirdShaderModelSupported_ = false;
                 if(d3dCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0))
@@ -117,6 +121,12 @@ namespace selene
         DWORD D3d9Capabilities::getMaxTextureAnisotropy() const
         {
                 return maxTextureAnisotropy_;
+        }
+
+        //----------------------------------------------------------------------------------------------------
+        DWORD D3d9Capabilities::getMaxTextureSize() const
+        {
+                return maxTextureSize_;
         }
 
 }

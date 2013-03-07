@@ -12,8 +12,8 @@ float4 main(PS_INPUT In): COLOR0
         In.textureCoords.xy += texCoordsAdjustment.zw;
         float3 ColorOut = tex2D(Texture, In.textureCoords);
 
-        ColorOut *= bloomParameters.y / (bloomParameters.x + 0.001);
-        ColorOut *= (1.0 + (ColorOut / (bloomParameters.z)));
+        ColorOut *= bloomParameters.z / (bloomParameters.x + 0.001);
+        ColorOut *= (1.0 + (ColorOut / bloomParameters.w));
         ColorOut -= 5.0;
         ColorOut = max(ColorOut, 0.0);
         ColorOut /= (10.0 + ColorOut);
