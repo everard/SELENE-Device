@@ -30,14 +30,16 @@ namespace selene
                 Matrix viewMatrix;
 
                 Vector4d textureCoordinatesAdjustment;
-                Vector4d edgeDetectionParameters;
                 Vector4d conversionParameters;
                 Vector4d projectionParameters;
                 Vector4d unprojectionVector;
+                Vector4d renderTargetSize;
                 Vector4d bloomParameters;
                 Vector4d ssaoParameters;
                 Vector4d shadowMapSize;
                 Vector4d screenSize;
+
+                uint8_t renderingFlags;
 
                 GlesFrameParameters();
                 ~GlesFrameParameters();

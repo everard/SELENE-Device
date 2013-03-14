@@ -12,7 +12,7 @@ namespace selene
 {*/
 
         /**
-         * \addtogroup Windows
+         * \addtogroup Android
          * @{
          */
 

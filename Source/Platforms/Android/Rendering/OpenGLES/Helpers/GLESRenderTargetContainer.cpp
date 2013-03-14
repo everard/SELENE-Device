@@ -53,6 +53,7 @@ namespace selene
 
                 uint32_t shadowMapSize = nearestPowerOfTwo * 2;
 
+                frameParameters.renderTargetSize.define(static_cast<float>(nearestPowerOfTwo));
                 frameParameters.shadowMapSize.define(static_cast<float>(shadowMapSize));
                 frameParameters.screenSize.define(static_cast<float>(parameters.getWidth()),
                                                   static_cast<float>(parameters.getHeight()),

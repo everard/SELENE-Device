@@ -556,101 +556,21 @@ namespace selene
                 glBlendFunc(GL_ONE, GL_ONE);
                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBlendFunc");
 
-                // render without shadows
-                uint8_t programNo = GLSL_PROGRAM_DIRECTIONAL_LIGHT_ACCUMULATION;
-                uint8_t lightUnit = Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL;
+                renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL);
 
-                static Vector4d colors[BATCH_SIZE];
-                static Vector4d positions[BATCH_SIZE];
-                static Vector4d directions[BATCH_SIZE];
-                const GLenum cullFaceModes[] = {GL_FRONT, GL_FRONT, GL_BACK};
-
-                for(uint8_t lightType = LIGHT_DIRECTIONAL; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
+                if(!IS_SET(frameParameters_->renderingFlags, RENDERING_SHADOWS_ENABLED))
                 {
-                        glCullFace(cullFaceModes[lightType]);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glCullFace");
-
-                        const auto& variables = variables_[programNo];
-                        programs_[programNo].set();
-                        prepareLightAccumulation(variables);
-
-                        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[lightType]);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
-
-                        glEnableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnableVertexAttribArray");
-
-                        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, lightVolumeGeometryVertexStride, nullptr);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glVertexAttribPointer");
-
-                        glBindBuffer(GL_ARRAY_BUFFER, 0);
-                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
-
-                        uint32_t numLights = 0;
-
-                        for(bool result = lightNode.readFirstElement(lightUnit); result;
-                                 result = lightNode.readNextElement())
-                        {
-                                auto light = lightNode.getCurrentKey();
-
-                                if(light == nullptr)
-                                        break;
-
-                                colors[numLights].define(light->getColor(), light->getIntensity());
-
-                                switch(light->getRenderingUnit())
-                                {
-                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL:
-                                        {
-                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
-                                                directions[numLights].define(directionalLight->getDirection(), directionalLight->getSize());
-                                                break;
-                                        }
-                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT:
-                                        {
-                                                PointLight* pointLight = static_cast<PointLight*>(light);
-                                                positions[numLights].define(pointLight->getPosition(), pointLight->getRadius());
-                                                break;
-                                        }
-
-                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT:
-                                        {
-                                                SpotLight* spotLight = static_cast<SpotLight*>(light);
-
-                                                positions[numLights].define(spotLight->getPosition(),   spotLight->getRadius());
-                                                directions[numLights].define(spotLight->getDirection(), spotLight->getCosTheta());
-                                                break;
-                                        }
-
-                                        default:
-                                                break;
-                                }
-
-                                ++numLights;
-
-                                if(numLights == BATCH_SIZE)
-                                {
-                                        renderLightGeometry(variables, lightType, numLights, colors, positions, directions);
-                                        numLights = 0;
-                                }
-                        }
-
-                        if(numLights > 0)
-                                renderLightGeometry(variables, lightType, numLights, colors, positions, directions);
+                        renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_DIRECTIONAL);
+                        glDisable(GL_BLEND);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisable(GL_BLEND)");
+                        return;
                 }
 
-                // unbind everything
-                glDisableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
-                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisableVertexAttribArray");
-
-                // unbind textures
-                textureHandler_->setTexture(0, 0);
-                textureHandler_->setTexture(0, 1);
-                textureHandler_->setTexture(0, 2);
-
                 // render with shadows
-                programNo = GLSL_PROGRAM_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS;
-                lightUnit = Renderer::Data::UNIT_LIGHT_SPOT;
+                uint8_t programNo = GLSL_PROGRAM_SPOT_LIGHT_ACCUMULATION_WITH_SHADOWS;
+                uint8_t lightUnit = Renderer::Data::UNIT_LIGHT_SPOT;
+
+                static Vector4d position, direction, color;
 
                 for(uint8_t lightType = LIGHT_SPOT; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
                 {
@@ -663,20 +583,20 @@ namespace selene
                                 if(light == nullptr || actorNode == nullptr)
                                         break;
 
-                                colors[0].define(light->getColor(), light->getIntensity());
+                                color.define(light->getColor(), light->getIntensity());
 
                                 switch(light->getRenderingUnit())
                                 {
                                         case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
                                         {
                                                 DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
-                                                directions[0].define(directionalLight->getDirection(), directionalLight->getSize());
+                                                direction.define(directionalLight->getDirection(), directionalLight->getSize());
                                                 break;
                                         }
                                         case Renderer::Data::UNIT_LIGHT_POINT:
                                         {
                                                 PointLight* pointLight = static_cast<PointLight*>(light);
-                                                positions[0].define(pointLight->getPosition(), pointLight->getRadius());
+                                                position.define(pointLight->getPosition(), pointLight->getRadius());
                                                 break;
                                         }
 
@@ -684,8 +604,8 @@ namespace selene
                                         {
                                                 SpotLight* spotLight = static_cast<SpotLight*>(light);
 
-                                                positions[0].define(spotLight->getPosition(),   spotLight->getRadius());
-                                                directions[0].define(spotLight->getDirection(), spotLight->getCosTheta());
+                                                position.define(spotLight->getPosition(),   spotLight->getRadius());
+                                                direction.define(spotLight->getDirection(), spotLight->getCosTheta());
 
                                                 renderShadowMap(*actorNode, *spotLight);
                                                 break;
@@ -711,7 +631,7 @@ namespace selene
                                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
 
-                                renderLightGeometry(variables, lightType, 1, colors, positions, directions);
+                                renderLightGeometry(variables, lightType, 1, &color, &position, &direction);
                         }
                 }
 
@@ -774,6 +694,105 @@ namespace selene
                 locationNormalsBuffer = program.getUniformLocation("normalsBuffer");
                 locationShadowsBuffer = program.getUniformLocation("shadowsBuffer");
                 locationShadowMap = program.getUniformLocation("shadowMap");
+        }
+
+        //----------------------------------------------------------------------------------------------------------
+        void GlesLightingRenderer::renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
+                                                                uint8_t lightUnit)
+        {
+                // render without shadows
+                uint8_t programNo = GLSL_PROGRAM_DIRECTIONAL_LIGHT_ACCUMULATION;
+
+                static Vector4d colors[BATCH_SIZE];
+                static Vector4d positions[BATCH_SIZE];
+                static Vector4d directions[BATCH_SIZE];
+                const GLenum cullFaceModes[] = {GL_FRONT, GL_FRONT, GL_BACK};
+
+                for(uint8_t lightType = LIGHT_DIRECTIONAL; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
+                {
+                        glCullFace(cullFaceModes[lightType]);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glCullFace");
+
+                        const auto& variables = variables_[programNo];
+                        programs_[programNo].set();
+                        prepareLightAccumulation(variables);
+
+                        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers_[lightType]);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
+
+                        glEnableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnableVertexAttribArray");
+
+                        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, lightVolumeGeometryVertexStride, nullptr);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glVertexAttribPointer");
+
+                        glBindBuffer(GL_ARRAY_BUFFER, 0);
+                        CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glBindBuffer");
+
+                        uint32_t numLights = 0;
+
+                        for(bool result = lightNode.readFirstElement(lightUnit); result;
+                                 result = lightNode.readNextElement())
+                        {
+                                auto light = lightNode.getCurrentKey();
+
+                                if(light == nullptr)
+                                        break;
+
+                                colors[numLights].define(light->getColor(), light->getIntensity());
+
+                                switch(light->getRenderingUnit())
+                                {
+                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL:
+                                        case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
+                                        {
+                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
+                                                directions[numLights].define(directionalLight->getDirection(), directionalLight->getSize());
+                                                break;
+                                        }
+                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT:
+                                        case Renderer::Data::UNIT_LIGHT_POINT:
+                                        {
+                                                PointLight* pointLight = static_cast<PointLight*>(light);
+                                                positions[numLights].define(pointLight->getPosition(), pointLight->getRadius());
+                                                break;
+                                        }
+
+                                        case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_SPOT:
+                                        case Renderer::Data::UNIT_LIGHT_SPOT:
+                                        {
+                                                SpotLight* spotLight = static_cast<SpotLight*>(light);
+
+                                                positions[numLights].define(spotLight->getPosition(),   spotLight->getRadius());
+                                                directions[numLights].define(spotLight->getDirection(), spotLight->getCosTheta());
+                                                break;
+                                        }
+
+                                        default:
+                                                break;
+                                }
+
+                                ++numLights;
+
+                                if(numLights == BATCH_SIZE)
+                                {
+                                        renderLightGeometry(variables, lightType, numLights, colors, positions, directions);
+                                        numLights = 0;
+                                }
+                        }
+
+                        if(numLights > 0)
+                                renderLightGeometry(variables, lightType, numLights, colors, positions, directions);
+                }
+
+                // unbind everything
+                glDisableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
+                CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glDisableVertexAttribArray");
+
+                // unbind textures
+                textureHandler_->setTexture(0, 0);
+                textureHandler_->setTexture(0, 1);
+                textureHandler_->setTexture(0, 2);
         }
 
         //----------------------------------------------------------------------------------------------------------

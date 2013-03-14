@@ -14,6 +14,7 @@
 #include "Helpers/GLESActorsRenderer.h"
 #include "Helpers/GLESFullScreenQuad.h"
 #include "Helpers/GLESTextureHandler.h"
+#include "Helpers/GLESBloomRenderer.h"
 #include "Helpers/GLESCapabilities.h"
 #include "Helpers/GLESGUIRenderer.h"
 
@@ -48,6 +49,7 @@ namespace selene
                 GlesActorsRenderer actorsRenderer_;
                 GlesFullScreenQuad fullScreenQuad_;
                 GlesTextureHandler textureHandler_;
+                GlesBloomRenderer bloomRenderer_;
                 GlesGuiRenderer guiRenderer_;
 
                 GlesFrameParameters frameParameters_;

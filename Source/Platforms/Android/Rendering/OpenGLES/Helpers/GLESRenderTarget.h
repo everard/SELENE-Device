@@ -29,8 +29,6 @@ namespace selene
                  * \brief Initializes render target.
                  * \param[in] width width of the render target
                  * \param[in] height height of the render target
-                 * \param[in] depthRenderbuffer depth renderbuffer
-                 * \param[in] depthTexture depth texture
                  * \return true if render target has been successfully initialized
                  */
                 bool initialize(uint32_t width, uint32_t height);

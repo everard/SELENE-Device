@@ -130,6 +130,14 @@ namespace selene
                 GlesTextureHandler* textureHandler_;
 
                 /**
+                 * \brief Renders lighting without shadows.
+                 * \param[in] lightNode light node
+                 * \param[in] lightUnit light unit, from which rendering will start
+                 */
+                void renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
+                                                  uint8_t lightUnit);
+
+                /**
                  * \brief Prepares light accumulation.
                  * \param[in] variables container of the GLSL program's locations of variables
                  */
@@ -143,6 +151,7 @@ namespace selene
 
                 /**
                  * \brief Renders light geometry.
+                 * \param[in] variables container of the GLSL program's locations of variables
                  * \param[in] type type of the light
                  * \param[in] numLights number of lights
                  * \param[in] positions light positions

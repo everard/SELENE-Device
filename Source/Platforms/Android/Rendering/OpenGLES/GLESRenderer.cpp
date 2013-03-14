@@ -22,6 +22,7 @@ namespace selene
         {
                 parameters_ = parameters;
                 writeLogEntry("--- Initializing OpenGL ES renderer ---");
+                setFlags(parameters_.getFlags());
 
                 // initialize helpers
                 if(!initializeHelpers())
@@ -68,9 +69,16 @@ namespace selene
                                                              frameParameters_.projectionParameters.z - frameParameters_.projectionParameters.w,
                                                              frameParameters_.projectionParameters.w, 1.0f);
 
-                frameParameters_.bloomParameters.define(0.08f, 0.18f, 0.64f, 1.5f);
-                frameParameters_.ssaoParameters.define(2.5f, -0.2f, 1.0f, 1.0f);
-                frameParameters_.edgeDetectionParameters.define(2.5f, 0.99f, 0.0f, 0.0f);
+                frameParameters_.bloomParameters = camera.getEffectParameters(Renderer::Effects::BLOOM);
+                frameParameters_.ssaoParameters  = camera.getEffectParameters(Renderer::Effects::SSAO);
+
+                frameParameters_.renderingFlags = getFlags();
+                if(!camera.isEffectEnabled(Renderer::Effects::SHADOWS))
+                {
+                        CLEAR(frameParameters_.renderingFlags, RENDERING_SHADOWS_ENABLED);
+                }
+
+                uint8_t resultRenderTarget = RENDER_TARGET_RESULT;
 
                 // set viewport
                 glViewport(0, 0, parameters_.getWidth(), parameters_.getHeight());
@@ -80,6 +88,13 @@ namespace selene
                 lightingRenderer_.renderLighting(renderingData.getLightNode());
                 actorsRenderer_.renderShading(renderingData.getActorNode());
 
+                if(is(RENDERING_BLOOM_ENABLED) && camera.isEffectEnabled(Renderer::Effects::BLOOM))
+                {
+                        bloomRenderer_.renderBloom();
+                        resultRenderTarget = RENDER_TARGET_HELPER_1;
+                }
+
+                glViewport(0, 0, parameters_.getWidth(), parameters_.getHeight());
                 glDisable(GL_DEPTH_TEST);
                 glDisable(GL_CULL_FACE);
                 CHECK_GLES_ERROR("GlesRenderer::render: glDisable");
@@ -95,7 +110,7 @@ namespace selene
                 glUniform1i(resultTextureLocation_, 0);
                 CHECK_GLES_ERROR("GlesRenderer::render: glUniform1i");
 
-                textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(RENDER_TARGET_RESULT), 0);
+                textureHandler_.setTexture(renderTargetContainer_.getRenderTarget(resultRenderTarget), 0);
 
                 fullScreenQuad_.render();
 
@@ -215,6 +230,12 @@ namespace selene
                         return false;
                 }
 
+                if(!bloomRenderer_.initialize(renderTargetContainer_, frameParameters_, fullScreenQuad_, textureHandler_))
+                {
+                        writeLogEntry("ERROR: Could not initialize bloom renderer.");
+                        return false;
+                }
+
                 if(!guiRenderer_.initialize(textureHandler_, parameters_.getFileManager()))
                 {
                         writeLogEntry("ERROR: Could not initialize GUI renderer.");
@@ -236,6 +257,7 @@ namespace selene
                 actorsRenderer_.destroy();
                 fullScreenQuad_.destroy();
                 textureHandler_.destroy();
+                bloomRenderer_.destroy();
                 guiRenderer_.destroy();
         }
 

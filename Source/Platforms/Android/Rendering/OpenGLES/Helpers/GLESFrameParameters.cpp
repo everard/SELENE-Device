@@ -6,7 +6,10 @@
 namespace selene
 {
 
-        GlesFrameParameters::GlesFrameParameters() {}
+        GlesFrameParameters::GlesFrameParameters()
+        {
+                renderingFlags = 0;
+        }
         GlesFrameParameters::~GlesFrameParameters() {}
 
 }

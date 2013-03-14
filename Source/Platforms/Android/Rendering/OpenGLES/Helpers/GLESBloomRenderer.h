@@ -1,34 +1,33 @@
 // Copyright (c) 2012 Nezametdinov E. Ildus
 // Licensed under the MIT License (see LICENSE.txt for details)
 
-/*#ifndef D3D9_BLOOM_RENDERER_H
-#define D3D9_BLOOM_RENDERER_H
+#ifndef GLES_BLOOM_RENDERER_H
+#define GLES_BLOOM_RENDERER_H
 
-#include "D3D9Shader.h"
+#include "GLESGLSLProgram.h"
 
 namespace selene
-{*/
+{
 
         /**
-         * \addtogroup Windows
+         * \addtogroup Android
          * @{
          */
 
         // Forward declaration of classes
-        /*class D3d9RenderTargetContainer;
-        class D3d9FrameParameters;
-        class D3d9FullScreenQuad;
-        class D3d9TextureHandler;
-        class D3d9Capabilities;*/
+        class GlesRenderTargetContainer;
+        class GlesFrameParameters;
+        class GlesFullScreenQuad;
+        class GlesTextureHandler;
 
         /**
          * Represents bloom renderer.
          */
-        /*class D3d9BloomRenderer
+        class GlesBloomRenderer
         {
         public:
-                D3d9BloomRenderer();
-                ~D3d9BloomRenderer();*/
+                GlesBloomRenderer();
+                ~GlesBloomRenderer();
 
                 /**
                  * \brief Initializes bloom renderer.
@@ -36,69 +35,76 @@ namespace selene
                  * \param[in] frameParameters frame parameters
                  * \param[in] fullScreenQuad full screen quad
                  * \param[in] textureHandler texture handler
-                 * \param[in] capabilities D3D capabilities
                  * \return true if bloom renderer has been successfully initialized
                  */
-                /*bool initialize(D3d9RenderTargetContainer& renderTargetContainer,
-                                D3d9FrameParameters& frameParameters,
-                                D3d9FullScreenQuad& fullScreenQuad,
-                                D3d9TextureHandler& textureHandler,
-                                D3d9Capabilities& capabilities);*/
+                bool initialize(GlesRenderTargetContainer& renderTargetContainer,
+                                GlesFrameParameters& frameParameters,
+                                GlesFullScreenQuad& fullScreenQuad,
+                                GlesTextureHandler& textureHandler);
 
                 /**
                  * \brief Destroys bloom renderer.
                  */
-                //void destroy();
+                void destroy();
 
                 /**
                  * \brief Renders bloom.
                  */
-                //void renderBloom();
+                void renderBloom();
 
-        //private:
+        private:
                 /// Helper constants
-                /*enum
+                enum
                 {
-                        VERTEX_SHADER_BRIGHT_PASS = 0,
-                        VERTEX_SHADER_BLOOM_PASS,
-                        VERTEX_SHADER_COMBINE_PASS,
-                        NUM_OF_VERTEX_SHADERS,
-
-                        PIXEL_SHADER_BRIGHT_PASS = 0,
-                        PIXEL_SHADER_BLOOM_PASS,
-                        PIXEL_SHADER_COMBINE_PASS,
-                        NUM_OF_PIXEL_SHADERS,
+                        GLSL_PROGRAM_BRIGHT_PASS = 0,
+                        GLSL_PROGRAM_BLOOM_PASS,
+                        GLSL_PROGRAM_COMBINE_PASS,
+                        NUM_OF_GLSL_PROGRAMS,
 
                         NUM_OF_BLUR_OFFSETS = 9,
 
-                        LOCATION_IMAGE_SCALE = 0,
-                        LOCATION_TEXTURE_COORDINATES_ADJUSTMENT = 0,
-                        LOCATION_BLOOM_PARAMETERS = 1,
-                        LOCATION_BLUR_OFFSETS = 2,
-
-                        LOCATION_INPUT_IMAGE_BRIGHT_PASS  = 0,
-                        LOCATION_INPUT_IMAGE_BLOOM_PASS   = 0,
-                        LOCATION_BLOOM_IMAGE_COMBINE_PASS = 0,
-                        LOCATION_ORIGINAL_IMAGE_COMBINE_PASS = 1
+                        LOCATION_ATTRIBUTE_POSITION = 0
                 };
 
-                D3d9VertexShader vertexShaders_[NUM_OF_VERTEX_SHADERS];
-                D3d9PixelShader  pixelShaders_[NUM_OF_PIXEL_SHADERS];
+                /**
+                 * Represents container of the GLSL program's locations of variables.
+                 */
+                class Variables
+                {
+                public:
+                        GLint locationInputImage;
+                        GLint locationCombinedImage;
 
-                LPDIRECT3DDEVICE9 d3dDevice_;
+                        GLint locationTextureCoordinatesAdjustment;
+                        GLint locationBloomParameters;
+                        GLint locationBlurOffsets;
+                        GLint locationImageScale;
 
-                D3d9RenderTargetContainer* renderTargetContainer_;
-                D3d9FrameParameters* frameParameters_;
-                D3d9FullScreenQuad* fullScreenQuad_;
-                D3d9TextureHandler* textureHandler_;
-                D3d9Capabilities* capabilities_;
+                        Variables();
+                        ~Variables();
 
-        };*/
+                        /**
+                         * \brief Obtains locations of variables.
+                         * \param[in] program GLSL program, which is source of the locations
+                         */
+                        void obtainLocations(GlesGlslProgram& program);
+
+                };
+
+                GlesGlslProgram programs_[NUM_OF_GLSL_PROGRAMS];
+                Variables variables_[NUM_OF_GLSL_PROGRAMS];
+
+                GlesRenderTargetContainer* renderTargetContainer_;
+                GlesFrameParameters* frameParameters_;
+                GlesFullScreenQuad* fullScreenQuad_;
+                GlesTextureHandler* textureHandler_;
+
+        };
 
         /**
          * @}
          */
 
-/*}
+}
 
-#endif*/
+#endif
