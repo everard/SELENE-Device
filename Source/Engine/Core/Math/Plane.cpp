@@ -41,7 +41,7 @@ namespace selene
                            const Vector3d& point1,
                            const Vector3d& point2)
         {
-                normal_ = -((point1 - point0) * (point2 - point0));
+                normal_ = -((point1 - point0).cross(point2 - point0));
                 normal_.normalize();
 
                 d_ = -normal_.dot(point0);

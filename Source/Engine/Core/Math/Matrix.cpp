@@ -129,10 +129,10 @@ namespace selene
                 Vector3d zAxis = targetPosition - eyePosition;
                 zAxis.normalize();
 
-                Vector3d xAxis = upVector * zAxis;
+                Vector3d xAxis = upVector.cross(zAxis);
                 xAxis.normalize();
 
-                Vector3d yAxis = zAxis * xAxis;
+                Vector3d yAxis = zAxis.cross(xAxis);
 
                 a[0][0] = xAxis.x; a[0][1] = yAxis.x; a[0][2] = zAxis.x; a[0][3] = 0.0f;
                 a[1][0] = xAxis.y; a[1][1] = yAxis.y; a[1][2] = zAxis.y; a[1][3] = 0.0f;

@@ -458,7 +458,7 @@ namespace selene
                                 b = b - normal.dot(b) * normal - t.dot(b) * t / t.dot(t);
                                 b.normalize();
 
-                                Vector3d crossProduct = normal * t;
+                                Vector3d crossProduct = normal.cross(t);
                                 if(crossProduct == b)
                                         tangent.define(t, 1.0f);
                                 else if(crossProduct == -b)

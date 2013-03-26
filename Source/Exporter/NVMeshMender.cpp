@@ -778,7 +778,7 @@ namespace selene
                         Vector3d edge0 = verts[t.indices[1]].pos - verts[t.indices[0]].pos;
                         Vector3d edge1 = verts[t.indices[2]].pos - verts[t.indices[0]].pos;
 
-                        t.normal = edge0 * edge1;
+                        t.normal = edge0.cross(edge1);
 
                         if(WeightNormalsByArea < 1.0f)
                         {
@@ -851,13 +851,13 @@ namespace selene
                                 {
                                         // the tangent is valid, so we can just use that
                                         // to calculate the binormal
-                                        theVerts[i].binormal = theVerts[i].normal * theVerts[i].tangent;
+                                        theVerts[i].binormal = theVerts[i].normal.cross(theVerts[i].tangent);
                                 }
                                 else if(lenBin > 0.5)
                                 {
                                         // the binormal is good and we can use it to calculate
                                         // the tangent
-                                        theVerts[i].tangent = theVerts[i].binormal * theVerts[i].normal;
+                                        theVerts[i].tangent = theVerts[i].binormal.cross(theVerts[i].normal);
                                 }
                                 else
                                 {
@@ -882,8 +882,8 @@ namespace selene
                                                 startAxis = yAxis;
                                         }
 
-                                        theVerts[i].tangent = theVerts[i].normal * startAxis;
-                                        theVerts[i].binormal = theVerts[i].normal * theVerts[i].tangent;
+                                        theVerts[i].tangent = theVerts[i].normal.cross(startAxis);
+                                        theVerts[i].binormal = theVerts[i].normal.cross(theVerts[i].tangent);
                                 }
                         }
                         else
@@ -892,7 +892,7 @@ namespace selene
                                 if(theVerts[i].binormal.dot(theVerts[i].tangent) > 0.999f)
                                 {
                                         // then they are too similar lets make them more different
-                                        theVerts[i].binormal = theVerts[i].normal * theVerts[i].tangent;
+                                        theVerts[i].binormal = theVerts[i].normal.cross(theVerts[i].tangent);
                                 }
                         }
                 }

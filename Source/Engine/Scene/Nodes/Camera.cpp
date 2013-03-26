@@ -240,7 +240,7 @@ namespace selene
                 Quaternion direction = Quaternion(directions_[ORIGINAL]) * horizontalRotationQuaternion;
 
                 // compute strafe direction
-                strafeDirection_ = Vector3d(direction.x, direction.y, direction.z) * upVectors_[ORIGINAL];
+                strafeDirection_ = Vector3d(direction.x, direction.y, direction.z).cross(upVectors_[ORIGINAL]);
                 strafeDirection_.normalize();
 
                 // construct vertical rotation quaternion

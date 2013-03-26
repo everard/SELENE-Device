@@ -323,9 +323,9 @@ namespace selene
                 Vector3d upVector;
 
                 if(fabs(direction.x) < SELENE_EPSILON && fabs(direction.y) < SELENE_EPSILON)
-                        upVector = Vector3d(0.0f, 1.0f, 0.0f) * direction;
+                        upVector = Vector3d(0.0f, 1.0f, 0.0f).cross(direction);
                 else
-                        upVector = Vector3d(0.0f, 0.0f, 1.0f) * direction;
+                        upVector = Vector3d(0.0f, 0.0f, 1.0f).cross(direction);
 
                 viewMatrix_.lookAt(positions_[MODIFIED],
                                    positions_[MODIFIED] + direction, upVector);
