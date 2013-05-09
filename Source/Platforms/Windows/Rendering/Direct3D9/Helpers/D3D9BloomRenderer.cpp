@@ -22,7 +22,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         bool D3d9BloomRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                            D3d9FrameParameters& frameParameters,
                                            D3d9FullScreenQuad& fullScreenQuad,
@@ -77,7 +77,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         void D3d9BloomRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -95,7 +95,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         void D3d9BloomRenderer::renderBloom()
         {
                 if(d3dDevice_ == nullptr)

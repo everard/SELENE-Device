@@ -14,7 +14,7 @@ namespace selene
         }
         TextureManager::~TextureManager() {}
 
-        //--------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool TextureManager::readTexture(std::istream& stream, Texture::Data& textureData)
         {
                 // read header
@@ -33,7 +33,7 @@ namespace selene
                 return readPixels(stream, textureData);
         }
 
-        //--------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool TextureManager::readHeader(std::istream& stream, Texture::Data& textureData)
         {
                 // read header
@@ -94,7 +94,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool TextureManager::getProperties(Texture::Data& textureData)
         {
                 // get number of mip maps
@@ -124,7 +124,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool TextureManager::computeTotalSize(Texture::Data& textureData)
         {
                 if(isDxt_)
@@ -165,7 +165,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool TextureManager::readPixels(std::istream& stream, Texture::Data& textureData)
         {
                 if(isDxt_)

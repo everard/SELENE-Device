@@ -22,7 +22,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         bool GlesActorsRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                             GlesFrameParameters& frameParameters,
                                             GlesTextureHandler& textureHandler)
@@ -248,7 +248,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -259,7 +259,7 @@ namespace selene
                 textureHandler_ = nullptr;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
                 glEnable(GL_DEPTH_TEST);
@@ -291,7 +291,7 @@ namespace selene
                 renderActors(actorNode, RENDERING_PASS_NORMALS);
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode)
         {
                 renderTargetContainer_->setShadowMap();
@@ -334,7 +334,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glCullFace(GL_FRONT)");
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderShading(Renderer::Data::ActorNode& actorNode)
         {
                 glEnable(GL_DEPTH_TEST);
@@ -389,7 +389,7 @@ namespace selene
         }
         GlesActorsRenderer::Variables::~Variables() {}
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationWorldViewProjectionMatrix = program.getUniformLocation("worldViewProjectionMatrix");
@@ -412,7 +412,7 @@ namespace selene
                 locationSpecularColor = program.getUniformLocation("specularColor");
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::setMaterial(const Material& material, uint8_t pass,
                                              const GlesActorsRenderer::Variables& variables)
         {
@@ -469,7 +469,7 @@ namespace selene
                 }
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::setSkeletonPose(const Array<Skeleton::Transform, uint16_t>& boneTransforms,
                                                  const GlesActorsRenderer::Variables& variables)
         {
@@ -493,7 +493,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesActorsRenderer::setSkeletonPose: glUniform4fv");
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderActors(Renderer::Data::ActorNode& actorNode, uint8_t pass)
         {
                 static const bool cullFaces[] = {true, false};
@@ -685,7 +685,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glBindBuffer");
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderMeshSubsetInstances(const Renderer::Data::List<Actor::Instance>& renderingList,
                                                            const GlesActorsRenderer::Variables& variables,
                                                            const Mesh::Subset& meshSubset,

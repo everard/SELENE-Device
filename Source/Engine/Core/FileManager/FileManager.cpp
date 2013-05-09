@@ -14,7 +14,7 @@ namespace selene
         }
         FileManager::~FileManager() {}
 
-        //---------------------------------------------------------
+        //----------------------------------------------------------------------------
         bool FileManager::addFolder(const char* folder)
         {
                 if(folder == nullptr)
@@ -32,7 +32,7 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------
+        //----------------------------------------------------------------------------
         const char* FileManager::find(const char* fileName) const
         {
                 // validate
@@ -60,14 +60,15 @@ namespace selene
                 return nullptr;
         }
 
-        //---------------------------------------------------------
+        //----------------------------------------------------------------------------
         std::istream* FileManager::open(const char* fileName) const
         {
                 const char* fullFileName = find(fileName);
                 if(fullFileName == nullptr)
                         return nullptr;
 
-                std::unique_ptr<std::ifstream> stream(new(std::nothrow) std::ifstream(fullFileName, std::ios::binary | std::ios::in));
+                std::unique_ptr<std::ifstream> stream(new(std::nothrow)
+                        std::ifstream(fullFileName, std::ios::binary | std::ios::in));
 
                 if(stream.get() == nullptr)
                         return nullptr;

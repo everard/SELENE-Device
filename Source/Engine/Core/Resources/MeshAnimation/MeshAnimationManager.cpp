@@ -9,7 +9,7 @@ namespace selene
         MeshAnimationManager::MeshAnimationManager() {}
         MeshAnimationManager::~MeshAnimationManager() {}
 
-        //----------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool MeshAnimationManager::readMeshAnimation(std::istream& stream,
                                                      MeshAnimation::Data& meshAnimationData)
         {

@@ -16,7 +16,7 @@ namespace selene
                 SAFE_RELEASE(d3dTexture_);
         }
 
-        //-------------------------
+        //-------------------------------------------------------------------------------------------------
         bool D3d9Texture::retain()
         {
                 LPDIRECT3DDEVICE9 d3dDevice = D3d9Renderer::getDevice();
@@ -156,7 +156,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------
+        //-------------------------------------------------------------------------------------------------
         void D3d9Texture::discard()
         {
                 SAFE_RELEASE(d3dTexture_);

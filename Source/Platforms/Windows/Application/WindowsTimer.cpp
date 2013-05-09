@@ -15,14 +15,14 @@ namespace selene
         }
         WindowsTimer::~WindowsTimer() {}
 
-        //----------------------------------
+        //---------------------------------------------------------------------
         void WindowsTimer::reset()
         {
                 QueryPerformanceCounter(&currentTime_);
                 ticks_ = currentTime_.QuadPart;
         }
 
-        //----------------------------------
+        //---------------------------------------------------------------------
         float WindowsTimer::getElapsedTime()
         {
                 QueryPerformanceCounter(&currentTime_);

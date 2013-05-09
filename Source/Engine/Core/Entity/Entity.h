@@ -19,26 +19,26 @@ namespace selene
         /**
          * Represents entity.
          * This class is base for many other classes, such as resources, scene objects, applications, etc.
-         * It contains only one property - name - and provides interface for getting and setting it.
+         * It contains only one property - name - and provides interface for getting it.
          */
         class Entity
         {
         public:
                 /**
                  * \brief Constructs entity with given name.
-                 * \param[in] name entity name
+                 * \param[in] name name of the entity
                  */
                 Entity(const char* name);
                 virtual ~Entity();
 
                 /**
-                 * \brief Returns entity name.
-                 * \return c-string containing entity name
+                 * \brief Returns name of the entity.
+                 * \return c-string, which contains name of the entity
                  */
                 const char* getName() const;
 
-        protected:
-                std::string name_;
+        private:
+                char* name_;
 
         };
 

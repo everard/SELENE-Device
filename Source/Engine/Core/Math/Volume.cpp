@@ -17,7 +17,7 @@ namespace selene
         }
         Volume::~Volume() {}
 
-        //---------------------------------------------------------
+        //------------------------------------------------------------------------------
         void Volume::define(const Plane* planes, uint8_t numPlanes)
         {
                 // validate
@@ -32,7 +32,7 @@ namespace selene
                         planes_[i] = planes[i];
         }
 
-        //---------------------------------------------------------
+        //------------------------------------------------------------------------------
         void Volume::define(const Matrix& viewProjectionMatrix)
         {
                 const float* elements = static_cast<const float*>(viewProjectionMatrix);
@@ -83,13 +83,13 @@ namespace selene
                 planes_[0].normalize();
         }
 
-        //---------------------------------------------------------
+        //------------------------------------------------------------------------------
         uint8_t Volume::getNumPlanes() const
         {
                 return numPlanes_;
         }
 
-        //---------------------------------------------------------
+        //------------------------------------------------------------------------------
         const Plane* Volume::getPlanes() const
         {
                 return planes_;

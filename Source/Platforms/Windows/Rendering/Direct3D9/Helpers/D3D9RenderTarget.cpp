@@ -18,7 +18,7 @@ namespace selene
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool D3d9RenderTarget::initialize(uint32_t width, uint32_t height, D3DFORMAT format,
                                           D3DSURFACE_DESC* depthStencilSurfaceDescriptor)
         {
@@ -74,7 +74,7 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void D3d9RenderTarget::initialize(LPDIRECT3DTEXTURE9 d3dTexture, LPDIRECT3DSURFACE9 d3dSurface,
                                           LPDIRECT3DSURFACE9 d3dDepthStencilSurface)
         {
@@ -83,7 +83,7 @@ namespace selene
                 d3dDepthStencilSurface_ = d3dDepthStencilSurface;
         }
 
-        //---------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void D3d9RenderTarget::destroy()
         {
                 SAFE_RELEASE(d3dTexture_);
@@ -91,19 +91,19 @@ namespace selene
                 SAFE_RELEASE(d3dDepthStencilSurface_);
         }
 
-        //---------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         LPDIRECT3DTEXTURE9 D3d9RenderTarget::getTexture() const
         {
                 return d3dTexture_;
         }
 
-        //---------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         LPDIRECT3DSURFACE9 D3d9RenderTarget::getSurface() const
         {
                 return d3dSurface_;
         }
 
-        //---------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         LPDIRECT3DSURFACE9 D3d9RenderTarget::getDepthStencilSurface() const
         {
                 return d3dDepthStencilSurface_;

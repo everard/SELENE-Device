@@ -15,13 +15,13 @@ namespace selene
         Mesh::Mesh(const char* name): Resource(name) {}
         Mesh::~Mesh() {}
 
-        //----------------------------
+        //-----------------------------------------------------------
         Mesh::Data& Mesh::getData()
         {
                 return data_;
         }
 
-        //----------------------------
+        //-----------------------------------------------------------
         bool Mesh::hasSkeleton() const
         {
                 return static_cast<bool>(data_.skeleton);

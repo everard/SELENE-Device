@@ -12,7 +12,7 @@ namespace selene
         Actor::ViewProjectionTransform::ViewProjectionTransform() {}
         Actor::ViewProjectionTransform::~ViewProjectionTransform() {}
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void Actor::ViewProjectionTransform::compute(const Actor& actor, const Matrix& viewMatrix,
                                                      const Matrix& viewProjectionMatrix)
         {
@@ -23,19 +23,19 @@ namespace selene
                 normalsMatrix_.transpose();
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Matrix& Actor::ViewProjectionTransform::getWorldViewProjectionMatrix() const
         {
                 return worldViewProjectionMatrix_;
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Matrix& Actor::ViewProjectionTransform::getWorldViewMatrix() const
         {
                 return worldViewMatrix_;
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Matrix& Actor::ViewProjectionTransform::getNormalsMatrix() const
         {
                 return normalsMatrix_;
@@ -49,13 +49,13 @@ namespace selene
         }
         Actor::Instance::~Instance() {}
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Actor::ViewProjectionTransform& Actor::Instance::getViewProjectionTransform() const
         {
                 return viewProjectionTransform_;
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Skeleton::Instance* Actor::Instance::getSkeletonInstance() const
         {
                 return skeletonInstance_;
@@ -75,7 +75,7 @@ namespace selene
         }
         Actor::~Actor() {}
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void Actor::setMesh(const Resource::Instance<Mesh>& mesh)
         {
                 skeletonInstance_ = nullptr;
@@ -99,7 +99,8 @@ namespace selene
                         }
 
                         renderingUnit_ = Renderer::Data::UNIT_MESH_SKIN;
-                        skeletonInstance_ = const_cast<Skeleton::Instance*>(&meshAnimationProcessor_.getSkeletonInstance());
+                        skeletonInstance_ =
+                                const_cast<Skeleton::Instance*>(&meshAnimationProcessor_.getSkeletonInstance());
                 }
                 else
                 {
@@ -110,19 +111,19 @@ namespace selene
                 requestUpdateOperation();
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Resource::Instance<Mesh>& Actor::getMesh() const
         {
                 return mesh_;
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Skeleton::Instance& Actor::getSkeletonInstance() const
         {
                 return meshAnimationProcessor_.getSkeletonInstance();
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         bool Actor::addMeshAnimation(const Resource::Instance<MeshAnimation>& meshAnimation,
                                      float blendFactorTransitionTime,
                                      float startingTransitionTime,
@@ -141,7 +142,7 @@ namespace selene
                                                                 blendFactor);
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         bool Actor::removeMeshAnimation(uint32_t index)
         {
                 if(skeletonInstance_ == nullptr)
@@ -150,13 +151,13 @@ namespace selene
                 return meshAnimationProcessor_.removeMeshAnimation(index);
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         MeshAnimationProcessor::MixableMeshAnimation& Actor::getMeshAnimation(uint32_t index)
         {
                 return meshAnimationProcessor_.getMeshAnimation(index);
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void Actor::processMeshAnimations(float elapsedTime)
         {
                 if(skeletonInstance_ == nullptr)
@@ -166,20 +167,20 @@ namespace selene
                 requestChildNodesUpdateOperation();
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         const Box& Actor::getBoundingBox() const
         {
                 performUpdateOperation();
                 return boundingBoxes_[MODIFIED];
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         int16_t Actor::getRenderingUnit() const
         {
                 return renderingUnit_;
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         RELATION Actor::determineRelation(const Volume& volume) const
         {
                 if(is(HIDDEN))
@@ -190,7 +191,7 @@ namespace selene
                 return boundingBoxes_[MODIFIED].determineRelation(volume);
         }
 
-        //----------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void Actor::update() const
         {
                 // transform bounding box to world space

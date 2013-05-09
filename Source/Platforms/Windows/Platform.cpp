@@ -14,19 +14,19 @@ namespace selene
         Platform::FileManager::FileManager(): selene::FileManager(Platform::fileExists) {}
         Platform::FileManager::~FileManager() {}
 
-        //---------------------------------------------
+        //---------------------------------------------------------------------------------
         bool Platform::fileExists(const char* fileName)
         {
                 return (_access(fileName, 0) == 0);
         }
 
-        //---------------------------------------------
+        //---------------------------------------------------------------------------------
         uint32_t Platform::getDefaultScreenWidth()
         {
                 return Platform::defaultScreenWidth_;
         }
 
-        //---------------------------------------------
+        //---------------------------------------------------------------------------------
         uint32_t Platform::getDefaultScreenHeight()
         {
                 return Platform::defaultScreenHeight_;

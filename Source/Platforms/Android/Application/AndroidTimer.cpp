@@ -12,13 +12,13 @@ namespace selene
         }
         AndroidTimer::~AndroidTimer() {}
 
-        //----------------------------------
+        //-------------------------------------------------------------------------------------------------
         void AndroidTimer::reset()
         {
                 clock_gettime(CLOCK_MONOTONIC, &currentTime_);
         }
 
-        //----------------------------------
+        //-------------------------------------------------------------------------------------------------
         float AndroidTimer::getElapsedTime()
         {
                 timespec ts;

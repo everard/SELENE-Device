@@ -23,7 +23,7 @@ namespace selene
         }
         TextBox::~TextBox() {}
 
-        //---------------------------------------------------
+        //---------------------------------------------------------------------------------------------------
         void TextBox::setText(const char* text)
         {
                 if(text == nullptr)
@@ -37,7 +37,7 @@ namespace selene
                 setFlags(GUI_ELEMENT_UPDATED);
         }
 
-        //---------------------------------------------------
+        //---------------------------------------------------------------------------------------------------
         const std::string& TextBox::getText() const
         {
                 if(!is(GUI_ELEMENT_UPDATED))
@@ -51,7 +51,7 @@ namespace selene
                 return text_;
         }
 
-        //---------------------------------------------------
+        //---------------------------------------------------------------------------------------------------
         void TextBox::process(const Vector2d& cursorPosition,
                               uint8_t pressedControlButtons,
                               uint8_t key)

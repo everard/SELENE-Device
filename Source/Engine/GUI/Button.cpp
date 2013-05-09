@@ -16,7 +16,7 @@ namespace selene
                                                        fontSize, position, size, text) {}
         Button::~Button() {}
 
-        //--------------------------------------------------
+        //--------------------------------------------------------------------------------------------
         void Button::process(const Vector2d& cursorPosition,
                              uint8_t pressedControlButtons,
                              uint8_t)

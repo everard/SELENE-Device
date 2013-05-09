@@ -169,7 +169,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         bool D3d9LightingRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                               D3d9FrameParameters& frameParameters,
                                               D3d9ActorsRenderer& actorsRenderer,
@@ -275,7 +275,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -299,7 +299,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLighting(Renderer::Data::LightNode& lightNode)
         {
                 if(d3dDevice_ == nullptr)
@@ -367,7 +367,7 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
                                                                 uint8_t lightUnit)
         {
@@ -449,7 +449,7 @@ namespace selene
                 }
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::prepareLightAccumulation()
         {
                 textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
@@ -483,7 +483,7 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLightGeometry(uint8_t type, uint32_t numLights,
                                                        Vector4d* positions,
                                                        Vector4d* directions,
@@ -529,7 +529,7 @@ namespace selene
                                           numLights * lightVolumeGeometryNumVertices[type] - 2);
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
         {
                 actorsRenderer_->renderShadowMap(actorNode, spotLight.getProjectionParameters());

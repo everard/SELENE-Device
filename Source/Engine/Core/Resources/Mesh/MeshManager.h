@@ -15,7 +15,7 @@ namespace selene
          */
 
         /**
-         * Represents mesh manager. Reads/writes meshes from/to std::istream/std::ostream.
+         * Represents mesh manager. Reads/writes meshes from/to istream/ostream.
          */
         class MeshManager
         {

@@ -21,7 +21,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------
         bool GlesBloomRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                            GlesFrameParameters& frameParameters,
                                            GlesFullScreenQuad& fullScreenQuad,
@@ -160,7 +160,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------
         void GlesBloomRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -172,7 +172,7 @@ namespace selene
                 textureHandler_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------
         void GlesBloomRenderer::renderBloom()
         {
                 Vector4d imageScale(0.25f);
@@ -311,7 +311,7 @@ namespace selene
         }
         GlesBloomRenderer::Variables::~Variables() {}
 
-        //----------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------
         void GlesBloomRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationInputImage    = program.getUniformLocation("inputImage");

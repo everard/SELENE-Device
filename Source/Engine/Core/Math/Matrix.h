@@ -142,78 +142,22 @@ namespace selene
                  */
                 void transpose();
 
-                /**
-                 * \brief Converts to float*.
-                 */
+                // Operators
                 operator float*();
-
-                /**
-                 * \brief Converts to const float*.
-                 */
                 operator const float*() const;
 
-                /**
-                 * \brief Assignes matrix.
-                 * \param[in] matrix another matrix which will be assigned to current
-                 * \return reference to the matrix
-                 */
-                Matrix& operator =(const Matrix& matrix);
-
-                /**
-                 * \brief Unary "+" operator.
-                 * \param[in] matrix initial matrix
-                 * \return result of unary "+" operation
-                 */
-                friend Matrix operator +(const Matrix& matrix);
-
-                /**
-                 * \brief Computes sum of two matrices.
-                 * \param[in] matrix0 the first matrix
-                 * \param[in] matrix1 the second matrix
-                 * \return sum of two matrices (matrix0 + matrix1)
-                 */
-                friend Matrix operator +(const Matrix& matrix0, const Matrix& matrix1);
-
-                /**
-                 * \brief Computes sum of matrix and scalar.
-                 * \param[in] matrix matrix
-                 * \param[in] scalar scalar
-                 * \return sum of matrix and scalar (matrix + scalar)
-                 */
-                friend Matrix operator +(const Matrix& matrix, float scalar);
-
-                /**
-                 * \brief Subtracts one matrix from another.
-                 * \param[in] matrix0 the first matrix
-                 * \param[in] matrix1 the second matrix
-                 * \return difference of two matrices (matrix0 - matrix1)
-                 */
-                friend Matrix operator -(const Matrix& matrix0, const Matrix& matrix1);
-
-                /**
-                 * \brief Subtracts a scalar from matrix.
-                 * \param[in] matrix matrix
-                 * \param[in] scalar scalar
-                 * \return difference (matrix - scalar)
-                 */
-                friend Matrix operator -(const Matrix& matrix, float scalar);
-
-                /**
-                 * \brief Unary "-" operator.
-                 * \param[in] matrix initial matrix
-                 * \return result of unary "-" operation
-                 */
-                friend Matrix operator -(const Matrix& matrix);
-
-                /**
-                 * \brief Multiplies two matrices.
-                 * \param[in] matrix0 the first matrix
-                 * \param[in] matrix1 the second matrix
-                 * \return product of two matrices
-                 */
-                friend Matrix operator *(const Matrix& matrix0, const Matrix& matrix1);
-
         };
+
+        // Matrix operators
+        Matrix operator +(const Matrix& matrix);
+        Matrix operator +(const Matrix& matrix, float scalar);
+        Matrix operator +(const Matrix& matrix0, const Matrix& matrix1);
+
+        Matrix operator -(const Matrix& matrix);
+        Matrix operator -(const Matrix& matrix, float scalar);
+        Matrix operator -(const Matrix& matrix0, const Matrix& matrix1);
+
+        Matrix operator *(const Matrix& matrix0, const Matrix& matrix1);
 
         /**
          * @}

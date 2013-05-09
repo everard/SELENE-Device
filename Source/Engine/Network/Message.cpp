@@ -14,13 +14,13 @@ namespace selene
         }
         Message::~Message() {}
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         uint8_t* Message::getData() const
         {
                 return const_cast<uint8_t*>(data_ + MESSAGE_HEADER_SIZE);
         }
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         uint16_t Message::getType() const
         {
                 if(position_ > 0)
@@ -29,7 +29,7 @@ namespace selene
                 return type_;
         }
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         uint16_t Message::getSize() const
         {
                 if(position_ > 0)
@@ -38,13 +38,13 @@ namespace selene
                 return size_;
         }
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         uint16_t Message::getNumBytesReceived() const
         {
                 return numBytesReceived_;
         }
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         bool Message::receive(uint8_t* buffer, uint16_t size)
         {
                 numBytesReceived_ = 0;
@@ -109,7 +109,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         bool Message::send(const Socket& socket, uint16_t type,
                            const uint8_t* buffer, uint16_t size)
         {
@@ -126,7 +126,7 @@ namespace selene
                 return socket.send(data, size + MESSAGE_HEADER_SIZE);
         }
 
-        //------------------------------------------------------
+        //-----------------------------------------------------------------------
         void Message::clear()
         {
                 type_     = BAD_MESSAGE_TYPE;

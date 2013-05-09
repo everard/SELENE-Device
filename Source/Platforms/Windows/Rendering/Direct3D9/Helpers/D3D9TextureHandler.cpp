@@ -30,7 +30,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         bool D3d9TextureHandler::initialize()
         {
                 d3dDevice_ = D3d9Renderer::getDevice();
@@ -57,7 +57,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void D3d9TextureHandler::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_DUMMY_TEXTURES; ++i)
@@ -67,14 +67,14 @@ namespace selene
                 d3dDevice_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void D3d9TextureHandler::setTexture(const Resource::Instance<Texture>& texture, DWORD stage,
                                             uint8_t dummyTextureIndex)
         {
                 setTexture(*texture, stage, dummyTextureIndex);
         }
 
-        //----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void D3d9TextureHandler::setTexture(Texture* texture, DWORD stage, uint8_t dummyTextureIndex)
         {
                 if(d3dDevice_ == nullptr)
@@ -89,7 +89,7 @@ namespace selene
                 }
         }
 
-        //----------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------
         void D3d9TextureHandler::setStageState(DWORD stage, DWORD magFilter, DWORD minFilter, DWORD mipFilter,
                                                DWORD textureCoordinateModeU, DWORD textureCoordinateModeV)
         {

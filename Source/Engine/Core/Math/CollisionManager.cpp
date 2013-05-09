@@ -17,7 +17,7 @@ namespace selene
         CollisionManager::CollisionManager() {}
         CollisionManager::~CollisionManager() {}
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool CollisionManager::determineIntersection(const Ray2d& ray, float& distanceToIntersection,
                                                      CollisionManager::Geometry geometry)
         {
@@ -50,7 +50,7 @@ namespace selene
                 return intersects;
         }
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         Vector2d CollisionManager::move(const SweptCircle& sweptCircle,
                                         CollisionManager::Geometry geometry,
                                         uint8_t maxRecursion)
@@ -71,7 +71,7 @@ namespace selene
                 return position;
         }
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool CollisionManager::determineCollision(const Vector2d& position,
                                                   const Vector2d& velocity,
                                                   const SweptCircle& sweptCircle,
@@ -147,7 +147,7 @@ namespace selene
                 return collides;
         }
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool CollisionManager::determineCollision(const Vector2d& position,
                                                   const Vector2d& velocity,
                                                   const Circle& circle,
@@ -208,7 +208,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool CollisionManager::determineCollision(const Vector2d& position,
                                                   const Vector2d& velocity,
                                                   const LineSegment2d& lineSegment,
@@ -264,7 +264,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool CollisionManager::determineCollision(const Vector2d& position,
                                                   const Vector2d& velocity,
                                                   float distanceToTravel,
@@ -328,7 +328,7 @@ namespace selene
                 return collides;
         }
 
-        //-------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         Vector2d CollisionManager::move(const Vector2d& position,
                                         const Vector2d& velocity,
                                         float distanceToTravel)

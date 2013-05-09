@@ -58,7 +58,7 @@ namespace selene
                 destroy();
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         bool D3d9ParticlesRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                                D3d9FrameParameters& frameParameters,
                                                D3d9TextureHandler& textureHandler,
@@ -129,7 +129,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -149,7 +149,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::renderParticleSystems(Renderer::Data::ParticleSystemNode& particleSystemNode)
         {
                 if(d3dDevice_ == nullptr)
@@ -212,7 +212,7 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::renderParticleSystem(ParticleSystem* particleSystem)
         {
                 if(particleSystem == nullptr)
@@ -255,7 +255,7 @@ namespace selene
                         renderParticles(numParticles);
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::renderParticles(uint32_t numParticles)
         {
                 uint8_t* destinationBuffer = nullptr;

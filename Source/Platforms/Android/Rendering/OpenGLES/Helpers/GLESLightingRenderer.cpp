@@ -167,7 +167,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         bool GlesLightingRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                               GlesFrameParameters& frameParameters,
                                               GlesActorsRenderer& actorsRenderer,
@@ -506,7 +506,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -527,7 +527,7 @@ namespace selene
                 textureHandler_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderLighting(Renderer::Data::LightNode& lightNode)
         {
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_LIGHT_BUFFER))
@@ -670,7 +670,7 @@ namespace selene
         }
         GlesLightingRenderer::Variables::~Variables() {}
 
-        //------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationViewProjectionMatrix = program.getUniformLocation("viewProjectionMatrix");
@@ -696,7 +696,7 @@ namespace selene
                 locationShadowMap = program.getUniformLocation("shadowMap");
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
                                                                 uint8_t lightUnit)
         {
@@ -795,7 +795,7 @@ namespace selene
                 textureHandler_->setTexture(0, 2);
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::prepareLightAccumulation(const GlesLightingRenderer::Variables& variables)
         {
                 glUniform1i(variables.locationDepthBuffer, 0);
@@ -828,7 +828,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesLightingRenderer::prepareLightAccumulation: glUniform4fv");
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::prepareShadowsPass(const GlesLightingRenderer::Variables& variables)
         {
                 glUniform1i(variables.locationDepthBuffer, 0);
@@ -859,7 +859,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesLightingRenderer::prepareShadowsPass: glUniform4fv");
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderLightGeometry(const GlesLightingRenderer::Variables& variables,
                                                        uint8_t type, uint32_t numLights,
                                                        Vector4d* colors,
@@ -896,7 +896,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesFullScreenQuad::render: glDrawArrays");
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
         {
                 // render shadow map

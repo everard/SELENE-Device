@@ -17,7 +17,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------
+        //----------------------------------------------------------
         bool RenderingMemoryBuffer::initialize(std::size_t size)
         {
                 destroy();
@@ -35,14 +35,14 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------
+        //----------------------------------------------------------
         void RenderingMemoryBuffer::destroy()
         {
                 SAFE_DELETE_ARRAY(allocatedMemory_);
                 location_ = size_ = 0;
         }
 
-        //------------------------------------------------------
+        //----------------------------------------------------------
         void RenderingMemoryBuffer::clear()
         {
                 location_ = 0;

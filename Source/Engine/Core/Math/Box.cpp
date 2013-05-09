@@ -19,7 +19,7 @@ namespace selene
         }
         Box::~Box() {}
 
-        //---------------------------------------------------------
+        //---------------------------------------------------------------------------------
         void Box::define(const Vector3d& center,
                          float width,
                          float height,
@@ -41,20 +41,20 @@ namespace selene
                 vertices_[7].define(center.x + width, center.y + height, center.z + depth);
         }
 
-        //---------------------------------------------------------
+        //---------------------------------------------------------------------------------
         void Box::define(const Vector3d* vertices)
         {
                 for(register uint8_t i = 0; i < 8; ++i)
                         vertices_[i] = vertices[i];
         }
 
-        //---------------------------------------------------------
+        //---------------------------------------------------------------------------------
         const Vector3d* Box::getVertices() const
         {
                 return vertices_;
         }
 
-        //---------------------------------------------------------
+        //---------------------------------------------------------------------------------
         RELATION Box::determineRelation(const Volume& volume) const
         {
                 const Plane* planes = volume.getPlanes();
@@ -79,7 +79,7 @@ namespace selene
                 return INSIDE;
         }
 
-        //---------------------------------------------------------
+        //---------------------------------------------------------------------------------
         void Box::transform(const Matrix& matrix)
         {
                 vertices_[0].transform(matrix);

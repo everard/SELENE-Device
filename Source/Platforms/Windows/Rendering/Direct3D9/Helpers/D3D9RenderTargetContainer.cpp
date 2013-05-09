@@ -25,7 +25,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         bool D3d9RenderTargetContainer::initialize(D3d9FrameParameters& frameParameters,
                                                    Renderer::Parameters& parameters,
                                                    D3d9Capabilities& capabilities)
@@ -157,7 +157,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void D3d9RenderTargetContainer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_RENDER_TARGETS; ++i)
@@ -168,7 +168,7 @@ namespace selene
                 shadowMap_.destroy();
         }
 
-        //------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         const D3d9RenderTarget& D3d9RenderTargetContainer::getRenderTarget(uint8_t type) const
         {
                 if(type >= NUM_OF_RENDER_TARGETS)
@@ -177,13 +177,13 @@ namespace selene
                 return renderTargets_[type];
         }
 
-        //------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         const D3d9RenderTarget& D3d9RenderTargetContainer::getBackBuffer() const
         {
                 return backBuffer_;
         }
 
-        //------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         const D3d9RenderTarget& D3d9RenderTargetContainer::getShadowMap() const
         {
                 return shadowMap_;

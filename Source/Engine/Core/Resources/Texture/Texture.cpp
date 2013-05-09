@@ -17,7 +17,7 @@ namespace selene
         Texture::Texture(const char* name): Resource(name) {}
         Texture::~Texture() {}
 
-        //-------------------------------
+        //-----------------------------------------------------
         Texture::Data& Texture::getData()
         {
                 return data_;

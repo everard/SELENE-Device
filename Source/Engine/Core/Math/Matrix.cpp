@@ -19,7 +19,7 @@ namespace selene
         }
         Matrix::~Matrix() {}
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::define(float a11, float a12, float a13, float a14,
                             float a21, float a22, float a23, float a24,
                             float a31, float a32, float a33, float a34,
@@ -31,7 +31,7 @@ namespace selene
                 a[3][0] = a41; a[3][1] = a42; a[3][2] = a43; a[3][3] = a44;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::identity()
         {
                 a[0][0] = 1.0f; a[0][1] = 0.0f; a[0][2] = 0.0f; a[0][3] = 0.0f;
@@ -40,7 +40,7 @@ namespace selene
                 a[3][0] = 0.0f; a[3][1] = 0.0f; a[3][2] = 0.0f; a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::translation(const Vector3d& translationVector)
         {
                 a[0][0] = 1.0f; a[0][1] = 0.0f; a[0][2] = 0.0f; a[0][3] = 0.0f;
@@ -52,7 +52,7 @@ namespace selene
                 a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::scale(const Vector3d& scaleVector)
         {
                 a[0][0] = scaleVector.x;
@@ -65,7 +65,7 @@ namespace selene
                 a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::rotationX(float angle)
         {
                 float c = cos(angle), s = sin(angle);
@@ -75,7 +75,7 @@ namespace selene
                 a[3][0] = 0.0f; a[3][1] = 0.0f; a[3][2] = 0.0f; a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::rotationY(float angle)
         {
                 float c = cos(angle), s = sin(angle);
@@ -85,7 +85,7 @@ namespace selene
                 a[3][0] = 0.0f; a[3][1] = 0.0f; a[3][2] = 0.0f; a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::rotationZ(float angle)
         {
                 float c = cos(angle), s = sin(angle);
@@ -95,7 +95,7 @@ namespace selene
                 a[3][0] = 0.0f; a[3][1] = 0.0f; a[3][2] = 0.0f; a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::yawPitchRoll(const Vector3d& rotationVector)
         {
                 float ca = cos(rotationVector.x), cb = cos(rotationVector.y), cg = cos(rotationVector.z);
@@ -107,7 +107,7 @@ namespace selene
                 a[3][0] =    0.0f; a[3][1] =                   0.0f; a[3][2] =                   0.0f; a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::perspective(float fov, float aspect, float zn, float zf)
         {
                 float tg = tan(fov * SELENE_PI / 360.0f);
@@ -121,7 +121,7 @@ namespace selene
                 a[3][0] = 0.0f; a[3][1] = 0.0f; a[3][2] = zf * zn / d; a[3][3] = 0.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::lookAt(const Vector3d& eyePosition,
                             const Vector3d& targetPosition,
                             const Vector3d& upVector)
@@ -143,7 +143,7 @@ namespace selene
                 a[3][3] = 1.0f;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool Matrix::invert()
         {
                 // Code contributed by Jacques Leroy <jle@star.be>.
@@ -365,7 +365,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void Matrix::transpose()
         {
                 float tmp;
@@ -381,71 +381,51 @@ namespace selene
                 }
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         Matrix::operator float*()
         {
                 return &a[0][0];
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         Matrix::operator const float*() const
         {
                 return &a[0][0];
         }
 
-        //-------------------------------------------------------------------
-        Matrix& Matrix::operator =(const Matrix& matrix)
-        {
-                a[0][0] = matrix.a[0][0]; a[0][1] = matrix.a[0][1]; a[0][2] = matrix.a[0][2]; a[0][3] = matrix.a[0][3];
-                a[1][0] = matrix.a[1][0]; a[1][1] = matrix.a[1][1]; a[1][2] = matrix.a[1][2]; a[1][3] = matrix.a[1][3];
-                a[2][0] = matrix.a[2][0]; a[2][1] = matrix.a[2][1]; a[2][2] = matrix.a[2][2]; a[2][3] = matrix.a[2][3];
-                a[3][0] = matrix.a[3][0]; a[3][1] = matrix.a[3][1]; a[3][2] = matrix.a[3][2]; a[3][3] = matrix.a[3][3];
-                return *this;
-        }
-
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         Matrix operator +(const Matrix& matrix)
         {
                 return matrix;
         }
 
-        //-------------------------------------------------------------------
-        Matrix operator +(const Matrix& matrix0, const Matrix& matrix1)
-        {
-                return Matrix(matrix0.a[0][0] + matrix1.a[0][0], matrix0.a[0][1] + matrix1.a[0][1], matrix0.a[0][2] + matrix1.a[0][2], matrix0.a[0][3] + matrix1.a[0][3],
-                              matrix0.a[1][0] + matrix1.a[1][0], matrix0.a[1][1] + matrix1.a[1][1], matrix0.a[1][2] + matrix1.a[1][2], matrix0.a[1][3] + matrix1.a[1][3],
-                              matrix0.a[2][0] + matrix1.a[2][0], matrix0.a[2][1] + matrix1.a[2][1], matrix0.a[2][2] + matrix1.a[2][2], matrix0.a[2][3] + matrix1.a[2][3],
-                              matrix0.a[3][0] + matrix1.a[3][0], matrix0.a[3][1] + matrix1.a[3][1], matrix0.a[3][2] + matrix1.a[3][2], matrix0.a[3][3] + matrix1.a[3][3]);
-        }
-
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         Matrix operator +(const Matrix& matrix, float scalar)
         {
-                return Matrix(matrix.a[0][0] + scalar, matrix.a[0][1] + scalar, matrix.a[0][2] + scalar, matrix.a[0][3] + scalar,
-                              matrix.a[1][0] + scalar, matrix.a[1][1] + scalar, matrix.a[1][2] + scalar, matrix.a[1][3] + scalar,
-                              matrix.a[2][0] + scalar, matrix.a[2][1] + scalar, matrix.a[2][2] + scalar, matrix.a[2][3] + scalar,
-                              matrix.a[3][0] + scalar, matrix.a[3][1] + scalar, matrix.a[3][2] + scalar, matrix.a[3][3] + scalar);
+                return Matrix(matrix.a[0][0] + scalar, matrix.a[0][1] + scalar,
+                              matrix.a[0][2] + scalar, matrix.a[0][3] + scalar,
+                              matrix.a[1][0] + scalar, matrix.a[1][1] + scalar,
+                              matrix.a[1][2] + scalar, matrix.a[1][3] + scalar,
+                              matrix.a[2][0] + scalar, matrix.a[2][1] + scalar,
+                              matrix.a[2][2] + scalar, matrix.a[2][3] + scalar,
+                              matrix.a[3][0] + scalar, matrix.a[3][1] + scalar,
+                              matrix.a[3][2] + scalar, matrix.a[3][3] + scalar);
         }
 
-        //-------------------------------------------------------------------
-        Matrix operator -(const Matrix& matrix0, const Matrix& matrix1)
+        //------------------------------------------------------------------------------------------------------------
+        Matrix operator +(const Matrix& matrix0, const Matrix& matrix1)
         {
-                return Matrix(matrix0.a[0][0] - matrix1.a[0][0], matrix0.a[0][1] - matrix1.a[0][1], matrix0.a[0][2] - matrix1.a[0][2], matrix0.a[0][3] - matrix1.a[0][3],
-                              matrix0.a[1][0] - matrix1.a[1][0], matrix0.a[1][1] - matrix1.a[1][1], matrix0.a[1][2] - matrix1.a[1][2], matrix0.a[1][3] - matrix1.a[1][3],
-                              matrix0.a[2][0] - matrix1.a[2][0], matrix0.a[2][1] - matrix1.a[2][1], matrix0.a[2][2] - matrix1.a[2][2], matrix0.a[2][3] - matrix1.a[2][3],
-                              matrix0.a[3][0] - matrix1.a[3][0], matrix0.a[3][1] - matrix1.a[3][1], matrix0.a[3][2] - matrix1.a[3][2], matrix0.a[3][3] - matrix1.a[3][3]);
+                return Matrix(matrix0.a[0][0] + matrix1.a[0][0], matrix0.a[0][1] + matrix1.a[0][1],
+                              matrix0.a[0][2] + matrix1.a[0][2], matrix0.a[0][3] + matrix1.a[0][3],
+                              matrix0.a[1][0] + matrix1.a[1][0], matrix0.a[1][1] + matrix1.a[1][1],
+                              matrix0.a[1][2] + matrix1.a[1][2], matrix0.a[1][3] + matrix1.a[1][3],
+                              matrix0.a[2][0] + matrix1.a[2][0], matrix0.a[2][1] + matrix1.a[2][1],
+                              matrix0.a[2][2] + matrix1.a[2][2], matrix0.a[2][3] + matrix1.a[2][3],
+                              matrix0.a[3][0] + matrix1.a[3][0], matrix0.a[3][1] + matrix1.a[3][1],
+                              matrix0.a[3][2] + matrix1.a[3][2], matrix0.a[3][3] + matrix1.a[3][3]);
         }
 
-        //-------------------------------------------------------------------
-        Matrix operator -(const Matrix& matrix, float scalar)
-        {
-                return Matrix(matrix.a[0][0] - scalar, matrix.a[0][1] - scalar, matrix.a[0][2] - scalar, matrix.a[0][3] - scalar,
-                              matrix.a[1][0] - scalar, matrix.a[1][1] - scalar, matrix.a[1][2] - scalar, matrix.a[1][3] - scalar,
-                              matrix.a[2][0] - scalar, matrix.a[2][1] - scalar, matrix.a[2][2] - scalar, matrix.a[2][3] - scalar,
-                              matrix.a[3][0] - scalar, matrix.a[3][1] - scalar, matrix.a[3][2] - scalar, matrix.a[3][3] - scalar);
-        }
-
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         Matrix operator -(const Matrix& matrix)
         {
                 return Matrix(-matrix.a[0][0], -matrix.a[0][1], -matrix.a[0][2], -matrix.a[0][3],
@@ -454,7 +434,33 @@ namespace selene
                               -matrix.a[3][0], -matrix.a[3][1], -matrix.a[3][2], -matrix.a[3][3]);
         }
 
-        //-------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
+        Matrix operator -(const Matrix& matrix, float scalar)
+        {
+                return Matrix(matrix.a[0][0] - scalar, matrix.a[0][1] - scalar,
+                              matrix.a[0][2] - scalar, matrix.a[0][3] - scalar,
+                              matrix.a[1][0] - scalar, matrix.a[1][1] - scalar,
+                              matrix.a[1][2] - scalar, matrix.a[1][3] - scalar,
+                              matrix.a[2][0] - scalar, matrix.a[2][1] - scalar,
+                              matrix.a[2][2] - scalar, matrix.a[2][3] - scalar,
+                              matrix.a[3][0] - scalar, matrix.a[3][1] - scalar,
+                              matrix.a[3][2] - scalar, matrix.a[3][3] - scalar);
+        }
+
+        //------------------------------------------------------------------------------------------------------------
+        Matrix operator -(const Matrix& matrix0, const Matrix& matrix1)
+        {
+                return Matrix(matrix0.a[0][0] - matrix1.a[0][0], matrix0.a[0][1] - matrix1.a[0][1],
+                              matrix0.a[0][2] - matrix1.a[0][2], matrix0.a[0][3] - matrix1.a[0][3],
+                              matrix0.a[1][0] - matrix1.a[1][0], matrix0.a[1][1] - matrix1.a[1][1],
+                              matrix0.a[1][2] - matrix1.a[1][2], matrix0.a[1][3] - matrix1.a[1][3],
+                              matrix0.a[2][0] - matrix1.a[2][0], matrix0.a[2][1] - matrix1.a[2][1],
+                              matrix0.a[2][2] - matrix1.a[2][2], matrix0.a[2][3] - matrix1.a[2][3],
+                              matrix0.a[3][0] - matrix1.a[3][0], matrix0.a[3][1] - matrix1.a[3][1],
+                              matrix0.a[3][2] - matrix1.a[3][2], matrix0.a[3][3] - matrix1.a[3][3]);
+        }
+
+        //------------------------------------------------------------------------------------------------------------
         Matrix operator *(const Matrix& matrix0, const Matrix& matrix1)
         {
                 Matrix result;
