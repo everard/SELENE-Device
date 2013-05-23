@@ -28,7 +28,8 @@ namespace selene
          * ...
          *
          * // get instance of the mesh, whose skeleton shall be animated
-         * selene::Resource::Instance<selene::Mesh> meshInstance = resourceManager.requestResource<selene::Mesh>("skin mesh");
+         * selene::Resource::Instance<selene::Mesh> meshInstance =
+         *         resourceManager.requestResource<selene::Mesh>("skin mesh");
          * if((*meshInstance) == nullptr)
          * {
          *         handleError();
@@ -127,7 +128,7 @@ namespace selene
                          * on skeleton)
                          * \param[in] skeletonInstance skeleton instance
                          */
-                        MixableMeshAnimation(const Resource::Instance<MeshAnimation>& meshAnimation = Resource::Instance<MeshAnimation>(),
+                        MixableMeshAnimation(const MeshAnimationInstance& meshAnimation = MeshAnimationInstance(),
                                              float blendFactorTransitionTime = 0.0f,
                                              float startingTransitionTime    = 0.0f,
                                              float stoppingTransitionTime    = 0.0f,

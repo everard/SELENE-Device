@@ -22,7 +22,7 @@ namespace selene
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool GlesActorsRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                             GlesFrameParameters& frameParameters,
                                             GlesTextureHandler& textureHandler)
@@ -74,22 +74,39 @@ namespace selene
                         "void main()\n"
                         "{\n"
                         "        vec3 position = vec3(0.0, 0.0, 0.0);\n"
-                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y), int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
-                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x], boneRotations[indices.x], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y], boneRotations[indices.y], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z], boneRotations[indices.z], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w], boneRotations[indices.w], vertexPosition.xyz);\n"
+                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y),\n"
+                        "                              int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
+                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x],\n"
+                        "                                                            boneRotations[indices.x],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y],\n"
+                        "                                                            boneRotations[indices.y],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z],\n"
+                        "                                                            boneRotations[indices.z],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w],\n"
+                        "                                                            boneRotations[indices.w],\n"
+                        "                                                            vertexPosition.xyz);\n"
                         "        gl_Position = worldViewProjectionMatrix * vec4(position, 1.0);\n"
                         "        vec3 tangent  = vec3(0.0, 0.0, 0.0);\n"
                         "        vec3 normal   = vec3(0.0, 0.0, 0.0);\n"
-                        "        tangent += vertexBoneWeights.x * rotateVector(vertexTangent.xyz, boneRotations[indices.x]).xyz;\n"
-                        "        tangent += vertexBoneWeights.y * rotateVector(vertexTangent.xyz, boneRotations[indices.y]).xyz;\n"
-                        "        tangent += vertexBoneWeights.z * rotateVector(vertexTangent.xyz, boneRotations[indices.z]).xyz;\n"
-                        "        tangent += vertexBoneWeights.w * rotateVector(vertexTangent.xyz, boneRotations[indices.w]).xyz;\n"
-                        "        normal += vertexBoneWeights.x * rotateVector(vertexNormal.xyz, boneRotations[indices.x]).xyz;\n"
-                        "        normal += vertexBoneWeights.y * rotateVector(vertexNormal.xyz, boneRotations[indices.y]).xyz;\n"
-                        "        normal += vertexBoneWeights.z * rotateVector(vertexNormal.xyz, boneRotations[indices.z]).xyz;\n"
-                        "        normal += vertexBoneWeights.w * rotateVector(vertexNormal.xyz, boneRotations[indices.w]).xyz;\n"
+                        "        tangent += vertexBoneWeights.x * rotateVector(vertexTangent.xyz,\n"
+                        "                                                      boneRotations[indices.x]).xyz;\n"
+                        "        tangent += vertexBoneWeights.y * rotateVector(vertexTangent.xyz,\n"
+                        "                                                      boneRotations[indices.y]).xyz;\n"
+                        "        tangent += vertexBoneWeights.z * rotateVector(vertexTangent.xyz,\n"
+                        "                                                      boneRotations[indices.z]).xyz;\n"
+                        "        tangent += vertexBoneWeights.w * rotateVector(vertexTangent.xyz,\n"
+                        "                                                      boneRotations[indices.w]).xyz;\n"
+                        "        normal += vertexBoneWeights.x * rotateVector(vertexNormal.xyz,\n"
+                        "                                                     boneRotations[indices.x]).xyz;\n"
+                        "        normal += vertexBoneWeights.y * rotateVector(vertexNormal.xyz,\n"
+                        "                                                     boneRotations[indices.y]).xyz;\n"
+                        "        normal += vertexBoneWeights.z * rotateVector(vertexNormal.xyz,\n"
+                        "                                                     boneRotations[indices.z]).xyz;\n"
+                        "        normal += vertexBoneWeights.w * rotateVector(vertexNormal.xyz,\n"
+                        "                                                     boneRotations[indices.w]).xyz;\n"
                         "        vTextureCoordinates = vertexTextureCoordinates;\n"
                         "        vNormal  = mat3(normalsMatrix) * normal;\n"
                         "        vTangent = mat3(normalsMatrix) * tangent;\n"
@@ -106,9 +123,13 @@ namespace selene
                         "varying vec3 vBitangent;\n"
                         "void main()\n"
                         "{\n"
-                        "        vec3 normal = 2.0 * texture2D(normalMap, vTextureCoordinates.xy).xyz - vec3(1.0, 1.0, 1.0);\n"
-                        "        vec3 normalizedNormal = normalize(normal.x * vTangent + normal.y * vBitangent + normal.z * vNormal);\n"
-                        "        gl_FragColor = vec4(encodeNormal(normalizedNormal), specularParameters.x * texture2D(specularMap, vTextureCoordinates.xy).a);\n"
+                        "        vec3 normal = 2.0 * texture2D(normalMap, vTextureCoordinates.xy).xyz -\n"
+                        "                      vec3(1.0, 1.0, 1.0);\n"
+                        "        vec3 normalizedNormal = normalize(normal.x * vTangent +\n"
+                        "                                          normal.y * vBitangent +\n"
+                        "                                          normal.z * vNormal);\n"
+                        "        gl_FragColor = vec4(encodeNormal(normalizedNormal), specularParameters.x *\n"
+                        "                            texture2D(specularMap, vTextureCoordinates.xy).a);\n"
                         "}\n";
 
                 // shading pass shaders
@@ -139,11 +160,20 @@ namespace selene
                         "void main()\n"
                         "{\n"
                         "        vec3 position = vec3(0.0, 0.0, 0.0);\n"
-                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y), int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
-                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x], boneRotations[indices.x], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y], boneRotations[indices.y], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z], boneRotations[indices.z], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w], boneRotations[indices.w], vertexPosition.xyz);\n"
+                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y),\n"
+                        "                              int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
+                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x],\n"
+                        "                                                            boneRotations[indices.x],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y],\n"
+                        "                                                            boneRotations[indices.y],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z],\n"
+                        "                                                            boneRotations[indices.z],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w],\n"
+                        "                                                            boneRotations[indices.w],\n"
+                        "                                                            vertexPosition.xyz);\n"
                         "        gl_Position = vPosition = worldViewProjectionMatrix * vec4(position, 1.0);\n"
                         "        vTextureCoordinates = vertexTextureCoordinates;\n"
                         "}\n";
@@ -162,12 +192,15 @@ namespace selene
                         "varying vec4 vPosition;\n"
                         "void main()\n"
                         "{\n"
-                        "        vec2 textureCoordinatesForLightBuffer = vec2(0.5, 0.5) * (vPosition.xy / vPosition.w) + vec2(0.5, 0.5);\n"
+                        "        vec2 textureCoordinatesForLightBuffer = vec2(0.5, 0.5) *\n"
+                        "                                                (vPosition.xy / vPosition.w) +\n"
+                        "                                                vec2(0.5, 0.5);\n"
                         "        textureCoordinatesForLightBuffer *= textureCoordinatesAdjustment.xy;\n"
                         "        vec4 lightBufferValue = texture2D(lightBuffer, textureCoordinatesForLightBuffer);\n"
                         "        vec4 ambient = ambientColor * texture2D(ambientMap, vTextureCoordinates.xy);\n"
                         "        vec4 diffuse = diffuseColor * texture2D(diffuseMap, vTextureCoordinates.xy);\n"
-                        "        vec4 specular = specularColor * texture2D(specularMap, vTextureCoordinates.xy) * specularParameters.x * lightBufferValue.w;\n"
+                        "        vec4 specular = specularColor * texture2D(specularMap, vTextureCoordinates.xy) *\n"
+                        "                        specularParameters.x * lightBufferValue.w;\n"
                         "        specular *= vec4(lightBufferValue.xyz, 1.0);\n"
                         "        gl_FragColor = ambient + diffuse * vec4(lightBufferValue.xyz, 1.0) + specular;\n"
                         "}\n";
@@ -193,11 +226,20 @@ namespace selene
                         "void main()\n"
                         "{\n"
                         "        vec3 position = vec3(0.0, 0.0, 0.0);\n"
-                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y), int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
-                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x], boneRotations[indices.x], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y], boneRotations[indices.y], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z], boneRotations[indices.z], vertexPosition.xyz);\n"
-                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w], boneRotations[indices.w], vertexPosition.xyz);\n"
+                        "        ivec4 indices = ivec4(int(vertexBoneIndices.x), int(vertexBoneIndices.y),\n"
+                        "                              int(vertexBoneIndices.z), int(vertexBoneIndices.w));\n"
+                        "        position += vertexBoneWeights.x * transformPosition(bonePositions[indices.x],\n"
+                        "                                                            boneRotations[indices.x],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.y * transformPosition(bonePositions[indices.y],\n"
+                        "                                                            boneRotations[indices.y],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.z * transformPosition(bonePositions[indices.z],\n"
+                        "                                                            boneRotations[indices.z],\n"
+                        "                                                            vertexPosition.xyz);\n"
+                        "        position += vertexBoneWeights.w * transformPosition(bonePositions[indices.w],\n"
+                        "                                                            boneRotations[indices.w],\n"
+                        "                                                            vertexPosition.xyz);\n"
                         "        gl_Position = worldViewProjectionMatrix * vec4(position, 1.0);\n"
                         "}\n";
 
@@ -227,7 +269,8 @@ namespace selene
                         GlesGlslProgram::VertexAttribute("vertexPosition", LOCATION_ATTRIBUTE_POSITION),
                         GlesGlslProgram::VertexAttribute("vertexNormal", LOCATION_ATTRIBUTE_NORMAL),
                         GlesGlslProgram::VertexAttribute("vertexTangent", LOCATION_ATTRIBUTE_TANGENT),
-                        GlesGlslProgram::VertexAttribute("vertexTextureCoordinates", LOCATION_ATTRIBUTE_TEXTURE_COORDINATES),
+                        GlesGlslProgram::VertexAttribute("vertexTextureCoordinates",
+                                                         LOCATION_ATTRIBUTE_TEXTURE_COORDINATES),
                         GlesGlslProgram::VertexAttribute("vertexBoneIndices", LOCATION_ATTRIBUTE_BONE_INDICES),
                         GlesGlslProgram::VertexAttribute("vertexBoneWeights", LOCATION_ATTRIBUTE_BONE_WEIGHTS)
                 };
@@ -235,7 +278,8 @@ namespace selene
 
                 for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
                 {
-                        if(!programs_[i].initialize(vertexShaderSources[i], fragmentShaderSources[i], vertexAttributes, numVertexAttributes, true, true))
+                        if(!programs_[i].initialize(vertexShaderSources[i], fragmentShaderSources[i],
+                                                    vertexAttributes, numVertexAttributes, true, true))
                         {
                                 destroy();
                                 return false;
@@ -248,7 +292,7 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -259,7 +303,7 @@ namespace selene
                 textureHandler_ = nullptr;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
                 glEnable(GL_DEPTH_TEST);
@@ -276,7 +320,8 @@ namespace selene
 
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_NORMALS))
                 {
-                        LOGI("****************************** FAILED: GlesActorsRenderer::renderPositionsAndNormals: setRenderTarget(RENDER_TARGET_NORMALS)");
+                        LOGI("****************************** FAILED: GlesActorsRenderer::renderPositionsAndNormals:"
+                             "setRenderTarget(RENDER_TARGET_NORMALS)");
                         return;
                 }
 
@@ -291,7 +336,7 @@ namespace selene
                 renderActors(actorNode, RENDERING_PASS_NORMALS);
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode)
         {
                 renderTargetContainer_->setShadowMap();
@@ -334,7 +379,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderShadowMap: glCullFace(GL_FRONT)");
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderShading(Renderer::Data::ActorNode& actorNode)
         {
                 glEnable(GL_DEPTH_TEST);
@@ -351,7 +396,8 @@ namespace selene
 
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_RESULT))
                 {
-                        LOGI("****************************** FAILED: GlesActorsRenderer::renderShading: setRenderTarget(RENDER_TARGET_RESULT)");
+                        LOGI("****************************** FAILED: GlesActorsRenderer::renderShading:"
+                             "setRenderTarget(RENDER_TARGET_RESULT)");
                         return;
                 }
 
@@ -389,7 +435,7 @@ namespace selene
         }
         GlesActorsRenderer::Variables::~Variables() {}
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationWorldViewProjectionMatrix = program.getUniformLocation("worldViewProjectionMatrix");
@@ -412,7 +458,7 @@ namespace selene
                 locationSpecularColor = program.getUniformLocation("specularColor");
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::setMaterial(const Material& material, uint8_t pass,
                                              const GlesActorsRenderer::Variables& variables)
         {
@@ -432,7 +478,8 @@ namespace selene
                                 textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR), 1,
                                                             GlesTextureHandler::DUMMY_TEXTURE_WHITE);
 
-                                glUniform4fv(variables.locationSpecularParameters, 1, static_cast<const float*>(specularParameters));
+                                glUniform4fv(variables.locationSpecularParameters, 1,
+                                             static_cast<const float*>(specularParameters));
                                 CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform4fv");
                                 break;
                         }
@@ -459,17 +506,21 @@ namespace selene
                                 textureHandler_->setTexture(material.getTextureMap(TEXTURE_MAP_SPECULAR), 2,
                                                             GlesTextureHandler::DUMMY_TEXTURE_WHITE);
 
-                                glUniform4fv(variables.locationAmbientColor, 1, static_cast<const float*>(ambientColor));
-                                glUniform4fv(variables.locationDiffuseColor, 1, static_cast<const float*>(diffuseColor));
-                                glUniform4fv(variables.locationSpecularColor, 1, static_cast<const float*>(specularColor));
-                                glUniform4fv(variables.locationSpecularParameters, 1, static_cast<const float*>(specularParameters));
+                                glUniform4fv(variables.locationAmbientColor, 1,
+                                             static_cast<const float*>(ambientColor));
+                                glUniform4fv(variables.locationDiffuseColor, 1,
+                                             static_cast<const float*>(diffuseColor));
+                                glUniform4fv(variables.locationSpecularColor, 1,
+                                             static_cast<const float*>(specularColor));
+                                glUniform4fv(variables.locationSpecularParameters, 1,
+                                             static_cast<const float*>(specularParameters));
                                 CHECK_GLES_ERROR("GlesActorsRenderer::setMaterial: glUniform4fv");
                                 break;
                         }
                 }
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::setSkeletonPose(const Array<Skeleton::Transform, uint16_t>& boneTransforms,
                                                  const GlesActorsRenderer::Variables& variables)
         {
@@ -479,8 +530,9 @@ namespace selene
                 static Quaternion rotations[MAX_NUM_OF_BONES_IN_MODEL];
                 static Vector4d   positions[MAX_NUM_OF_BONES_IN_MODEL];
 
-                uint16_t numBoneTransforms = (boneTransforms.getSize() > static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL)) ?
-                                             static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL) : boneTransforms.getSize();
+                uint16_t numBoneTransforms =
+                        (boneTransforms.getSize() > static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL)) ?
+                        static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL) : boneTransforms.getSize();
 
                 for(uint16_t i = 0; i < numBoneTransforms; ++i)
                 {
@@ -488,56 +540,18 @@ namespace selene
                         rotations[i] = boneTransforms[i].rotation;
                 }
 
-                glUniform4fv(variables.locationBonePositions, numBoneTransforms, reinterpret_cast<const float*>(positions));
-                glUniform4fv(variables.locationBoneRotations, numBoneTransforms, reinterpret_cast<const float*>(rotations));
+                glUniform4fv(variables.locationBonePositions, numBoneTransforms,
+                             reinterpret_cast<const float*>(positions));
+                glUniform4fv(variables.locationBoneRotations, numBoneTransforms,
+                             reinterpret_cast<const float*>(rotations));
                 CHECK_GLES_ERROR("GlesActorsRenderer::setSkeletonPose: glUniform4fv");
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderActors(Renderer::Data::ActorNode& actorNode, uint8_t pass)
         {
                 static const bool cullFaces[] = {true, false};
                 GlesGlslProgram* programs = nullptr;
-
-                static const uint8_t vertexBufferObjectIndices[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
-                {
-                        {
-                                Mesh::VERTEX_STREAM_POSITIONS,
-                                Mesh::VERTEX_STREAM_TBN_BASES,
-                                Mesh::VERTEX_STREAM_TBN_BASES,
-                                Mesh::VERTEX_STREAM_TEXTURE_COORDINATES
-                        },
-                        {
-                                Mesh::VERTEX_STREAM_POSITIONS,
-                                Mesh::VERTEX_STREAM_TEXTURE_COORDINATES, 0, 0
-                        },
-                        {
-                                Mesh::VERTEX_STREAM_POSITIONS, 0, 0, 0
-                        }
-                };
-                static const uint8_t vertexAttributeLocations[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
-                {
-                        {
-                                LOCATION_ATTRIBUTE_POSITION,
-                                LOCATION_ATTRIBUTE_NORMAL,
-                                LOCATION_ATTRIBUTE_TANGENT,
-                                LOCATION_ATTRIBUTE_TEXTURE_COORDINATES
-                        },
-                        {
-                                LOCATION_ATTRIBUTE_POSITION,
-                                LOCATION_ATTRIBUTE_TEXTURE_COORDINATES, 0, 0
-                        },
-                        {
-                                LOCATION_ATTRIBUTE_POSITION, 0, 0, 0
-                        }
-                };
-                static const uint8_t vertexAttributeSizes[NUM_OF_RENDERING_PASSES][MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
-                {
-                        {3, 3, 4, 2},
-                        {3, 2, 0, 0},
-                        {3, 0, 0, 0}
-                };
-                static const uint8_t numVertexAttributes[NUM_OF_RENDERING_PASSES] = {4, 2, 1};
 
                 switch(pass)
                 {
@@ -567,16 +581,20 @@ namespace selene
                         if(pass == RENDERING_PASS_SHADING)
                         {
                                 glUniform4fv(variables.locationTextureCoordinatesAdjustment, 1,
-                                             static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment));
+                                             static_cast<float*>(frameParameters_->textureCoordinatesAdjustment));
                                 CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glUniform4fv");
 
                                 glUniform1i(variables.locationLightBuffer, 3);
                                 CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glUniform1i");
-                                textureHandler_->setTexture(renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER), 3);
+
+                                auto& lightBuffer =
+                                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER);
+                                textureHandler_->setTexture(lightBuffer, 3);
                         }
 
                         // walk through all material units
-                        for(uint8_t materialUnit = 0; materialUnit < Renderer::Data::NUM_OF_MATERIAL_UNITS; ++materialUnit)
+                        for(uint8_t materialUnit = 0; materialUnit < Renderer::Data::NUM_OF_MATERIAL_UNITS;
+                            ++materialUnit)
                         {
                                 if(cullFaces[materialUnit])
                                         glEnable(GL_CULL_FACE);
@@ -598,84 +616,14 @@ namespace selene
                                                 break;
 
                                         setMaterial(*material, pass, variables);
-
-                                        // walk through all meshes
-                                        for(bool resultMesh = meshNode->readFirstElement(); resultMesh;
-                                                 resultMesh = meshNode->readNextElement())
-                                        {
-                                                GlesMesh* glesMesh = static_cast<GlesMesh*>(meshNode->getCurrentKey());
-                                                if(glesMesh == nullptr)
-                                                        break;
-
-                                                auto meshSubsetNode = meshNode->getCurrentData();
-                                                if(meshSubsetNode == nullptr)
-                                                        break;
-
-                                                const auto& meshData = glesMesh->getData();
-
-                                                for(uint8_t vertexAttributeNo = 0; vertexAttributeNo < numVertexAttributes[pass]; ++vertexAttributeNo)
-                                                {
-                                                        uint8_t vertexBufferObjectIndex = vertexBufferObjectIndices[pass][vertexAttributeNo];
-                                                        uint8_t vertexAttributeLocation = vertexAttributeLocations[pass][vertexAttributeNo];
-
-                                                        glBindBuffer(GL_ARRAY_BUFFER, glesMesh->vertexBuffers_[vertexBufferObjectIndex]);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glBindBuffer");
-
-                                                        glEnableVertexAttribArray(vertexAttributeLocation);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glEnableVertexAttribArray");
-
-                                                        glVertexAttribPointer(vertexAttributeLocation, vertexAttributeSizes[pass][vertexAttributeNo], GL_FLOAT, GL_FALSE,
-                                                                              meshData.vertices[vertexBufferObjectIndex].getStride(),
-                                                                              nullptr);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glVertexAttribPointer");
-                                                }
-
-                                                if(meshUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                                {
-                                                        glBindBuffer(GL_ARRAY_BUFFER, glesMesh->vertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS]);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glBindBuffer");
-
-                                                        // set bone indices
-                                                        glEnableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_INDICES);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glEnableVertexAttribArray");
-
-                                                        glVertexAttribPointer(LOCATION_ATTRIBUTE_BONE_INDICES, 4, GL_FLOAT, GL_FALSE,
-                                                                              meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride(),
-                                                                              nullptr);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glVertexAttribPointer");
-
-                                                        // set bone weights
-                                                        glEnableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_WEIGHTS);
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glEnableVertexAttribArray");
-
-                                                        glVertexAttribPointer(LOCATION_ATTRIBUTE_BONE_WEIGHTS, 4, GL_FLOAT, GL_FALSE,
-                                                                              meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride(),
-                                                                              reinterpret_cast<uint8_t*>(sizeof(Vector4d)));
-                                                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glVertexAttribPointer");
-                                                }
-
-                                                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                                                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glesMesh->indexBuffer_);
-                                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glBindBuffer");
-
-                                                // walk through all mesh subsets
-                                                for(bool resultMeshSubset = meshSubsetNode->readFirstElement(); resultMeshSubset;
-                                                         resultMeshSubset = meshSubsetNode->readNextElement())
-                                                {
-                                                        auto meshSubset = meshSubsetNode->getCurrentKey();
-                                                        auto renderingList = meshSubsetNode->getCurrentData();
-
-                                                        if(meshSubset == nullptr || renderingList == nullptr)
-                                                                break;
-
-                                                        renderMeshSubsetInstances(*renderingList, variables, *meshSubset, meshUnit, pass);
-                                                }
-                                        }
+                                        renderMeshes(variables, *meshNode, meshUnit, pass);
                                 }
                         }
 
-                        for(uint8_t vertexAttributeNo = 0; vertexAttributeNo < numVertexAttributes[pass]; ++vertexAttributeNo)
-                                glDisableVertexAttribArray(vertexAttributeLocations[pass][vertexAttributeNo]);
+                        glDisableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
+                        glDisableVertexAttribArray(LOCATION_ATTRIBUTE_NORMAL);
+                        glDisableVertexAttribArray(LOCATION_ATTRIBUTE_TANGENT);
+                        glDisableVertexAttribArray(LOCATION_ATTRIBUTE_TEXTURE_COORDINATES);
                         glDisableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_INDICES);
                         glDisableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_WEIGHTS);
                         CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glDisableVertexAttribArray");
@@ -685,7 +633,138 @@ namespace selene
                 CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glBindBuffer");
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
+        void GlesActorsRenderer::renderMeshes(const GlesActorsRenderer::Variables& variables,
+                                              Renderer::Data::MeshNode& meshNode,
+                                              uint8_t meshRenderingUnit,
+                                              uint8_t pass)
+        {
+                static const uint8_t vertexBufferObjectIndices[NUM_OF_RENDERING_PASSES]
+                                                              [MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
+                {
+                        {
+                                Mesh::VERTEX_STREAM_POSITIONS,
+                                Mesh::VERTEX_STREAM_TBN_BASES,
+                                Mesh::VERTEX_STREAM_TBN_BASES,
+                                Mesh::VERTEX_STREAM_TEXTURE_COORDINATES
+                        },
+                        {
+                                Mesh::VERTEX_STREAM_POSITIONS,
+                                Mesh::VERTEX_STREAM_TEXTURE_COORDINATES, 0, 0
+                        },
+                        {
+                                Mesh::VERTEX_STREAM_POSITIONS, 0, 0, 0
+                        }
+                };
+                static const uint8_t vertexAttributeLocations[NUM_OF_RENDERING_PASSES]
+                                                             [MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
+                {
+                        {
+                                LOCATION_ATTRIBUTE_POSITION,
+                                LOCATION_ATTRIBUTE_NORMAL,
+                                LOCATION_ATTRIBUTE_TANGENT,
+                                LOCATION_ATTRIBUTE_TEXTURE_COORDINATES
+                        },
+                        {
+                                LOCATION_ATTRIBUTE_POSITION,
+                                LOCATION_ATTRIBUTE_TEXTURE_COORDINATES, 0, 0
+                        },
+                        {
+                                LOCATION_ATTRIBUTE_POSITION, 0, 0, 0
+                        }
+                };
+                static const uint8_t vertexAttributeSizes[NUM_OF_RENDERING_PASSES]
+                                                         [MAX_NUM_OF_VERTEX_ATTRIBUTES_PER_PASS] =
+                {
+                        {3, 3, 4, 2},
+                        {3, 2, 0, 0},
+                        {3, 0, 0, 0}
+                };
+                static const uint8_t numVertexAttributes[NUM_OF_RENDERING_PASSES] = {4, 2, 1};
+
+                // walk through all meshes
+                for(bool resultMesh = meshNode.readFirstElement(); resultMesh;
+                         resultMesh = meshNode.readNextElement())
+                {
+                        GlesMesh* glesMesh =
+                                static_cast<GlesMesh*>(meshNode.getCurrentKey());
+                        if(glesMesh == nullptr)
+                                break;
+
+                        auto meshSubsetNode = meshNode.getCurrentData();
+                        if(meshSubsetNode == nullptr)
+                                break;
+
+                        const auto& meshData = glesMesh->getData();
+
+                        for(uint8_t vertexAttributeNo = 0; vertexAttributeNo < numVertexAttributes[pass];
+                            ++vertexAttributeNo)
+                        {
+                                uint8_t vertexBufferObjectIndex = vertexBufferObjectIndices[pass][vertexAttributeNo];
+                                uint8_t vertexAttributeLocation = vertexAttributeLocations[pass][vertexAttributeNo];
+
+                                glBindBuffer(GL_ARRAY_BUFFER, glesMesh->vertexBuffers_[vertexBufferObjectIndex]);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glBindBuffer");
+
+                                glEnableVertexAttribArray(vertexAttributeLocation);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glEnableVertexAttribArray");
+
+                                auto& vertexStream = meshData.vertices[vertexBufferObjectIndex];
+
+                                glVertexAttribPointer(vertexAttributeLocation,
+                                                      vertexAttributeSizes[pass][vertexAttributeNo],
+                                                      GL_FLOAT, GL_FALSE, vertexStream.getStride(), nullptr);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glVertexAttribPointer");
+                        }
+
+                        if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
+                        {
+                                auto& vertexBuffer =
+                                        glesMesh->vertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS];
+                                glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glBindBuffer");
+
+                                // set bone indices
+                                glEnableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_INDICES);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glEnableVertexAttribArray");
+
+                                auto& vertexStream =
+                                        meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS];
+                                glVertexAttribPointer(LOCATION_ATTRIBUTE_BONE_INDICES, 4,
+                                                      GL_FLOAT, GL_FALSE, vertexStream.getStride(), nullptr);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glVertexAttribPointer");
+
+                                // set bone weights
+                                glEnableVertexAttribArray(LOCATION_ATTRIBUTE_BONE_WEIGHTS);
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glEnableVertexAttribArray");
+
+                                glVertexAttribPointer(LOCATION_ATTRIBUTE_BONE_WEIGHTS, 4,
+                                                      GL_FLOAT, GL_FALSE, vertexStream.getStride(),
+                                                      reinterpret_cast<uint8_t*>(sizeof(Vector4d)));
+                                CHECK_GLES_ERROR("GlesActorsRenderer::renderActors:glVertexAttribPointer");
+                        }
+
+                        glBindBuffer(GL_ARRAY_BUFFER, 0);
+                        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glesMesh->indexBuffer_);
+                        CHECK_GLES_ERROR("GlesActorsRenderer::renderActors: glBindBuffer");
+
+                        // walk through all mesh subsets
+                        for(bool resultMeshSubset = meshSubsetNode->readFirstElement(); resultMeshSubset;
+                                 resultMeshSubset = meshSubsetNode->readNextElement())
+                        {
+                                auto meshSubset = meshSubsetNode->getCurrentKey();
+                                auto renderingList = meshSubsetNode->getCurrentData();
+
+                                if(meshSubset == nullptr || renderingList == nullptr)
+                                        break;
+
+                                renderMeshSubsetInstances(*renderingList, variables, *meshSubset,
+                                                          meshRenderingUnit, pass);
+                        }
+                }
+        }
+
+        //------------------------------------------------------------------------------------------------------------
         void GlesActorsRenderer::renderMeshSubsetInstances(const Renderer::Data::List<Actor::Instance>& renderingList,
                                                            const GlesActorsRenderer::Variables& variables,
                                                            const Mesh::Subset& meshSubset,

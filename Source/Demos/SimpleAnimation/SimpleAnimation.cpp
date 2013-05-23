@@ -11,7 +11,8 @@ namespace selene
                                                          Platform::getDefaultScreenHeight());
         }
 
-        SimpleAnimation::SimpleAnimation(const char* name, uint32_t width, uint32_t height): Platform::Application(name, width, height)
+        SimpleAnimation::SimpleAnimation(const char* name, uint32_t width, uint32_t height):
+                Platform::Application(name, width, height)
         {
                 // specify search folders for file manager
                 const char* folders[] =
@@ -56,7 +57,7 @@ namespace selene
         }
         SimpleAnimation::~SimpleAnimation() {}
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool SimpleAnimation::onInitialize()
         {
                 // initialize memory buffer of the renderer
@@ -92,124 +93,118 @@ namespace selene
                         Vector4d(1.0f, 1.0f, 1.0f, 1.0f)
                 };
 
-                gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                         {
-                                                                 this->onButtonMessageExit();
-                                                         }),
-                                                         buttonBackgroundColors,
-                                                         textColors,
-                                                         Vector2d(0.05f, 0.07f),
-                                                         Vector2d(1.4f, 0.5f),
-                                                         Vector2d(0.5f, 0.1f),
-                                                         "Exit"));
+                auto button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageExit();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(1.4f, 0.5f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Exit");
+                gui_.addElement(button);
 
-                gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                         {
-                                                                 this->onButtonMessageWalk();
-                                                         }),
-                                                         buttonBackgroundColors,
-                                                         textColors,
-                                                         Vector2d(0.05f, 0.07f),
-                                                         Vector2d(0.1f, 0.50f),
-                                                         Vector2d(0.5f, 0.1f),
-                                                         "Walk"));
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageWalk();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(0.1f, 0.50f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Walk");
+                gui_.addElement(button);
 
-                gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                         {
-                                                                 this->onButtonMessageShoot();
-                                                         }),
-                                                         buttonBackgroundColors,
-                                                         textColors,
-                                                         Vector2d(0.05f, 0.07f),
-                                                         Vector2d(0.1f, 0.63f),
-                                                         Vector2d(0.5f, 0.1f),
-                                                         "Shoot"));
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageShoot();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(0.1f, 0.63f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Shoot");
+                gui_.addElement(button);
 
-                gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                         {
-                                                                 this->onButtonMessageLookLeft();
-                                                         }),
-                                                         buttonBackgroundColors,
-                                                         textColors,
-                                                         Vector2d(0.05f, 0.07f),
-                                                         Vector2d(0.1f, 0.76f),
-                                                         Vector2d(0.5f, 0.1f),
-                                                         "Look left"));
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageLookLeft();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(0.1f, 0.76f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Look left");
+                gui_.addElement(button);
 
-                gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                         {
-                                                                 this->onButtonMessageLookRight();
-                                                         }),
-                                                         buttonBackgroundColors,
-                                                         textColors,
-                                                         Vector2d(0.05f, 0.07f),
-                                                         Vector2d(0.1f, 0.89f),
-                                                         Vector2d(0.5f, 0.1f),
-                                                         "Look right"));
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageLookRight();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(0.1f, 0.89f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Look right");
+                gui_.addElement(button);
 
-                int32_t elementId =
-                        gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                                 {
-                                                                         this->onButtonMessageToggleSsao();
-                                                                 }),
-                                                                 buttonBackgroundColors,
-                                                                 textColors,
-                                                                 Vector2d(0.05f, 0.07f),
-                                                                 Vector2d(1.4f, 0.76f),
-                                                                 Vector2d(0.5f, 0.1f),
-                                                                 "SSAO"));
-
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageToggleSsao();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(1.4f, 0.76f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "SSAO");
+                int32_t elementId = gui_.addElement(button);
                 buttonToggleSsao_ = gui_.getElement(elementId);
 
-                elementId =
-                        gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                                 {
-                                                                         this->onButtonMessageToggleBloom();
-                                                                 }),
-                                                                 buttonBackgroundColors,
-                                                                 textColors,
-                                                                 Vector2d(0.05f, 0.07f),
-                                                                 Vector2d(1.4f, 0.89f),
-                                                                 Vector2d(0.5f, 0.1f),
-                                                                 "Bloom"));
-
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageToggleBloom();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(1.4f, 0.89f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Bloom");
+                elementId = gui_.addElement(button);
                 buttonToggleBloom_ = gui_.getElement(elementId);
 
-                elementId =
-                        gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                                 {
-                                                                         this->onButtonMessageToggleShadows();
-                                                                 }),
-                                                                 buttonBackgroundColors,
-                                                                 textColors,
-                                                                 Vector2d(0.05f, 0.07f),
-                                                                 Vector2d(1.4f, 1.02f),
-                                                                 Vector2d(0.5f, 0.1f),
-                                                                 "Shadows"));
-
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageToggleShadows();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(1.4f, 1.02f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "Shadows");
+                elementId = gui_.addElement(button);
                 buttonToggleShadows_ = gui_.getElement(elementId);
 
-                elementId =
-                        gui_.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
-                                                                 {
-                                                                         this->onButtonMessageToggleSettings();
-                                                                 }),
-                                                                 buttonBackgroundColors,
-                                                                 textColors,
-                                                                 Vector2d(0.05f, 0.07f),
-                                                                 Vector2d(1.4f, 0.63f),
-                                                                 Vector2d(0.5f, 0.1f),
-                                                                 "[+]Effects"));
-
+                button =
+                        new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t, uint8_t)
+                                                 {this->onButtonMessageToggleSettings();}),
+                                                 buttonBackgroundColors,
+                                                 textColors,
+                                                 Vector2d(0.05f, 0.07f),
+                                                 Vector2d(1.4f, 0.63f),
+                                                 Vector2d(0.5f, 0.1f),
+                                                 "[+]Effects");
+                elementId = gui_.addElement(button);
                 buttonToggleSettings_ = gui_.getElement(elementId);
 
-                gui_.addElement(new(std::nothrow) Label(std::function<void (int32_t, uint8_t)>(),
-                                                        labelBackgroundColors,
-                                                        textColors,
-                                                        Vector2d(0.05f, 0.07f),
-                                                        Vector2d(0.1f, 0.1f),
-                                                        Vector2d(1.6f, 0.1f),
-                                                        "Use controller to rotate camera."));
+                auto label =
+                        new(std::nothrow) Label(std::function<void (int32_t, uint8_t)>(),
+                                                labelBackgroundColors,
+                                                textColors,
+                                                Vector2d(0.05f, 0.07f),
+                                                Vector2d(0.1f, 0.1f),
+                                                Vector2d(1.6f, 0.1f),
+                                                "Use controller to rotate camera.");
+                gui_.addElement(label);
 
                 toggleGuiElementVisibility(buttonToggleSsao_);
                 toggleGuiElementVisibility(buttonToggleBloom_);
@@ -263,7 +258,8 @@ namespace selene
                 scene_.addNode(new(std::nothrow) Actor("floor",
                                                        meshManager_.requestResource<Mesh>("floor.sle"),
                                                        Vector3d(0.0f, 0.0f),
-                                                       Quaternion(Vector3d(-1.0f, 0.0f, 0.0f) * std::sin(SELENE_PI * 0.25f),
+                                                       Quaternion(Vector3d(-1.0f, 0.0f, 0.0f) *
+                                                                  std::sin(SELENE_PI * 0.25f),
                                                                   std::cos(SELENE_PI * 0.25f))));
 
                 scene_.addNode(new(std::nothrow) DirectionalLight("directional light",
@@ -291,7 +287,8 @@ namespace selene
                                                         Vector3d(0.0f, 0.0f, 1.0f),
                                                         Vector3d(0.0f, 1.0f),
                                                         Vector4d(45.0f,
-                                                                 static_cast<float>(height_) / static_cast<float>(width_),
+                                                                 static_cast<float>(height_) /
+                                                                 static_cast<float>(width_),
                                                                  1.0f,
                                                                  1000.0f),
                                                         15.0f,
@@ -334,7 +331,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onDestroy()
         {
                 Renderer::destroyMemoryBuffer();
@@ -344,27 +341,27 @@ namespace selene
                 meshManager_.destroyResources(true);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onKeyPress(uint8_t key)
         {
                 gui_.process(cursorPosition_, pressedControlButtons_, key);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onControlButtonPress(uint8_t button)
         {
                 if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onControlButtonRelease(uint8_t button)
         {
                 if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = false;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onUpdate(float)
         {
                 // rotate camera
@@ -383,14 +380,14 @@ namespace selene
                 gui_.process(cursorPosition_, pressedControlButtons_, 0);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onRender(float elapsedTime)
         {
                 // render scene
                 scene_.updateAndRender(elapsedTime, renderer_);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::toggleEffect(uint8_t type)
         {
                 auto camera = camera_.lock();
@@ -403,7 +400,7 @@ namespace selene
                         camera->enableEffect(type);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::toggleGuiElementVisibility(std::weak_ptr<Gui::Element>& element)
         {
                 auto lockedElement = element.lock();
@@ -416,14 +413,14 @@ namespace selene
                         lockedElement->setFlags(GUI_ELEMENT_HIDDEN);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageExit()
         {
                 // halt application
                 halt();
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageWalk()
         {
                 auto weakObject = scene_.getActor("object");
@@ -434,7 +431,7 @@ namespace selene
                 }
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageShoot()
         {
                 auto weakObject = scene_.getActor("object");
@@ -445,7 +442,7 @@ namespace selene
                 }
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageLookLeft()
         {
                 auto weakObject = scene_.getActor("object");
@@ -457,7 +454,7 @@ namespace selene
                 }
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageLookRight()
         {
                 auto weakObject = scene_.getActor("object");
@@ -469,25 +466,25 @@ namespace selene
                 }
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleSsao()
         {
                 toggleEffect(Renderer::Effects::SSAO);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleBloom()
         {
                 toggleEffect(Renderer::Effects::BLOOM);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleShadows()
         {
                 toggleEffect(Renderer::Effects::SHADOWS);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleSettings()
         {
                 toggleGuiElementVisibility(buttonToggleSsao_);

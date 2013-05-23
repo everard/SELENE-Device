@@ -29,7 +29,7 @@ namespace selene
         }
         RawMeshData::~RawMeshData() {}
 
-        //--------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool RawMeshData::read(const char* fileName)
         {
                 if(fileName == nullptr)
@@ -209,8 +209,10 @@ namespace selene
                                 }
 
                                 bones_[i].name = boneName;
-                                stream.read(reinterpret_cast<char*>(&bones_[i].offsetTransform.rotation), sizeof(Quaternion));
-                                stream.read(reinterpret_cast<char*>(&bones_[i].offsetTransform.position), sizeof(Vector3d));
+                                stream.read(reinterpret_cast<char*>(&bones_[i].offsetTransform.rotation),
+                                                                    sizeof(Quaternion));
+                                stream.read(reinterpret_cast<char*>(&bones_[i].offsetTransform.position),
+                                                                    sizeof(Vector3d));
                                 stream.read(reinterpret_cast<char*>(&bones_[i].parent), sizeof(int32_t));
                                 bones_[i].offsetTransform.rotation.normalize();
                         }
@@ -225,7 +227,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool RawMeshData::readMaterial(std::istream& stream, RawMeshData::Material& material)
         {
                 // read face index

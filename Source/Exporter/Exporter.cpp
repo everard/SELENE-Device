@@ -139,25 +139,25 @@ namespace selene
         Exporter::DummyMesh::DummyMesh(const char* name): Mesh(name) {}
         Exporter::DummyMesh::~DummyMesh() {}
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool Exporter::DummyMesh::retain()
         {
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void Exporter::DummyMesh::discard() {}
 
         Exporter::DummyTexture::DummyTexture(const char* name): Texture(name) {}
         Exporter::DummyTexture::~DummyTexture() {}
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool Exporter::DummyTexture::retain()
         {
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void Exporter::DummyTexture::discard() {}
 
         Exporter::Exporter(RawMeshData* rawMeshData): mesh_(nullptr)
@@ -173,7 +173,7 @@ namespace selene
                 clear();
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool Exporter::doExport(const char* fileName)
         {
                 clear();
@@ -188,8 +188,10 @@ namespace selene
 
                 std::cout << "SUCCESS" << std::endl;
 
-                if(rawMeshData_->positions_.isEmpty() || rawMeshData_->faces_.isEmpty() ||
-                   rawMeshData_->textureCoordinates_.isEmpty() || rawMeshData_->textureFaces_.isEmpty())
+                if(rawMeshData_->positions_.isEmpty()          ||
+                   rawMeshData_->faces_.isEmpty()              ||
+                   rawMeshData_->textureCoordinates_.isEmpty() ||
+                   rawMeshData_->textureFaces_.isEmpty())
                 {
                         std::cout << "   ERROR: mesh is broken" << std::endl;
                         return false;
@@ -381,7 +383,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void Exporter::clear()
         {
                 skinVertices_.destroy();
@@ -392,7 +394,7 @@ namespace selene
                 numFaces_     = 0;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool Exporter::readFaces()
         {
                 faces_ = new(std::nothrow) RawMeshData::Face[rawMeshData_->faces_.getSize()];
@@ -406,28 +408,34 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool Exporter::createVerticesAndFaces(Mesh::Data& meshData)
         {
-                if(!meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].create(numVertices_, sizeof(Vector3d)) ||
-                   !meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES].create(numVertices_, sizeof(Vector3d) + sizeof(Vector4d)) ||
-                   !meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].create(numVertices_, sizeof(Vector2d)))
+                auto& textureCoordinatesVertexStream = meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES];
+                auto& positionsVertexStream          = meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS];
+                auto& skinDataVertexStream           = meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS];
+                auto& tbnBasesVertexStream           = meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES];
+
+                if(!textureCoordinatesVertexStream.create(numVertices_, sizeof(Vector2d)) ||
+                   !positionsVertexStream.create(numVertices_, sizeof(Vector3d))          ||
+                   !tbnBasesVertexStream.create(numVertices_, sizeof(Vector3d) + sizeof(Vector4d)))
                         return false;
 
                 if(rawMeshData_->hasSkeleton_)
-                        if(!meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].create(numVertices_, 2 * sizeof(Vector4d)))
+                {
+                        if(!skinDataVertexStream.create(numVertices_, 2 * sizeof(Vector4d)))
                                 return false;
+                }
 
                 for(uint32_t i = 0; i < numFaces_; ++i)
                 {
                         for(uint8_t j = 0; j < 3; ++j)
                         {
                                 uint32_t vertexIndex = faces_[i].indices[j];
-                                uint8_t* vertexPosition = &meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS][vertexIndex *
-                                        meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getStride()];
+                                uint8_t* vertexPosition =
+                                        &positionsVertexStream[vertexIndex * positionsVertexStream.getStride()];
 
-                                const MeshMender::Vertex& menderVertex =
-                                        meshMenderVertices_[faces_[i].indices[j]];
+                                const MeshMender::Vertex& menderVertex = meshMenderVertices_[faces_[i].indices[j]];
 
                                 // position
                                 Vector3d& position = *(reinterpret_cast<Vector3d*>(vertexPosition));
@@ -437,13 +445,11 @@ namespace selene
                                                 menderVertex.pos.z);
 
                                 // normal
-                                uint8_t* vertexTbnBasis = &meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES][vertexIndex *
-                                        meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES].getStride()];
+                                uint8_t* vertexTbnBasis =
+                                        &tbnBasesVertexStream[vertexIndex * tbnBasesVertexStream.getStride()];
                                 Vector3d& normal = *(reinterpret_cast<Vector3d*>(vertexTbnBasis));
 
-                                normal.define(menderVertex.normal.x,
-                                              menderVertex.normal.y,
-                                              menderVertex.normal.z);
+                                normal.define(menderVertex.normal.x, menderVertex.normal.y, menderVertex.normal.z);
                                 normal.normalize();
 
                                 // tangent and binormal
@@ -465,31 +471,36 @@ namespace selene
                                         tangent.define(t, -1.0f);
                                 else
                                 {
-                                        std::cout << "          Warning! V[" << faces_[i].indices[j] << "] has non ortho TBN basis" << std::endl;
+                                        std::cout << "          Warning! V[" << faces_[i].indices[j] <<
+                                                     "] has non ortho TBN basis" << std::endl;
                                         tangent = Vector4d(t, -1.0f);
                                 }
 
                                 // texture coordinates
-                                uint8_t* vertexTextureCoordinates = &meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES][vertexIndex *
-                                        meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].getStride()];
-                                Vector2d& textureCoordinates = *(reinterpret_cast<Vector2d*>(vertexTextureCoordinates));
+                                uint8_t* vertexTextureCoordinates =
+                                        &textureCoordinatesVertexStream[vertexIndex *
+                                                                        textureCoordinatesVertexStream.getStride()];
+                                Vector2d& textureCoordinates =
+                                        *(reinterpret_cast<Vector2d*>(vertexTextureCoordinates));
 
                                 textureCoordinates.define(menderVertex.s, menderVertex.t);
 
                                 // fill weights and indices
                                 if(rawMeshData_->hasSkeleton_)
                                 {
-                                        uint8_t* vertexIndicesAndWeights = &meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS][vertexIndex *
-                                                meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride()];
+                                        uint8_t* vertexIndicesAndWeights =
+                                                &skinDataVertexStream[vertexIndex * skinDataVertexStream.getStride()];
                                         Vector4d& indices = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights));
-                                        Vector4d& weights = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights + sizeof(Vector4d)));
+                                        Vector4d& weights = *(reinterpret_cast<Vector4d*>(vertexIndicesAndWeights +
+                                                                                          sizeof(Vector4d)));
 
                                         uint32_t oldVertexIndex = newToOldVertexMapping_[vertexIndex];
                                         indices = skinVertices_[oldVertexIndex].indices;
                                         weights = skinVertices_[oldVertexIndex].weights;
 
                                         if(fabs(weights.x + weights.y + weights.z + weights.w - 1.0f) > SELENE_EPSILON)
-                                                std::cout << "          Warning! V[" << vertexIndex << "] has overall skin weights != 1.0" << std::endl;
+                                                std::cout << "          Warning! V[" << vertexIndex <<
+                                                             "] has overall skin weights != 1.0" << std::endl;
                                 }
                         }
                 }
@@ -526,7 +537,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool Exporter::createSubsets(Mesh::Data& meshData)
         {
                 if(!meshData.subsets.create(static_cast<uint16_t>(rawMeshData_->materials_.getSize())))
@@ -577,7 +588,9 @@ namespace selene
                                         resourceManager_.createResource(textureMapFileName,
                                                                         textureFactory);
 
-                                        material.setTextureMap(resourceManager_.requestResource<Texture>(textureMapFileName), j);
+                                        auto textureMap =
+                                                resourceManager_.requestResource<Texture>(textureMapFileName);
+                                        material.setTextureMap(textureMap, j);
                                 }
                         }
                 }

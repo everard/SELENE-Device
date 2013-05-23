@@ -173,7 +173,7 @@ namespace selene
                 destroy();
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool D3d9SsaoRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                           D3d9FrameParameters& frameParameters,
                                           D3d9FullScreenQuad& fullScreenQuad,
@@ -227,8 +227,10 @@ namespace selene
 
                 if(capabilities_->isThirdShaderModelSupported())
                 {
-                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_);
-                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh",  "ps_3_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
+                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", "vs_1_1", 0,
+                                                           D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_);
+                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh",  "ps_3_0", 0,
+                                                          D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
 
                         if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].create(d3dOptionalVertexShader) ||
                            !optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_SSAO_PASS].create(d3dOptionalPixelShader))
@@ -286,7 +288,7 @@ namespace selene
                 return true;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void D3d9SsaoRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
@@ -314,7 +316,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void D3d9SsaoRenderer::renderSsao()
         {
                 if(d3dDevice_ == nullptr)
@@ -326,7 +328,8 @@ namespace selene
 
                 if(capabilities_->isThirdShaderModelSupported())
                 {
-                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getSurface());
+                        const auto& renderTarget = renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0);
+                        d3dDevice_->SetRenderTarget(0, renderTarget.getSurface());
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                         optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].set();
@@ -334,7 +337,9 @@ namespace selene
                 }
                 else
                 {
-                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER).getSurface());
+                        const auto& renderTarget =
+                                renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER);
+                        d3dDevice_->SetRenderTarget(0, renderTarget.getSurface());
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                         vertexShaders_[VERTEX_SHADER_SSAO_PASS].set();
@@ -345,11 +350,14 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                    static_cast<const float*>(frameParameters_->unprojectionVector), 1);
+                                                    static_cast<const float*>(frameParameters_->unprojectionVector),
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                    static_cast<const float*>(frameParameters_->projectionParameters),
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SSAO_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->ssaoParameters), 1);
+                                                    static_cast<const float*>(frameParameters_->ssaoParameters),
+                                                    1);
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_SCREEN_SIZE_SSAO_PASS,
                                                      static_cast<const float*>(frameParameters_->screenSize), 1);
@@ -401,7 +409,7 @@ namespace selene
                 blurSsao(edgeDetectionParameters);
         }
 
-        //-----------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void D3d9SsaoRenderer::blurSsao(const Vector4d& edgeDetectionParameters,
                                         bool shouldUpscale)
         {
@@ -426,35 +434,41 @@ namespace selene
                         pixelShaders_[PIXEL_SHADER_SSAO_BLUR_X_PASS + i].set();
 
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                            static_cast<const float*>(frameParameters_->unprojectionVector), 1);
+                                                            frameParameters_->unprojectionVector,
+                                                            1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                            static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                            frameParameters_->projectionParameters,
+                                                            1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_EDGE_DETECTION_PARAMETERS,
-                                                            static_cast<const float*>(edgeDetectionParameters), 1);
+                                                            edgeDetectionParameters,
+                                                            1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_SCREEN_SIZE_BLUR_PASS,
-                                                            static_cast<const float*>(frameParameters_->screenSize), 1);
+                                                            frameParameters_->screenSize,
+                                                            1);
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                            static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                            frameParameters_->textureCoordinatesAdjustment,
+                                                            1);
 
+                        const auto& positionsMap = renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS);
                         textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
                                                        D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP,
-                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_POSITIONS).getTexture());
+                        d3dDevice_->SetTexture(LOCATION_POSITIONS_MAP, positionsMap.getTexture());
 
+                        const auto& normalsMap = renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS);
                         textureHandler_->setStageState(LOCATION_NORMALS_MAP,
                                                        D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(LOCATION_NORMALS_MAP,
-                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
+                        d3dDevice_->SetTexture(LOCATION_NORMALS_MAP, normalsMap.getTexture());
 
                         if(shouldUpscale)
                         {
+                                const auto& ssaoBuffer =
+                                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER);
                                 textureHandler_->setStageState(LOCATION_SSAO_BUFFER,
                                                                D3DTEXF_LINEAR, D3DTEXF_POINT, D3DTEXF_LINEAR,
                                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                                d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER,
-                                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_HALF_SIZE_HELPER).getTexture());
+                                d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER, ssaoBuffer.getTexture());
                                 shouldUpscale = false;
                         }
                         else

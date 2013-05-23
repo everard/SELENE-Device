@@ -21,7 +21,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool GlesBloomRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                            GlesFrameParameters& frameParameters,
                                            GlesFullScreenQuad& fullScreenQuad,
@@ -95,7 +95,8 @@ namespace selene
                         "        weights[4] = 0.16;\n"
                         "        vec4 color = vec4(0.0, 0.0, 0.0, 1.0);\n"
                         "        for(int i = 0; i < 9; ++i)\n"
-                        "                color += weights[i] * texture2D(inputImage, textureCoordinates + blurOffsets[i].xy);\n"
+                        "                color += weights[i] * texture2D(inputImage,\n"
+                        "                                                textureCoordinates + blurOffsets[i].xy);\n"
                         "        gl_FragColor = color * bloomParameters.y;\n"
                         "}\n";
 
@@ -109,7 +110,8 @@ namespace selene
                         "void main()\n"
                         "{"
                         "        gl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);\n"
-                        "        textureCoordinates = vertexPosition.zw * textureCoordinatesAdjustment.xy * imageScale.x;\n"
+                        "        textureCoordinates = vertexPosition.zw *\n"
+                        "                             textureCoordinatesAdjustment.xy * imageScale.x;\n"
                         "        originalTextureCoordinates = vertexPosition.zw * textureCoordinatesAdjustment.xy;\n"
                         "}\n";
 
@@ -121,7 +123,8 @@ namespace selene
                         "uniform sampler2D combinedImage;\n"
                         "void main()\n"
                         "{\n"
-                        "        gl_FragColor = texture2D(inputImage, textureCoordinates) + texture2D(combinedImage, originalTextureCoordinates);\n"
+                        "        gl_FragColor = texture2D(inputImage, textureCoordinates) +\n"
+                        "                       texture2D(combinedImage, originalTextureCoordinates);\n"
                         "}\n";
 
                 // load GLSL programs
@@ -160,7 +163,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void GlesBloomRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -172,7 +175,7 @@ namespace selene
                 textureHandler_ = nullptr;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void GlesBloomRenderer::renderBloom()
         {
                 Vector4d imageScale(0.25f);
@@ -202,7 +205,8 @@ namespace selene
                 // bright pass
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_HELPER_0))
                 {
-                        LOGI("****************************** FAILED: GlesBloomRenderer::renderBloom: setRenderTarget(RENDER_TARGET_HELPER_0)");
+                        LOGI("****************************** FAILED: GlesBloomRenderer::renderBloom:"
+                             "setRenderTarget(RENDER_TARGET_HELPER_0)");
                         return;
                 }
 
@@ -251,7 +255,8 @@ namespace selene
 
                         if(!renderTargetContainer_->setRenderTarget(resultRenderTarget))
                         {
-                                LOGI("****************************** FAILED: GlesBloomRenderer::renderBloom: setRenderTarget(resultRenderTarget)");
+                                LOGI("****************************** FAILED: GlesBloomRenderer::renderBloom:"
+                                     "setRenderTarget(resultRenderTarget)");
                                 return;
                         }
 
@@ -261,7 +266,8 @@ namespace selene
 
                         textureHandler_->setTexture(renderTargetContainer_->getRenderTarget(sourceRenderTarget), 0);
 
-                        glUniform4fv(variables->locationBlurOffsets, NUM_OF_BLUR_OFFSETS, reinterpret_cast<const float*>(blurOffsets[i]));
+                        glUniform4fv(variables->locationBlurOffsets, NUM_OF_BLUR_OFFSETS,
+                                     reinterpret_cast<const float*>(blurOffsets[i]));
                         CHECK_GLES_ERROR("GlesBloomRenderer::renderBloom: glUniform4fv");
 
                         fullScreenQuad_->render();
@@ -273,7 +279,8 @@ namespace selene
                 // combine pass
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_HELPER_1))
                 {
-                        LOGI("****************************** FAILED: GlesBloomRenderer::renderBloom: setRenderTarget(RENDER_TARGET_HELPER_1)");
+                        LOGI("****************************** FAILED: GlesBloomRenderer::renderBloom:"
+                             "setRenderTarget(RENDER_TARGET_HELPER_1)");
                         return;
                 }
 
@@ -311,7 +318,7 @@ namespace selene
         }
         GlesBloomRenderer::Variables::~Variables() {}
 
-        //------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void GlesBloomRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationInputImage    = program.getUniformLocation("inputImage");

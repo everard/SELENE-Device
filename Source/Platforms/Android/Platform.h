@@ -23,7 +23,8 @@
 #define CHECK_GLES_ERROR(...) {\
                                       for(GLint error = glGetError(); error; error = glGetError())\
                                       {\
-                                              LOGI("****************************** after %s() glError (0x%x)\n", __VA_ARGS__, error);\
+                                              LOGI("****************************** after %s() glError (0x%x)\n",\
+                                                   __VA_ARGS__, error);\
                                       }\
                               }
 

@@ -67,6 +67,19 @@ namespace selene
                 bool writeString(std::ostream& stream, const char* string);
 
         private:
+                /**
+                 * Represents vertex stream. Holds information about vertex stride and
+                 * shows whether or not current stream is present in the mesh.
+                 */
+                class VertexStream
+                {
+                public:
+                        uint8_t stride;
+                        bool isPresent;
+
+                };
+
+                VertexStream vertexStreams_[Mesh::NUM_OF_VERTEX_STREAMS];
                 ResourceManager* textureManager_;
                 ResourceFactory* textureFactory_;
                 bool hasSkeleton_;

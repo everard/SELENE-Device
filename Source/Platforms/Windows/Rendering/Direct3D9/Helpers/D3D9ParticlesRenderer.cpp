@@ -58,7 +58,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9ParticlesRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                                D3d9FrameParameters& frameParameters,
                                                D3d9TextureHandler& textureHandler,
@@ -119,7 +119,8 @@ namespace selene
                         return false;
                 }
 
-                if(FAILED(d3dDevice_->CreateVertexBuffer(particlesGeometryBufferSize, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC,
+                if(FAILED(d3dDevice_->CreateVertexBuffer(particlesGeometryBufferSize,
+                                                         D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC,
                                                          0, D3DPOOL_DEFAULT, &d3dVertexBuffer_, nullptr)))
                 {
                         destroy();
@@ -129,7 +130,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -149,7 +150,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::renderParticleSystems(Renderer::Data::ParticleSystemNode& particleSystemNode)
         {
                 if(d3dDevice_ == nullptr)
@@ -177,16 +178,21 @@ namespace selene
                                                D3DTEXF_LINEAR, D3DTEXF_LINEAR, D3DTEXF_POINT);
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_PROJECTION_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->projectionMatrix), 4);
+                                                     frameParameters_->projectionMatrix,
+                                                     4);
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewMatrix), 4);
+                                                     frameParameters_->viewMatrix,
+                                                     4);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                    static_cast<const float*>(frameParameters_->unprojectionVector), 1);
+                                                    frameParameters_->unprojectionVector,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                    frameParameters_->projectionParameters,
+                                                    1);
 
                 d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
                 d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -212,7 +218,7 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::renderParticleSystem(ParticleSystem* particleSystem)
         {
                 if(particleSystem == nullptr)
@@ -255,7 +261,7 @@ namespace selene
                         renderParticles(numParticles);
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ParticlesRenderer::renderParticles(uint32_t numParticles)
         {
                 uint8_t* destinationBuffer = nullptr;

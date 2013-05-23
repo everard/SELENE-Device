@@ -17,12 +17,13 @@ namespace selene
         }
         D3d9Capabilities::~D3d9Capabilities() {}
 
-        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9Capabilities::createCompatibleDevice(LPDIRECT3D9 d3d, const Renderer::Parameters& parameters,
                                                       D3DPRESENT_PARAMETERS& d3dPresentParameters,
                                                       LPDIRECT3DDEVICE9& d3dDevice)
         {
-                WindowsApplication* windowsApplication = dynamic_cast<WindowsApplication*>(parameters.getApplication());
+                WindowsApplication* windowsApplication =
+                        dynamic_cast<WindowsApplication*>(parameters.getApplication());
                 if(windowsApplication == nullptr)
                         return false;
 
@@ -99,31 +100,31 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9Capabilities::isR32fRenderTargetFormatSupported() const
         {
                 return isR32fRenderTargetFormatSupported_;
         }
 
-        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9Capabilities::isMultipleRenderTargetSupported() const
         {
                 return isMultipleRenderTargetSupported_;
         }
 
-        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9Capabilities::isThirdShaderModelSupported() const
         {
                 return isThirdShaderModelSupported_;
         }
 
-        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         DWORD D3d9Capabilities::getMaxTextureAnisotropy() const
         {
                 return maxTextureAnisotropy_;
         }
 
-        //--------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         DWORD D3d9Capabilities::getMaxTextureSize() const
         {
                 return maxTextureSize_;

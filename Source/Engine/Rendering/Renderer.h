@@ -54,10 +54,10 @@ namespace selene
         {
         public:
                 /**
-                 * Represents rendering data. It is organized in tree structure, which reduces state change during rendering.
-                 * Rendering data on the top level contains ActorNode (holds instances of actors, which should be rendered),
-                 * LightNode (contains lights and shadow casters from each light) and ParticleSystemNode (contains particle
-                 * systems, which should be rendered).
+                 * Represents rendering data. It is organized in tree structure, which reduces state change during
+                 * rendering. Rendering data on the top level contains ActorNode (holds instances of actors, which
+                 * should be rendered), LightNode (contains lights and shadow casters from each light) and
+                 * ParticleSystemNode (contains particle systems, which should be rendered).
                  * \see RenderingNode
                  *
                  * LightNode
@@ -316,7 +316,8 @@ namespace selene
                          * Represents particle system node. Contains arrays of particle systems,
                          * sorted by textures and ordered by particle system units.
                          */
-                        class ParticleSystemNode: public RenderingNode<Texture, List<ParticleSystem*>, NUM_OF_PARTICLE_SYSTEM_UNITS>
+                        class ParticleSystemNode: public RenderingNode<Texture, List<ParticleSystem*>,
+                                                                       NUM_OF_PARTICLE_SYSTEM_UNITS>
                         {
                         public:
                                 ParticleSystemNode();

@@ -17,7 +17,7 @@ namespace selene
 
         LPDIRECT3DDEVICE9 D3d9Renderer::d3dDevice_ = nullptr;
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         bool D3d9Renderer::initialize(const Renderer::Parameters& parameters)
         {
                 destroy();
@@ -62,7 +62,7 @@ namespace selene
                 return initializeHelpers();
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void D3d9Renderer::destroy()
         {
                 destroyHelpers();
@@ -71,7 +71,7 @@ namespace selene
                 SAFE_RELEASE(d3d_);
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void D3d9Renderer::render(const Camera& camera)
         {
                 if(d3dDevice_ == nullptr)
@@ -157,7 +157,7 @@ namespace selene
                 resultVertexShader_.set();
                 resultPixelShader_.set();
 
-                d3dDevice_->SetPixelShaderConstantF(0, static_cast<const float*>(frameParameters_.textureCoordinatesAdjustment), 1);
+                d3dDevice_->SetPixelShaderConstantF(0, frameParameters_.textureCoordinatesAdjustment, 1);
 
                 textureHandler_.setStageState(0, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                               D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
@@ -189,7 +189,7 @@ namespace selene
                         isDeviceLost_ = true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         LPDIRECT3DDEVICE9 D3d9Renderer::getDevice()
         {
                 return d3dDevice_;
@@ -214,7 +214,7 @@ namespace selene
                 return *this;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         bool D3d9Renderer::initializeHelpers()
         {
                 // load shaders
@@ -318,7 +318,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void D3d9Renderer::destroyHelpers()
         {
                 resultVertexShader_.destroy();
@@ -335,7 +335,7 @@ namespace selene
                 guiRenderer_.destroy();
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void D3d9Renderer::writeLogEntry(const char* entry)
         {
                 if(parameters_.getLog() != nullptr)

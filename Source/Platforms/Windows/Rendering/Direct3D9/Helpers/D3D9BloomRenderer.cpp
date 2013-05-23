@@ -22,7 +22,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool D3d9BloomRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                            D3d9FrameParameters& frameParameters,
                                            D3d9FullScreenQuad& fullScreenQuad,
@@ -77,7 +77,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9BloomRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -95,7 +95,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9BloomRenderer::renderBloom()
         {
                 if(d3dDevice_ == nullptr)
@@ -115,7 +115,9 @@ namespace selene
                 }
 
                 // bright pass
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getSurface());
+                const auto& brightPassRenderTarget =
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0);
+                d3dDevice_->SetRenderTarget(0, brightPassRenderTarget.getSurface());
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -129,13 +131,14 @@ namespace selene
                 vertexShaders_[VERTEX_SHADER_BRIGHT_PASS].set();
                 pixelShaders_[PIXEL_SHADER_BRIGHT_PASS].set();
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_IMAGE_SCALE,
-                                                     static_cast<const float*>(imageScale), 1);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_IMAGE_SCALE, imageScale, 1);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_BLOOM_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->bloomParameters), 1);
+                                                    frameParameters_->bloomParameters,
+                                                    1);
 
                 textureHandler_->setStageState(LOCATION_INPUT_IMAGE_BRIGHT_PASS,
                                                D3DTEXF_POINT, D3DTEXF_LINEAR, D3DTEXF_LINEAR,
@@ -149,45 +152,54 @@ namespace selene
                 vertexShaders_[VERTEX_SHADER_BLOOM_PASS].set();
                 pixelShaders_[PIXEL_SHADER_BLOOM_PASS].set();
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_IMAGE_SCALE,
-                                                     static_cast<const float*>(imageScale), 1);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_IMAGE_SCALE, imageScale, 1);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_BLOOM_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->bloomParameters), 1);
+                                                    frameParameters_->bloomParameters,
+                                                    1);
 
                 for(uint8_t i = 0; i < 2; ++i)
                 {
-                        uint8_t sourceRenderTarget = RENDER_TARGET_HELPER_0 + i;
-                        uint8_t resultRenderTarget = RENDER_TARGET_HELPER_1 - i;
+                        uint8_t sourceRenderTargetNo = RENDER_TARGET_HELPER_0 + i;
+                        uint8_t resultRenderTargetNo = RENDER_TARGET_HELPER_1 - i;
 
-                        d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(resultRenderTarget).getSurface());
+                        const auto& bloomResultRenderTarget =
+                                renderTargetContainer_->getRenderTarget(resultRenderTargetNo);
+                        const auto& bloomSourceRenderTarget =
+                                renderTargetContainer_->getRenderTarget(sourceRenderTargetNo);
+
+                        d3dDevice_->SetRenderTarget(0, bloomResultRenderTarget.getSurface());
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_BLUR_OFFSETS,
-                                                            reinterpret_cast<const float*>(blurOffsets[i]), NUM_OF_BLUR_OFFSETS);
+                                                            reinterpret_cast<const float*>(blurOffsets[i]),
+                                                            NUM_OF_BLUR_OFFSETS);
 
                         textureHandler_->setStageState(LOCATION_INPUT_IMAGE_BLOOM_PASS,
                                                        D3DTEXF_POINT, D3DTEXF_LINEAR, D3DTEXF_LINEAR,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
                         d3dDevice_->SetTexture(LOCATION_INPUT_IMAGE_BLOOM_PASS,
-                                               renderTargetContainer_->getRenderTarget(sourceRenderTarget).getTexture());
+                                               bloomSourceRenderTarget.getTexture());
 
                         fullScreenQuad_->render();
                 }
 
                 // combine pass
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_1).getSurface());
+                const auto& resultRenderTarget =
+                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_1);
+                d3dDevice_->SetRenderTarget(0, resultRenderTarget.getSurface());
 
                 vertexShaders_[VERTEX_SHADER_COMBINE_PASS].set();
                 pixelShaders_[PIXEL_SHADER_COMBINE_PASS].set();
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_IMAGE_SCALE,
-                                                     static_cast<const float*>(imageScale), 1);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_IMAGE_SCALE, imageScale, 1);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
 
                 textureHandler_->setStageState(LOCATION_BLOOM_IMAGE_COMBINE_PASS,
                                                D3DTEXF_LINEAR, D3DTEXF_LINEAR, D3DTEXF_LINEAR,

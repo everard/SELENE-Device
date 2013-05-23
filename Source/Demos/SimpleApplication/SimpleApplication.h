@@ -50,8 +50,8 @@ namespace selene
                 void onRender(float elapsedTime);
 
                 // GUI message callbacks
-                void onButtonMessageExit(int32_t elementId, uint8_t message);
-                void onButtonMessageCopy(int32_t elementId, uint8_t message);
+                void onButtonMessageExit();
+                void onButtonMessageCopy();
 
         };
 

@@ -20,7 +20,7 @@ namespace selene
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool D3d9Mesh::retain()
         {
                 LPDIRECT3DDEVICE9 d3dDevice = D3d9Renderer::getDevice();
@@ -50,8 +50,9 @@ namespace selene
 
                 if(hasSkeleton())
                 {
-                        if(FAILED(d3dDevice->CreateVertexBuffer(vertexBufferSizes[VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], 0, 0,
-                                                                D3DPOOL_DEFAULT, &d3dVertexBuffers_[VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], nullptr)))
+                        uint8_t streamNo = VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS;
+                        if(FAILED(d3dDevice->CreateVertexBuffer(vertexBufferSizes[streamNo], 0, 0, D3DPOOL_DEFAULT,
+                                                                &d3dVertexBuffers_[streamNo], nullptr)))
                         {
                                 destroy();
                                 return false;
@@ -110,13 +111,13 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9Mesh::discard()
         {
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9Mesh::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_VERTEX_STREAMS; ++i)

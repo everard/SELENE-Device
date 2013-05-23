@@ -15,7 +15,7 @@ In order to contribute to this repository one abloslutely MUST follow this guide
 
 2.1 Use ONLY spaces for indentation, tabs are not allowed.
 2.2 Basic indentation must be eight spaces.
-2.3 Line width MAY exceed 80 characters, but MAY NOT exceed 150 characters.
+2.3 Line width MAY exceed 80 characters, but MAY NOT exceed 120 characters.
 2.4 Double underscore ("__") IS NOT ALLOWED.
 2.5 All names and comments MUST be written in English.
 

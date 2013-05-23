@@ -7,7 +7,8 @@
 namespace selene
 {
 
-        AndroidApplication::AndroidApplication(const char* name, uint32_t width, uint32_t height): Application(name, width, height)
+        AndroidApplication::AndroidApplication(const char* name, uint32_t width, uint32_t height):
+                Application(name, width, height)
         {
                 state_ = nullptr;
                 shouldRun_ = true;
@@ -16,7 +17,7 @@ namespace selene
         }
         AndroidApplication::~AndroidApplication() {}
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool AndroidApplication::initialize()
         {
                 state_ = Platform::state_;
@@ -31,7 +32,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool AndroidApplication::run()
         {
                 float elapsedTime = 0.0f;
@@ -72,25 +73,25 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void AndroidApplication::halt()
         {
                 shouldRun_ = false;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         android_app* AndroidApplication::getHandle()
         {
                 return state_;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         float AndroidApplication::getKeyState(uint8_t)
         {
                 return 0.0f;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void AndroidApplication::processCommand(android_app* app, int32_t cmd)
         {
                 if(!shouldRun_)
@@ -109,7 +110,8 @@ namespace selene
                                 Renderer::Parameters parameters(this, nullptr, 0, 0, nullptr, 0);
                                 if(!renderer_.capabilities_.createCompatibleContext(parameters))
                                 {
-                                        LOGI("****************************** Error: Could not create OpenGL ES 2.0 context");
+                                        LOGI("****************************** Error: Could not "
+                                             "create OpenGL ES 2.0 context");
                                         shouldRun_ = false;
                                         return;
                                 }
@@ -168,7 +170,7 @@ namespace selene
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         int32_t AndroidApplication::processInputEvent(android_app*, AInputEvent* event)
         {
                 static int32_t previousX = 0;
@@ -210,7 +212,7 @@ namespace selene
                 return 0;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void AndroidApplication::commandProcessingCallback(android_app* app, int32_t cmd)
         {
                 AndroidApplication* application = static_cast<AndroidApplication*>(app->userData);
@@ -221,7 +223,7 @@ namespace selene
                 application->processCommand(app, cmd);
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         int32_t AndroidApplication::inputProcessingCallback(android_app* app, AInputEvent* event)
         {
                 AndroidApplication* application = static_cast<AndroidApplication*>(app->userData);

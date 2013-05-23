@@ -33,7 +33,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool D3d9GuiRenderer::initialize(D3d9FullScreenQuad& fullScreenQuad,
                                          D3d9TextureHandler& textureHandler,
                                          D3d9Capabilities& capabilities,
@@ -62,9 +62,12 @@ namespace selene
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("GUIFramesPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("GUITextPass.psh",   "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("GUICursorPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader("GUIFramesPass.psh", "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("GUITextPass.psh",   "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("GUICursorPass.psh", "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -99,7 +102,8 @@ namespace selene
                         return false;
                 }
 
-                if(FAILED(d3dDevice_->CreateVertexBuffer(guiGeometryVertexBufferSize, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC,
+                if(FAILED(d3dDevice_->CreateVertexBuffer(guiGeometryVertexBufferSize,
+                                                         D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC,
                                                          0, D3DPOOL_DEFAULT, &d3dVertexBuffer_, nullptr)))
                 {
                         destroy();
@@ -137,7 +141,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9GuiRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -159,7 +163,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9GuiRenderer::renderGui(Gui* gui)
         {
                 if(d3dDevice_ == nullptr || gui == nullptr)
@@ -350,7 +354,7 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ALPHATESTENABLE,  FALSE);
         }
 
-        //------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void D3d9GuiRenderer::renderGeometry(const Vector4d* vertices, uint32_t numFrames)
         {
                 uint8_t* destinationBuffer = nullptr;

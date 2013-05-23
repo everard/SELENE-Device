@@ -164,6 +164,16 @@ namespace selene
                 void renderActors(Renderer::Data::ActorNode& actorNode, uint8_t pass);
 
                 /**
+                 * \brief Renders meshes from given node.
+                 * \param[in] meshNode mesh node
+                 * \param[in] meshRenderingUnit mesh rendering unit
+                 * \param[in] pass rendering pass
+                 */
+                void renderMeshes(Renderer::Data::MeshNode& meshNode,
+                                  uint8_t meshRenderingUnit,
+                                  uint8_t pass);
+
+                /**
                  * \brief Renders instances of the given mesh subset.
                  * \param[in] renderingList rendering list, which contains view-projection
                  * transforms of the given mesh subset

@@ -53,8 +53,9 @@ namespace selene
                  * Array's real size is determined through following formula: real size = size * stride * sizeModifier.
                  * Such array modification is helpful for holding the mesh vertices and faces data.
                  * For example, mesh vertices are often represented as array of bytes. And it is critical to have
-                 * stride information. This also applies for mesh faces data. But in case of faces there is also need for
-                 * array size modification, because face consists of multiple indices (three for triangles, four for quads).
+                 * stride information. This also applies for mesh faces data. But in case of faces there is also need
+                 * for array size modification, because face consists of multiple indices (three for triangles, four
+                 * for quads).
                  * \param[in] size size of array
                  * \param[in] stride data stride
                  * \param[in] sizeModifier array size modifier

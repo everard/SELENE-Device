@@ -227,12 +227,14 @@ namespace selene
                                 {
                                         elementsMap_ = memoryBuffer_->allocateMemory<ElementsMap>();
                                         new(reinterpret_cast<void*>(elementsMap_)) ElementsMap(0, std::hash<K*>(),
-                                                                                               std::equal_to<K*>(), pairAllocator);
+                                                                                               std::equal_to<K*>(),
+                                                                                               pairAllocator);
 
                                         for(uint8_t i = 0; i < N; ++i)
                                         {
                                                 elements_[i] = memoryBuffer_->allocateMemory<ElementsContainer>();
-                                                new(reinterpret_cast<void*>(elements_[i])) ElementsContainer(pointerAllocator);
+                                                new(reinterpret_cast<void*>(elements_[i]))
+                                                        ElementsContainer(pointerAllocator);
                                         }
 
                                         currentElement_ = memoryBuffer_->allocateMemory<ElementsContainerIterator>();

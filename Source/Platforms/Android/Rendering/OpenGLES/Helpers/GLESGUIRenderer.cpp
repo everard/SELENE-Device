@@ -19,7 +19,7 @@ namespace selene
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         bool GlesGuiRenderer::initialize(GlesTextureHandler& textureHandler,
                                          FileManager* fileManager)
         {
@@ -85,10 +85,12 @@ namespace selene
                 };
                 const uint8_t numVertexAttributes = sizeof(vertexAttributes) / sizeof(vertexAttributes[0]);
 
-                if(!framesRenderingProgram_.initialize(framesRenderingVertexShader, framesRenderingFragmentShader, vertexAttributes, numVertexAttributes))
+                if(!framesRenderingProgram_.initialize(framesRenderingVertexShader, framesRenderingFragmentShader,
+                                                       vertexAttributes, numVertexAttributes))
                         return false;
 
-                if(!textRenderingProgram_.initialize(textRenderingVertexShader, textRenderingFragmentShader, vertexAttributes, numVertexAttributes))
+                if(!textRenderingProgram_.initialize(textRenderingVertexShader, textRenderingFragmentShader,
+                                                     vertexAttributes, numVertexAttributes))
                         return false;
 
                 fontTextureLocation_ = textRenderingProgram_.getUniformLocation("fontTexture");
@@ -97,7 +99,7 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void GlesGuiRenderer::destroy()
         {
                 fontTexture_.reset();
@@ -108,7 +110,7 @@ namespace selene
                 fontTextureLocation_ = -1;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------
         void GlesGuiRenderer::renderGui(Gui* gui)
         {
                 if(gui == nullptr)
@@ -195,8 +197,10 @@ namespace selene
 
                         if(numFrames == numFramesPerBatch)
                         {
-                                glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
-                                glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
+                                glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE,
+                                                      2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
+                                glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE,
+                                                      2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
                                 glDrawArrays(GL_TRIANGLES, 0, numFrames * numVerticesPerFrame);
 
                                 numFrames = 0;
@@ -206,8 +210,10 @@ namespace selene
 
                 if(numFrames != 0)
                 {
-                        glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
-                        glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
+                        glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE,
+                                              2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
+                        glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE,
+                                              2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
                         glDrawArrays(GL_TRIANGLES, 0, numFrames * numVerticesPerFrame);
                 }
 
@@ -269,8 +275,12 @@ namespace selene
 
                                 if(numFrames == numFramesPerBatch)
                                 {
-                                        glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
-                                        glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
+                                        glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE,
+                                                              2 * sizeof(Vector4d),
+                                                              static_cast<void*>(frameVertices));
+                                        glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR, 4, GL_FLOAT, GL_FALSE,
+                                                              2 * sizeof(Vector4d),
+                                                              static_cast<void*>(frameVertices + 1));
                                         glDrawArrays(GL_TRIANGLES, 0, numFrames * numVerticesPerFrame);
 
                                         numFrames = 0;
@@ -285,8 +295,10 @@ namespace selene
 
                 if(numFrames != 0)
                 {
-                        glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
-                        glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE, 2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
+                        glVertexAttribPointer(LOCATION_ATTRIBUTE_POSITION, 4, GL_FLOAT, GL_FALSE,
+                                              2 * sizeof(Vector4d), static_cast<void*>(frameVertices));
+                        glVertexAttribPointer(LOCATION_ATTRIBUTE_COLOR,    4, GL_FLOAT, GL_FALSE,
+                                              2 * sizeof(Vector4d), static_cast<void*>(frameVertices + 1));
                         glDrawArrays(GL_TRIANGLES, 0, numFrames * numVerticesPerFrame);
                 }
 

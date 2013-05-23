@@ -11,9 +11,9 @@ namespace selene
         {
                 // Directional light
                 -1.0f, -1.0f, 1.0f, 0.0f,
-                -1.0f, 1.0f, 1.0f, 0.0f,
-                1.0f, -1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 1.0f, 0.0f,
+                -1.0f,  1.0f, 1.0f, 0.0f,
+                 1.0f, -1.0f, 1.0f, 0.0f,
+                 1.0f,  1.0f, 1.0f, 0.0f,
 
                 // Point light
                 0.0f, 0.0f, 1.0f, 0.0f,
@@ -169,7 +169,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9LightingRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                               D3d9FrameParameters& frameParameters,
                                               D3d9ActorsRenderer& actorsRenderer,
@@ -205,8 +205,10 @@ namespace selene
                 // create vertex buffers
                 for(uint8_t l = 0; l < NUM_OF_LIGHT_TYPES; ++l)
                 {
-                        if(FAILED(d3dDevice_->CreateVertexBuffer(lightVolumeGeometryBufferSizes[l], 0, 0, D3DPOOL_DEFAULT,
-                                                                 &d3dVertexBuffers_[l], nullptr)))
+                        if(FAILED(d3dDevice_->CreateVertexBuffer(lightVolumeGeometryBufferSizes[l],
+                                                                 0, 0, D3DPOOL_DEFAULT,
+                                                                 &d3dVertexBuffers_[l],
+                                                                 nullptr)))
                         {
                                 destroy();
                                 return false;
@@ -230,7 +232,8 @@ namespace selene
                                 memcpy(reinterpret_cast<void*>(destinationBuffer), reinterpret_cast<void*>(vertices),
                                        lightVolumeGeometryVertexStride * lightVolumeGeometryNumVertices[l]);
 
-                                destinationBuffer += lightVolumeGeometryVertexStride * lightVolumeGeometryNumVertices[l];
+                                destinationBuffer +=
+                                        lightVolumeGeometryVertexStride * lightVolumeGeometryNumVertices[l];
                         }
 
                         d3dVertexBuffers_[l]->Unlock();
@@ -239,19 +242,28 @@ namespace selene
                 // load vertex and pixel shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("DirectionalLightAccPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("PointLightAccPass.vsh",       "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SpotLightAccPass.vsh",        "vs_2_0", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SpotLightShadowPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
+                        D3d9Shader("DirectionalLightAccPass.vsh", "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("PointLightAccPass.vsh",       "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SpotLightAccPass.vsh",        "vs_2_0", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SpotLightShadowPass.vsh",     "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("DirectionalLightAccPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("PointLightAccPass.psh",       "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SpotLightAccPass.psh",        "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SpotLightAccPassWithShadows.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SpotLightShadowPass.psh",         "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader("DirectionalLightAccPass.psh", "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("PointLightAccPass.psh",       "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SpotLightAccPass.psh",        "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SpotLightAccPassWithShadows.psh", "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("SpotLightShadowPass.psh",         "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -275,7 +287,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -299,13 +311,14 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLighting(Renderer::Data::LightNode& lightNode)
         {
                 if(d3dDevice_ == nullptr)
                         return;
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getSurface());
+                const auto& lightBuffer = renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER);
+                d3dDevice_->SetRenderTarget(0, lightBuffer.getSurface());
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
 
                 d3dDevice_->SetVertexDeclaration(d3dVertexDeclaration_);
@@ -338,9 +351,10 @@ namespace selene
                         prepareLightAccumulation();
 
                         // set shadow map at sampler 2
+                        const auto& shadowMap = renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT);
                         textureHandler_->setStageState(2, D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_NONE,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(2, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getTexture());
+                        d3dDevice_->SetTexture(2, shadowMap.getTexture());
 
                         d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
                         d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -367,7 +381,7 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
                                                                 uint8_t lightUnit)
         {
@@ -407,15 +421,18 @@ namespace selene
                                         case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL:
                                         case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
                                         {
-                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
-                                                directions[numLights].define(directionalLight->getDirection(), directionalLight->getSize());
+                                                DirectionalLight* directionalLight =
+                                                        static_cast<DirectionalLight*>(light);
+                                                directions[numLights].define(directionalLight->getDirection(),
+                                                                             directionalLight->getSize());
                                                 break;
                                         }
                                         case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT:
                                         case Renderer::Data::UNIT_LIGHT_POINT:
                                         {
                                                 PointLight* pointLight = static_cast<PointLight*>(light);
-                                                positions[numLights].define(pointLight->getPosition(), pointLight->getRadius());
+                                                positions[numLights].define(pointLight->getPosition(),
+                                                                            pointLight->getRadius());
                                                 break;
                                         }
 
@@ -424,8 +441,10 @@ namespace selene
                                         {
                                                 SpotLight* spotLight = static_cast<SpotLight*>(light);
 
-                                                positions[numLights].define(spotLight->getPosition(),   spotLight->getRadius());
-                                                directions[numLights].define(spotLight->getDirection(), spotLight->getCosTheta());
+                                                positions[numLights].define(spotLight->getPosition(),
+                                                                            spotLight->getRadius());
+                                                directions[numLights].define(spotLight->getDirection(),
+                                                                             spotLight->getCosTheta());
                                                 break;
                                         }
 
@@ -449,7 +468,7 @@ namespace selene
                 }
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::prepareLightAccumulation()
         {
                 textureHandler_->setStageState(LOCATION_POSITIONS_MAP,
@@ -465,25 +484,31 @@ namespace selene
                                        renderTargetContainer_->getRenderTarget(RENDER_TARGET_NORMALS).getTexture());
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_PROJECTION_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewProjectionMatrix), 4);
+                                                     frameParameters_->viewProjectionMatrix,
+                                                     4);
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_NORMALS_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->normalsMatrix), 4);
+                                                     frameParameters_->normalsMatrix,
+                                                     4);
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewMatrix), 4);
+                                                     frameParameters_->viewMatrix,
+                                                     4);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                    static_cast<const float*>(frameParameters_->unprojectionVector), 1);
+                                                    frameParameters_->unprojectionVector,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                    frameParameters_->projectionParameters,
+                                                    1);
 
                 d3dDevice_->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
                 d3dDevice_->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
                 d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderLightGeometry(uint8_t type, uint32_t numLights,
                                                        Vector4d* positions,
                                                        Vector4d* directions,
@@ -529,7 +554,7 @@ namespace selene
                                           numLights * lightVolumeGeometryNumVertices[type] - 2);
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9LightingRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
         {
                 actorsRenderer_->renderShadowMap(actorNode, spotLight.getProjectionParameters());
@@ -541,8 +566,9 @@ namespace selene
                 lightTextureMatrix = frameParameters_->viewInvMatrix * spotLight.getViewProjectionMatrix();
 
                 // restore original depth stencil surface
+                const auto& renderTarget = renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT);
                 d3dDevice_->SetDepthStencilSurface(renderTargetContainer_->getBackBuffer().getDepthStencilSurface());
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getSurface());
+                d3dDevice_->SetRenderTarget(0, renderTarget.getSurface());
 
                 d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
                 d3dDevice_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -567,29 +593,38 @@ namespace selene
                 Vector4d bias(lightProjectionParameters.w * 0.0375f);
 
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_PROJECTION_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewProjectionMatrix), 4);
+                                                     frameParameters_->viewProjectionMatrix,
+                                                     4);
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_NORMALS_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->normalsMatrix), 4);
+                                                     frameParameters_->normalsMatrix,
+                                                     4);
                 d3dDevice_->SetVertexShaderConstantF(LOCATION_VIEW_MATRIX,
-                                                     static_cast<const float*>(frameParameters_->viewMatrix), 4);
+                                                     frameParameters_->viewMatrix,
+                                                     4);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
-                                                    static_cast<const float*>(frameParameters_->unprojectionVector), 1);
+                                                    frameParameters_->unprojectionVector,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                    frameParameters_->projectionParameters,
+                                                    1);
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_LIGHT_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(lightProjectionParameters), 1);
+                                                    lightProjectionParameters,
+                                                    1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_LIGHT_VIEW_MATRIX,
-                                                    static_cast<const float*>(lightViewMatrix), 4);
+                                                    lightViewMatrix,
+                                                    4);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_LIGHT_TEXTURE_MATRIX,
-                                                    static_cast<const float*>(lightTextureMatrix), 4);
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_SHADOW_MAP_BIAS,
-                                                    static_cast<const float*>(bias), 1);
+                                                    lightTextureMatrix,
+                                                    4);
+                d3dDevice_->SetPixelShaderConstantF(LOCATION_SHADOW_MAP_BIAS, bias, 1);
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SHADOW_MAP_KERNEL_SIZE,
-                                                    static_cast<const float*>(frameParameters_->shadowMapKernelSize), 1);
+                                                    frameParameters_->shadowMapKernelSize,
+                                                    1);
 
                 d3dDevice_->SetVertexDeclaration(d3dVertexDeclaration_);
                 d3dDevice_->SetStreamSource(0, d3dVertexBuffers_[LIGHT_SPOT],
@@ -602,14 +637,13 @@ namespace selene
                 Vector4d lightPosition(spotLight.getPosition(), spotLight.getRadius());
                 Vector4d lightDirection(spotLight.getDirection(), spotLight.getCosTheta());
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_LIGHT_POSITION,
-                                                     static_cast<const float*>(lightPosition),  1);
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_LIGHT_DIRECTION,
-                                                     static_cast<const float*>(lightDirection), 1);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_LIGHT_POSITION, lightPosition, 1);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_LIGHT_DIRECTION, lightDirection, 1);
 
                 d3dDevice_->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, lightVolumeGeometryNumVertices[LIGHT_SPOT] - 2);
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getSurface());
+                const auto& lightBuffer = renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER);
+                d3dDevice_->SetRenderTarget(0, lightBuffer.getSurface());
         }
 
 }

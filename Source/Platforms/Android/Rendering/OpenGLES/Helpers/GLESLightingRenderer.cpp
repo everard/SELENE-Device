@@ -167,7 +167,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         bool GlesLightingRenderer::initialize(GlesRenderTargetContainer& renderTargetContainer,
                                               GlesFrameParameters& frameParameters,
                                               GlesActorsRenderer& actorsRenderer,
@@ -203,12 +203,15 @@ namespace selene
                                 for(uint32_t j = 0; j < lightVolumeGeometryNumVertices[l]; ++j)
                                         vertices[4 * j + 3] = index;
 
-                                memcpy(reinterpret_cast<void*>(destinationBuffer), reinterpret_cast<void*>(vertices), chunkSize);
+                                memcpy(reinterpret_cast<void*>(destinationBuffer),
+                                       reinterpret_cast<void*>(vertices),
+                                       chunkSize);
 
                                 destinationBuffer += chunkSize;
                         }
 
-                        glBufferData(GL_ARRAY_BUFFER, lightVolumeGeometryBufferSizes[l], temporaryBuffer, GL_STATIC_DRAW);
+                        glBufferData(GL_ARRAY_BUFFER, lightVolumeGeometryBufferSizes[l],
+                                     temporaryBuffer, GL_STATIC_DRAW);
                         CHECK_GLES_ERROR("GlesFullScreenQuad::initialize: glBufferData");
                 }
 
@@ -260,7 +263,8 @@ namespace selene
                         "        float nDotL = dot(normal, toLightNormalized);\n"
                         "        vec3 v = normalize(-position);\n"
                         "        vec3 h = normalize(toLightNormalized + v);\n"
-                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
+                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w,\n"
+                        "                            nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
                 // point light shaders
@@ -283,7 +287,8 @@ namespace selene
                         "        gl_Position = vTextureCoordinates = viewProjectionMatrix * vec4(position, 1.0);\n"
                         "        vec4 viewSpaceLightPosition = viewMatrix * vec4(lightPosition.xyz, 1.0);\n"
                         "        viewSpaceLightPosition.xyz /= viewSpaceLightPosition.w;\n"
-                        "        vLightPosition = vec4(viewSpaceLightPosition.xyz, 1.0 / (lightPosition.w * lightPosition.w));\n"
+                        "        vLightPosition = vec4(viewSpaceLightPosition.xyz, 1.0 /\n"
+                        "                              (lightPosition.w * lightPosition.w));\n"
                         "}\n";
 
                 static const char fragmentShaderPointLightAccumulation[] =
@@ -310,11 +315,13 @@ namespace selene
                         "                                       conversionParameters, unprojectionVector);\n"
                         "        vec3 toLight = vLightPosition.xyz - position;\n"
                         "        vec3 toLightNormalized = normalize(toLight);\n"
-                        "        float attenuation = clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0);\n"
+                        "        float attenuation = clamp(1.0 - dot(toLight, toLight) * vLightPosition.w,\n"
+                        "                                  0.0, 1.0);\n"
                         "        float nDotL = dot(normal, toLightNormalized) * attenuation;\n"
                         "        vec3 v = normalize(-position);\n"
                         "        vec3 h = normalize(toLightNormalized + v);\n"
-                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
+                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w,\n"
+                        "                            nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
                 // spot light shaders
@@ -350,7 +357,8 @@ namespace selene
                         "        mat3 conversionMatrix = mat3(axisX, axisY, axisZ);\n"
                         "        vec3 position = vec3(vertexPosition.xy, 0.0);\n"
                         "        vec3 newPosition = position * conversionMatrix;\n"
-                        "        position = lightPosition.xyz + lightDirection.xyz * vertexPosition.z + newPosition * lightPosition.w * 1.268;\n"
+                        "        position = lightPosition.xyz + lightDirection.xyz * vertexPosition.z +\n"
+                        "                   newPosition * lightPosition.w * 1.268;\n"
                         "        gl_Position = vTextureCoordinates = viewProjectionMatrix * vec4(position, 1.0);\n"
                         "        vLightPosition = viewMatrix * vec4(lightPosition.xyz, 1.0);\n"
                         "        vLightPosition.w = 1.0 / dot(lightDirection.xyz, lightDirection.xyz);\n"
@@ -384,11 +392,13 @@ namespace selene
                         "        vec3 lightDirectionNormalized = normalize(vLightDirection.xyz);\n"
                         "        float factor = 1.0 - dot(toLightNormalized, lightDirectionNormalized);"
                         "        float attenuation = clamp(1.0 - factor * factor * vLightDirection.w, 0.0, 1.0);\n"
-                        "        attenuation = min(attenuation, clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0));\n"
+                        "        attenuation = min(attenuation,\n"
+                        "                          clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0));\n"
                         "        vec3 v = normalize(-position);\n"
                         "        vec3 h = normalize(toLightNormalized + v);\n"
                         "        float nDotL = dot(normal, toLightNormalized) * attenuation;\n"
-                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
+                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w,\n"
+                        "                            nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
                 static const char fragmentShaderSpotLightAccumulationWithShadows[] =
@@ -420,11 +430,14 @@ namespace selene
                         "        vec3 lightDirectionNormalized = normalize(vLightDirection.xyz);\n"
                         "        float factor = 1.0 - dot(toLightNormalized, lightDirectionNormalized);"
                         "        float attenuation = clamp(1.0 - factor * factor * vLightDirection.w, 0.0, 1.0);\n"
-                        "        attenuation = min(attenuation, clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0));\n"
+                        "        attenuation = min(attenuation,\n"
+                        "                          clamp(1.0 - dot(toLight, toLight) * vLightPosition.w, 0.0, 1.0));\n"
                         "        vec3 v = normalize(-position);\n"
                         "        vec3 h = normalize(toLightNormalized + v);\n"
-                        "        float nDotL = dot(normal, toLightNormalized) * attenuation * texture2D(shadowsBuffer, textureCoordinates).x;\n"
-                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w, nDotL * pow(dot(normal, h), encodedNormal.w));\n"
+                        "        float nDotL = dot(normal, toLightNormalized) * attenuation *\n"
+                        "                      texture2D(shadowsBuffer, textureCoordinates).x;\n"
+                        "        gl_FragColor = vec4(vLightColor.xyz * nDotL * vLightColor.w,\n"
+                        "                            nDotL * pow(dot(normal, h), encodedNormal.w));\n"
                         "}\n";
 
                 static const char fragmentShaderSpotLightShadowsPass[] =
@@ -443,7 +456,8 @@ namespace selene
                         "varying vec4 vLightDirection;\n"
                         "float computeShadow(vec2 textureCoordinates, float eyeZ)\n"
                         "{\n"
-                        "        float shadowMapEyeZ = convertDepthToEyeZ(2.0 * texture2D(shadowMap, textureCoordinates).x - 1.0,\n"
+                        "        float depth = texture2D(shadowMap, textureCoordinates).x;\n"
+                        "        float shadowMapEyeZ = convertDepthToEyeZ(2.0 * depth - 1.0,\n"
                         "                                                 shadowMapConversionParameters) + bias.x;\n"
                         "        return (eyeZ >= shadowMapEyeZ) ? 0.0 : 1.0;\n"
                         "}\n"
@@ -506,7 +520,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_GLSL_PROGRAMS; ++i)
@@ -527,12 +541,13 @@ namespace selene
                 textureHandler_ = nullptr;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderLighting(Renderer::Data::LightNode& lightNode)
         {
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_LIGHT_BUFFER))
                 {
-                        LOGI("****************************** FAILED: GlesLightingRenderer::renderLighting: setRenderTarget(RENDER_TARGET_LIGHT_BUFFER)");
+                        LOGI("****************************** FAILED: GlesLightingRenderer::renderLighting:"
+                             "setRenderTarget(RENDER_TARGET_LIGHT_BUFFER)");
                         return;
                 }
 
@@ -589,8 +604,10 @@ namespace selene
                                 {
                                         case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
                                         {
-                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
-                                                direction.define(directionalLight->getDirection(), directionalLight->getSize());
+                                                DirectionalLight* directionalLight =
+                                                        static_cast<DirectionalLight*>(light);
+                                                direction.define(directionalLight->getDirection(),
+                                                                 directionalLight->getSize());
                                                 break;
                                         }
                                         case Renderer::Data::UNIT_LIGHT_POINT:
@@ -625,7 +642,8 @@ namespace selene
                                 glEnableVertexAttribArray(LOCATION_ATTRIBUTE_POSITION);
                                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glEnableVertexAttribArray");
 
-                                glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, lightVolumeGeometryVertexStride, nullptr);
+                                glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
+                                                      lightVolumeGeometryVertexStride, nullptr);
                                 CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glVertexAttribPointer");
 
                                 glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -670,7 +688,7 @@ namespace selene
         }
         GlesLightingRenderer::Variables::~Variables() {}
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::Variables::obtainLocations(GlesGlslProgram& program)
         {
                 locationViewProjectionMatrix = program.getUniformLocation("viewProjectionMatrix");
@@ -696,7 +714,7 @@ namespace selene
                 locationShadowMap = program.getUniformLocation("shadowMap");
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderLightingWithoutShadows(Renderer::Data::LightNode& lightNode,
                                                                 uint8_t lightUnit)
         {
@@ -708,7 +726,8 @@ namespace selene
                 static Vector4d directions[BATCH_SIZE];
                 const GLenum cullFaceModes[] = {GL_FRONT, GL_FRONT, GL_BACK};
 
-                for(uint8_t lightType = LIGHT_DIRECTIONAL; lightType <= LIGHT_SPOT; ++lightType, ++lightUnit, ++programNo)
+                for(uint8_t lightType = LIGHT_DIRECTIONAL; lightType <= LIGHT_SPOT;
+                    ++lightType, ++lightUnit, ++programNo)
                 {
                         glCullFace(cullFaceModes[lightType]);
                         CHECK_GLES_ERROR("GlesLightingRenderer::renderLighting: glCullFace");
@@ -746,15 +765,18 @@ namespace selene
                                         case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL:
                                         case Renderer::Data::UNIT_LIGHT_DIRECTIONAL:
                                         {
-                                                DirectionalLight* directionalLight = static_cast<DirectionalLight*>(light);
-                                                directions[numLights].define(directionalLight->getDirection(), directionalLight->getSize());
+                                                DirectionalLight* directionalLight =
+                                                        static_cast<DirectionalLight*>(light);
+                                                directions[numLights].define(directionalLight->getDirection(),
+                                                                             directionalLight->getSize());
                                                 break;
                                         }
                                         case Renderer::Data::UNIT_LIGHT_NO_SHADOWS_POINT:
                                         case Renderer::Data::UNIT_LIGHT_POINT:
                                         {
                                                 PointLight* pointLight = static_cast<PointLight*>(light);
-                                                positions[numLights].define(pointLight->getPosition(), pointLight->getRadius());
+                                                positions[numLights].define(pointLight->getPosition(),
+                                                                            pointLight->getRadius());
                                                 break;
                                         }
 
@@ -763,8 +785,10 @@ namespace selene
                                         {
                                                 SpotLight* spotLight = static_cast<SpotLight*>(light);
 
-                                                positions[numLights].define(spotLight->getPosition(),   spotLight->getRadius());
-                                                directions[numLights].define(spotLight->getDirection(), spotLight->getCosTheta());
+                                                positions[numLights].define(spotLight->getPosition(),
+                                                                            spotLight->getRadius());
+                                                directions[numLights].define(spotLight->getDirection(),
+                                                                             spotLight->getCosTheta());
                                                 break;
                                         }
 
@@ -776,7 +800,8 @@ namespace selene
 
                                 if(numLights == BATCH_SIZE)
                                 {
-                                        renderLightGeometry(variables, lightType, numLights, colors, positions, directions);
+                                        renderLightGeometry(variables, lightType, numLights,
+                                                            colors, positions, directions);
                                         numLights = 0;
                                 }
                         }
@@ -795,7 +820,7 @@ namespace selene
                 textureHandler_->setTexture(0, 2);
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::prepareLightAccumulation(const GlesLightingRenderer::Variables& variables)
         {
                 glUniform1i(variables.locationDepthBuffer, 0);
@@ -828,7 +853,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesLightingRenderer::prepareLightAccumulation: glUniform4fv");
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::prepareShadowsPass(const GlesLightingRenderer::Variables& variables)
         {
                 glUniform1i(variables.locationDepthBuffer, 0);
@@ -859,7 +884,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesLightingRenderer::prepareShadowsPass: glUniform4fv");
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderLightGeometry(const GlesLightingRenderer::Variables& variables,
                                                        uint8_t type, uint32_t numLights,
                                                        Vector4d* colors,
@@ -896,7 +921,7 @@ namespace selene
                 CHECK_GLES_ERROR("GlesFullScreenQuad::render: glDrawArrays");
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------
         void GlesLightingRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode, const SpotLight& spotLight)
         {
                 // render shadow map
@@ -905,7 +930,8 @@ namespace selene
                 // render shadow
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_HELPER_0))
                 {
-                        LOGI("****************************** FAILED: GlesLightingRenderer::renderShadowMap: setRenderTarget(RENDER_TARGET_HELPER_0)");
+                        LOGI("****************************** FAILED: GlesLightingRenderer::renderShadowMap:"
+                             "setRenderTarget(RENDER_TARGET_HELPER_0)");
                         return;
                 }
 
@@ -978,7 +1004,8 @@ namespace selene
                 // restore light buffer render target
                 if(!renderTargetContainer_->setRenderTarget(RENDER_TARGET_LIGHT_BUFFER))
                 {
-                        LOGI("****************************** FAILED: GlesLightingRenderer::renderShadowMap: setRenderTarget(RENDER_TARGET_LIGHT_BUFFER)");
+                        LOGI("****************************** FAILED: GlesLightingRenderer::renderShadowMap:"
+                             "setRenderTarget(RENDER_TARGET_LIGHT_BUFFER)");
                         return;
                 }
 

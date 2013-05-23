@@ -15,55 +15,45 @@ namespace selene
          */
 
         /**
-         * Represents raw mesh data. The following table outlines its structure.
-         * Field                                   | Size                                | Value
-         * --------------------------------------- | ----------------------------------- | --------------------------------
-         * Header                                  | 7 bytes                             | "TEMPSLE"
-         * number of vertices - **nv**             | 4 bytes                             | unsigned integer
-         * number of faces - **nf**                | 4 bytes                             | unsigned integer
-         * number of texture coordinates - **ntc** | 4 bytes                             | unsigned integer
-         * vertex positions                        | **nv** x sizeof(Vector3d)           | **nv** times Vector3d
-         * texture coordinates                     | **ntc** x sizeof(Vector2d)          | **ntc** times Vector2d
-         * faces                                   | **nf** x (12 bytes)                 | **nf** times 3 unsigned integers
-         * texture faces                           | **nf** x (12 bytes)                 | **nf** times 3 unsigned integers
-         * number of materials - **nm**            | 4 bytes                             | unsigned integer
-         * materials                               | **nm** x *material* (see below)     | **nm** times *material*
-         * number of skin vertices - **nsv**       | 4 bytes                             | unsigned integer
-         * skin vertices                           | **nsv** x *skin vertex* (see below) | **nsv** times *skin vertex*
-         * number of bones - **nb**                | 2 bytes                             | unsigned int
-         * bones                                   | **nb** x *bone* (see below)         | **nb** times *bone*
+         * Represents raw mesh data. The following list outlines its structure.
+         * - Header, 7 bytes, must be "TEMPSLE";
+         * - number of vertices (**nv**), uint32_t;
+         * - number of faces (**nf**), uint32_t;
+         * - number of texture coordinates (**ntc**), uint32_t;
+         * - vertex positions, **nv** times Vector3d;
+         * - texture coordinates, **ntc** times Vector2d;
+         * - faces, **nf** times (3 * uint32_t);
+         * - texture faces, **nf** times (3 * uint32_t);
+         * - number of materials (**nm**), uint32_t;
+         * - materials, **nm** times *material*;
+         * - number of skin vertices (**nsv**), uint32_t;
+         * - skin vertices, **nsv** times *skin vertex*;
+         * - number of bones (**nb**), uint16_t;
+         * - bones, **nb** times *bone*.
          *
-         * The following table outlines **material** data structure.
-         * Field                                   | Size                                                    | Value
-         * --------------------------------------- | ------------------------------------------------------- | --------------------------------
-         * face index                              | 4 bytes                                                 | unsigned integer
-         * type                                    | 5 bytes                                                 | must be "PHONG" or "BLINN"
-         * flag, which marks material as two-sided | 1 byte                                                  | unsigned integer
-         * colors                                  | selene::NUM_OF_MATERIAL_COLOR_TYPES x sizeof(Vector3d)  | Vector3d for each material color
-         * specular level                          | 4 bytes                                                 | float
-         * glossiness                              | 4 bytes                                                 | float
-         * opacity                                 | 4 bytes                                                 | float
-         * texture names                           | selene::NUM_OF_TEXTURE_MAP_TYPES x *string* (see below) | *string* for each texture map
+         * The following list outlines **material** data structure.
+         * - Index of the face, uint32_t;
+         * - type, 5 bytes, must be "PHONG" or "BLINN";
+         * - flag, which marks material as two-sided, uint8_t;
+         * - colors, Vector3d for each material color;
+         * - specular level, float;
+         * - glossiness, float;
+         * - opacity, float;
+         * - texture names, *string* for each texture map.
          *
          * The following table outlines **skin vertex** data structure.
-         * Field        | Size             | Value
-         * ------------ | ---------------- | ------------------------
-         * weights      | sizeof(Vector4d) | Vector4d
-         * bone indices | 4 x (4 bytes)    | 4 times unsigned integer
+         * - Weights, Vector4d;
+         * - bone indices, 4 times uint32_t.
          *
          * The following table outlines **bone** data structure.
-         * Field                    | Size                 | Value
-         * ------------------------ | -------------------- | --------------
-         * name                     | *string* (see below) | *string*
-         * rotation                 | sizeof(Quaternion)   | Quaternion
-         * position                 | sizeof(Vector3d)     | Vector3d
-         * index of the parent bone | 4 bytes              | signed integer
+         * - Name, *string*;
+         * - rotation, Quaternion;
+         * - position, Vector3d;
+         * - index of the parent bone, int32_t.
          *
          * The following table outlines **string** data structure.
-         * Field            | Size          | Value
-         * ---------------- | ------------- | ------------------
-         * length - **len** | 2 bytes       | unsigned integer
-         * characters       | **len** bytes | **len** characters
+         * - Length (**len**), uint16_t;
+         * - characters, **len** times char.
          */
         class RawMeshData: protected MeshManager
         {

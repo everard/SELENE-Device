@@ -82,21 +82,16 @@ namespace selene
                  */
                 uint32_t getNumKeys();
 
-                /**
-                 * \brief Does nothing.
-                 * \return true
-                 */
+                // Resource interface implementation
                 bool retain();
-
-                /**
-                 * \brief Does nothing.
-                 */
                 void discard();
 
         protected:
                 Data data_;
 
         };
+
+        typedef Resource::Instance<MeshAnimation> MeshAnimationInstance;
 
         /**
          * @}

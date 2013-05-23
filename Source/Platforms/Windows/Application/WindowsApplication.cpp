@@ -6,7 +6,8 @@
 namespace selene
 {
 
-        WindowsApplication::WindowsApplication(const char* name, uint32_t width, uint32_t height): Application(name, width, height)
+        WindowsApplication::WindowsApplication(const char* name, uint32_t width, uint32_t height):
+                Application(name, width, height)
         {
                 windowClassName_ = "SELENE Device window class";
 
@@ -19,7 +20,7 @@ namespace selene
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool WindowsApplication::initialize()
         {
                 hInstance_ = GetModuleHandle(nullptr);
@@ -46,7 +47,7 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool WindowsApplication::run()
         {
                 if(hWnd_ == nullptr)
@@ -117,20 +118,20 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void WindowsApplication::halt()
         {
                 if(hWnd_ != nullptr)
                         PostQuitMessage(0);
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         HWND WindowsApplication::getWindowHandle()
         {
                 return hWnd_;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         float WindowsApplication::getKeyState(uint8_t key)
         {
                 if(::GetAsyncKeyState(key) != 0)
@@ -139,23 +140,24 @@ namespace selene
                 return 0.0f;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         LRESULT WindowsApplication::onMessage(UINT message, WPARAM wParam, LPARAM lParam)
         {
                 return DefWindowProc(hWnd_, message, wParam, lParam);
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         LRESULT CALLBACK WindowsApplication::windowProcedure(HWND hWnd, UINT message,
                                                              WPARAM wParam, LPARAM lParam)
         {
-                WindowsApplication* windowsApplication = reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
+                WindowsApplication* windowsApplication =
+                        reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
                 if(windowsApplication != nullptr)
                         return windowsApplication->processMessages(message, wParam, lParam);
                 return DefWindowProc(hWnd, message, wParam, lParam);
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         ATOM WindowsApplication::registerWindowClass()
         {
                 WNDCLASS windowClass;
@@ -174,7 +176,7 @@ namespace selene
                 return RegisterClass(&windowClass);
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void WindowsApplication::destroy()
         {
                 renderer_.destroy();
@@ -188,7 +190,7 @@ namespace selene
                 hWnd_ = nullptr;
         }
 
-        //---------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         LRESULT WindowsApplication::processMessages(UINT message, WPARAM wParam, LPARAM lParam)
         {
                 switch(message)

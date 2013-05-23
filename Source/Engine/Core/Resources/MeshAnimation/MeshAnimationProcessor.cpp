@@ -7,7 +7,7 @@
 namespace selene
 {
 
-        MeshAnimationProcessor::MixableMeshAnimation::MixableMeshAnimation(const Resource::Instance<MeshAnimation>& meshAnimation,
+        MeshAnimationProcessor::MixableMeshAnimation::MixableMeshAnimation(const MeshAnimationInstance& meshAnimation,
                                                                            float blendFactorTransitionTime,
                                                                            float startingTransitionTime,
                                                                            float stoppingTransitionTime,
@@ -22,7 +22,8 @@ namespace selene
                 numTimesToPlay_ = 0;
                 numTimesPlayed_ = 0;
 
-                blendFactorTransitionTime_ = blendFactorTransitionTime > SELENE_EPSILON ? blendFactorTransitionTime : 0.0f;
+                blendFactorTransitionTime_ =
+                        blendFactorTransitionTime > SELENE_EPSILON ? blendFactorTransitionTime : 0.0f;
                 startingTransitionTime_ = startingTransitionTime > SELENE_EPSILON ? startingTransitionTime : 0.0f;
                 stoppingTransitionTime_ = stoppingTransitionTime > SELENE_EPSILON ? stoppingTransitionTime : 0.0f;
                 animationTime_ = animationTime > SELENE_EPSILON ? animationTime : 1.0f;
@@ -37,14 +38,14 @@ namespace selene
         }
         MeshAnimationProcessor::MixableMeshAnimation::~MixableMeshAnimation() {}
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::MixableMeshAnimation::play(float blendFactor, uint32_t numTimes)
         {
                 setBlendFactor(blendFactor);
                 play(numTimes);
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::MixableMeshAnimation::play(uint32_t numTimes)
         {
                 numTimesToPlay_ = numTimes;
@@ -80,7 +81,7 @@ namespace selene
                 }
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::MixableMeshAnimation::stop()
         {
                 if(state_ == STOPPING_ANIMATION || state_ == STOPPED)
@@ -103,7 +104,7 @@ namespace selene
                 state_ = STOPPING_ANIMATION;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::MixableMeshAnimation::setBlendFactor(float blendFactor)
         {
                 blendFactor = blendFactor > SELENE_EPSILON ? blendFactor : 0.0f;
@@ -114,7 +115,7 @@ namespace selene
                 blendFactorInterpolationScalar_ = 0.0f;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::MixableMeshAnimation::process(float elapsedTime)
         {
                 if(state_ == STOPPED || skeletonInstance_ == nullptr)
@@ -203,27 +204,27 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool MeshAnimationProcessor::initialize(const std::shared_ptr<Skeleton>& skeleton)
         {
                 destroy();
                 return skeletonInstance_.initialize(skeleton);
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::destroy()
         {
                 mixableMeshAnimations_.clear();
                 skeletonInstance_.destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         const Skeleton::Instance& MeshAnimationProcessor::getSkeletonInstance() const
         {
                 return skeletonInstance_;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool MeshAnimationProcessor::addMeshAnimation(const Resource::Instance<MeshAnimation>& meshAnimation,
                                                       float blendFactorTransitionTime,
                                                       float startingTransitionTime,
@@ -234,20 +235,22 @@ namespace selene
                 if(*meshAnimation == nullptr)
                         return false;
 
-                std::unique_ptr<MixableMeshAnimation> mixableMeshAnimation(new(std::nothrow) MixableMeshAnimation(meshAnimation,
-                                                                                                                  blendFactorTransitionTime,
-                                                                                                                  startingTransitionTime,
-                                                                                                                  stoppingTransitionTime,
-                                                                                                                  animationTime,
-                                                                                                                  blendFactor,
-                                                                                                                  &skeletonInstance_));
+                auto mixableMeshAnimation = new(std::nothrow) MixableMeshAnimation(meshAnimation,
+                                                                                   blendFactorTransitionTime,
+                                                                                   startingTransitionTime,
+                                                                                   stoppingTransitionTime,
+                                                                                   animationTime,
+                                                                                   blendFactor,
+                                                                                   &skeletonInstance_);
 
-                if(!mixableMeshAnimation)
+                if(mixableMeshAnimation == nullptr)
                         return false;
+
+                std::unique_ptr<MixableMeshAnimation> uniqueMixableMeshAnimation(mixableMeshAnimation);
 
                 try
                 {
-                        mixableMeshAnimations_.push_back(std::move(mixableMeshAnimation));
+                        mixableMeshAnimations_.push_back(std::move(uniqueMixableMeshAnimation));
                 }
                 catch(...)
                 {
@@ -257,7 +260,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool MeshAnimationProcessor::removeMeshAnimation(uint32_t index)
         {
                 if(index >= mixableMeshAnimations_.size())
@@ -268,7 +271,7 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         MeshAnimationProcessor::MixableMeshAnimation& MeshAnimationProcessor::getMeshAnimation(uint32_t index)
         {
                 if(index >= mixableMeshAnimations_.size())
@@ -277,7 +280,7 @@ namespace selene
                 return *mixableMeshAnimations_[index];
         }
 
-        //----------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void MeshAnimationProcessor::processMeshAnimations(float elapsedTime)
         {
                 for(auto it  = mixableMeshAnimations_.begin();

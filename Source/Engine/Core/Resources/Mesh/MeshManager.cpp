@@ -11,10 +11,23 @@ namespace selene
                 textureManager_ = nullptr;
                 textureFactory_ = nullptr;
                 hasSkeleton_ = false;
+
+                const uint8_t vertexStreamStrides[Mesh::NUM_OF_VERTEX_STREAMS] =
+                {
+                        sizeof(Vector3d), sizeof(Vector3d) + sizeof(Vector4d),
+                        sizeof(Vector2d), sizeof(Vector4d) + sizeof(Vector4d)
+                };
+                const bool vertexStreamPresenceFlags[Mesh::NUM_OF_VERTEX_STREAMS] = {true, true, true, false};
+
+                for(uint8_t i = 0; i < Mesh::NUM_OF_VERTEX_STREAMS; ++i)
+                {
+                        vertexStreams_[i].stride    = vertexStreamStrides[i];
+                        vertexStreams_[i].isPresent = vertexStreamPresenceFlags[i];
+                }
         }
         MeshManager::~MeshManager() {}
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readMesh(std::istream& stream,
                                    Mesh::Data& meshData,
                                    ResourceManager* textureManager,
@@ -55,7 +68,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeMesh(std::ostream& stream, const Mesh::Data& meshData)
         {
                 // write header
@@ -82,7 +95,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readString(std::istream& stream, char* string)
         {
                 if(!stream.good())
@@ -106,7 +119,7 @@ namespace selene
                 return false;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeString(std::ostream& stream, const char* string)
         {
                 if(!stream.good())
@@ -137,7 +150,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readMaterial(std::istream& stream, Material& material)
         {
                 if(!stream.good())
@@ -180,7 +193,11 @@ namespace selene
                                 if(*material.getTextureMap(j) == nullptr && textureFactory_ != nullptr)
                                 {
                                         if(textureManager_->createResource(fileName, *textureFactory_) == SUCCESS)
-                                                material.setTextureMap(textureManager_->requestResource<Texture>(fileName), j);
+                                        {
+                                                auto textureMap =
+                                                        textureManager_->requestResource<Texture>(fileName);
+                                                material.setTextureMap(textureMap, j);
+                                        }
                                 }
                         }
                         else
@@ -190,7 +207,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readHeader(std::istream& stream)
         {
                 if(!stream.good())
@@ -209,7 +226,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readBoundingBox(std::istream& stream, Box& boundingBox)
         {
                 if(!stream.good())
@@ -224,7 +241,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readVerticesAndFaces(std::istream& stream, Mesh::Data& meshData)
         {
                 if(!stream.good())
@@ -245,27 +262,29 @@ namespace selene
                         return false;
 
                 // allocate memory for vertices and faces
-                if(!meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].create(numVertices, sizeof(Vector3d)) ||
-                   !meshData.vertices[Mesh::VERTEX_STREAM_TBN_BASES].create(numVertices, sizeof(Vector3d) + sizeof(Vector4d)) ||
-                   !meshData.vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES].create(numVertices, sizeof(Vector2d)))
-                        return false;
+                vertexStreams_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].isPresent = hasSkeleton_;
+                for(uint8_t i = 0; i < Mesh::NUM_OF_VERTEX_STREAMS; ++i)
+                {
+                        if(!vertexStreams_[i].isPresent)
+                                continue;
 
-                if(hasSkeleton_)
-                        if(!meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].create(numVertices, 2 * sizeof(Vector4d)))
+                        if(!meshData.vertices[i].create(numVertices, vertexStreams_[i].stride))
                                 return false;
+                }
 
                 if(!meshData.faces.create(numFaces, faceStride, 3))
                         return false;
 
                 // read vertices and faces
-                for(uint8_t i = Mesh::VERTEX_STREAM_POSITIONS; i <= Mesh::VERTEX_STREAM_TEXTURE_COORDINATES; ++i)
-                        stream.read(reinterpret_cast<char*>(&meshData.vertices[i][0]),
-                                    meshData.vertices[i].getSize() * meshData.vertices[i].getStride());
+                for(uint8_t i = 0; i < Mesh::NUM_OF_VERTEX_STREAMS; ++i)
+                {
+                        if(!vertexStreams_[i].isPresent)
+                                continue;
 
-                if(hasSkeleton_)
-                        stream.read(reinterpret_cast<char*>(&meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS][0]),
-                                    meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getSize() *
-                                    meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
+                        auto& vertexStream = meshData.vertices[i];
+                        stream.read(reinterpret_cast<char*>(&vertexStream[0]),
+                                    vertexStream.getSize() * vertexStream.getStride());
+                }
 
                 stream.read(reinterpret_cast<char*>(&meshData.faces[0]),
                             3 * meshData.faces.getSize() * meshData.faces.getStride());
@@ -293,11 +312,14 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readSubsets(std::istream& stream, Mesh::Data& meshData)
         {
                 if(!stream.good())
                         return false;
+
+                auto numVertices = meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getSize();
+                auto numFaces    = meshData.faces.getSize();
 
                 uint16_t numSubsets = 0;
 
@@ -328,15 +350,15 @@ namespace selene
                         Mesh::Subset& subset = meshData.subsets[i];
                         if(static_cast<uint32_t>(subset.vertexIndex + subset.numVertices) <= subset.vertexIndex ||
                            static_cast<uint32_t>(subset.faceIndex + subset.numFaces) <= subset.faceIndex ||
-                           (subset.vertexIndex + subset.numVertices) > meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getSize() ||
-                           (subset.faceIndex + subset.numFaces) > meshData.faces.getSize())
+                           (subset.vertexIndex + subset.numVertices) > numVertices ||
+                           (subset.faceIndex + subset.numFaces) > numFaces)
                                 return false;
                 }
 
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readBones(std::istream& stream, Array<Skeleton::Bone, uint16_t>& bones)
         {
                 if(!stream.good())
@@ -364,8 +386,10 @@ namespace selene
                                         return false;
 
                                 bone.name = boneName;
-                                stream.read(reinterpret_cast<char*>(&bone.offsetTransform.rotation), sizeof(Quaternion));
-                                stream.read(reinterpret_cast<char*>(&bone.offsetTransform.position), sizeof(Vector3d));
+                                stream.read(reinterpret_cast<char*>(&bone.offsetTransform.rotation),
+                                            sizeof(Quaternion));
+                                stream.read(reinterpret_cast<char*>(&bone.offsetTransform.position),
+                                            sizeof(Vector3d));
                                 stream.read(reinterpret_cast<char*>(&bone.parent), sizeof(int32_t));
 
                                 // validate
@@ -381,7 +405,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeMaterial(std::ostream& stream, const Material& material)
         {
                 if(!stream.good())
@@ -424,7 +448,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeHeader(std::ostream& stream)
         {
                 if(!stream.good())
@@ -441,7 +465,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeBoundingBox(std::ostream& stream, const Box& boundingBox)
         {
                 if(!stream.good())
@@ -454,45 +478,47 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeVerticesAndFaces(std::ostream& stream, const Mesh::Data& meshData)
         {
                 if(!stream.good())
                         return false;
 
                 // validate
-                for(uint8_t i = Mesh::VERTEX_STREAM_POSITIONS; i <= Mesh::VERTEX_STREAM_TEXTURE_COORDINATES; ++i)
+                vertexStreams_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].isPresent = hasSkeleton_;
+                for(uint8_t i = 0; i < Mesh::NUM_OF_VERTEX_STREAMS; ++i)
+                {
+                        if(!vertexStreams_[i].isPresent)
+                                continue;
+
                         if(meshData.vertices[i].isEmpty())
                                 return false;
+                }
 
-                if(hasSkeleton_ && meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].isEmpty())
+                uint8_t faceStride = meshData.faces.getStride();
+                if(meshData.faces.isEmpty() || (faceStride != 2 && faceStride != 4))
                         return false;
 
-                if(meshData.faces.isEmpty() || (meshData.faces.getStride() != 2 && meshData.faces.getStride() != 4))
-                        return false;
+                uint32_t numVertices = meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getSize();
+                uint32_t numFaces    = meshData.faces.getSize();
 
                 try
                 {
-                        // write number of vertices and faces
-                        uint32_t numVertices = meshData.vertices[Mesh::VERTEX_STREAM_POSITIONS].getSize();
-                        uint32_t numFaces    = meshData.faces.getSize();
-
+                        // write number of vertices and faces, face stride
                         stream.write(reinterpret_cast<char*>(&numVertices), sizeof(uint32_t));
                         stream.write(reinterpret_cast<char*>(&numFaces),    sizeof(uint32_t));
-
-                        // write face stride
-                        uint8_t faceStride = meshData.faces.getStride();
-                        stream.write(reinterpret_cast<char*>(&faceStride), sizeof(uint8_t));
+                        stream.write(reinterpret_cast<char*>(&faceStride),  sizeof(uint8_t));
 
                         // write vertices and faces
-                        for(uint8_t i = Mesh::VERTEX_STREAM_POSITIONS; i <= Mesh::VERTEX_STREAM_TEXTURE_COORDINATES; ++i)
-                                stream.write(reinterpret_cast<const char*>(&meshData.vertices[i][0]),
-                                             meshData.vertices[i].getSize() * meshData.vertices[i].getStride());
+                        for(uint8_t i = 0; i < Mesh::NUM_OF_VERTEX_STREAMS; ++i)
+                        {
+                                if(!vertexStreams_[i].isPresent)
+                                        continue;
 
-                        if(hasSkeleton_)
-                                stream.write(reinterpret_cast<const char*>(&meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS][0]),
-                                             meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getSize() *
-                                             meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
+                                auto& vertexStream = meshData.vertices[i];
+                                stream.write(reinterpret_cast<const char*>(&vertexStream[0]),
+                                             vertexStream.getSize() * vertexStream.getStride());
+                        }
 
                         stream.write(reinterpret_cast<const char*>(&meshData.faces[0]),
                                      3 * meshData.faces.getSize() * meshData.faces.getStride());
@@ -505,7 +531,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeSubsets(std::ostream& stream, const Mesh::Data& meshData)
         {
                 if(!stream.good())
@@ -545,7 +571,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------
         bool MeshManager::writeBones(std::ostream& stream, const Array<Skeleton::Bone, uint16_t>& bones)
         {
                 if(!stream.good())

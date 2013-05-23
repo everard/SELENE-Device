@@ -24,7 +24,7 @@ namespace selene
                 destroy();
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9ActorsRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                             D3d9FrameParameters& frameParameters,
                                             D3d9TextureHandler& textureHandler,
@@ -44,20 +44,30 @@ namespace selene
                 // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("PositionPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SkinPositionPass.vsh", "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
-                        D3d9Shader("NormalsPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SkinNormalsPass.vsh",  "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
-                        D3d9Shader("ShadingPass.vsh",      "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SkinShadingPass.vsh",  "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_)
+                        D3d9Shader("PositionPass.vsh",     "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SkinPositionPass.vsh", "vs_2_0", 0,
+                                   D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
+                        D3d9Shader("NormalsPass.vsh",      "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SkinNormalsPass.vsh",  "vs_2_0", 0,
+                                   D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
+                        D3d9Shader("ShadingPass.vsh",      "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader("SkinShadingPass.vsh",  "vs_2_0", 0,
+                                   D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("PositionPass.psh",    "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("NormalsPass.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("ShadingPass.psh",     "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("ShadingPassSSAO.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader("PositionPass.psh",    "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("NormalsPass.psh",     "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("ShadingPass.psh",     "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader("ShadingPassSSAO.psh", "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -83,11 +93,14 @@ namespace selene
                 {
                         D3d9Shader d3dOptionalVertexShaders[NUM_OF_OPTIONAL_VERTEX_SHADERS] =
                         {
-                                D3d9Shader("PositionNormalsPass.vsh",     "vs_1_1", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
-                                D3d9Shader("SkinPositionNormalsPass.vsh", "vs_2_0", 0, D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_)
+                                D3d9Shader("PositionNormalsPass.vsh",     "vs_1_1", 0,
+                                           D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_),
+                                D3d9Shader("SkinPositionNormalsPass.vsh", "vs_2_0", 0,
+                                           D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_)
                         };
 
-                        D3d9Shader d3dOptionalPixelShader("PositionNormalsPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
+                        D3d9Shader d3dOptionalPixelShader("PositionNormalsPass.psh", "ps_2_0", 0,
+                                                          D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
 
                         for(uint32_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
                         {
@@ -98,7 +111,9 @@ namespace selene
                                 }
                         }
 
-                        if(!optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS].create(d3dOptionalPixelShader))
+                        auto& optionalPixelShader =
+                                optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS];
+                        if(!optionalPixelShader.create(d3dOptionalPixelShader))
                         {
                                 destroy();
                                 return false;
@@ -126,7 +141,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::destroy()
         {
                 for(uint8_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
@@ -150,7 +165,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderPositionsAndNormals(Renderer::Data::ActorNode& actorNode)
         {
                 if(d3dDevice_ == nullptr)
@@ -190,7 +205,8 @@ namespace selene
 
                         optionalPixelShaders_[OPTIONAL_PIXEL_SHADER_POSITIONS_AND_NORMALS_PASS].set();
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                            static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                            frameParameters_->projectionParameters,
+                                                            1);
 
                         renderActors(actorNode, RENDERING_PASS_POSITIONS_AND_NORMALS);
                         d3dDevice_->SetRenderTarget(1, nullptr);
@@ -214,14 +230,15 @@ namespace selene
 
                                 pixelShaders_[pixelShaderNo[pass]].set();
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                                    static_cast<const float*>(frameParameters_->projectionParameters), 1);
+                                                                    frameParameters_->projectionParameters,
+                                                                    1);
 
                                 renderActors(actorNode, pass);
                         }
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderShadowMap(Renderer::Data::ActorNode& actorNode,
                                                  const Vector4d& projectionParameters)
         {
@@ -246,19 +263,19 @@ namespace selene
                 d3dDevice_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
                 pixelShaders_[PIXEL_SHADER_POSITIONS_PASS].set();
-                d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS,
-                                                    static_cast<const float*>(projectionParameters), 1);
+                d3dDevice_->SetPixelShaderConstantF(LOCATION_PROJECTION_PARAMETERS, projectionParameters, 1);
 
                 renderActors(actorNode, RENDERING_PASS_POSITIONS);
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderShading(Renderer::Data::ActorNode& actorNode, bool isSsaoEnabled)
         {
                 if(d3dDevice_ == nullptr)
                         return;
 
-                d3dDevice_->SetRenderTarget(0, renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT).getSurface());
+                const auto& renderTarget = renderTargetContainer_->getRenderTarget(RENDER_TARGET_RESULT);
+                d3dDevice_->SetRenderTarget(0, renderTarget.getSurface());
                 d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
                 d3dDevice_->SetVertexDeclaration(d3dMeshVertexDeclaration_);
@@ -284,19 +301,19 @@ namespace selene
                 textureHandler_->setStageState(LOCATION_SPECULAR_MAP_SHADING_PASS,
                                                D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC, D3DTEXF_ANISOTROPIC);
 
+                const auto& lightBuffer = renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER);
                 textureHandler_->setStageState(LOCATION_LIGHT_BUFFER_SHADING_PASS,
                                                D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
                                                D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                d3dDevice_->SetTexture(LOCATION_LIGHT_BUFFER_SHADING_PASS,
-                                       renderTargetContainer_->getRenderTarget(RENDER_TARGET_LIGHT_BUFFER).getTexture());
+                d3dDevice_->SetTexture(LOCATION_LIGHT_BUFFER_SHADING_PASS, lightBuffer.getTexture());
 
                 if(isSsaoEnabled)
                 {
+                        const auto& ssaoBuffer = renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0);
                         textureHandler_->setStageState(LOCATION_SSAO_BUFFER_SHADING_PASS,
                                                        D3DTEXF_POINT, D3DTEXF_POINT, D3DTEXF_POINT,
                                                        D3DTADDRESS_CLAMP, D3DTADDRESS_CLAMP);
-                        d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER_SHADING_PASS,
-                                               renderTargetContainer_->getRenderTarget(RENDER_TARGET_HELPER_0).getTexture());
+                        d3dDevice_->SetTexture(LOCATION_SSAO_BUFFER_SHADING_PASS, ssaoBuffer.getTexture());
 
                         pixelShaders_[PIXEL_SHADER_SHADING_PASS_WITH_SSAO].set();
                 }
@@ -304,12 +321,13 @@ namespace selene
                         pixelShaders_[PIXEL_SHADER_SHADING_PASS].set();
 
                 d3dDevice_->SetPixelShaderConstantF(LOCATION_TEXTURE_COORDINATES_ADJUSTMENT,
-                                                    static_cast<const float*>(frameParameters_->textureCoordinatesAdjustment), 1);
+                                                    frameParameters_->textureCoordinatesAdjustment,
+                                                    1);
 
                 renderActors(actorNode, RENDERING_PASS_SHADING);
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::setMaterial(const Material& material, uint8_t pass)
         {
                 switch(pass)
@@ -327,7 +345,8 @@ namespace selene
                                                             D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SPECULAR_PARAMETERS_NORMALS_PASS,
-                                                                    static_cast<const float*>(specularParameters), 1);
+                                                                    specularParameters,
+                                                                    1);
                                 break;
                         }
 
@@ -349,19 +368,23 @@ namespace selene
                                                             D3d9TextureHandler::DUMMY_TEXTURE_WHITE);
 
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_AMBIENT_COLOR_SHADING_PASS,
-                                                                    static_cast<const float*>(ambientColor), 1);
+                                                                    ambientColor,
+                                                                    1);
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_DIFFUSE_COLOR_SHADING_PASS,
-                                                                    static_cast<const float*>(diffuseColor), 1);
+                                                                    diffuseColor,
+                                                                    1);
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SPECULAR_COLOR_SHADING_PASS,
-                                                                    static_cast<const float*>(specularColor), 1);
+                                                                    specularColor,
+                                                                    1);
                                 d3dDevice_->SetPixelShaderConstantF(LOCATION_SPECULAR_PARAMETERS_SHADING_PASS,
-                                                                    static_cast<const float*>(specularParameters), 1);
+                                                                    specularParameters,
+                                                                    1);
                                 break;
                         }
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::setSkeletonPose(const Array<Skeleton::Transform, uint16_t>& boneTransforms)
         {
                 if(boneTransforms.isEmpty())
@@ -370,8 +393,9 @@ namespace selene
                 static Quaternion rotations[MAX_NUM_OF_BONES_IN_MODEL];
                 static Vector4d   positions[MAX_NUM_OF_BONES_IN_MODEL];
 
-                uint16_t numBoneTransforms = (boneTransforms.getSize() > static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL)) ?
-                                             static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL) : boneTransforms.getSize();
+                uint16_t numBoneTransforms =
+                        (boneTransforms.getSize() > static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL)) ?
+                        static_cast<uint16_t>(MAX_NUM_OF_BONES_IN_MODEL) : boneTransforms.getSize();
 
                 for(uint16_t i = 0; i < numBoneTransforms; ++i)
                 {
@@ -379,16 +403,81 @@ namespace selene
                         positions[i].define(boneTransforms[i].position, 0.0f);
                 }
 
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_BONE_ROTATIONS, reinterpret_cast<const float*>(rotations), numBoneTransforms);
-                d3dDevice_->SetVertexShaderConstantF(LOCATION_BONE_POSITIONS, reinterpret_cast<const float*>(positions), numBoneTransforms);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_BONE_ROTATIONS,
+                                                     reinterpret_cast<const float*>(rotations),
+                                                     numBoneTransforms);
+                d3dDevice_->SetVertexShaderConstantF(LOCATION_BONE_POSITIONS,
+                                                     reinterpret_cast<const float*>(positions),
+                                                     numBoneTransforms);
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderActors(Renderer::Data::ActorNode& actorNode, uint8_t pass)
         {
                 static const DWORD cullModes[] = {D3DCULL_CCW, D3DCULL_NONE};
                 D3d9VertexShader* vertexShaders = nullptr;
 
+                switch(pass)
+                {
+                        case RENDERING_PASS_POSITIONS:
+                                vertexShaders = &vertexShaders_[VERTEX_SHADER_POSITIONS_PASS];
+                                break;
+
+                        case RENDERING_PASS_NORMALS:
+                                vertexShaders = &vertexShaders_[VERTEX_SHADER_NORMALS_PASS];
+                                break;
+
+                        case RENDERING_PASS_SHADING:
+                                vertexShaders = &vertexShaders_[VERTEX_SHADER_SHADING_PASS];
+                                break;
+
+                        case RENDERING_PASS_POSITIONS_AND_NORMALS:
+                                if(!capabilities_->isMultipleRenderTargetSupported())
+                                        return;
+                                vertexShaders =
+                                        &optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS];
+                                break;
+
+                        default:
+                                return;
+                }
+
+                // walk through all mesh units
+                for(uint8_t meshUnit = 0; meshUnit < Renderer::Data::NUM_OF_MESH_UNITS; ++meshUnit)
+                {
+                        auto& materialNode = actorNode.getMaterialNode(meshUnit);
+                        vertexShaders[meshUnit].set();
+
+                        // walk through all material units
+                        for(uint8_t materialUnit = 0; materialUnit < Renderer::Data::NUM_OF_MATERIAL_UNITS;
+                            ++materialUnit)
+                        {
+                                d3dDevice_->SetRenderState(D3DRS_CULLMODE, cullModes[materialUnit]);
+
+                                // walk through all materials
+                                for(bool materialResult = materialNode.readFirstElement(materialUnit); materialResult;
+                                         materialResult = materialNode.readNextElement())
+                                {
+                                        auto material = materialNode.getCurrentKey();
+                                        if(material == nullptr)
+                                                break;
+
+                                        auto meshNode = materialNode.getCurrentData();
+                                        if(meshNode == nullptr)
+                                                break;
+
+                                        setMaterial(*material, pass);
+                                        renderMeshes(*meshNode, meshUnit, pass);
+                                }
+                        }
+                }
+        }
+
+        //------------------------------------------------------------------------------------------------------------
+        void D3d9ActorsRenderer::renderMeshes(Renderer::Data::MeshNode& meshNode,
+                                              uint8_t meshRenderingUnit,
+                                              uint8_t pass)
+        {
                 static const uint8_t vertexStreamIndices[NUM_OF_RENDERING_PASSES][MAX_VERTEX_STREAMS_PER_PASS] =
                 {
                         {Mesh::VERTEX_STREAM_POSITIONS, 0, 0},
@@ -409,102 +498,52 @@ namespace selene
                 };
                 static const uint8_t numVertexStreams[NUM_OF_RENDERING_PASSES] = {1, 3, 2, 3};
 
-                switch(pass)
+                // walk through all meshes
+                for(bool resultMesh = meshNode.readFirstElement(); resultMesh;
+                         resultMesh = meshNode.readNextElement())
                 {
-                        case RENDERING_PASS_POSITIONS:
-                                vertexShaders = &vertexShaders_[VERTEX_SHADER_POSITIONS_PASS];
+                        D3d9Mesh* d3dMesh = static_cast<D3d9Mesh*>(meshNode.getCurrentKey());
+                        if(d3dMesh == nullptr)
                                 break;
 
-                        case RENDERING_PASS_NORMALS:
-                                vertexShaders = &vertexShaders_[VERTEX_SHADER_NORMALS_PASS];
+                        auto meshSubsetNode = meshNode.getCurrentData();
+                        if(meshSubsetNode == nullptr)
                                 break;
 
-                        case RENDERING_PASS_SHADING:
-                                vertexShaders = &vertexShaders_[VERTEX_SHADER_SHADING_PASS];
-                                break;
+                        const auto& meshData = d3dMesh->getData();
 
-                        case RENDERING_PASS_POSITIONS_AND_NORMALS:
-                                if(!capabilities_->isMultipleRenderTargetSupported())
-                                        return;
-                                vertexShaders = &optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_POSITIONS_AND_NORMALS_PASS];
-                                break;
-
-                        default:
-                                return;
-                }
-
-                // walk through all mesh units
-                for(uint8_t meshUnit = 0; meshUnit < Renderer::Data::NUM_OF_MESH_UNITS; ++meshUnit)
-                {
-                        auto& materialNode = actorNode.getMaterialNode(meshUnit);
-                        vertexShaders[meshUnit].set();
-
-                        // walk through all material units
-                        for(uint8_t materialUnit = 0; materialUnit < Renderer::Data::NUM_OF_MATERIAL_UNITS; ++materialUnit)
+                        for(uint8_t vertexStream = 0; vertexStream < numVertexStreams[pass]; ++vertexStream)
                         {
-                                d3dDevice_->SetRenderState(D3DRS_CULLMODE, cullModes[materialUnit]);
+                                UINT streamNo = vertexStreamIndices[pass][vertexStream];
+                                d3dDevice_->SetStreamSource(streamNo, d3dMesh->d3dVertexBuffers_[streamNo], 0,
+                                                            meshData.vertices[streamNo].getStride());
+                        }
 
-                                // walk through all materials
-                                for(bool materialResult = materialNode.readFirstElement(materialUnit); materialResult;
-                                         materialResult = materialNode.readNextElement())
-                                {
-                                        auto material = materialNode.getCurrentKey();
-                                        if(material == nullptr)
-                                                break;
+                        if(meshRenderingUnit == Renderer::Data::UNIT_MESH_SKIN)
+                        {
+                                UINT streamNo = Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS;
+                                d3dDevice_->SetStreamSource(streamNo, d3dMesh->d3dVertexBuffers_[streamNo], 0,
+                                                            meshData.vertices[streamNo].getStride());
+                        }
 
-                                        auto meshNode = materialNode.getCurrentData();
-                                        if(meshNode == nullptr)
-                                                break;
+                        d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
 
-                                        setMaterial(*material, pass);
+                        // walk through all mesh subsets
+                        for(bool resultMeshSubset = meshSubsetNode->readFirstElement(); resultMeshSubset;
+                                 resultMeshSubset = meshSubsetNode->readNextElement())
+                        {
+                                auto meshSubset    = meshSubsetNode->getCurrentKey();
+                                auto renderingList = meshSubsetNode->getCurrentData();
 
-                                        // walk through all meshes
-                                        for(bool resultMesh = meshNode->readFirstElement(); resultMesh;
-                                                 resultMesh = meshNode->readNextElement())
-                                        {
-                                                D3d9Mesh* d3dMesh = static_cast<D3d9Mesh*>(meshNode->getCurrentKey());
-                                                if(d3dMesh == nullptr)
-                                                        break;
+                                if(meshSubset == nullptr || renderingList == nullptr)
+                                        break;
 
-                                                auto meshSubsetNode = meshNode->getCurrentData();
-                                                if(meshSubsetNode == nullptr)
-                                                        break;
-
-                                                const auto& meshData = d3dMesh->getData();
-
-                                                for(uint8_t vertexStream = 0; vertexStream < numVertexStreams[pass]; ++vertexStream)
-                                                {
-                                                        UINT streamNo = vertexStreamIndices[pass][vertexStream];
-                                                        d3dDevice_->SetStreamSource(streamNo, d3dMesh->d3dVertexBuffers_[streamNo], 0,
-                                                                                    meshData.vertices[streamNo].getStride());
-                                                }
-
-                                                if(meshUnit == Renderer::Data::UNIT_MESH_SKIN)
-                                                        d3dDevice_->SetStreamSource(Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS,
-                                                                                    d3dMesh->d3dVertexBuffers_[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS], 0,
-                                                                                    meshData.vertices[Mesh::VERTEX_STREAM_BONE_INDICES_AND_WEIGHTS].getStride());
-
-                                                d3dDevice_->SetIndices(d3dMesh->d3dIndexBuffer_);
-
-                                                // walk through all mesh subsets
-                                                for(bool resultMeshSubset = meshSubsetNode->readFirstElement(); resultMeshSubset;
-                                                         resultMeshSubset = meshSubsetNode->readNextElement())
-                                                {
-                                                        auto meshSubset = meshSubsetNode->getCurrentKey();
-                                                        auto renderingList = meshSubsetNode->getCurrentData();
-
-                                                        if(meshSubset == nullptr || renderingList == nullptr)
-                                                                break;
-
-                                                        renderMeshSubsetInstances(*renderingList, *meshSubset, meshUnit, pass);
-                                                }
-                                        }
-                                }
+                                renderMeshSubsetInstances(*renderingList, *meshSubset, meshRenderingUnit, pass);
                         }
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9ActorsRenderer::renderMeshSubsetInstances(const Renderer::Data::List<Actor::Instance>& renderingList,
                                                            const Mesh::Subset& meshSubset,
                                                            uint8_t meshRenderingUnit,
@@ -515,29 +554,29 @@ namespace selene
                 {
                         const auto& transform = (*it).getViewProjectionTransform();
                         d3dDevice_->SetVertexShaderConstantF(LOCATION_WORLD_VIEW_PROJECTION_MATRIX,
-                                                             static_cast<const float*>(transform.getWorldViewProjectionMatrix()),
+                                                             transform.getWorldViewProjectionMatrix(),
                                                              4);
 
                         switch(pass)
                         {
                                 case RENDERING_PASS_POSITIONS_AND_NORMALS:
                                         d3dDevice_->SetVertexShaderConstantF(LOCATION_WORLD_VIEW_MATRIX,
-                                                                             static_cast<const float*>(transform.getWorldViewMatrix()),
+                                                                             transform.getWorldViewMatrix(),
                                                                              4);
                                         d3dDevice_->SetVertexShaderConstantF(LOCATION_NORMALS_MATRIX,
-                                                                             static_cast<const float*>(transform.getNormalsMatrix()),
+                                                                             transform.getNormalsMatrix(),
                                                                              4);
                                         break;
 
                                 case RENDERING_PASS_POSITIONS:
                                         d3dDevice_->SetVertexShaderConstantF(LOCATION_WORLD_VIEW_MATRIX,
-                                                                             static_cast<const float*>(transform.getWorldViewMatrix()),
+                                                                             transform.getWorldViewMatrix(),
                                                                              4);
                                         break;
 
                                 case RENDERING_PASS_NORMALS:
                                         d3dDevice_->SetVertexShaderConstantF(LOCATION_NORMALS_MATRIX,
-                                                                             static_cast<const float*>(transform.getNormalsMatrix()),
+                                                                             transform.getNormalsMatrix(),
                                                                              4);
                                         break;
                         }

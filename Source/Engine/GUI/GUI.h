@@ -72,13 +72,6 @@ namespace selene
          * int32_t labelId0 = gui.addElement(new(std::nothrow) Label(...));
          * int32_t labelId1 = gui.addElement(new(std::nothrow) Label(...));
          * int32_t textBoxId0 = gui.addElement(new(std::nothrow) TextBox(...));
-         *
-         * // note, that if delegated function should be passed as callback, then consider using C++11 lambdas
-         * int32_t buttonId0 = gui.addElement(new(std::nothrow) Button(std::function<void (int32_t, uint8_t)>([this] (int32_t elementId, uint8_t message)
-         *                                                             {
-         *                                                                     this->onButtonMessage(elementId, message);
-         *                                                             }),
-         *                                                             other parameters);
          * \endcode
          * \see Gui::Element
          * \see Label Button TextBox

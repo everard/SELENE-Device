@@ -34,7 +34,7 @@ namespace selene
                 destroy();
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool GlesRenderTargetContainer::initialize(GlesFrameParameters& frameParameters,
                                                    Renderer::Parameters& parameters)
         {
@@ -60,8 +60,10 @@ namespace selene
                                                   static_cast<float>(halfWidth),
                                                   static_cast<float>(halfHeight));
 
-                frameParameters.textureCoordinatesAdjustment.define(frameParameters.screenSize.x / static_cast<float>(nearestPowerOfTwo),
-                                                                    frameParameters.screenSize.y / static_cast<float>(nearestPowerOfTwo),
+                frameParameters.textureCoordinatesAdjustment.define(frameParameters.screenSize.x /
+                                                                    static_cast<float>(nearestPowerOfTwo),
+                                                                    frameParameters.screenSize.y /
+                                                                    static_cast<float>(nearestPowerOfTwo),
                                                                     0.0f, 0.0f);
 
                 // create depth buffers
@@ -98,11 +100,9 @@ namespace selene
                 glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFrameBuffer_);
                 CHECK_GLES_ERROR("GlesRenderTargetContainer::initialize: glBindFramebuffer");
 
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffers_[DEPTH_BUFFER_SHADOW_MAP], 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                                       depthBuffers_[DEPTH_BUFFER_SHADOW_MAP], 0);
                 CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
-
-                //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTargets_[RENDER_TARGET_HELPER_1].getRenderableTexture(), 0);
-                //CHECK_GLES_ERROR("GlesRenderTargetContainer::setShadowMap: glFramebufferTexture2D");
 
                 if(!isFramebufferComplete())
                 {
@@ -122,7 +122,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         void GlesRenderTargetContainer::destroy()
         {
                 if(frameBuffer_ != 0)
@@ -152,7 +152,7 @@ namespace selene
                 isFrameBufferBound_ = false;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool GlesRenderTargetContainer::setRenderTarget(uint8_t type) const
         {
                 if(type >= NUM_OF_RENDER_TARGETS)
@@ -165,7 +165,8 @@ namespace selene
                         isFrameBufferBound_ = true;
                 }
 
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTargets_[type].getRenderableTexture(), 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                       renderTargets_[type].getRenderableTexture(), 0);
                 CHECK_GLES_ERROR("GlesRenderTargetContainer::setRenderTarget: glFramebufferTexture2D");
 
                 GLuint depthBuffer = 0;
@@ -192,7 +193,7 @@ namespace selene
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         const GlesRenderTarget& GlesRenderTargetContainer::getRenderTarget(uint8_t type) const
         {
                 if(type >= NUM_OF_RENDER_TARGETS)
@@ -201,7 +202,7 @@ namespace selene
                 return renderTargets_[type];
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         void GlesRenderTargetContainer::setShadowMap() const
         {
                 glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFrameBuffer_);
@@ -209,7 +210,7 @@ namespace selene
                 isFrameBufferBound_ = false;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         void GlesRenderTargetContainer::setBackBuffer() const
         {
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -217,7 +218,7 @@ namespace selene
                 isFrameBufferBound_ = false;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         GLuint GlesRenderTargetContainer::getDepthBuffer(uint8_t type) const
         {
                 if(type >= NUM_OF_DEPTH_BUFFERS)
@@ -226,7 +227,7 @@ namespace selene
                 return depthBuffers_[type];
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         GLuint GlesRenderTargetContainer::createDepthBuffer(uint32_t width, uint32_t height)
         {
                 GLuint texture;
@@ -253,7 +254,7 @@ namespace selene
                 return texture;
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------
         bool GlesRenderTargetContainer::isFramebufferComplete() const
         {
                 GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -264,19 +265,23 @@ namespace selene
                         switch(status)
                         {
                                 case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                                        LOGI("****************************** FBO error: FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+                                        LOGI("****************************** FBO error:"
+                                             "FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
                                         break;
 
                                 case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                                        LOGI("****************************** FBO error: FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+                                        LOGI("****************************** FBO error:"
+                                             "FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
                                         break;
 
                                 case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-                                        LOGI("****************************** FBO error: FRAMEBUFFER_INCOMPLETE_DIMENSIONS");
+                                        LOGI("****************************** FBO error:"
+                                             "FRAMEBUFFER_INCOMPLETE_DIMENSIONS");
                                         break;
 
                                 case GL_FRAMEBUFFER_UNSUPPORTED:
-                                        LOGI("****************************** FBO error: FRAMEBUFFER_UNSUPPORTED");
+                                        LOGI("****************************** FBO error:"
+                                             "FRAMEBUFFER_UNSUPPORTED");
                                         break;
 
                                 default:
