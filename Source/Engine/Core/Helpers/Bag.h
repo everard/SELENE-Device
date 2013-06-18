@@ -46,8 +46,12 @@ namespace selene
 
                         if(data_ == nullptr || elements_ == nullptr)
                         {
-                                SAFE_DELETE_ARRAY(data_);
-                                SAFE_DELETE_ARRAY(elements_);
+                                delete[] data_;
+                                delete[] elements_;
+
+                                data_ = nullptr;
+                                elements_ = nullptr;
+
                                 capacity_ = 0;
                                 return;
                         }
@@ -59,8 +63,8 @@ namespace selene
                 {
                         clear();
 
-                        SAFE_DELETE_ARRAY(data_);
-                        SAFE_DELETE_ARRAY(elements_);
+                        delete[] data_;
+                        delete[] elements_;
                 }
 
                 /**

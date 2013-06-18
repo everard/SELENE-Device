@@ -38,7 +38,9 @@ namespace selene
         //----------------------------------------------------------
         void RenderingMemoryBuffer::destroy()
         {
-                SAFE_DELETE_ARRAY(allocatedMemory_);
+                delete[] allocatedMemory_;
+                allocatedMemory_ = nullptr;
+
                 location_ = size_ = 0;
         }
 

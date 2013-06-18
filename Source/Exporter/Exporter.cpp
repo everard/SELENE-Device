@@ -92,7 +92,7 @@ namespace selene
 
                 if(vertices == nullptr)
                 {
-                        SAFE_DELETE_ARRAY(newFaces);
+                        delete[] newFaces;
                         return false;
                 }
 
@@ -124,8 +124,8 @@ namespace selene
                         vertices[i].updateFaces(newFaces);
 
                 // free memory
-                SAFE_DELETE_ARRAY(vertices);
-                SAFE_DELETE_ARRAY(faces);
+                delete[] vertices;
+                delete[] faces;
 
                 // set new faces as current
                 *currentFaces = newFaces;
@@ -388,7 +388,9 @@ namespace selene
         {
                 skinVertices_.destroy();
                 newToOldVertexMapping_.clear();
-                SAFE_DELETE_ARRAY(faces_);
+
+                delete[] faces_;
+                faces_ = nullptr;
 
                 numVertices_  = 0;
                 numFaces_     = 0;

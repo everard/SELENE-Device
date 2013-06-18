@@ -24,7 +24,7 @@ namespace selene
         }
         Entity::~Entity()
         {
-                SAFE_DELETE_ARRAY(name_);
+                delete[] name_;
         }
 
         //---------------------------------------------------------

@@ -96,7 +96,9 @@ namespace selene
                  */
                 void destroy()
                 {
-                        SAFE_DELETE_ARRAY(data_);
+                        delete[] data_;
+                        data_ = nullptr;
+
                         size_ = sizeModifier_ = 0;
                         realSize_ = 0;
                         stride_ = 0;

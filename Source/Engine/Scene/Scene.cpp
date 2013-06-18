@@ -355,7 +355,7 @@ namespace selene
                 }
                 catch(...) {}
 
-                SAFE_DELETE(node);
+                delete node;
                 return false;
         }
 

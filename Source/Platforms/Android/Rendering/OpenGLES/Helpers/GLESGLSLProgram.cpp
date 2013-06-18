@@ -183,7 +183,7 @@ namespace selene
                                         glGetProgramInfoLog(program_, infoStringLength, nullptr, buffer);
                                         CHECK_GLES_ERROR("GlesGlslProgram::initialize: glGetProgramInfoLog");
                                         LOGI("****************************** Failed linking GLSL program: %s", buffer);
-                                        SAFE_DELETE_ARRAY(buffer);
+                                        delete[] buffer;
                                 }
                         }
 
@@ -268,7 +268,7 @@ namespace selene
                                         glGetShaderInfoLog(shader, infoStringLength, nullptr, buffer);
                                         CHECK_GLES_ERROR("GlesGlslProgram::loadShader: glGetShaderInfoLog");
                                         LOGI("****************************** Failed loading shader: %s", buffer);
-                                        SAFE_DELETE_ARRAY(buffer);
+                                        delete[] buffer;
                                 }
                         }
 
