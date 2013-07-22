@@ -23,12 +23,12 @@ namespace selene
         template <class D, class S> class Array
         {
         public:
-                Array()
+                Array():
+                        data_(nullptr), size_(0), sizeModifier_(0),
+                        realSize_(0), stride_(0) {}
+                Array(const Array<D, S>& other): Array()
                 {
-                        data_ = nullptr;
-                        size_ = sizeModifier_ = 0;
-                        realSize_ = 0;
-                        stride_ = 0;
+                        *this = other;
                 }
                 ~Array()
                 {
@@ -144,27 +144,27 @@ namespace selene
 
                 /**
                  * \brief Assignes array.
-                 * \param[in] otherArray array which will be assigned to current
+                 * \param[in] other array, which will be assigned to current
                  * \return reference to the array
                  */
-                Array<D, S>& operator =(const Array<D, S>& otherArray)
+                Array<D, S>& operator =(const Array<D, S>& other)
                 {
-                        if(sizeModifier_ == otherArray.sizeModifier_ &&
-                           stride_ == otherArray.stride_ &&
-                           size_ == otherArray.size_)
+                        if(sizeModifier_ == other.sizeModifier_ &&
+                           stride_ == other.stride_ &&
+                           size_   == other.size_)
                         {
                                 for(uint32_t i = 0; i < realSize_; ++i)
-                                        data_[i] = otherArray.data_[i];
+                                        data_[i] = other.data_[i];
 
                                 return *this;
                         }
 
                         destroy();
 
-                        if(create(otherArray.size_, otherArray.stride_, otherArray.sizeModifier_))
+                        if(create(other.size_, other.stride_, other.sizeModifier_))
                         {
                                 for(uint32_t i = 0; i < realSize_; ++i)
-                                        data_[i] = otherArray.data_[i];
+                                        data_[i] = other.data_[i];
                         }
 
                         return *this;

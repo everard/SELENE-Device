@@ -7,10 +7,7 @@
 namespace selene
 {
 
-        Vector2d::Vector2d(float x_, float y_)
-        {
-                define(x_, y_);
-        }
+        Vector2d::Vector2d(float x_, float y_): x(x_), y(y_) {}
         Vector2d::~Vector2d() {}
 
         //---------------------------------------------------------------------------------
@@ -129,14 +126,9 @@ namespace selene
                         std::fabs(y - vector.y) <= SELENE_EPSILON);
         }
 
-        Vector3d::Vector3d(float x_, float y_, float z_)
-        {
-                define(x_, y_, z_);
-        }
-        Vector3d::Vector3d(const Vector2d& vector, float z_)
-        {
-                define(vector, z_);
-        }
+        Vector3d::Vector3d(float x_, float y_, float z_): x(x_), y(y_), z(z_) {}
+        Vector3d::Vector3d(const Vector2d& vector, float z_):
+                x(vector.x), y(vector.y), z(z_) {}
         Vector3d::~Vector3d() {}
 
         //---------------------------------------------------------------------------------
@@ -303,22 +295,14 @@ namespace selene
                         std::fabs(z - vector.z) <= SELENE_EPSILON);
         }
 
-        Vector4d::Vector4d(float x_, float y_, float z_, float w_)
-        {
-                define(x_, y_, z_, w_);
-        }
-        Vector4d::Vector4d(const Vector2d& vector, float z_, float w_)
-        {
-                define(vector, z_, w_);
-        }
-        Vector4d::Vector4d(const Vector2d& vector0, const Vector2d& vector1)
-        {
-                define(vector0, vector1);
-        }
-        Vector4d::Vector4d(const Vector3d& vector, float w_)
-        {
-                define(vector, w_);
-        }
+        Vector4d::Vector4d(float x_, float y_, float z_, float w_):
+                x(x_), y(y_), z(z_), w(w_) {}
+        Vector4d::Vector4d(const Vector2d& vector, float z_, float w_):
+                x(vector.x), y(vector.y), z(z_), w(w_) {}
+        Vector4d::Vector4d(const Vector2d& vector0, const Vector2d& vector1):
+                x(vector0.x), y(vector0.y), z(vector1.x), w(vector1.y) {}
+        Vector4d::Vector4d(const Vector3d& vector, float w_):
+                x(vector.x), y(vector.y), z(vector.z), w(w_) {}
         Vector4d::~Vector4d() {}
 
         //---------------------------------------------------------------------------------
@@ -464,22 +448,14 @@ namespace selene
                         std::fabs(w - vector.w) <= SELENE_EPSILON);
         }
 
-        Quaternion::Quaternion(float x_, float y_, float z_, float w_)
-        {
-                define(x_, y_, z_, w_);
-        }
-        Quaternion::Quaternion(const Vector2d& vector, float z_, float w_)
-        {
-                define(vector, z_, w_);
-        }
-        Quaternion::Quaternion(const Vector2d& vector0, const Vector2d& vector1)
-        {
-                define(vector0, vector1);
-        }
-        Quaternion::Quaternion(const Vector3d& vector, float w_)
-        {
-                define(vector, w_);
-        }
+        Quaternion::Quaternion(float x_, float y_, float z_, float w_):
+                x(x_), y(y_), z(z_), w(w_) {}
+        Quaternion::Quaternion(const Vector2d& vector, float z_, float w_):
+                x(vector.x), y(vector.y), z(z_), w(w_) {}
+        Quaternion::Quaternion(const Vector2d& vector0, const Vector2d& vector1):
+                x(vector0.x), y(vector0.y), z(vector1.x), w(vector1.y) {}
+        Quaternion::Quaternion(const Vector3d& vector, float w_):
+                x(vector.x), y(vector.y), z(vector.z), w(w_) {}
         Quaternion::~Quaternion() {}
 
         //---------------------------------------------------------------------------------

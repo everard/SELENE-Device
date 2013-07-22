@@ -29,7 +29,9 @@ namespace selene
                  * \param[in] name name of the entity
                  */
                 Entity(const char* name);
+                Entity(const Entity&) = delete;
                 virtual ~Entity();
+                Entity& operator =(const Entity&) = delete;
 
                 /**
                  * \brief Returns name of the entity.

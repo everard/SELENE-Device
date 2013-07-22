@@ -29,7 +29,9 @@ namespace selene
                 Cone(const Vector3d& apex = Vector3d(),
                      const Vector3d& direction = Vector3d(1.0f),
                      float radius = 1.0f);
+                Cone(const Cone&) = default;
                 ~Cone();
+                Cone& operator =(const Cone&) = default;
 
                 /**
                  * \brief Defines cone with given apex, direction and radius.
@@ -80,7 +82,7 @@ namespace selene
                 /**
                  * \brief Determines relation between cone and volume.
                  * \param[in] volume volume
-                 * \return OUTSIDE if cone is ouside the volume, INTERSECTS if
+                 * \return OUTSIDE if cone is outside the volume, INTERSECTS if
                  * cone intersects the volume and INSIDE if cone is inside the volume
                  */
                 RELATION determineRelation(const Volume& volume) const;

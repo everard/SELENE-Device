@@ -55,7 +55,7 @@ namespace selene
          * - Length (**len**), uint16_t;
          * - characters, **len** times char.
          */
-        class RawMeshData: protected MeshManager
+        class RawMeshData
         {
         public:
                 /**

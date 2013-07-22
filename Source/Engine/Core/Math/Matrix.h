@@ -45,7 +45,9 @@ namespace selene
                        float a21 = 0.0f, float a22 = 0.0f, float a23 = 0.0f, float a24 = 0.0f,
                        float a31 = 0.0f, float a32 = 0.0f, float a33 = 0.0f, float a34 = 0.0f,
                        float a41 = 0.0f, float a42 = 0.0f, float a43 = 0.0f, float a44 = 0.0f);
+                Matrix(const Matrix&) = default;
                 ~Matrix();
+                Matrix& operator =(const Matrix&) = default;
 
                 /**
                  * \brief Defines matrix with given elements.

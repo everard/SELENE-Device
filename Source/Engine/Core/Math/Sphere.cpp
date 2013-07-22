@@ -6,10 +6,8 @@
 namespace selene
 {
 
-        Sphere::Sphere(const Vector3d& center, float radius)
-        {
-                define(center, radius);
-        }
+        Sphere::Sphere(const Vector3d& center, float radius):
+                center_(center), radius_(radius) {}
         Sphere::~Sphere() {}
 
         //-----------------------------------------------------------------

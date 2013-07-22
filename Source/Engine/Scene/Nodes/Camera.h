@@ -45,7 +45,9 @@ namespace selene
                        const Vector4d& projectionParameters = Vector4d(45.0f, 0.75f, 1.0f, 1000.0f),
                        float distance = 0.0f,
                        Gui* gui = nullptr);
+                Camera(const Camera&) = delete;
                 virtual ~Camera();
+                Camera& operator =(const Camera&) = delete;
 
                 /**
                  * \brief Sets GUI.

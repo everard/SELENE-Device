@@ -42,19 +42,12 @@ namespace selene
                  * \brief Constructs allocator with given memory buffer.
                  * \param[in] memoryBuffer rendering memory buffer
                  */
-                RenderingMemoryAllocator(RenderingMemoryBuffer& memoryBuffer)
-                {
-                        memoryBuffer_ = &memoryBuffer;
-                }
-                RenderingMemoryAllocator(const RenderingMemoryAllocator& other)
-                {
-                        memoryBuffer_ = other.memoryBuffer_;
-                }
-                template <class U> RenderingMemoryAllocator(const RenderingMemoryAllocator<U>& other)
-                {
-                        memoryBuffer_ = other.memoryBuffer_;
-                }
+                RenderingMemoryAllocator(RenderingMemoryBuffer& memoryBuffer): memoryBuffer_(&memoryBuffer) {}
+                RenderingMemoryAllocator(const RenderingMemoryAllocator&) = default;
+                template <class U> RenderingMemoryAllocator(const RenderingMemoryAllocator<U>& other):
+                        memoryBuffer_(other.memoryBuffer_) {}
                 ~RenderingMemoryAllocator() {}
+                RenderingMemoryAllocator& operator =(const RenderingMemoryAllocator&) = default;
 
                 /**
                  * \brief Allocates memory for given number of objects.

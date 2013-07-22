@@ -39,7 +39,9 @@ namespace selene
                  * \param[in] vertices array of vertices of the box
                  */
                 Box(const Vector3d* vertices);
+                Box(const Box&) = default;
                 ~Box();
+                Box& operator =(const Box&) = default;
 
                 /**
                  * \brief Defines box with given center, width, height and depth.
@@ -68,7 +70,7 @@ namespace selene
                 /**
                  * \brief Determines relation between box and volume.
                  * \param[in] volume volume
-                 * \return OUTSIDE if box is ouside the volume, INTERSECTS if
+                 * \return OUTSIDE if box is outside the volume, INTERSECTS if
                  * box intersects the volume and INSIDE if box is inside the volume
                  */
                 RELATION determineRelation(const Volume& volume) const;

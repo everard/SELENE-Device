@@ -43,7 +43,9 @@ namespace selene
                                  const Vector4d& color,
                                  float lifeSpan,
                                  float size);
+                        Particle(const Particle&) = default;
                         ~Particle();
+                        Particle& operator =(const Particle&) = default;
 
                         /**
                          * \brief Returns position.
@@ -109,7 +111,9 @@ namespace selene
                                const Vector2d& size = Vector2d(1.0f),
                                float density = 0.0f,
                                const Resource::Instance<Texture>& texture = Resource::Instance<Texture>());
+                ParticleSystem(const ParticleSystem&) = delete;
                 ~ParticleSystem();
+                ParticleSystem& operator =(const ParticleSystem&) = delete;
 
                 /**
                  * \brief Clears particle system.

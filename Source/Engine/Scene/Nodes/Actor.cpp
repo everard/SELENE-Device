@@ -9,7 +9,8 @@
 namespace selene
 {
 
-        Actor::ViewProjectionTransform::ViewProjectionTransform() {}
+        Actor::ViewProjectionTransform::ViewProjectionTransform():
+                worldViewProjectionMatrix_(), worldViewMatrix_(), normalsMatrix_() {}
         Actor::ViewProjectionTransform::~ViewProjectionTransform() {}
 
         //------------------------------------------------------------------------------------------------------
@@ -42,11 +43,8 @@ namespace selene
         }
 
         Actor::Instance::Instance(const Actor::ViewProjectionTransform& viewProjectionTransform,
-                                  const Skeleton::Instance* skeletonInstance)
-        {
-                viewProjectionTransform_ = viewProjectionTransform;
-                skeletonInstance_ = skeletonInstance;
-        }
+                                  const Skeleton::Instance* skeletonInstance):
+                viewProjectionTransform_(viewProjectionTransform), skeletonInstance_(skeletonInstance) {}
         Actor::Instance::~Instance() {}
 
         //------------------------------------------------------------------------------------------------------
@@ -65,7 +63,9 @@ namespace selene
                      const Resource::Instance<Mesh>& mesh,
                      const Vector3d& position,
                      const Quaternion& rotation,
-                     const Vector3d& scale): Scene::Node(name)
+                     const Vector3d& scale):
+                Scene::Node(name), meshAnimationProcessor_(),
+                mesh_(), renderingUnit_(-1)
         {
                 positions_[ORIGINAL] = position;
                 rotations_[ORIGINAL] = rotation;

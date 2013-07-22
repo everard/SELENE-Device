@@ -38,7 +38,9 @@ namespace selene
                 {
                 public:
                         ViewProjectionTransform();
+                        ViewProjectionTransform(const ViewProjectionTransform&) = default;
                         ~ViewProjectionTransform();
+                        ViewProjectionTransform& operator =(const ViewProjectionTransform&) = default;
 
                         /**
                          * \brief Computes view-projection transform.
@@ -88,7 +90,9 @@ namespace selene
                          */
                         Instance(const ViewProjectionTransform& viewProjectionTransform,
                                  const Skeleton::Instance* skeletonInstance);
+                        Instance(const Instance&) = default;
                         ~Instance();
+                        Instance& operator =(const Instance&) = default;
 
                         /**
                          * \brief Returns view-projection transform.
@@ -121,7 +125,9 @@ namespace selene
                       const Vector3d& position = Vector3d(),
                       const Quaternion& rotation = Quaternion(),
                       const Vector3d& scale = Vector3d(1.0f, 1.0f, 1.0f));
+                Actor(const Actor&) = delete;
                 virtual ~Actor();
+                Actor& operator =(const Actor&) = delete;
 
                 /**
                  * \brief Sets mesh.

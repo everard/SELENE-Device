@@ -39,7 +39,9 @@ namespace selene
                         const Vector2d& position,
                         const Vector2d& size,
                         const char* text);
+                TextBox(const TextBox&) = delete;
                 ~TextBox();
+                TextBox& operator =(const TextBox&) = delete;
 
                 /**
                  * \brief Sets text.

@@ -2,16 +2,13 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "MeshManager.h"
+#include "../../Helpers/Utility.h"
 
 namespace selene
 {
 
-        MeshManager::MeshManager()
+        MeshManager::MeshManager(): textureManager_(nullptr), textureFactory_(nullptr), hasSkeleton_(false)
         {
-                textureManager_ = nullptr;
-                textureFactory_ = nullptr;
-                hasSkeleton_ = false;
-
                 const uint8_t vertexStreamStrides[Mesh::NUM_OF_VERTEX_STREAMS] =
                 {
                         sizeof(Vector3d), sizeof(Vector3d) + sizeof(Vector4d),
@@ -95,60 +92,8 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------
-        bool MeshManager::readString(std::istream& stream, char* string)
-        {
-                if(!stream.good())
-                        return false;
-
-                uint16_t length = 0;
-
-                // read length
-                stream.read(reinterpret_cast<char*>(&length), sizeof(uint16_t));
-
-                // read string
-                if(length != 0 && length < MAX_STRING_LENGTH)
-                {
-                        stream.read(string, length);
-                        string[length] = 0;
-                        return true;
-                }
-
-                stream.seekg(length, std::ios_base::cur);
-                string[0] = 0;
-                return false;
-        }
-
-        //--------------------------------------------------------------------------------------------------------
-        bool MeshManager::writeString(std::ostream& stream, const char* string)
-        {
-                if(!stream.good())
-                        return false;
-
-                uint16_t length = 0;
-
-                if(string == nullptr)
-                {
-                        // write string length and return false if string is not passed
-                        stream.write(reinterpret_cast<char*>(&length), sizeof(uint16_t));
-                        return false;
-                }
-
-                // get string length
-                size_t stringLength = strlen(string);
-                length = (stringLength >= MAX_STRING_LENGTH) ? (MAX_STRING_LENGTH - 1) :
-                         (static_cast<uint16_t>(stringLength));
-
-                // write string length
-                stream.write(reinterpret_cast<char*>(&length), sizeof(uint16_t));
-                if(length == 0)
-                        return false;
-
-                // write string
-                stream.write(string, length);
-
-                return true;
-        }
+        MeshManager::VertexStream::VertexStream(): stride(0), isPresent(false) {}
+        MeshManager::VertexStream::~VertexStream() {}
 
         //--------------------------------------------------------------------------------------------------------
         bool MeshManager::readMaterial(std::istream& stream, Material& material)
@@ -167,7 +112,7 @@ namespace selene
                 material.setFlags(flags);
 
                 // read colors and other parameters
-                char fileName[MAX_STRING_LENGTH];
+                char fileName[Utility::MAX_STRING_LENGTH];
                 Vector3d colors[NUM_OF_MATERIAL_COLOR_TYPES];
                 float specularLevel, glossiness, opacity;
 
@@ -186,7 +131,7 @@ namespace selene
                 // read texture maps
                 for(register uint8_t j = 0; j < NUM_OF_TEXTURE_MAP_TYPES; ++j)
                 {
-                        if(readString(stream, fileName) && textureManager_ != nullptr)
+                        if(Utility::readString(stream, fileName) && textureManager_ != nullptr)
                         {
                                 material.setTextureMap(textureManager_->requestResource<Texture>(fileName), j);
 
@@ -373,7 +318,7 @@ namespace selene
                 if(!bones.create(numBones))
                         return false;
 
-                char boneName[MAX_STRING_LENGTH];
+                char boneName[Utility::MAX_STRING_LENGTH];
 
                 // read bones
                 try
@@ -382,7 +327,7 @@ namespace selene
                         {
                                 Skeleton::Bone& bone = bones[i];
 
-                                if(!readString(stream, boneName))
+                                if(!Utility::readString(stream, boneName))
                                         return false;
 
                                 bone.name = boneName;
@@ -440,9 +385,9 @@ namespace selene
                 {
                         Texture* texture = *material.getTextureMap(j);
                         if(texture != nullptr)
-                                writeString(stream, texture->getName());
+                                Utility::writeString(stream, texture->getName());
                         else
-                                writeString(stream, nullptr);
+                                Utility::writeString(stream, nullptr);
                 }
 
                 return true;
@@ -592,7 +537,7 @@ namespace selene
                         {
                                 const Skeleton::Bone& bone = bones[i];
 
-                                if(!writeString(stream, bone.name.c_str()))
+                                if(!Utility::writeString(stream, bone.name.c_str()))
                                         return false;
 
                                 stream.write(reinterpret_cast<const char*>(&bone.offsetTransform.rotation),

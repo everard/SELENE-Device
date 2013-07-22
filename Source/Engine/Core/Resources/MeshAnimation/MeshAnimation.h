@@ -44,7 +44,9 @@ namespace selene
                         float length, lengthInv;
 
                         Data();
+                        Data(const Data&) = delete;
                         ~Data();
+                        Data& operator =(const Data&) = delete;
 
                 };
 
@@ -53,7 +55,9 @@ namespace selene
                  * \param[in] name name of the mesh animation
                  */
                 MeshAnimation(const char* name);
+                MeshAnimation(const MeshAnimation&) = delete;
                 ~MeshAnimation();
+                MeshAnimation& operator =(const MeshAnimation&) = delete;
 
                 /**
                  * \brief Returns mesh animation data.

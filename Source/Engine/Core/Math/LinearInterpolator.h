@@ -21,7 +21,9 @@ namespace selene
         {
         public:
                 LinearInterpolator() {}
+                LinearInterpolator(const LinearInterpolator&) = default;
                 ~LinearInterpolator() {}
+                LinearInterpolator& operator =(const LinearInterpolator&) = default;
 
                 /**
                  * \brief Sets value.

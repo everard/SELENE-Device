@@ -6,13 +6,10 @@
 namespace selene
 {
 
-        MeshAnimation::Data::Data()
-        {
-                length = lengthInv = 1.0f;
-        }
+        MeshAnimation::Data::Data(): keys(), helperKey(), emptyKey(), length(1.0f), lengthInv(1.0f) {}
         MeshAnimation::Data::~Data() {}
 
-        MeshAnimation::MeshAnimation(const char* name): Resource(name) {}
+        MeshAnimation::MeshAnimation(const char* name): Resource(name), data_() {}
         MeshAnimation::~MeshAnimation() {}
 
         //--------------------------------------------------------------------------------------------------

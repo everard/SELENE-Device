@@ -6,6 +6,9 @@
 namespace selene
 {
 
+        Skeleton::Transform::Transform(): rotation(), position() {}
+        Skeleton::Transform::~Transform() {}
+
         //-------------------------------------------------------------------------------------------------------------
         void Skeleton::Transform::identity()
         {
@@ -41,10 +44,15 @@ namespace selene
                 return initialTransform;
         }
 
-        Skeleton::Instance::Instance()
-        {
-                isUpdated_ = false;
-        }
+        Skeleton::Bone::Bone(): offsetTransform(), name(), parent(-1) {}
+        Skeleton::Bone::~Bone() {}
+
+        Skeleton::BoneTransform::BoneTransform(): transform(), boneName() {}
+        Skeleton::BoneTransform::~BoneTransform() {}
+
+        Skeleton::Instance::Instance():
+                localBoneTransforms_(), combinedBoneTransforms_(),
+                finalBoneTransforms_(), skeleton_(), isUpdated_(false) {}
         Skeleton::Instance::~Instance() {}
 
         //-------------------------------------------------------------------------------------------------------------
@@ -200,7 +208,7 @@ namespace selene
                 }
         }
 
-        Skeleton::Skeleton() {}
+        Skeleton::Skeleton(): bones_(), initialLocalBoneTransforms_(), bonesMap_() {}
         Skeleton::~Skeleton() {}
 
         //-------------------------------------------------------------------------------------------------------------
@@ -278,14 +286,6 @@ namespace selene
                         return -1;
 
                 return static_cast<int32_t>(it->second);
-        }
-
-        //-------------------------------------------------------------------------------------------------------------
-        Skeleton& Skeleton::operator =(const Skeleton& skeleton)
-        {
-                bones_ = skeleton.bones_;
-                initialize();
-                return *this;
         }
 
 }

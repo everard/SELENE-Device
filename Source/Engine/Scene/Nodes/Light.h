@@ -25,9 +25,13 @@ namespace selene
                 /**
                  * \brief Constructs light with given name.
                  * \param[in] name name of the light
+                 * \param[in] color color of the light
+                 * \param[in] intensity intensity of the light
                  */
-                Light(const char* name);
+                Light(const char* name, const Vector3d& color, float intensity);
+                Light(const Light&) = delete;
                 virtual ~Light();
+                Light& operator =(const Light&) = delete;
 
                 /**
                  * \brief Returns volume.
@@ -86,7 +90,9 @@ namespace selene
                                  const Vector3d& color = Vector3d(1.0f, 1.0f, 1.0f),
                                  float intensity = 1.0f,
                                  float size = 1000.0f);
+                DirectionalLight(const DirectionalLight&) = delete;
                 ~DirectionalLight();
+                DirectionalLight& operator =(const DirectionalLight&) = delete;
 
                 /**
                  * \brief Sets direction.
@@ -162,7 +168,9 @@ namespace selene
                            const Vector3d& color = Vector3d(1.0f, 1.0f, 1.0f),
                            float intensity = 1.0f,
                            float radius = 1.0f);
+                PointLight(const PointLight&) = delete;
                 ~PointLight();
+                PointLight& operator =(const PointLight&) = delete;
 
                 /**
                  * \brief Sets radius.
@@ -225,7 +233,9 @@ namespace selene
                           const Vector3d& color = Vector3d(1.0f, 1.0f, 1.0f),
                           float intensity = 1.0f,
                           float radius = 1.0f);
+                SpotLight(const SpotLight&) = delete;
                 ~SpotLight();
+                SpotLight& operator =(const SpotLight&) = delete;
 
                 /**
                  * \brief Sets direction.

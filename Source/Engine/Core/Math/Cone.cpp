@@ -8,10 +8,8 @@ namespace selene
 
         Cone::Cone(const Vector3d& apex,
                    const Vector3d& direction,
-                   float radius)
-        {
-                define(apex, direction, radius);
-        }
+                   float radius):
+                apex_(apex), direction_(direction), radius_(radius) {}
         Cone::~Cone() {}
 
         //-----------------------------------------------------------------

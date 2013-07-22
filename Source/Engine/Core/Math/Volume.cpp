@@ -7,13 +7,9 @@
 namespace selene
 {
 
-        Volume::Volume(const Plane* planes, uint8_t numPlanes)
+        Volume::Volume(const Plane* planes, uint8_t numPlanes): numPlanes_(0)
         {
                 define(planes, numPlanes);
-        }
-        Volume::Volume(const Volume& volume)
-        {
-                define(volume.planes_, volume.numPlanes_);
         }
         Volume::~Volume() {}
 
@@ -75,7 +71,7 @@ namespace selene
                                   elements[15] - elements[14]);
                 planes_[1].normalize();
 
-                // extract the frustum's near clipping plane and normalize it.
+                // extract the frustum's near clipping plane and normalize it
                 planes_[0].define(elements[ 3] + elements[ 2],
                                   elements[ 7] + elements[ 6],
                                   elements[11] + elements[10],

@@ -151,7 +151,9 @@ namespace selene
                                 typedef std::deque<T, RenderingMemoryAllocator<T>> ElementsContainer;
 
                                 List(): elements_(RenderingMemoryAllocator<T>(Renderer::getMemoryBuffer())) {}
+                                List(const List&) = delete;
                                 ~List() {}
+                                List& operator =(const List&) = delete;
 
                                 /**
                                  * \brief Adds element to the rendering list.
@@ -193,7 +195,9 @@ namespace selene
                         {
                         public:
                                 MeshSubsetNode();
+                                MeshSubsetNode(const MeshSubsetNode&) = delete;
                                 ~MeshSubsetNode();
+                                MeshSubsetNode& operator =(const MeshSubsetNode&) = delete;
 
                                 /**
                                  * \brief Adds mesh subset.
@@ -214,7 +218,9 @@ namespace selene
                         {
                         public:
                                 MeshNode();
+                                MeshNode(const MeshNode&) = delete;
                                 ~MeshNode();
+                                MeshNode& operator =(const MeshNode&) = delete;
 
                                 /**
                                  * \brief Adds mesh.
@@ -238,7 +244,9 @@ namespace selene
                         {
                         public:
                                 MaterialNode();
+                                MaterialNode(const MaterialNode&) = delete;
                                 ~MaterialNode();
+                                MaterialNode& operator =(const MaterialNode&) = delete;
 
                                 /**
                                  * \brief Adds material.
@@ -263,7 +271,9 @@ namespace selene
                         {
                         public:
                                 ActorNode();
+                                ActorNode(const ActorNode&) = delete;
                                 ~ActorNode();
+                                ActorNode& operator =(const ActorNode&) = delete;
 
                                 /**
                                  * \brief Clears actor node.
@@ -300,7 +310,9 @@ namespace selene
                         {
                         public:
                                 LightNode();
+                                LightNode(const LightNode&) = delete;
                                 ~LightNode();
+                                LightNode& operator =(const LightNode&) = delete;
 
                                 /**
                                  * \brief Adds light.
@@ -321,7 +333,9 @@ namespace selene
                         {
                         public:
                                 ParticleSystemNode();
+                                ParticleSystemNode(const ParticleSystemNode&) = delete;
                                 ~ParticleSystemNode();
+                                ParticleSystemNode& operator =(const ParticleSystemNode&) = delete;
 
                                 /**
                                  * \brief Adds particle system.
@@ -333,7 +347,9 @@ namespace selene
                         };
 
                         Data();
+                        Data(const Data&) = delete;
                         ~Data();
+                        Data& operator =(const Data&) = delete;
 
                         /**
                          * \brief Sets camera, which point of view will be used to render the scene.
@@ -418,7 +434,9 @@ namespace selene
                         };
 
                         Effects();
-                        ~Effects();
+                        Effects(const Effects&) = delete;
+                        virtual ~Effects();
+                        Effects& operator =(const Effects&) = delete;
 
                         /**
                          * \brief Enables effect.
@@ -489,7 +507,9 @@ namespace selene
                         Parameters(Application* application, FileManager* fileManager,
                                    uint32_t width, uint32_t height, std::ostream* log,
                                    uint8_t flags);
+                        Parameters(const Parameters&) = default;
                         virtual ~Parameters();
+                        Parameters& operator =(const Parameters&) = default;
 
                         /**
                          * \brief Returns application.
@@ -537,7 +557,9 @@ namespace selene
                 };
 
                 Renderer();
+                Renderer(const Renderer&) = delete;
                 virtual ~Renderer();
+                Renderer& operator =(const Renderer&) = delete;
 
                 /**
                  * \brief Initializes renderer.

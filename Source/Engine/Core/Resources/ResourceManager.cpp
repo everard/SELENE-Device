@@ -8,10 +8,8 @@ namespace selene
 
         std::set<ResourceManager*> ResourceManager::resourceManagers_;
 
-        ResourceManager::ResourceManager()
+        ResourceManager::ResourceManager(): resources_(), nullSharedPointer_(), isInitialized_(true)
         {
-                isInitialized_ = true;
-
                 try
                 {
                         resourceManagers_.insert(this);

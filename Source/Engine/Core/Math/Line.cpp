@@ -6,18 +6,15 @@
 namespace selene
 {
 
-        Line2d::Line2d(const Vector2d& normal, const Vector2d& point)
+        Line2d::Line2d(const Vector2d& normal, const Vector2d& point): Line2d()
         {
                 define(normal, point);
         }
-        Line2d::Line2d(const Vector2d* vertices)
+        Line2d::Line2d(const Vector2d* vertices): Line2d()
         {
                 define(vertices);
         }
-        Line2d::Line2d()
-        {
-                c_ = 0.0f;
-        }
+        Line2d::Line2d(): normal_(), c_(0.0f) {}
         Line2d::~Line2d() {}
 
         //--------------------------------------------------------------------------
@@ -56,7 +53,7 @@ namespace selene
                 vertices_[0] = vertices[0];
                 vertices_[1] = vertices[1];
         }
-        LineSegment2d::LineSegment2d() {}
+        LineSegment2d::LineSegment2d(): line_() {}
         LineSegment2d::~LineSegment2d() {}
 
         //--------------------------------------------------------------------------

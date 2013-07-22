@@ -16,6 +16,10 @@
 
 #include "Core/FileManager/FileManager.h"
 
+#include "Core/Helpers/Utility.h"
+
+#include "Core/Material/Material.h"
+
 #include "Core/Math/CollisionManager.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Matrix.h"
@@ -33,8 +37,6 @@
 #include "Core/Resources/Texture/Texture.h"
 #include "Core/Resources/Mesh/MeshFactory.h"
 #include "Core/Resources/Mesh/Mesh.h"
-
-#include "Core/Material/Material.h"
 
 #include "Scene/Nodes/ParticleSystem.h"
 #include "Scene/Nodes/Camera.h"

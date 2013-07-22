@@ -6,12 +6,9 @@
 namespace selene
 {
 
-        Material::Material()
-        {
-                specularLevel_ = glossiness_ = 0.0f;
-                opacity_ = 1.0f;
-                shadingType_ = MATERIAL_SHADING_UNKNOWN;
-        }
+        Material::Material():
+                specularLevel_(0.0f), glossiness_(0.0f), opacity_(1.0f),
+                shadingType_(MATERIAL_SHADING_UNKNOWN) {}
         Material::~Material() {}
 
         //---------------------------------------------------------------------------------------

@@ -13,14 +13,12 @@ namespace selene
                                            const Vector3d& velocity,
                                            const Vector4d& color,
                                            float lifeSpan,
-                                           float size)
+                                           float size):
+                position_(position), velocity_(velocity), size_(size),
+                fadeOutSpeed_(0.0f), color_(color)
         {
-                position_ = position;
-                velocity_ = velocity;
-                color_ = color;
-                size_ = size;
-
-                fadeOutSpeed_ = (lifeSpan > SELENE_EPSILON) ? (color_.w / lifeSpan) : 0.0f;
+                if(lifeSpan > SELENE_EPSILON)
+                        fadeOutSpeed_ = color_.w / lifeSpan;
         }
         ParticleSystem::Particle::~Particle() {}
 
@@ -66,23 +64,14 @@ namespace selene
                                        const Vector4d& color,
                                        const Vector2d& size,
                                        float density,
-                                       const Resource::Instance<Texture>& texture): Scene::Node(name),
-                                                                                    particles_(150)
+                                       const Resource::Instance<Texture>& texture):
+                Scene::Node(name), particles_(150), previousPosition_(), boundingBox_(),
+                elapsedTime_(0.0f), velocity_(velocity), lifeSpan_(lifeSpan),
+                size_(size), scattering_(scattering), color_(color),
+                density_(density), texture_(texture)
         {
                 setPosition(position);
                 setDirection(direction);
-
-                scattering_ = scattering;
-                velocity_ = velocity;
-                lifeSpan_ = lifeSpan;
-                color_ = color;
-                size_ = size;
-
-                density_ = density;
-                setTexture(texture);
-
-                elapsedTime_ = 0.0f;
-
                 previousPosition_ = getPosition();
         }
         ParticleSystem::~ParticleSystem() {}

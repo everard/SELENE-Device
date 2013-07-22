@@ -7,14 +7,12 @@
 namespace selene
 {
 
-        CollisionManager::Geometry::Geometry()
-        {
-                lineSegments = nullptr;
-                sweptCircles = nullptr;
-        }
+        CollisionManager::Geometry::Geometry():
+                lineSegments(nullptr), sweptCircles(nullptr) {}
         CollisionManager::Geometry::~Geometry() {}
 
-        CollisionManager::CollisionManager() {}
+        CollisionManager::CollisionManager():
+                geometry_(), maxRecursion_(0), recursion_(0), radius_(0.0f) {}
         CollisionManager::~CollisionManager() {}
 
         //-----------------------------------------------------------------------------------------------------------

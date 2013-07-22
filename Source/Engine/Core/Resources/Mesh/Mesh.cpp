@@ -6,22 +6,24 @@
 namespace selene
 {
 
-        Mesh::Subset::Subset()
-        {
-                vertexIndex = numVertices = faceIndex = numFaces = 0;
-        }
+        Mesh::Subset::Subset():
+                vertexIndex(0), numVertices(0), faceIndex(0),
+                numFaces(0), material() {}
         Mesh::Subset::~Subset() {}
 
-        Mesh::Mesh(const char* name): Resource(name) {}
+        Mesh::Data::Data(): faces(), subsets(), boundingBox(), skeleton() {}
+        Mesh::Data::~Data() {}
+
+        Mesh::Mesh(const char* name): Resource(name), data_() {}
         Mesh::~Mesh() {}
 
-        //-----------------------------------------------------------
+        //------------------------------------------------------------------
         Mesh::Data& Mesh::getData()
         {
                 return data_;
         }
 
-        //-----------------------------------------------------------
+        //------------------------------------------------------------------
         bool Mesh::hasSkeleton() const
         {
                 return static_cast<bool>(data_.skeleton);

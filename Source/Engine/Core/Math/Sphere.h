@@ -35,7 +35,9 @@ namespace selene
                  * \param[in] radius radius of the sphere
                  */
                 Sphere(const Vector3d& center = Vector3d(), float radius = 1.0f);
+                Sphere(const Sphere&) = default;
                 ~Sphere();
+                Sphere& operator =(const Sphere&) = default;
 
                 /**
                  * \brief Defines sphere with given center and radius.

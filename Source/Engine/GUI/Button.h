@@ -39,7 +39,9 @@ namespace selene
                        const Vector2d& position,
                        const Vector2d& size,
                        const char* text);
+                Button(const Button&) = delete;
                 ~Button();
+                Button& operator =(const Button&) = delete;
 
         protected:
                 /**

@@ -6,8 +6,8 @@
 
 #include "../Macros/Macros.h"
 #include <fstream>
-#include <vector>
 #include <string>
+#include <deque>
 
 namespace selene
 {
@@ -45,7 +45,9 @@ namespace selene
                  * \param[in] fileExists function which is used to check file existence
                  */
                 FileManager(bool (*fileExists)(const char*));
+                FileManager(const FileManager&) = delete;
                 virtual ~FileManager();
+                FileManager& operator =(const FileManager&) = delete;
 
                 /**
                  * \brief Adds a folder. Contents of this folder will be looked during search for files.
@@ -74,7 +76,7 @@ namespace selene
 
         protected:
                 mutable std::string fileName_;
-                std::vector<std::string> folders_;
+                std::deque<std::string> folders_;
                 bool (*fileExists_)(const char*);
 
         };

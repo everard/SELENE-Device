@@ -28,21 +28,15 @@ namespace selene
                  * \brief Constructs bag with given capacity.
                  * \param[in] capacity capacity of the bag
                  */
-                Bag(uint32_t capacity)
+                Bag(uint32_t capacity):
+                        data_(nullptr), elements_(nullptr),
+                        size_(0), capacity_(capacity)
                 {
-                        capacity_ = capacity;
-                        size_ = 0;
-
                         if(capacity_ == 0)
-                        {
-                                data_ = nullptr;
-                                elements_ = nullptr;
-                        }
-                        else
-                        {
-                                data_ = new(std::nothrow) uint8_t[capacity_ * sizeof(T)];
-                                elements_ = new(std::nothrow) T*[capacity_];
-                        }
+                                return;
+
+                        data_ = new(std::nothrow) uint8_t[capacity_ * sizeof(T)];
+                        elements_ = new(std::nothrow) T*[capacity_];
 
                         if(data_ == nullptr || elements_ == nullptr)
                         {
@@ -59,6 +53,7 @@ namespace selene
                         for(uint32_t i = 0; i < capacity_; ++i)
                                 elements_[i] = reinterpret_cast<T*>(&data_[i * sizeof(T)]);
                 }
+                Bag(const Bag<T>&) = delete;
                 ~Bag()
                 {
                         clear();
@@ -66,6 +61,7 @@ namespace selene
                         delete[] data_;
                         delete[] elements_;
                 }
+                Bag<T>& operator =(const Bag<T>&) = delete;
 
                 /**
                  * \brief Clears bag.
@@ -163,6 +159,7 @@ namespace selene
         private:
                 uint8_t* data_;
                 T** elements_;
+
                 volatile uint32_t size_;
                 uint32_t capacity_;
 

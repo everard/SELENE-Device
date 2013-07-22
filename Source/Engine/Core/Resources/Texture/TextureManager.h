@@ -21,7 +21,9 @@ namespace selene
         {
         public:
                 TextureManager();
+                TextureManager(const TextureManager&) = default;
                 ~TextureManager();
+                TextureManager& operator =(const TextureManager&) = default;
 
                 /**
                  * \brief Reads texture.

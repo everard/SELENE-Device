@@ -6,12 +6,8 @@
 namespace selene
 {
 
-        TextureManager::TextureManager()
-        {
-                totalSize_ = compressionFactor_ = 0;
-                memset(&ddsHeader_, 0, sizeof(DdsHeader));
-                isDxt_ = false;
-        }
+        TextureManager::TextureManager():
+                totalSize_(0), compressionFactor_(0), ddsHeader_(), isDxt_(false) {}
         TextureManager::~TextureManager() {}
 
         //-----------------------------------------------------------------------------------------------------

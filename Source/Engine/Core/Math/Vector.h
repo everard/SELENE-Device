@@ -33,7 +33,9 @@ namespace selene
                  * \param[in] y_ y coordinate of vector
                  */
                 explicit Vector2d(float x_ = 0.0f, float y_ = 0.0f);
+                Vector2d(const Vector2d&) = default;
                 ~Vector2d();
+                Vector2d& operator =(const Vector2d&) = default;
 
                 /**
                  * \brief Defines vector with given coordinates.
@@ -107,7 +109,9 @@ namespace selene
                  * \param[in] z_ z coordinate of vector
                  */
                 explicit Vector3d(const Vector2d& vector, float z_ = 0.0f);
+                Vector3d(const Vector3d&) = default;
                 ~Vector3d();
+                Vector3d& operator =(const Vector3d&) = default;
 
                 /**
                  * \brief Defines vector with given coordinates.
@@ -234,7 +238,9 @@ namespace selene
                  * \param[in] w_ w coordinate of vector
                  */
                 explicit Vector4d(const Vector3d& vector, float w_ = 0.0f);
+                Vector4d(const Vector4d&) = default;
                 ~Vector4d();
+                Vector4d& operator =(const Vector4d&) = default;
 
                 /**
                  * \brief Defines vector with given coordinates.
@@ -328,7 +334,9 @@ namespace selene
                  * \param[in] w_ w coordinate of quaternion
                  */
                 explicit Quaternion(const Vector3d& vector, float w_ = 0.0f);
+                Quaternion(const Quaternion&) = default;
                 ~Quaternion();
+                Quaternion& operator =(const Quaternion&) = default;
 
                 /**
                  * \brief Defines quaternion with given coordinates.

@@ -13,28 +13,23 @@ namespace selene
                                                                            float stoppingTransitionTime,
                                                                            float animationTime,
                                                                            float blendFactor,
-                                                                           Skeleton::Instance* skeletonInstance)
+                                                                           Skeleton::Instance* skeletonInstance):
+                meshAnimation_(meshAnimation), skeletonInstance_(skeletonInstance), numTimesToPlay_(0),
+                numTimesPlayed_(0), blendFactorTransitionTime_(0.0f), startingTransitionTime_(0.0f),
+                stoppingTransitionTime_(0.0f), animationTime_(0.0f), elapsedTime_(0.0f),
+                animationInterpolationScalar_(0.0f), blendFactor_(),
+                blendFactorInterpolationScalar_(1.0f),
+                state_(STOPPED)
         {
-                skeletonInstance_ = skeletonInstance;
-
-                meshAnimation_ = meshAnimation;
-
-                numTimesToPlay_ = 0;
-                numTimesPlayed_ = 0;
-
                 blendFactorTransitionTime_ =
                         blendFactorTransitionTime > SELENE_EPSILON ? blendFactorTransitionTime : 0.0f;
                 startingTransitionTime_ = startingTransitionTime > SELENE_EPSILON ? startingTransitionTime : 0.0f;
                 stoppingTransitionTime_ = stoppingTransitionTime > SELENE_EPSILON ? stoppingTransitionTime : 0.0f;
                 animationTime_ = animationTime > SELENE_EPSILON ? animationTime : 1.0f;
-                elapsedTime_ = animationInterpolationScalar_ = 0.0f;
 
                 blendFactor = blendFactor > SELENE_EPSILON ? blendFactor : 0.0f;
-                blendFactorInterpolationScalar_ = 1.0f;
                 blendFactor_.setValue(blendFactor, 0);
                 blendFactor_.setValue(blendFactor, 1);
-
-                state_ = STOPPED;
         }
         MeshAnimationProcessor::MixableMeshAnimation::~MixableMeshAnimation() {}
 
@@ -198,7 +193,8 @@ namespace selene
                 }
         }
 
-        MeshAnimationProcessor::MeshAnimationProcessor() {}
+        MeshAnimationProcessor::MeshAnimationProcessor():
+                mixableMeshAnimations_(), emptyMixableMeshAnimation_(), skeletonInstance_() {}
         MeshAnimationProcessor::~MeshAnimationProcessor()
         {
                 destroy();

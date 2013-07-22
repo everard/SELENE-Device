@@ -12,11 +12,12 @@ namespace selene
                        const Vector2d& fontSize,
                        const Vector2d& position,
                        const Vector2d& size,
-                       const char* text): Gui::Element(callbackFunction, backgroundColors, textColors,
-                                                       fontSize, position, size, text) {}
+                       const char* text):
+                Gui::Element(callbackFunction, backgroundColors, textColors,
+                             fontSize, position, size, text) {}
         Button::~Button() {}
 
-        //--------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
         void Button::process(const Vector2d& cursorPosition,
                              uint8_t pressedControlButtons,
                              uint8_t)

@@ -21,7 +21,9 @@ namespace selene
         {
         public:
                 MeshManager();
+                MeshManager(const MeshManager&) = default;
                 ~MeshManager();
+                MeshManager& operator =(const MeshManager&) = default;
 
                 /**
                  * \brief Reads mesh.
@@ -44,28 +46,6 @@ namespace selene
                  */
                 bool writeMesh(std::ostream& stream, const Mesh::Data& meshData);
 
-        protected:
-                enum
-                {
-                        MAX_STRING_LENGTH = 1024
-                };
-
-                /**
-                 * \brief Reads string.
-                 * \param[in] stream std::istream from which string is read
-                 * \param[out] string c-string
-                 * \return true if string has been successfully read
-                 */
-                bool readString(std::istream& stream, char* string);
-
-                /**
-                 * \brief Writes string.
-                 * \param[in] stream std::ostream to which string is written
-                 * \param[in] string c-string
-                 * \return true if string has been successfully written
-                 */
-                bool writeString(std::ostream& stream, const char* string);
-
         private:
                 /**
                  * Represents vertex stream. Holds information about vertex stride and
@@ -76,6 +56,11 @@ namespace selene
                 public:
                         uint8_t stride;
                         bool isPresent;
+
+                        VertexStream();
+                        VertexStream(const VertexStream&) = default;
+                        ~VertexStream();
+                        VertexStream& operator =(const VertexStream&) = default;
 
                 };
 

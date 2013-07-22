@@ -20,6 +20,11 @@ namespace selene
         class Socket
         {
         public:
+                Socket() = default;
+                Socket(const Socket&) = delete;
+                virtual ~Socket() = 0;
+                Socket& operator =(const Socket&) = delete;
+
                 /**
                  * \brief Receives data.
                  * \param[in] buffer buffer which will hold data

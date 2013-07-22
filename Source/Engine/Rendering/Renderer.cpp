@@ -71,7 +71,7 @@ namespace selene
                 return addElement(element, renderingUnit);
         }
 
-        Renderer::Data::ActorNode::ActorNode() {}
+        Renderer::Data::ActorNode::ActorNode(): emptyMaterialNode_() {}
         Renderer::Data::ActorNode::~ActorNode() {}
 
         //-----------------------------------------------------------------------------------------------------------
@@ -165,10 +165,7 @@ namespace selene
                 return true;
         }
 
-        Renderer::Data::Data()
-        {
-                camera_ = nullptr;
-        }
+        Renderer::Data::Data(): actorNode_(), lightNode_(), particleSystemNode_(), camera_(nullptr) {}
         Renderer::Data::~Data() {}
 
         //-----------------------------------------------------------------------------------------------------------
@@ -295,15 +292,9 @@ namespace selene
 
         Renderer::Parameters::Parameters(Application* application, FileManager* fileManager,
                                          uint32_t width, uint32_t height, std::ostream* log,
-                                         uint8_t flags)
-        {
-                application_ = application;
-                fileManager_ = fileManager;
-                width_  = width;
-                height_ = height;
-                log_   = log;
-                flags_ = flags;
-        }
+                                         uint8_t flags):
+                application_(application), fileManager_(fileManager), width_(width),
+                height_(height), log_(log), flags_(flags) {}
         Renderer::Parameters::~Parameters() {}
 
         //-----------------------------------------------------------------------------------------------------------

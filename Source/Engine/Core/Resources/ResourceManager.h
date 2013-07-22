@@ -64,7 +64,9 @@ namespace selene
         {
         public:
                 ResourceManager();
+                ResourceManager(const ResourceManager&) = delete;
                 ~ResourceManager();
+                ResourceManager& operator =(const ResourceManager&) = delete;
 
                 /**
                  * \brief Returns number of resources.

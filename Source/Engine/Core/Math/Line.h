@@ -31,8 +31,10 @@ namespace selene
                  * \param[in] vertices array of two vertices
                  */
                 Line2d(const Vector2d* vertices);
+                Line2d(const Line2d&) = default;
                 Line2d();
                 ~Line2d();
+                Line2d& operator =(const Line2d&) = default;
 
                 /**
                  * \brief Defines line with given normal and point.
@@ -77,8 +79,10 @@ namespace selene
                  * \param[in] vertices vertices of the line segment
                  */
                 LineSegment2d(const Vector2d* vertices);
+                LineSegment2d(const LineSegment2d&) = default;
                 LineSegment2d();
                 ~LineSegment2d();
+                LineSegment2d& operator =(const LineSegment2d&) = default;
 
                 /**
                  * \brief Defines line segment with given vertices.

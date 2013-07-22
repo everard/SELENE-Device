@@ -135,7 +135,9 @@ namespace selene
                                              float animationTime = 0.0f,
                                              float blendFactor   = 0.0f,
                                              Skeleton::Instance* skeletonInstance = nullptr);
+                        MixableMeshAnimation(const MixableMeshAnimation&) = delete;
                         ~MixableMeshAnimation();
+                        MixableMeshAnimation& operator =(const MixableMeshAnimation&) = delete;
 
                         /**
                          * \brief Plays mesh animation.
@@ -201,7 +203,9 @@ namespace selene
                 };
 
                 MeshAnimationProcessor();
+                MeshAnimationProcessor(const MeshAnimationProcessor&) = delete;
                 ~MeshAnimationProcessor();
+                MeshAnimationProcessor& operator =(const MeshAnimationProcessor&) = delete;
 
                 /**
                  * \brief Initializes mesh animation processor.

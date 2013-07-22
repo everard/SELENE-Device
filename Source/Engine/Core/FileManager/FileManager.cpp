@@ -8,10 +8,8 @@
 namespace selene
 {
 
-        FileManager::FileManager(bool (*fileExists)(const char*))
-        {
-                fileExists_ = fileExists;
-        }
+        FileManager::FileManager(bool (*fileExists)(const char*)):
+                fileName_(), folders_(), fileExists_(fileExists) {}
         FileManager::~FileManager() {}
 
         //----------------------------------------------------------------------------

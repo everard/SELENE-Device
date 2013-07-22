@@ -32,12 +32,16 @@ namespace selene
                  * \brief Constructs rendering node with given memory buffer.
                  * \param[in] memoryBuffer rendering memory buffer
                  */
-                RenderingNode(RenderingMemoryBuffer& memoryBuffer)
+                RenderingNode(RenderingMemoryBuffer& memoryBuffer):
+                        memoryBuffer_(&memoryBuffer), elementsMap_(nullptr),
+                        currentElement_(nullptr), currentUnit_(-1)
                 {
-                        memoryBuffer_ = &memoryBuffer;
-                        clear();
+                        for(uint8_t i = 0; i < N; ++i)
+                                elements_[i] = nullptr;
                 }
-                ~RenderingNode() {}
+                RenderingNode(const RenderingNode&) = delete;
+                virtual ~RenderingNode() {}
+                RenderingNode& operator =(const RenderingNode&) = delete;
 
                 /**
                  * \brief Clears node.
@@ -150,6 +154,11 @@ namespace selene
                         K* key;
                         D data;
                         bool isListed;
+
+                        Element(): key(nullptr), data(), isListed(false) {}
+                        Element(const Element&) = delete;
+                        ~Element() {}
+                        Element& operator =(const Element&) = delete;
 
                 };
 

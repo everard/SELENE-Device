@@ -12,7 +12,11 @@ namespace selene
                        const Vector3d& upVector,
                        const Vector4d& projectionParameters,
                        float distance,
-                       Gui* gui): Scene::Node(name)
+                       Gui* gui):
+                Scene::Node(name), projectionMatrix_(), projectionInvMatrix_(), viewProjectionMatrix_(),
+                viewMatrix_(), projectionParameters_(), horizontalAngle_(0.0f), verticalAngle_(0.0f),
+                distance_(0.0f), strafeDirection_(), target_(), frustum_(),
+                renderingData_(), gui_(gui)
         {
                 setPosition(position);
                 setDirection(direction);
@@ -21,10 +25,7 @@ namespace selene
                 setPerspective(projectionParameters);
                 setDistance(distance);
 
-                horizontalAngle_ = verticalAngle_ = 0.0f;
-
                 renderingData_.setCamera(*this);
-                gui_ = gui;
         }
         Camera::~Camera() {}
 

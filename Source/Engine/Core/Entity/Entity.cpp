@@ -7,27 +7,25 @@
 namespace selene
 {
 
-        Entity::Entity(const char* name)
+        Entity::Entity(const char* name): name_(nullptr)
         {
-                name_ = nullptr;
+                if(name == nullptr)
+                        return;
 
-                if(name != nullptr)
-                {
-                        auto nameLength = std::strlen(name) + 1;
-                        name_ = new(std::nothrow) char[nameLength];
+                auto nameLength = std::strlen(name) + 1;
+                name_ = new(std::nothrow) char[nameLength];
 
-                        if(name_ == nullptr)
-                                return;
+                if(name_ == nullptr)
+                        return;
 
-                        std::memcpy(name_, name, nameLength);
-                }
+                std::memcpy(name_, name, nameLength);
         }
         Entity::~Entity()
         {
                 delete[] name_;
         }
 
-        //---------------------------------------------------------
+        //-----------------------------------------------------
         const char* Entity::getName() const
         {
                 return name_;

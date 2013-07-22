@@ -59,7 +59,9 @@ namespace selene
                 };
 
                 Message();
+                Message(const Message&) = default;
                 ~Message();
+                Message& operator =(const Message&) = default;
 
                 /**
                  * \brief Returns data.

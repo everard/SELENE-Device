@@ -6,17 +6,14 @@
 namespace selene
 {
 
-        Plane::Plane(float a, float b, float c, float d)
-        {
-                define(a, b, c, d);
-        }
-        Plane::Plane(const Vector3d& normal, const Vector3d& point)
-        {
-                define(normal, point);
-        }
+        Plane::Plane(float a, float b, float c, float d):
+                normal_(a, b, c), d_(d) {}
+        Plane::Plane(const Vector3d& normal, const Vector3d& point):
+                normal_(normal), d_(-normal.dot(point)) {}
         Plane::Plane(const Vector3d& point0,
                      const Vector3d& point1,
-                     const Vector3d& point2)
+                     const Vector3d& point2):
+                normal_(), d_(0.0f)
         {
                 define(point0, point1, point2);
         }

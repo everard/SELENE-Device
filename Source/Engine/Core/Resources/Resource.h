@@ -44,23 +44,18 @@ namespace selene
                          * to the resource of derived class (T).
                          * \param[in] sharedPointer std::shared_ptr to the resource
                          */
-                        Instance(const std::shared_ptr<Resource>& sharedPointer)
+                        Instance(const std::shared_ptr<Resource>& sharedPointer): Instance()
                         {
-                                resource_ = nullptr;
-
                                 initialize(dynamic_cast<T*>(sharedPointer.get()));
 
                                 if(resource_ != nullptr)
                                         weakPointer_ = sharedPointer;
                         }
-                        Instance(const Instance<T>& instance)
+                        Instance(const Instance<T>& instance): Instance()
                         {
                                 *this = instance;
                         }
-                        Instance()
-                        {
-                                resource_ = nullptr;
-                        }
+                        Instance(): weakPointer_(), resource_(nullptr) {}
                         ~Instance()
                         {
                                 if(weakPointer_.expired())
@@ -70,7 +65,7 @@ namespace selene
                         }
 
                         /**
-                         * \brief Assignes resource instance.
+                         * \brief Assigns resource instance.
                          *
                          * Current resource is released and replaced by another resource, which is then requested.
                          * \param[in] instance another resource instance which will be assigned to current
@@ -135,7 +130,9 @@ namespace selene
                  * \param[in] name name of the resource
                  */
                 Resource(const char* name);
+                Resource(const Resource&) = delete;
                 virtual ~Resource();
+                Resource& operator =(const Resource&) = delete;
 
                 /**
                  * \brief Returns true if resource is used.

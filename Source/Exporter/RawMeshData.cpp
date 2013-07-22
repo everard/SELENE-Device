@@ -198,11 +198,11 @@ namespace selene
                                 return false;
                         }
 
-                        char boneName[MAX_STRING_LENGTH];
+                        char boneName[Utility::MAX_STRING_LENGTH];
 
                         for(uint32_t i = 0; i < bones_.getSize(); ++i)
                         {
-                                if(!readString(stream, boneName))
+                                if(!Utility::readString(stream, boneName))
                                 {
                                         std::cout << "FAILED\n";
                                         return false;
@@ -257,11 +257,11 @@ namespace selene
                 stream.read(reinterpret_cast<char*>(&material.opacity), sizeof(float));
 
                 // read texture map file names
-                char textureMapFileName[MAX_STRING_LENGTH];
+                char textureMapFileName[Utility::MAX_STRING_LENGTH];
 
                 for(uint32_t i = 0; i < NUM_OF_TEXTURE_MAP_TYPES; ++i)
                 {
-                        if(readString(stream, textureMapFileName))
+                        if(Utility::readString(stream, textureMapFileName))
                                 material.textureMapFileNames[i] = textureMapFileName;
                 }
 

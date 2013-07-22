@@ -31,6 +31,11 @@ namespace selene
                 uint32_t bBitMask;
                 uint32_t aBitMask;
 
+                DdsPixelFormat();
+                DdsPixelFormat(const DdsPixelFormat&) = default;
+                ~DdsPixelFormat();
+                DdsPixelFormat& operator =(const DdsPixelFormat&) = default;
+
         };
 
         /**
@@ -42,6 +47,11 @@ namespace selene
                 uint32_t caps1;
                 uint32_t caps2;
                 uint32_t reserved[2];
+
+                DdsCaps();
+                DdsCaps(const DdsCaps&) = default;
+                ~DdsCaps();
+                DdsCaps& operator =(const DdsCaps&) = default;
 
         };
 
@@ -62,6 +72,11 @@ namespace selene
                 DdsPixelFormat pixelFormat;
                 DdsCaps caps;
                 uint32_t reserved2;
+
+                DdsHeader();
+                DdsHeader(const DdsHeader&) = default;
+                ~DdsHeader();
+                DdsHeader& operator =(const DdsHeader&) = default;
 
         };
 

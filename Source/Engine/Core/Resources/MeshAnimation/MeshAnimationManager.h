@@ -18,11 +18,13 @@ namespace selene
         /**
          * Represents mesh animation manager. Reads mesh animation from std::istream.
          */
-        class MeshAnimationManager: protected MeshManager
+        class MeshAnimationManager
         {
         public:
                 MeshAnimationManager();
+                MeshAnimationManager(const MeshAnimationManager&) = default;
                 ~MeshAnimationManager();
+                MeshAnimationManager& operator =(const MeshAnimationManager&) = default;
 
                 /**
                  * \brief Reads mesh animation.

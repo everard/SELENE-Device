@@ -47,7 +47,9 @@ namespace selene
                         std::shared_ptr<Material> material;
 
                         Subset();
+                        Subset(const Subset&) = delete;
                         ~Subset();
+                        Subset& operator =(const Subset&) = delete;
 
                 };
 
@@ -62,8 +64,14 @@ namespace selene
                 public:
                         Array<uint8_t, uint32_t> vertices[NUM_OF_VERTEX_STREAMS], faces;
                         Array<Subset, uint16_t> subsets;
+
                         Box boundingBox;
                         std::shared_ptr<Skeleton> skeleton;
+
+                        Data();
+                        Data(const Data&) = delete;
+                        ~Data();
+                        Data& operator =(const Data&) = delete;
 
                 };
 
@@ -72,7 +80,9 @@ namespace selene
                  * \param[in] name name of the mesh
                  */
                 Mesh(const char* name);
+                Mesh(const Mesh&) = delete;
                 ~Mesh();
+                Mesh& operator =(const Mesh&) = delete;
 
                 /**
                  * \brief Returns mesh data.

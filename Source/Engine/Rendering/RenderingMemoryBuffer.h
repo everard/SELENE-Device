@@ -24,7 +24,9 @@ namespace selene
         {
         public:
                 RenderingMemoryBuffer();
+                RenderingMemoryBuffer(const RenderingMemoryBuffer&) = delete;
                 ~RenderingMemoryBuffer();
+                RenderingMemoryBuffer& operator =(const RenderingMemoryBuffer&) = delete;
 
                 /**
                  * \brief Initializes rendering memory buffer.

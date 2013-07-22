@@ -104,7 +104,9 @@ namespace selene
                                 const Vector2d& position,
                                 const Vector2d& size,
                                 const char* text);
+                        Element(const Element&) = delete;
                         virtual ~Element();
+                        Element& operator =(const Element&) = delete;
 
                         /**
                          * \brief Returns ID.
@@ -210,7 +212,9 @@ namespace selene
                 };
 
                 Gui();
+                Gui(const Gui&) = delete;
                 virtual ~Gui();
+                Gui& operator =(const Gui&) = delete;
 
                 /**
                  * \brief Destroys GUI.

@@ -32,7 +32,9 @@ namespace selene
                  * \param[in] direction direction of the ray
                  */
                 Ray2d(const Vector2d& origin, const Vector2d& direction);
+                Ray2d(const Ray2d&) = default;
                 ~Ray2d();
+                Ray2d& operator =(const Ray2d&) = default;
 
                 /**
                  * \brief Defines ray with given origin and direction (direction must be already normalized).
@@ -106,7 +108,9 @@ namespace selene
                  * \param[in] direction direction of the ray
                  */
                 Ray3d(const Vector3d& origin, const Vector3d& direction);
+                Ray3d(const Ray3d&) = default;
                 ~Ray3d();
+                Ray3d& operator =(const Ray3d&) = default;
 
                 /**
                  * \brief Defines ray with given origin and direction (direction must be already normalized).

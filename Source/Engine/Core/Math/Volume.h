@@ -29,8 +29,9 @@ namespace selene
                  * \param[in] numPlanes number of bounding planes
                  */
                 Volume(const Plane* planes = nullptr, uint8_t numPlanes = 0);
-                Volume(const Volume& volume);
+                Volume(const Volume&) = default;
                 ~Volume();
+                Volume& operator =(const Volume&) = default;
 
                 /**
                  * \brief Defines volume with given planes.

@@ -80,7 +80,9 @@ namespace selene
                          * \param[in] name name of the node
                          */
                         Node(const char* name);
+                        Node(const Node&) = delete;
                         virtual ~Node();
+                        Node& operator =(const Node&) = delete;
 
                         /**
                          * \brief Sets position of the node in local space.
@@ -215,7 +217,9 @@ namespace selene
                 };
 
                 Scene();
+                Scene(const Scene&) = delete;
                 ~Scene();
+                Scene& operator =(const Scene&) = delete;
 
                 /**
                  * \brief Destroys scene.

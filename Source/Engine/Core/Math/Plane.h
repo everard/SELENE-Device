@@ -43,7 +43,9 @@ namespace selene
                 Plane(const Vector3d& point0,
                       const Vector3d& point1,
                       const Vector3d& point2);
+                Plane(const Plane&) = default;
                 ~Plane();
+                Plane& operator =(const Plane&) = default;
 
                 /**
                  * \brief Defines plane with given coefficients.

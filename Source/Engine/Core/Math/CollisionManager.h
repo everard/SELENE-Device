@@ -33,12 +33,16 @@ namespace selene
                         std::vector<PSweptCircle>* sweptCircles;
 
                         Geometry();
+                        Geometry(const Geometry&) = default;
                         ~Geometry();
+                        Geometry& operator =(const Geometry&) = default;
 
                 };
 
                 CollisionManager();
+                CollisionManager(const CollisionManager&) = default;
                 ~CollisionManager();
+                CollisionManager& operator =(const CollisionManager&) = default;
 
                 /**
                  * \brief Determines intersection between ray and geometry.

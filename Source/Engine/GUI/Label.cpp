@@ -12,8 +12,9 @@ namespace selene
                      const Vector2d& fontSize,
                      const Vector2d& position,
                      const Vector2d& size,
-                     const char* text): Gui::Element(callbackFunction, backgroundColors, textColors,
-                                                     fontSize, position, size, text) {}
+                     const char* text):
+                Gui::Element(callbackFunction, backgroundColors, textColors,
+                             fontSize, position, size, text) {}
         Label::~Label() {}
 
 }

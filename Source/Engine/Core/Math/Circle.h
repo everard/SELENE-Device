@@ -26,7 +26,9 @@ namespace selene
                  * \param[in] radius radius of the circle
                  */
                 Circle(const Vector2d& center, float radius);
+                Circle(const Circle&) = default;
                 ~Circle();
+                Circle& operator =(const Circle&) = default;
 
                 /**
                  * \brief Defines circle with given center and radius.
@@ -79,8 +81,10 @@ namespace selene
                  */
                 SweptCircle(const Vector2d& center, float radius,
                             const Vector2d& direction);
+                SweptCircle(const SweptCircle&) = default;
                 SweptCircle();
                 ~SweptCircle();
+                SweptCircle& operator =(const SweptCircle&) = default;
 
                 /**
                  * \brief Defines swept circle with given center, radius and direction.

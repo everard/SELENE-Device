@@ -39,7 +39,9 @@ namespace selene
                       const Vector2d& position,
                       const Vector2d& size,
                       const char* text);
+                Label(const Label&) = delete;
                 ~Label();
+                Label& operator =(const Label&) = delete;
 
         };
 

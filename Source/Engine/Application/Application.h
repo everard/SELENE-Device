@@ -48,7 +48,9 @@ namespace selene
                  * \param[in] height rendering area height in pixels
                  */
                 Application(const char* name, uint32_t width, uint32_t height);
+                Application(const Application&) = delete;
                 virtual ~Application();
+                Application& operator =(const Application&) = delete;
 
                 /**
                  * \brief Initializes application.

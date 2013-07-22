@@ -12,14 +12,11 @@
 namespace selene
 {
 
-        Scene::Node::Node(const char* name): Entity(name)
+        Scene::Node::Node(const char* name):
+                Entity(name), worldMatrix_(), skeletonInstance_(nullptr),
+                boneIndex_(-1), parentNode_(nullptr), childNodes_()
         {
                 scale_[ORIGINAL].define(1.0f);
-
-                skeletonInstance_ = nullptr;
-                boneIndex_ = -1;
-
-                parentNode_ = nullptr;
         }
         Scene::Node::~Node()
         {
@@ -225,11 +222,9 @@ namespace selene
                 return false;
         }
 
-        Scene::Scene()
-        {
-                numVisibleActors_ = numVisibleLights_ = 0;
-                numVisibleParticleSystems_ = 0;
-        }
+        Scene::Scene():
+                activeCamera_(), actors_(), lights_(), cameras_(), particleSystems_(),
+                numVisibleActors_(0), numVisibleLights_(0), numVisibleParticleSystems_(0) {}
         Scene::~Scene()
         {
                 destroy();

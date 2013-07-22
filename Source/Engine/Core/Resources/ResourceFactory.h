@@ -35,7 +35,9 @@ namespace selene
                  * \param[in] fileManager file manager
                  */
                 ResourceFactory(FileManager* fileManager = nullptr);
+                ResourceFactory(const ResourceFactory&) = delete;
                 virtual ~ResourceFactory();
+                ResourceFactory& operator =(const ResourceFactory&) = delete;
 
                 /**
                  * \brief Sets file manager.

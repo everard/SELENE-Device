@@ -7,27 +7,23 @@
 namespace selene
 {
 
-        ResourceFactory::ResourceFactory(FileManager* fileManager)
-        {
-                setFileManager(fileManager);
-                resourceManager_ = nullptr;
-                resourceFactory_ = nullptr;
-        }
+        ResourceFactory::ResourceFactory(FileManager* fileManager):
+                fileManager_(fileManager), resourceManager_(nullptr), resourceFactory_(nullptr) {}
         ResourceFactory::~ResourceFactory() {}
 
-        //------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------
         void ResourceFactory::setFileManager(FileManager* fileManager)
         {
                 fileManager_ = fileManager;
         }
 
-        //------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------
         void ResourceFactory::setResourceManager(ResourceManager* resourceManager)
         {
                 resourceManager_ = resourceManager;
         }
 
-        //------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------
         void ResourceFactory::setResourceFactory(ResourceFactory* resourceFactory)
         {
                 resourceFactory_ = resourceFactory;

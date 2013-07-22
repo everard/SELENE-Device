@@ -32,7 +32,9 @@ namespace selene
                  * \param[in] flags status flags
                  */
                 Status(uint8_t flags = 0);
+                Status(const Status&) = default;
                 virtual ~Status();
+                Status& operator =(const Status&) = default;
 
                 /**
                  * \brief Sets flags.

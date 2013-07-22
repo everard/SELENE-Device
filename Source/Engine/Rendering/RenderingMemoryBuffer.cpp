@@ -7,11 +7,8 @@
 namespace selene
 {
 
-        RenderingMemoryBuffer::RenderingMemoryBuffer()
-        {
-                allocatedMemory_ = nullptr;
-                location_ = size_ = 0;
-        }
+        RenderingMemoryBuffer::RenderingMemoryBuffer():
+                allocatedMemory_(nullptr), location_(0), size_(0) {}
         RenderingMemoryBuffer::~RenderingMemoryBuffer()
         {
                 destroy();

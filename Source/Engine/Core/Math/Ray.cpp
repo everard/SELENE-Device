@@ -9,10 +9,8 @@
 namespace selene
 {
 
-        Ray2d::Ray2d(const Vector2d& origin, const Vector2d& direction)
-        {
-                define(origin, direction);
-        }
+        Ray2d::Ray2d(const Vector2d& origin, const Vector2d& direction):
+                origin_(origin), direction_(direction) {}
         Ray2d::~Ray2d() {}
 
         //--------------------------------------------------------------------------------------------------
@@ -92,10 +90,8 @@ namespace selene
                 return true;
         }
 
-        Ray3d::Ray3d(const Vector3d& origin, const Vector3d& direction)
-        {
-                define(origin, direction);
-        }
+        Ray3d::Ray3d(const Vector3d& origin, const Vector3d& direction):
+                origin_(origin), direction_(direction) {}
         Ray3d::~Ray3d() {}
 
         //--------------------------------------------------------------------------------------------------

@@ -8,10 +8,8 @@
 namespace selene
 {
 
-        Light::Light(const char* name): Scene::Node(name)
-        {
-                intensity_ = 1.0f;
-        }
+        Light::Light(const char* name, const Vector3d& color, float intensity):
+                Scene::Node(name), volume_(), color_(color), intensity_(intensity) {}
         Light::~Light() {}
 
         //------------------------------------------------------------------------------------------------
@@ -49,13 +47,10 @@ namespace selene
                                            const Vector3d& direction,
                                            const Vector3d& color,
                                            float intensity,
-                                           float size): Light(name)
+                                           float size):
+                Light(name, color, intensity), direction_(), size_(size)
         {
                 setDirection(direction);
-                color_ = color;
-
-                intensity_ = intensity;
-                size_ = size;
         }
         DirectionalLight::~DirectionalLight() {}
 
@@ -116,12 +111,10 @@ namespace selene
                                const Vector3d& position,
                                const Vector3d& color,
                                float intensity,
-                               float radius): Light(name)
+                               float radius):
+                Light(name, color, intensity), boundingSphere_()
         {
                 positions_[ORIGINAL] = position;
-                color_ = color;
-
-                intensity_ = intensity;
                 boundingSphere_.setRadius(radius);
         }
         PointLight::~PointLight() {}
@@ -206,13 +199,12 @@ namespace selene
                              const Vector3d& direction,
                              const Vector3d& color,
                              float intensity,
-                             float radius): Light(name)
+                             float radius):
+                Light(name, color, intensity), boundingCone_(), viewProjectionMatrix_(),
+                viewMatrix_(), projectionParameters_(), cosTheta_(0.0f)
         {
                 positions_[ORIGINAL]  = position;
                 directions_[ORIGINAL] = direction;
-                color_ = color;
-
-                intensity_ = intensity;
                 boundingCone_.setRadius(radius);
         }
         SpotLight::~SpotLight() {}
@@ -315,14 +307,14 @@ namespace selene
                         directionLength = 1.0f;
 
                 float tanTheta = boundingCone_.getRadius() / directionLength;
-                cosTheta_ = sqrt(1.0f / (1.0f + tanTheta * tanTheta));
+                cosTheta_ = std::sqrt(1.0f / (1.0f + tanTheta * tanTheta));
 
-                float fov = 2.0f * atan(tanTheta) * (180.0f / SELENE_PI);
+                float fov = 2.0f * std::atan(tanTheta) * (180.0f / SELENE_PI);
 
                 Matrix projectionMatrix;
                 Vector3d upVector;
 
-                if(fabs(direction.x) < SELENE_EPSILON && fabs(direction.y) < SELENE_EPSILON)
+                if(std::fabs(direction.x) < SELENE_EPSILON && std::fabs(direction.y) < SELENE_EPSILON)
                         upVector = Vector3d(0.0f, 1.0f, 0.0f).cross(direction);
                 else
                         upVector = Vector3d(0.0f, 0.0f, 1.0f).cross(direction);

@@ -37,6 +37,11 @@ namespace selene
                         Quaternion rotation;
                         Vector3d position;
 
+                        Transform();
+                        Transform(const Transform&) = default;
+                        ~Transform();
+                        Transform& operator =(const Transform&) = default;
+
                         /**
                          * \brief Creates identity transform.
                          */
@@ -75,6 +80,11 @@ namespace selene
                         std::string name;
                         int32_t parent;
 
+                        Bone();
+                        Bone(const Bone&) = default;
+                        ~Bone();
+                        Bone& operator =(const Bone&) = default;
+
                 };
 
                 /**
@@ -86,6 +96,11 @@ namespace selene
                         Transform transform;
                         std::string boneName;
 
+                        BoneTransform();
+                        BoneTransform(const BoneTransform&) = default;
+                        ~BoneTransform();
+                        BoneTransform& operator =(const BoneTransform&) = default;
+
                 };
 
                 /**
@@ -96,7 +111,9 @@ namespace selene
                 {
                 public:
                         Instance();
+                        Instance(const Instance&) = delete;
                         ~Instance();
+                        Instance& operator =(const Instance&) = delete;
 
                         /**
                          * \brief Initializes skeleton instance with skeleton.
@@ -161,7 +178,9 @@ namespace selene
                 };
 
                 Skeleton();
+                Skeleton(const Skeleton&) = delete;
                 ~Skeleton();
+                Skeleton& operator =(const Skeleton&) = delete;
 
                 /**
                  * \brief Initializes skeleton.
@@ -192,13 +211,6 @@ namespace selene
                  * \return index of the bone with given name (or -1 if bone could not be found)
                  */
                 int32_t getBoneIndex(const std::string& boneName) const;
-
-                /**
-                 * \brief Assignes skeleton.
-                 * \param[in] skeleton another skeleton which will be assigned to current
-                 * \return reference to the skeleton
-                 */
-                Skeleton& operator =(const Skeleton& skeleton);
 
         private:
                 Array<Bone, uint16_t> bones_;

@@ -12,16 +12,14 @@ namespace selene
                               const Vector2d& fontSize,
                               const Vector2d& position,
                               const Vector2d& size,
-                              const char* text)
+                              const char* text):
+                callbackFunction_(callbackFunction), blackColor_(),
+                fontSize_(fontSize), position_(position),
+                size_(size), text_(), id_(-1),
+                gui_(nullptr)
         {
-                callbackFunction_ = callbackFunction;
-
-                memcpy(backgroundColors_, backgroundColors, sizeof(backgroundColors_));
-                memcpy(textColors_, textColors, sizeof(textColors_));
-
-                fontSize_ = fontSize;
-                position_ = position;
-                size_ = size;
+                std::memcpy(backgroundColors_, backgroundColors, sizeof(backgroundColors_));
+                std::memcpy(textColors_, textColors, sizeof(textColors_));
 
                 if(text != nullptr)
                 {
@@ -31,10 +29,6 @@ namespace selene
                         }
                         catch(...) {}
                 }
-
-                id_ = -1;
-
-                gui_ = nullptr;
         }
         Gui::Element::~Element() {}
 
@@ -142,10 +136,7 @@ namespace selene
                         setFlags(GUI_ELEMENT_TOUCHED);
         }
 
-        Gui::Gui()
-        {
-                nextElementId_ = 0;
-        }
+        Gui::Gui(): elements_(), activeElement_(), cursorPosition_(), nextElementId_(0) {}
         Gui::~Gui()
         {
                 destroy();

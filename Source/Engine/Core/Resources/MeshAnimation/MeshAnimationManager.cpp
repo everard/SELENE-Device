@@ -2,6 +2,7 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "MeshAnimationManager.h"
+#include "../../Helpers/Utility.h"
 
 namespace selene
 {
@@ -32,7 +33,7 @@ namespace selene
                 if(!meshAnimationKeys.create(numMeshAnimationKeys))
                         return false;
 
-                char boneName[MAX_STRING_LENGTH];
+                char boneName[Utility::MAX_STRING_LENGTH];
 
                 try
                 {
@@ -49,7 +50,7 @@ namespace selene
 
                                 for(uint16_t j = 0; j < meshAnimationKey.getSize(); ++j)
                                 {
-                                        if(!readString(stream, boneName))
+                                        if(!Utility::readString(stream, boneName))
                                                 return false;
 
                                         Skeleton::BoneTransform& boneTransform = meshAnimationKey[j];

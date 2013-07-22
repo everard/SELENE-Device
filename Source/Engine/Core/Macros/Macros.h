@@ -32,6 +32,16 @@ namespace selene
         // Epsilon
         #define SELENE_EPSILON 0.001f
 
+        using std::uint32_t;
+        using std::uint16_t;
+        using std::uint8_t;
+
+        using std::int32_t;
+        using std::int16_t;
+        using std::int8_t;
+
+        using std::size_t;
+
 }
 
 #endif

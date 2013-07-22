@@ -49,7 +49,9 @@ namespace selene
                         uint8_t format, bpp;
 
                         Data();
+                        Data(const Data&) = delete;
                         ~Data();
+                        Data& operator =(const Data&) = delete;
 
                 };
 
@@ -58,7 +60,9 @@ namespace selene
                  * \param[in] name name of the texture
                  */
                 Texture(const char* name);
+                Texture(const Texture&) = delete;
                 ~Texture();
+                Texture& operator =(const Texture&) = delete;
 
                 /**
                  * \brief Returns texture data.

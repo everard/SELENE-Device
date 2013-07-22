@@ -6,10 +6,7 @@
 namespace selene
 {
 
-        Status::Status(uint8_t flags)
-        {
-                flags_ = flags;
-        }
+        Status::Status(uint8_t flags): flags_(flags) {}
         Status::~Status() {}
 
         //-----------------------------------------------------

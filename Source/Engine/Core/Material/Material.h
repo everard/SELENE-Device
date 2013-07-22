@@ -59,7 +59,9 @@ namespace selene
         {
         public:
                 Material();
+                Material(const Material&) = default;
                 virtual ~Material();
+                Material& operator =(const Material&) = default;
 
                 /**
                  * \brief Sets color.
@@ -158,6 +160,7 @@ namespace selene
         private:
                 Vector3d colors_[NUM_OF_MATERIAL_COLOR_TYPES];
                 float specularLevel_, glossiness_, opacity_;
+
                 Resource::Instance<Texture> textureMaps_[NUM_OF_TEXTURE_MAP_TYPES];
                 uint8_t shadingType_;
 
