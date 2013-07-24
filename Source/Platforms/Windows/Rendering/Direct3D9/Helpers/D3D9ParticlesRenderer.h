@@ -28,7 +28,9 @@ namespace selene
         {
         public:
                 D3d9ParticlesRenderer();
+                D3d9ParticlesRenderer(const D3d9ParticlesRenderer&) = delete;
                 ~D3d9ParticlesRenderer();
+                D3d9ParticlesRenderer& operator =(const D3d9ParticlesRenderer&) = delete;
 
                 /**
                  * \brief Initializes particles renderer.

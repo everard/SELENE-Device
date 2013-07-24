@@ -26,7 +26,9 @@ namespace selene
                  * \param[in] name name of the D3D9 texture
                  */
                 D3d9Texture(const char* name = nullptr);
+                D3d9Texture(const D3d9Texture&) = delete;
                 ~D3d9Texture();
+                D3d9Texture& operator =(const D3d9Texture&) = delete;
 
                 // Texture interface implementation
                 bool retain();

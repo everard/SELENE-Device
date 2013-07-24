@@ -29,7 +29,9 @@ namespace selene
                  * \param[in] height height of the rendering area in pixels
                  */
                 WindowsApplication(const char* name, uint32_t width, uint32_t height);
+                WindowsApplication(const WindowsApplication&) = delete;
                 ~WindowsApplication();
+                WindowsApplication& operator =(const WindowsApplication&) = delete;
 
                 // Application interface implementation
                 bool initialize();

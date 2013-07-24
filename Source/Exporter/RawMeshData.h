@@ -67,6 +67,11 @@ namespace selene
                         Vector4d weights;
                         Vector4d indices;
 
+                        SkinVertex();
+                        SkinVertex(const SkinVertex&) = default;
+                        ~SkinVertex();
+                        SkinVertex& operator =(const SkinVertex&) = default;
+
                 };
 
                 /**
@@ -78,7 +83,9 @@ namespace selene
                         uint32_t indices[3];
 
                         Face();
+                        Face(const Face&) = default;
                         ~Face();
+                        Face& operator =(const Face&) = default;
 
                 };
 
@@ -98,12 +105,16 @@ namespace selene
                         bool isTwoSided;
 
                         Material();
+                        Material(const Material&) = default;
                         ~Material();
+                        Material& operator =(const Material&) = default;
 
                 };
 
                 RawMeshData();
+                RawMeshData(const RawMeshData&) = delete;
                 ~RawMeshData();
+                RawMeshData& operator =(const RawMeshData&) = delete;
 
                 /**
                  * \brief Reads raw mesh data from file.

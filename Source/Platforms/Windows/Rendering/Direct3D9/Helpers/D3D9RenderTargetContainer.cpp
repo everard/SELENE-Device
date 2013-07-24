@@ -2,24 +2,14 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "D3D9RenderTargetContainer.h"
+
+#include "../../../../../Engine/Core/Helpers/Utility.h"
 #include "../D3D9Renderer.h"
 
 namespace selene
 {
 
-        // Returns nearest power of two
-        uint32_t getNearestPowerOfTwo(uint32_t x)
-        {
-                --x;
-                x |= x >> 1;
-                x |= x >> 2;
-                x |= x >> 4;
-                x |= x >> 8;
-                x |= x >> 16;
-                return ++x;
-        }
-
-        D3d9RenderTargetContainer::D3d9RenderTargetContainer() {}
+        D3d9RenderTargetContainer::D3d9RenderTargetContainer(): dummyRenderTarget_(), backBuffer_(), shadowMap_() {}
         D3d9RenderTargetContainer::~D3d9RenderTargetContainer()
         {
                 destroy();
@@ -42,7 +32,7 @@ namespace selene
                 uint32_t nearestSize = parameters.getWidth() > parameters.getHeight() ?
                                        parameters.getWidth() : parameters.getHeight();
 
-                uint32_t nearestPowerOfTwo = getNearestPowerOfTwo(nearestSize);
+                uint32_t nearestPowerOfTwo = Utility::getNearestPowerOfTwo(nearestSize);
                 if(nearestPowerOfTwo < parameters.getWidth() ||
                    nearestPowerOfTwo < parameters.getHeight())
                         nearestPowerOfTwo += nearestPowerOfTwo;

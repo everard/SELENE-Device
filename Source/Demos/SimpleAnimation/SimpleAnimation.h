@@ -15,7 +15,9 @@ namespace selene
         {
         public:
                 SimpleAnimation(const char* name, uint32_t width, uint32_t height);
+                SimpleAnimation(const SimpleAnimation&) = delete;
                 ~SimpleAnimation();
+                SimpleAnimation& operator =(const SimpleAnimation&) = delete;
 
         private:
                 ResourceManager textureManager_, meshManager_, meshAnimationManager_;
@@ -25,12 +27,12 @@ namespace selene
                 Gui gui_;
 
                 std::weak_ptr<Camera> camera_;
-                bool isCameraRotationEnabled_;
-
                 std::weak_ptr<Gui::Element> buttonToggleSsao_;
                 std::weak_ptr<Gui::Element> buttonToggleBloom_;
                 std::weak_ptr<Gui::Element> buttonToggleShadows_;
                 std::weak_ptr<Gui::Element> buttonToggleSettings_;
+
+                bool isCameraRotationEnabled_;
                 bool isSettingsMenuVisible_;
 
                 // Initialization event callback

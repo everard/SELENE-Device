@@ -41,7 +41,9 @@ namespace selene
                 };
 
                 D3d9LightingRenderer();
+                D3d9LightingRenderer(const D3d9LightingRenderer&) = delete;
                 ~D3d9LightingRenderer();
+                D3d9LightingRenderer& operator =(const D3d9LightingRenderer&) = delete;
 
                 /**
                  * \brief Initializes lighting renderer.

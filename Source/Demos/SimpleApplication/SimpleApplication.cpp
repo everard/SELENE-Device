@@ -12,7 +12,9 @@ namespace selene
         }
 
         SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height):
-                Platform::Application(name, width, height)
+                Platform::Application(name, width, height), textureManager_(), meshManager_(),
+                fileManager_(), scene_(), gui_(), labelId_(-1), textBoxId_(-1),
+                camera_(), isCameraRotationEnabled_(false)
         {
                 // specify search folders for file manager
                 const char* folders[] =
@@ -45,9 +47,6 @@ namespace selene
 
                 for(uint32_t i = 0; i < numFolders; ++i)
                         fileManager_.addFolder(folders[i]);
-
-                isCameraRotationEnabled_ = false;
-                labelId_ = textBoxId_ = -1;
         }
         SimpleApplication::~SimpleApplication() {}
 

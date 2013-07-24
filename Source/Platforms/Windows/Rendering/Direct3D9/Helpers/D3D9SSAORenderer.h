@@ -30,7 +30,9 @@ namespace selene
         {
         public:
                 D3d9SsaoRenderer();
+                D3d9SsaoRenderer(const D3d9SsaoRenderer&) = delete;
                 ~D3d9SsaoRenderer();
+                D3d9SsaoRenderer& operator =(const D3d9SsaoRenderer&) = delete;
 
                 /**
                  * \brief Initializes SSAO renderer.

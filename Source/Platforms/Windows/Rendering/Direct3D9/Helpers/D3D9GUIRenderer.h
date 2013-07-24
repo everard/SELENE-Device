@@ -30,7 +30,9 @@ namespace selene
         {
         public:
                 D3d9GuiRenderer();
+                D3d9GuiRenderer(const D3d9GuiRenderer&) = delete;
                 ~D3d9GuiRenderer();
+                D3d9GuiRenderer& operator =(const D3d9GuiRenderer&) = delete;
 
                 /**
                  * \brief Initializes GUI renderer.

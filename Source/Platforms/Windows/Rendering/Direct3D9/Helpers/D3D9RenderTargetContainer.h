@@ -40,7 +40,9 @@ namespace selene
         {
         public:
                 D3d9RenderTargetContainer();
+                D3d9RenderTargetContainer(const D3d9RenderTargetContainer&) = delete;
                 ~D3d9RenderTargetContainer();
+                D3d9RenderTargetContainer& operator =(const D3d9RenderTargetContainer&) = delete;
 
                 /**
                  * \brief Initializes render target container.

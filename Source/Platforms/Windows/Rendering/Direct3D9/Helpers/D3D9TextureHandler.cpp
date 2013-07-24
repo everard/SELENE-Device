@@ -19,11 +19,10 @@ namespace selene
                 *output = D3DXVECTOR4(0.5f, 0.5f, 1.0f, 1.0f);
         }
 
-        D3d9TextureHandler::D3d9TextureHandler()
+        D3d9TextureHandler::D3d9TextureHandler(): d3dDevice_(nullptr)
         {
                 for(uint8_t i = 0; i < NUM_OF_DUMMY_TEXTURES; ++i)
                         d3dDummyTextures_[i] = nullptr;
-                d3dDevice_ = nullptr;
         }
         D3d9TextureHandler::~D3d9TextureHandler()
         {

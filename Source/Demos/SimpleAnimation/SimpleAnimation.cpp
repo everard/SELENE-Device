@@ -12,7 +12,11 @@ namespace selene
         }
 
         SimpleAnimation::SimpleAnimation(const char* name, uint32_t width, uint32_t height):
-                Platform::Application(name, width, height)
+                Platform::Application(name, width, height), textureManager_(), meshManager_(),
+                meshAnimationManager_(), fileManager_(), scene_(), gui_(), camera_(),
+                buttonToggleSsao_(), buttonToggleBloom_(), buttonToggleShadows_(),
+                buttonToggleSettings_(), isCameraRotationEnabled_(false),
+                isSettingsMenuVisible_(false)
         {
                 // specify search folders for file manager
                 const char* folders[] =
@@ -51,9 +55,6 @@ namespace selene
 
                 for(uint32_t i = 0; i < numFolders; ++i)
                         fileManager_.addFolder(folders[i]);
-
-                isCameraRotationEnabled_ = false;
-                isSettingsMenuVisible_ = false;
         }
         SimpleAnimation::~SimpleAnimation() {}
 

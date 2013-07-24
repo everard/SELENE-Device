@@ -26,7 +26,9 @@ namespace selene
                  * \param[in] name name of the D3D9 mesh
                  */
                 D3d9Mesh(const char* name = nullptr);
+                D3d9Mesh(const D3d9Mesh&) = delete;
                 ~D3d9Mesh();
+                D3d9Mesh& operator =(const D3d9Mesh&) = delete;
 
                 // Mesh interface implementation
                 bool retain();

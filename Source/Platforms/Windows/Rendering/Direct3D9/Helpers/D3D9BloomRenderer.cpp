@@ -7,16 +7,9 @@
 namespace selene
 {
 
-        D3d9BloomRenderer::D3d9BloomRenderer()
-        {
-                d3dDevice_ = nullptr;
-
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                fullScreenQuad_ = nullptr;
-                textureHandler_ = nullptr;
-                capabilities_ = nullptr;
-        }
+        D3d9BloomRenderer::D3d9BloomRenderer():
+                d3dDevice_(nullptr), renderTargetContainer_(nullptr), frameParameters_(nullptr),
+                fullScreenQuad_(nullptr), textureHandler_(nullptr), capabilities_(nullptr) {}
         D3d9BloomRenderer::~D3d9BloomRenderer()
         {
                 destroy();

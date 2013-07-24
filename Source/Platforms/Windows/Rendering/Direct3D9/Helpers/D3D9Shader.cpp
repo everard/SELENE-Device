@@ -11,7 +11,7 @@ namespace selene
 {
 
         D3d9Shader::D3d9Shader(const char* name, const char* version, DWORD flags, uint8_t libraryType,
-                               const D3d9Capabilities& capabilities)
+                               const D3d9Capabilities& capabilities): code_(nullptr)
         {
                 static const char* pixelShaderPositionDecodingFromR32f =
                         "float4 EncodePos(float4 pos, float4 proj)"
@@ -51,8 +51,6 @@ namespace selene
                         "        float4 orig = p * unproj * zv.xxxx;"
                         "        return orig.xyz;"
                         "}";
-
-                code_ = nullptr;
 
                 HRSRC hResource = ::FindResource(GetModuleHandle(nullptr), name, RT_RCDATA);
                 if(hResource == nullptr)
@@ -138,11 +136,7 @@ namespace selene
                 return code_;
         }
 
-        D3d9VertexShader::D3d9VertexShader()
-        {
-                d3dShader_ = nullptr;
-                d3dDevice_ = nullptr;
-        }
+        D3d9VertexShader::D3d9VertexShader(): d3dShader_(nullptr), d3dDevice_(nullptr) {}
         D3d9VertexShader::~D3d9VertexShader()
         {
                 destroy();
@@ -184,11 +178,7 @@ namespace selene
                         d3dDevice_->SetVertexShader(d3dShader_);
         }
 
-        D3d9PixelShader::D3d9PixelShader()
-        {
-                d3dShader_ = nullptr;
-                d3dDevice_ = nullptr;
-        }
+        D3d9PixelShader::D3d9PixelShader(): d3dShader_(nullptr), d3dDevice_(nullptr) {}
         D3d9PixelShader::~D3d9PixelShader()
         {
                 destroy();

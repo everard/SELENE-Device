@@ -30,7 +30,9 @@ namespace selene
                 };
 
                 D3d9TextureHandler();
+                D3d9TextureHandler(const D3d9TextureHandler&) = delete;
                 ~D3d9TextureHandler();
+                D3d9TextureHandler& operator =(const D3d9TextureHandler&) = delete;
 
                 /**
                  * \brief Initializes texture handler.

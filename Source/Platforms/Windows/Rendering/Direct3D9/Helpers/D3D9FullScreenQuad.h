@@ -22,7 +22,9 @@ namespace selene
         {
         public:
                 D3d9FullScreenQuad();
+                D3d9FullScreenQuad(const D3d9FullScreenQuad&) = delete;
                 ~D3d9FullScreenQuad();
+                D3d9FullScreenQuad& operator =(const D3d9FullScreenQuad&) = delete;
 
                 /**
                  * \brief Initializes full-screen quad.

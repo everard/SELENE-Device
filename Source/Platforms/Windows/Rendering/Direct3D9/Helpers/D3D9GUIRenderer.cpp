@@ -18,16 +18,10 @@ namespace selene
                                                             guiGeometryNumVerticesPerFrame *
                                                             guiGeometryVertexStride;
 
-        D3d9GuiRenderer::D3d9GuiRenderer()
-        {
-                d3dVertexDeclaration_ = nullptr;
-                d3dVertexBuffer_ = nullptr;
-                d3dDevice_ = nullptr;
-
-                fullScreenQuad_ = nullptr;
-                textureHandler_ = nullptr;
-                capabilities_ = nullptr;
-        }
+        D3d9GuiRenderer::D3d9GuiRenderer():
+                d3dVertexDeclaration_(nullptr), d3dVertexBuffer_(nullptr), d3dDevice_(nullptr),
+                fontTexture_(), cursorTexture_(), fullScreenQuad_(nullptr),
+                textureHandler_(nullptr), capabilities_(nullptr) {}
         D3d9GuiRenderer::~D3d9GuiRenderer()
         {
                 destroy();

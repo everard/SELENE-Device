@@ -124,9 +124,13 @@ namespace selene
                         bool handled;
                         NeighborhoodID group;
 
+                        Triangle():
+                                normal(), tangent(), binormal(),
+                                handled(false), group(0), myID(0) {}
+
                         void Reset();
 
-                        // a global id used to keep track of tris'
+                        // a global id used to keep track of triangles
                         TriID myID;
 
                 };
@@ -134,6 +138,11 @@ namespace selene
                 class CanSmoothChecker
                 {
                 public:
+                        CanSmoothChecker() = default;
+                        CanSmoothChecker(const CanSmoothChecker&) = default;
+                        virtual ~CanSmoothChecker() = default;
+                        CanSmoothChecker& operator =(const CanSmoothChecker&) = default;
+
                         virtual bool CanSmooth(MeshMender::Triangle* t1,
                                                MeshMender::Triangle* t2,
                                                const float& minCreaseAngle) = 0;
@@ -239,7 +248,9 @@ namespace selene
                           const CylindricalFixOption fixCylindricalWrapping = DONT_FIX_CYLINDRICAL);
 
                 MeshMender();
+                MeshMender(const MeshMender&) = delete;
                 ~MeshMender();
+                MeshMender& operator =(const MeshMender&) = delete;
 
         protected:
                 float MinNormalsCreaseCosAngle;

@@ -72,9 +72,9 @@ namespace selene
                 bool isDeviceLost_;
 
                 D3d9Renderer();
-                D3d9Renderer(const D3d9Renderer&);
+                D3d9Renderer(const D3d9Renderer&) = delete;
                 ~D3d9Renderer();
-                D3d9Renderer& operator =(const D3d9Renderer&);
+                D3d9Renderer& operator =(const D3d9Renderer&) = delete;
 
                 /**
                  * \brief Initializes helpers.

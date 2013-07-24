@@ -28,7 +28,9 @@ namespace selene
         {
         public:
                 D3d9BloomRenderer();
+                D3d9BloomRenderer(const D3d9BloomRenderer&) = delete;
                 ~D3d9BloomRenderer();
+                D3d9BloomRenderer& operator =(const D3d9BloomRenderer&) = delete;
 
                 /**
                  * \brief Initializes bloom renderer.

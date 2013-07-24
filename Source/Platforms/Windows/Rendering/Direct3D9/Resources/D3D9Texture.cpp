@@ -7,10 +7,7 @@
 namespace selene
 {
 
-        D3d9Texture::D3d9Texture(const char* name): Texture(name)
-        {
-                d3dTexture_ = nullptr;
-        }
+        D3d9Texture::D3d9Texture(const char* name): Texture(name), d3dTexture_(nullptr) {}
         D3d9Texture::~D3d9Texture()
         {
                 SAFE_RELEASE(d3dTexture_);

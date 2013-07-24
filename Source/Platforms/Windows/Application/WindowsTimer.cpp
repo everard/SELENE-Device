@@ -6,7 +6,8 @@
 namespace selene
 {
 
-        WindowsTimer::WindowsTimer()
+        WindowsTimer::WindowsTimer():
+                currentTime_(), invFrequency_(0.0f), ticks_()
         {
                 QueryPerformanceFrequency(&currentTime_);
                 invFrequency_ = 1.0f / (float)currentTime_.QuadPart;

@@ -7,26 +7,27 @@
 namespace selene
 {
 
+        RawMeshData::SkinVertex::SkinVertex(): weights(), indices() {}
+        RawMeshData::SkinVertex::~SkinVertex() {}
+
         RawMeshData::Face::Face()
         {
                 memset(indices, 0, sizeof(indices));
         }
         RawMeshData::Face::~Face() {}
 
-        RawMeshData::Material::Material()
+        RawMeshData::Material::Material():
+                specularLevel(0.0f), glossiness(0.0f), opacity(0.0f),
+                faceIndex(0), isTwoSided(false)
         {
-                specularLevel = glossiness = opacity = 0.0f;
-                faceIndex = 0;
-
                 memset(type, 0, sizeof(type));
-                isTwoSided = false;
         }
         RawMeshData::Material::~Material() {}
 
-        RawMeshData::RawMeshData()
-        {
-                hasSkeleton_ = false;
-        }
+        RawMeshData::RawMeshData():
+                faces_(), textureFaces_(), positions_(),
+                textureCoordinates_(), skinVertices_(), materials_(),
+                bones_(), minBound_(), maxBound_(), hasSkeleton_(false) {}
         RawMeshData::~RawMeshData() {}
 
         //--------------------------------------------------------------------------------------------------------

@@ -40,7 +40,9 @@ namespace selene
                 uint8_t renderingFlags;
 
                 D3d9FrameParameters();
+                D3d9FrameParameters(const D3d9FrameParameters&) = default;
                 ~D3d9FrameParameters();
+                D3d9FrameParameters& operator =(const D3d9FrameParameters&) = default;
 
         };
 

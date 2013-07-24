@@ -7,14 +7,9 @@
 namespace selene
 {
 
-        D3d9Capabilities::D3d9Capabilities()
-        {
-                isR32fRenderTargetFormatSupported_ = false;
-                isMultipleRenderTargetSupported_ = false;
-                isThirdShaderModelSupported_ = false;
-                maxTextureAnisotropy_ = 1;
-                maxTextureSize_ = 1;
-        }
+        D3d9Capabilities::D3d9Capabilities():
+                isR32fRenderTargetFormatSupported_(false), isMultipleRenderTargetSupported_(false),
+                isThirdShaderModelSupported_(false), maxTextureAnisotropy_(1), maxTextureSize_(1) {}
         D3d9Capabilities::~D3d9Capabilities() {}
 
         //------------------------------------------------------------------------------------------------------------

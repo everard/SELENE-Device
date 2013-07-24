@@ -21,10 +21,17 @@ namespace selene
                         uint32_t faceNo, index;
                         uint32_t vertexIndex;
 
+                        FaceMap(): faceNo(0), index(0), vertexIndex(0) {}
+                        FaceMap(const FaceMap&) = default;
+                        ~FaceMap() {}
+                        FaceMap& operator =(const FaceMap&) = default;
+
                 };
 
-                MultiVertex() {}
+                MultiVertex(): duplicates_() {}
+                MultiVertex(const MultiVertex&) = delete;
                 ~MultiVertex() {}
+                MultiVertex& operator =(const MultiVertex&) = delete;
 
                 // Finds face map by key
                 FaceMap* find(uint32_t key)
@@ -160,14 +167,9 @@ namespace selene
         //-------------------------------------------------------------------------------------------------------------
         void Exporter::DummyTexture::discard() {}
 
-        Exporter::Exporter(RawMeshData* rawMeshData): mesh_(nullptr)
-        {
-                rawMeshData_ = rawMeshData;
-                faces_ = nullptr;
-
-                numVertices_  = 0;
-                numFaces_     = 0;
-        }
+        Exporter::Exporter(RawMeshData* rawMeshData):
+                resourceManager_(), mesh_(nullptr), rawMeshData_(rawMeshData), faces_(nullptr),
+                meshMenderVertices_(), newToOldVertexMapping_(), skinVertices_(), numVertices_(0), numFaces_(0) {}
         Exporter::~Exporter()
         {
                 clear();

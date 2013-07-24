@@ -22,17 +22,11 @@ namespace selene
                                                             particlesGeometryVertexStride;
         static Vector4d particlesGeometryBuffer[particlesGeometryNumVertices * particlesGeometryNumVectorsPerVertex];
 
-        D3d9ParticlesRenderer::D3d9ParticlesRenderer()
+        D3d9ParticlesRenderer::D3d9ParticlesRenderer():
+                d3dVertexDeclaration_(nullptr), d3dVertexBuffer_(nullptr), d3dDevice_(nullptr),
+                renderTargetContainer_(nullptr), frameParameters_(nullptr),
+                textureHandler_(nullptr), capabilities_(nullptr)
         {
-                d3dVertexDeclaration_ = nullptr;
-                d3dVertexBuffer_ = nullptr;
-                d3dDevice_ = nullptr;
-
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                textureHandler_ = nullptr;
-                capabilities_ = nullptr;
-
                 Vector4d vertices[] =
                 {
                         Vector4d(), Vector4d(), Vector4d(0.0f, 0.0f, -1.0f, -1.0f),

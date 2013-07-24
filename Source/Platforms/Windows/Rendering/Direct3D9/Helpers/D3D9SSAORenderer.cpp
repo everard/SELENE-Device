@@ -155,19 +155,10 @@ namespace selene
                 *output = colors[rand() % 16];
         }
 
-        D3d9SsaoRenderer::D3d9SsaoRenderer()
-        {
-                d3dVertexDeclaration_ = nullptr;
-                d3dRandomTexture_ = nullptr;
-                d3dVertexBuffer_  = nullptr;
-                d3dDevice_ = nullptr;
-
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                fullScreenQuad_ = nullptr;
-                textureHandler_ = nullptr;
-                capabilities_ = nullptr;
-        }
+        D3d9SsaoRenderer::D3d9SsaoRenderer():
+                d3dVertexDeclaration_(nullptr), d3dVertexBuffer_(nullptr), d3dRandomTexture_(nullptr),
+                d3dDevice_(nullptr), renderTargetContainer_(nullptr), frameParameters_(nullptr),
+                fullScreenQuad_(nullptr), textureHandler_(nullptr), capabilities_(nullptr) {}
         D3d9SsaoRenderer::~D3d9SsaoRenderer()
         {
                 destroy();

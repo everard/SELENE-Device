@@ -15,7 +15,9 @@ namespace selene
         {
         public:
                 SimpleApplication(const char* name, uint32_t width, uint32_t height);
+                SimpleApplication(const SimpleApplication&) = delete;
                 ~SimpleApplication();
+                SimpleApplication& operator =(const SimpleApplication&) = delete;
 
         private:
                 ResourceManager textureManager_, meshManager_;

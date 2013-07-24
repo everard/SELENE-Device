@@ -9,16 +9,9 @@
 namespace selene
 {
 
-        D3d9ActorsRenderer::D3d9ActorsRenderer()
-        {
-                d3dMeshVertexDeclaration_ = nullptr;
-                d3dDevice_ = nullptr;
-
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                textureHandler_ = nullptr;
-                capabilities_ = nullptr;
-        }
+        D3d9ActorsRenderer::D3d9ActorsRenderer():
+                d3dMeshVertexDeclaration_(nullptr), d3dDevice_(nullptr), renderTargetContainer_(nullptr),
+                frameParameters_(nullptr), textureHandler_(nullptr), capabilities_(nullptr) {}
         D3d9ActorsRenderer::~D3d9ActorsRenderer()
         {
                 destroy();

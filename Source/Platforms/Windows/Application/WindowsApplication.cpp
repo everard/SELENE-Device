@@ -7,14 +7,8 @@ namespace selene
 {
 
         WindowsApplication::WindowsApplication(const char* name, uint32_t width, uint32_t height):
-                Application(name, width, height)
-        {
-                windowClassName_ = "SELENE Device window class";
-
-                hInstance_ = nullptr;
-                hWnd_ = nullptr;
-                isActive_ = true;
-        }
+                Application(name, width, height), windowClassName_("SELENE Device window class"),
+                hInstance_(nullptr), hWnd_(nullptr), renderer_(), isActive_(true) {}
         WindowsApplication::~WindowsApplication()
         {
                 destroy();

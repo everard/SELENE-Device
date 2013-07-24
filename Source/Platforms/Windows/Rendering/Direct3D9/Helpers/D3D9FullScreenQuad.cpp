@@ -12,12 +12,8 @@ namespace selene
         static const uint32_t fullScreenQuadVertexBufferSize = fullScreenQuadNumVertices *
                                                                fullScreenQuadVertexStride;
 
-        D3d9FullScreenQuad::D3d9FullScreenQuad()
-        {
-                d3dVertexDeclaration_ = nullptr;
-                d3dVertexBuffer_ = nullptr;
-                d3dDevice_ = nullptr;
-        }
+        D3d9FullScreenQuad::D3d9FullScreenQuad():
+                d3dVertexDeclaration_(nullptr), d3dVertexBuffer_(nullptr), d3dDevice_(nullptr) {}
         D3d9FullScreenQuad::~D3d9FullScreenQuad()
         {
                 destroy();

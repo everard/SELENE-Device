@@ -22,7 +22,9 @@ namespace selene
         {
         public:
                 D3d9Capabilities();
+                D3d9Capabilities(const D3d9Capabilities&) = delete;
                 ~D3d9Capabilities();
+                D3d9Capabilities& operator =(const D3d9Capabilities&) = delete;
 
                 /**
                  * \brief Checks capabilities and creates device.

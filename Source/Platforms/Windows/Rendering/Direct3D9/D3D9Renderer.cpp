@@ -195,23 +195,20 @@ namespace selene
                 return d3dDevice_;
         }
 
-        D3d9Renderer::D3d9Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0)
+        D3d9Renderer::D3d9Renderer():
+                d3d_(nullptr), resultVertexShader_(), resultPixelShader_(), renderTargetContainer_(),
+                particlesRenderer_(), lightingRenderer_(), actorsRenderer_(), textureHandler_(),
+                fullScreenQuad_(), bloomRenderer_(), ssaoRenderer_(), guiRenderer_(),
+                d3dPresentParameters_(), frameParameters_(), capabilities_(),
+                parameters_(nullptr, nullptr, 0, 0, nullptr, 0),
+                isDeviceLost_(false)
         {
                 d3dDevice_ = nullptr;
-                d3d_ = nullptr;
-
                 memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
-                isDeviceLost_ = false;
         }
-        D3d9Renderer::D3d9Renderer(const D3d9Renderer&): Renderer(),
-                                                         parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
         D3d9Renderer::~D3d9Renderer()
         {
                 destroy();
-        }
-        D3d9Renderer& D3d9Renderer::operator =(const D3d9Renderer&)
-        {
-                return *this;
         }
 
         //----------------------------------------------------------------------------------------------------------

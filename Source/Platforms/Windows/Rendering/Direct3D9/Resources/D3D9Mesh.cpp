@@ -9,11 +9,10 @@
 namespace selene
 {
 
-        D3d9Mesh::D3d9Mesh(const char* name): Mesh(name)
+        D3d9Mesh::D3d9Mesh(const char* name): Mesh(name), d3dIndexBuffer_(nullptr)
         {
                 for(uint8_t i = 0; i < NUM_OF_VERTEX_STREAMS; ++i)
                         d3dVertexBuffers_[i] = nullptr;
-                d3dIndexBuffer_  = nullptr;
         }
         D3d9Mesh::~D3d9Mesh()
         {

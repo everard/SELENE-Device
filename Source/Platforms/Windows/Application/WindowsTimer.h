@@ -22,7 +22,9 @@ namespace selene
         {
         public:
                 WindowsTimer();
+                WindowsTimer(const WindowsTimer&) = delete;
                 ~WindowsTimer();
+                WindowsTimer& operator =(const WindowsTimer&) = delete;
 
                 // Timer interface implementation
                 void reset();

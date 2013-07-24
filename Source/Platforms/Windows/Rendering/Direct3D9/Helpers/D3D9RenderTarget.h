@@ -22,7 +22,9 @@ namespace selene
         {
         public:
                 D3d9RenderTarget();
+                D3d9RenderTarget(const D3d9RenderTarget&) = delete;
                 ~D3d9RenderTarget();
+                D3d9RenderTarget& operator =(const D3d9RenderTarget&) = delete;
 
                 /**
                  * \brief Initializes render target.

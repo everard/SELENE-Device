@@ -155,14 +155,10 @@ namespace selene
                 return (lhs.x < rhs.x);
         }
 
-        MeshMender::MeshMender()
-        {
-                MinNormalsCreaseCosAngle =   0.3f;
-                MinTangentsCreaseCosAngle =  0.0f;
-                MinBinormalsCreaseCosAngle = 0.0f;
-                WeightNormalsByArea = 0.0f;
-                m_RespectExistingSplits = DONT_RESPECT_SPLITS;
-        }
+        MeshMender::MeshMender():
+                MinNormalsCreaseCosAngle(0.3f), MinTangentsCreaseCosAngle(0.0f), MinBinormalsCreaseCosAngle(0.0f),
+                WeightNormalsByArea(0.0f), m_RespectExistingSplits(DONT_RESPECT_SPLITS), m_Triangles(),
+                m_VertexChildrenMap(), m_originalNumVerts(0) {}
         MeshMender::~MeshMender() {}
 
         void MeshMender::UpdateIndices(const size_t oldIndex,

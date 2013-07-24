@@ -7,12 +7,8 @@
 namespace selene
 {
 
-        D3d9RenderTarget::D3d9RenderTarget()
-        {
-                d3dTexture_ = nullptr;
-                d3dSurface_ = nullptr;
-                d3dDepthStencilSurface_ = nullptr;
-        }
+        D3d9RenderTarget::D3d9RenderTarget():
+                d3dTexture_(nullptr), d3dSurface_(nullptr), d3dDepthStencilSurface_(nullptr) {}
         D3d9RenderTarget::~D3d9RenderTarget()
         {
                 destroy();

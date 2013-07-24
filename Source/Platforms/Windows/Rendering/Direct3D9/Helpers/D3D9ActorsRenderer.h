@@ -29,7 +29,9 @@ namespace selene
         {
         public:
                 D3d9ActorsRenderer();
+                D3d9ActorsRenderer(const D3d9ActorsRenderer&) = delete;
                 ~D3d9ActorsRenderer();
+                D3d9ActorsRenderer& operator =(const D3d9ActorsRenderer&) = delete;
 
                 /**
                  * \brief Initializes actors renderer.

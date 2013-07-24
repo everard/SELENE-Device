@@ -6,10 +6,10 @@
 namespace selene
 {
 
-        D3d9FrameParameters::D3d9FrameParameters()
-        {
-                renderingFlags = 0;
-        }
+        D3d9FrameParameters::D3d9FrameParameters():
+                viewProjectionMatrix(), projectionMatrix(), viewInvMatrix(), normalsMatrix(),
+                viewMatrix(), textureCoordinatesAdjustment(), projectionParameters(), shadowMapKernelSize(),
+                unprojectionVector(), bloomParameters(), ssaoParameters(), screenSize(), renderingFlags(0) {}
         D3d9FrameParameters::~D3d9FrameParameters() {}
 
 }

@@ -48,6 +48,13 @@ namespace selene
                  */
                 static bool writeString(std::ostream& stream, const char* string);
 
+                /**
+                 * \brief Returns nearest to the given x power-of-two.
+                 * \param[in] x value
+                 * \return nearest to the given x power-of-two
+                 */
+                static uint32_t getNearestPowerOfTwo(uint32_t x);
+
         };
 
         /**

@@ -47,7 +47,9 @@ namespace selene
                  */
                 D3d9Shader(const char* name, const char* version, DWORD flags, uint8_t libraryType,
                            const D3d9Capabilities& capabilities);
+                D3d9Shader(const D3d9Shader&) = default;
                 ~D3d9Shader();
+                D3d9Shader& operator =(const D3d9Shader&) = default;
 
                 /**
                  * \brief Returns binary code of the shader.
@@ -68,7 +70,9 @@ namespace selene
         {
         public:
                 D3d9VertexShader();
+                D3d9VertexShader(const D3d9VertexShader&) = delete;
                 ~D3d9VertexShader();
+                D3d9VertexShader& operator =(const D3d9VertexShader&) = delete;
 
                 /**
                  * \brief Creates vertex shader.
@@ -100,7 +104,9 @@ namespace selene
         {
         public:
                 D3d9PixelShader();
+                D3d9PixelShader(const D3d9PixelShader&) = delete;
                 ~D3d9PixelShader();
+                D3d9PixelShader& operator =(const D3d9PixelShader&) = delete;
 
                 /**
                  * \brief Creates pixel shader.

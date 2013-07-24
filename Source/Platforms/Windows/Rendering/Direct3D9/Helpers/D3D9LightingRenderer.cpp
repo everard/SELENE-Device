@@ -150,19 +150,13 @@ namespace selene
                 D3d9LightingRenderer::BATCH_SIZE
         };
 
-        D3d9LightingRenderer::D3d9LightingRenderer()
+        D3d9LightingRenderer::D3d9LightingRenderer():
+                d3dVertexDeclaration_(nullptr), d3dDevice_(nullptr),
+                renderTargetContainer_(nullptr), frameParameters_(nullptr),
+                actorsRenderer_(nullptr), textureHandler_(nullptr), capabilities_(nullptr)
         {
                 for(uint8_t i = 0; i < NUM_OF_LIGHT_TYPES; ++i)
                         d3dVertexBuffers_[i] = nullptr;
-                d3dVertexDeclaration_ = nullptr;
-
-                d3dDevice_ = nullptr;
-
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                actorsRenderer_ = nullptr;
-                textureHandler_ = nullptr;
-                capabilities_ = nullptr;
         }
         D3d9LightingRenderer::~D3d9LightingRenderer()
         {

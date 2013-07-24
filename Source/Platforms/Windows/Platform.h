@@ -43,7 +43,9 @@ namespace selene
                 {
                 public:
                         FileManager();
+                        FileManager(const FileManager&) = delete;
                         ~FileManager();
+                        FileManager& operator =(const FileManager&) = delete;
 
                 };
 

@@ -17,7 +17,7 @@ namespace selene
 
         /**
          * Represents exporter. Processes RawMeshData and saves the result as SLE model.
-         * Uses nvMeshMender to compute tangent-bitangent-normal basis for vertices.
+         * Uses NVMeshMender to compute tangent-bitangent-normal basis for vertices.
          */
         class Exporter
         {
@@ -27,7 +27,9 @@ namespace selene
                  * \param[in] rawMeshData raw mesh data
                  */
                 Exporter(RawMeshData* rawMeshData);
+                Exporter(const Exporter&) = delete;
                 ~Exporter();
+                Exporter& operator =(const Exporter&) = delete;
 
                 /**
                  * \brief Exports mesh.
@@ -44,16 +46,12 @@ namespace selene
                 {
                 public:
                         DummyMesh(const char* name);
+                        DummyMesh(const DummyMesh&) = delete;
                         ~DummyMesh();
+                        DummyMesh& operator =(const DummyMesh&) = delete;
 
-                        /**
-                         * \brief Does nothing.
-                         */
+                        // selene::Resource interface implementation
                         bool retain();
-
-                        /**
-                         * \brief Does nothing.
-                         */
                         void discard();
 
                 };
@@ -65,16 +63,12 @@ namespace selene
                 {
                 public:
                         DummyTexture(const char* name);
+                        DummyTexture(const DummyTexture&) = delete;
                         ~DummyTexture();
+                        DummyTexture& operator =(const DummyTexture&) = delete;
 
-                        /**
-                         * \brief Does nothing.
-                         */
+                        // selene::Resource interface implementation
                         bool retain();
-
-                        /**
-                         * \brief Does nothing.
-                         */
                         void discard();
 
                 };
