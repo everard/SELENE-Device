@@ -4,15 +4,26 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-#include "Rendering/OpenGL/Resources/GLTexture.h"
-#include "Rendering/OpenGL/Resources/GLMesh.h"
+#include "../../Engine/Core/Resources/Texture/Texture.h"
+#include "../../Engine/Core/Resources/Mesh/Mesh.h"
 
-#include "Rendering/OpenGL/GLRenderer.h"
-#include "Application/LinuxApplication.h"
-#include "Application/LinuxTimer.h"
+#include "../../Engine/Application/Application.h"
+#include "../../Engine/Application/Timer.h"
+
+#include "../../Engine/Rendering/Renderer.h"
+
+#ifndef PLATFORM_LINUX
+#define PLATFORM_LINUX
+#endif
 
 namespace selene
 {
+
+        /**
+         * \addtogroup Linux
+         * \brief Implementation of platform-dependent layer for Linux OS.
+         * @{
+         */
 
         /**
          * Represents platform. Holds platform-dependent functions and application entry point.
@@ -20,11 +31,115 @@ namespace selene
         class Platform
         {
         public:
-                typedef LinuxApplication Application;
-                typedef LinuxTimer Timer;
+                /**
+                 * Represents texture.
+                 */
+                class Texture: public selene::Texture
+                {
+                public:
+                        /**
+                         * \brief Constructs texture with given name.
+                         * \param[in] name name of the texture
+                         */
+                        Texture(const char* name = nullptr);
+                        Texture(const Texture&) = delete;
+                        ~Texture() = default;
+                        Texture& operator =(const Texture&) = delete;
 
-                typedef GlTexture Texture;
-                typedef GlMesh Mesh;
+                        // Texture interface implementation
+                        bool retain();
+                        void discard();
+
+                };
+
+                /**
+                 * Represents mesh.
+                 */
+                class Mesh: public selene::Mesh
+                {
+                public:
+                        /**
+                         * \brief Constructs mesh with given name.
+                         * \param[in] name name of the mesh
+                         */
+                        Mesh(const char* name = nullptr);
+                        Mesh(const Mesh&) = delete;
+                        ~Mesh() = default;
+                        Mesh& operator =(const Mesh&) = delete;
+
+                        // Mesh interface implementation
+                        bool retain();
+                        void discard();
+
+                };
+
+                /**
+                 * Represents application.
+                 */
+                class Application: public selene::Application
+                {
+                public:
+                        /**
+                         * \brief Constructs application with given name, width and height of the rendering area.
+                         * \param[in] name name of the application
+                         * \param[in] width rendering area width in pixels
+                         * \param[in] height rendering area height in pixels
+                         */
+                        Application(const char* name, uint32_t width, uint32_t height);
+                        Application(const Application&) = delete;
+                        ~Application() = default;
+                        Application& operator =(const Application&) = delete;
+
+                        // Application interface implementation
+                        bool initialize();
+                        bool run();
+                        void halt();
+
+                protected:
+                        /**
+                         * Represents renderer.
+                         */
+                        class Renderer: public selene::Renderer
+                        {
+                        public:
+                                // Renderer interface implementation
+                                bool initialize(const Parameters&);
+                                void destroy();
+                                void render(const Camera&);
+
+                        private:
+                                friend class Application;
+
+                                Renderer() = default;
+                                Renderer(const Renderer&) = delete;
+                                ~Renderer() = default;
+                                Renderer& operator =(const Renderer&) = delete;
+
+                        };
+
+                        // Application interface implementation
+                        float getKeyState(uint8_t);
+
+                        Renderer renderer_;
+
+                };
+
+                /**
+                 * Represents timer.
+                 */
+                class Timer: public selene::Timer
+                {
+                public:
+                        Timer() = default;
+                        Timer(const Timer&) = default;
+                        ~Timer() = default;
+                        Timer& operator =(const Timer&) = default;
+
+                        // Timer interface implementation
+                        void reset();
+                        float getElapsedTime();
+
+                };
 
                 /**
                  * Represents file manager. This file manager handles platform-dependent file management.
@@ -33,7 +148,9 @@ namespace selene
                 {
                 public:
                         FileManager();
+                        FileManager(const FileManager&) = delete;
                         ~FileManager();
+                        FileManager& operator =(const FileManager&) = delete;
 
                 };
 
@@ -67,6 +184,10 @@ namespace selene
                 static uint32_t defaultScreenHeight_;
 
         };
+
+        /**
+         * @}
+         */
 
 }
 
