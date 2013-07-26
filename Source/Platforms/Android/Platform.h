@@ -20,13 +20,14 @@
 #include <set>
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "SELENE-Device", __VA_ARGS__))
-#define CHECK_GLES_ERROR(...) {\
-                                      for(GLint error = glGetError(); error; error = glGetError())\
-                                      {\
-                                              LOGI("****************************** after %s() glError (0x%x)\n",\
-                                                   __VA_ARGS__, error);\
-                                      }\
-                              }
+#define CHECK_GLES_ERROR(...)\
+{\
+        for(GLint error = glGetError(); error; error = glGetError())\
+        {\
+                LOGI("****************************** after %s() glError (0x%x)\n",\
+                     __VA_ARGS__, error);\
+        }\
+}
 
 namespace selene
 {
@@ -56,11 +57,13 @@ namespace selene
                 {
                 public:
                         FileManager();
+                        FileManager(const FileManager&) = delete;
                         ~FileManager();
+                        FileManager& operator =(const FileManager&) = delete;
 
-                        // File manager interface implementation
-                        virtual const char* find(const char* fileName) const;
-                        virtual std::istream* open(const char* fileName) const;
+                        // FileManager interface implementation
+                        const char* find(const char* fileName) const;
+                        std::istream* open(const char* fileName) const;
 
                 private:
                         AAssetManager* assetManager_;

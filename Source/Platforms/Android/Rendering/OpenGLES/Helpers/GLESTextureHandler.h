@@ -32,7 +32,9 @@ namespace selene
                 };
 
                 GlesTextureHandler();
+                GlesTextureHandler(const GlesTextureHandler&) = delete;
                 ~GlesTextureHandler();
+                GlesTextureHandler& operator =(const GlesTextureHandler&) = delete;
 
                 /**
                  * \brief Initializes texture handler.

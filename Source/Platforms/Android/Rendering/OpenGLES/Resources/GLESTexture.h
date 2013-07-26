@@ -26,7 +26,9 @@ namespace selene
                  * \param[in] name name of the texture
                  */
                 GlesTexture(const char* name = nullptr);
+                GlesTexture(const GlesTexture&) = delete;
                 ~GlesTexture();
+                GlesTexture& operator =(const GlesTexture&) = delete;
 
                 // Texture interface implementation
                 bool retain();

@@ -28,7 +28,7 @@ namespace selene
                         if(!textureData.pixels.create(numBytesPerPixel))
                                 return;
 
-                        memcpy(&textureData.pixels[0], pixels[i], numBytesPerPixel);
+                        std::memcpy(&textureData.pixels[0], pixels[i], numBytesPerPixel);
                 }
         }
         GlesTextureHandler::~GlesTextureHandler()

@@ -17,7 +17,7 @@
 namespace selene
 {
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool GlesRenderer::initialize(const Renderer::Parameters& parameters)
         {
                 parameters_ = parameters;
@@ -36,14 +36,14 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void GlesRenderer::destroy()
         {
                 destroyHelpers();
                 capabilities_.destroyContext();
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void GlesRenderer::render(const Camera& camera)
         {
                 auto& renderingData = const_cast<Renderer::Data&>(camera.getRenderingData());
@@ -126,15 +126,17 @@ namespace selene
                 eglSwapBuffers(capabilities_.getDisplay(), capabilities_.getSurface());
         }
 
-        GlesRenderer::GlesRenderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
-        GlesRenderer::GlesRenderer(const GlesRenderer&): Renderer(),
-                                                         parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
+        GlesRenderer::GlesRenderer():
+                resultRenderingProgram_(), textureCoordinatesAdjustmentLocation_(-1), resultTextureLocation_(-1),
+                renderTargetContainer_(), lightingRenderer_(),actorsRenderer_(), fullScreenQuad_(),
+                textureHandler_(), bloomRenderer_(), guiRenderer_(), frameParameters_(),
+                capabilities_(), parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
         GlesRenderer::~GlesRenderer()
         {
                 destroy();
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void GlesRenderer::writeLogEntry(const char* entry)
         {
                 LOGI("****************************** %s", entry);
@@ -142,7 +144,7 @@ namespace selene
                         (*parameters_.getLog()) << entry << std::endl;
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool GlesRenderer::retain()
         {
                 if(!capabilities_.createCompatibleContext(parameters_))
@@ -157,14 +159,14 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void GlesRenderer::discard()
         {
                 ResourceManager::discardResources();
                 destroy();
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool GlesRenderer::initializeHelpers()
         {
                 static const char* resultVertexShader =
@@ -250,7 +252,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         void GlesRenderer::destroyHelpers()
         {
                 resultRenderingProgram_.destroy();

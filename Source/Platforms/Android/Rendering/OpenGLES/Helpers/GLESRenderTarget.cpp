@@ -9,10 +9,7 @@
 namespace selene
 {
 
-        GlesRenderTarget::GlesRenderTarget()
-        {
-                renderableTexture_ = 0;
-        }
+        GlesRenderTarget::GlesRenderTarget(): renderableTexture_(0) {}
         GlesRenderTarget::~GlesRenderTarget()
         {
                 destroy();

@@ -40,7 +40,9 @@ namespace selene
                 };
 
                 GlesLightingRenderer();
+                GlesLightingRenderer(const GlesLightingRenderer&) = delete;
                 ~GlesLightingRenderer();
+                GlesLightingRenderer& operator =(const GlesLightingRenderer&) = delete;
 
                 /**
                  * \brief Initializes lighting renderer.
@@ -109,7 +111,9 @@ namespace selene
                         GLint locationShadowMap;
 
                         Variables();
+                        Variables(const Variables&) = default;
                         ~Variables();
+                        Variables& operator =(const Variables&) = default;
 
                         /**
                          * \brief Obtains locations of variables.

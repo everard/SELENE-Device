@@ -28,7 +28,9 @@ namespace selene
         {
         public:
                 GlesActorsRenderer();
+                GlesActorsRenderer(const GlesActorsRenderer&) = delete;
                 ~GlesActorsRenderer();
+                GlesActorsRenderer& operator =(const GlesActorsRenderer&) = delete;
 
                 /**
                  * \brief Initializes actors renderer.
@@ -118,7 +120,9 @@ namespace selene
                         GLint locationSpecularColor;
 
                         Variables();
+                        Variables(const Variables&) = default;
                         ~Variables();
+                        Variables& operator =(const Variables&) = default;
 
                         /**
                          * \brief Obtains locations of variables.

@@ -47,7 +47,9 @@ namespace selene
         {
         public:
                 GlesRenderTargetContainer();
+                GlesRenderTargetContainer(const GlesRenderTargetContainer&) = delete;
                 ~GlesRenderTargetContainer();
+                GlesRenderTargetContainer& operator =(const GlesRenderTargetContainer&) = delete;
 
                 /**
                  * \brief Initializes render target container.

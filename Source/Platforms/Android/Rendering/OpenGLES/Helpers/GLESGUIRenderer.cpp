@@ -10,10 +10,9 @@
 namespace selene
 {
 
-        GlesGuiRenderer::GlesGuiRenderer()
-        {
-                fontTextureLocation_ = -1;
-        }
+        GlesGuiRenderer::GlesGuiRenderer():
+                framesRenderingProgram_(), textRenderingProgram_(),
+                fontTextureLocation_(-1), fontTexture_(), textureHandler_(nullptr) {}
         GlesGuiRenderer::~GlesGuiRenderer()
         {
                 destroy();

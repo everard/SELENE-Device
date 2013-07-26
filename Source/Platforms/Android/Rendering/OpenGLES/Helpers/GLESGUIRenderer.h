@@ -28,7 +28,9 @@ namespace selene
         {
         public:
                 GlesGuiRenderer();
+                GlesGuiRenderer(const GlesGuiRenderer&) = delete;
                 ~GlesGuiRenderer();
+                GlesGuiRenderer& operator =(const GlesGuiRenderer&) = delete;
 
                 /**
                  * \brief Initializes GUI renderer.

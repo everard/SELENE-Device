@@ -26,7 +26,9 @@ namespace selene
                  * \param[in] name name of the mesh
                  */
                 GlesMesh(const char* name = nullptr);
+                GlesMesh(const GlesMesh&) = delete;
                 ~GlesMesh();
+                GlesMesh& operator =(const GlesMesh&) = delete;
 
                 // Mesh interface implementation
                 bool retain();

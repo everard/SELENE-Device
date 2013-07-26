@@ -9,13 +9,9 @@
 namespace selene
 {
 
-        GlesBloomRenderer::GlesBloomRenderer()
-        {
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                fullScreenQuad_ = nullptr;
-                textureHandler_ = nullptr;
-        }
+        GlesBloomRenderer::GlesBloomRenderer():
+                renderTargetContainer_(nullptr), frameParameters_(nullptr),
+                fullScreenQuad_(nullptr), textureHandler_(nullptr) {}
         GlesBloomRenderer::~GlesBloomRenderer()
         {
                 destroy();
@@ -306,16 +302,9 @@ namespace selene
                 textureHandler_->setTexture(0, 1);
         }
 
-        GlesBloomRenderer::Variables::Variables()
-        {
-                locationInputImage    = -1;
-                locationCombinedImage = -1;
-
-                locationTextureCoordinatesAdjustment  = -1;
-                locationBloomParameters = -1;
-                locationBlurOffsets = -1;
-                locationImageScale = -1;
-        }
+        GlesBloomRenderer::Variables::Variables():
+                locationInputImage(-1), locationCombinedImage(-1), locationTextureCoordinatesAdjustment(-1),
+                locationBloomParameters(-1), locationBlurOffsets(-1), locationImageScale(-1) {}
         GlesBloomRenderer::Variables::~Variables() {}
 
         //-----------------------------------------------------------------------------------------------------------
@@ -324,10 +313,10 @@ namespace selene
                 locationInputImage    = program.getUniformLocation("inputImage");
                 locationCombinedImage = program.getUniformLocation("combinedImage");
 
-                locationTextureCoordinatesAdjustment  = program.getUniformLocation("textureCoordinatesAdjustment");
-                locationBloomParameters               = program.getUniformLocation("bloomParameters");
-                locationBlurOffsets                   = program.getUniformLocation("blurOffsets");
-                locationImageScale                    = program.getUniformLocation("imageScale");
+                locationTextureCoordinatesAdjustment = program.getUniformLocation("textureCoordinatesAdjustment");
+                locationBloomParameters              = program.getUniformLocation("bloomParameters");
+                locationBlurOffsets                  = program.getUniformLocation("blurOffsets");
+                locationImageScale                   = program.getUniformLocation("imageScale");
         }
 
 }

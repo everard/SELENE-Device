@@ -9,13 +9,9 @@
 namespace selene
 {
 
-        GlesCapabilities::GlesCapabilities()
-        {
-                surface_ = EGL_NO_SURFACE;
-                context_ = EGL_NO_CONTEXT;
-                display_ = EGL_NO_DISPLAY;
-                surfaceWidth_ = surfaceHeight_ = 0;
-        }
+        GlesCapabilities::GlesCapabilities():
+                surface_(EGL_NO_SURFACE), context_(EGL_NO_CONTEXT),
+                display_(EGL_NO_DISPLAY), surfaceWidth_(0), surfaceHeight_(0) {}
         GlesCapabilities::~GlesCapabilities()
         {
                 destroyContext();

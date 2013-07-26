@@ -11,10 +11,8 @@
 namespace selene
 {
 
-        GlesGlslProgram::VertexAttribute::VertexAttribute(const char* name, GLuint location): Entity(name)
-        {
-                location_ = location;
-        }
+        GlesGlslProgram::VertexAttribute::VertexAttribute(const char* name, GLuint location):
+                name_(name), location_(location) {}
         GlesGlslProgram::VertexAttribute::~VertexAttribute() {}
 
         //-------------------------------------------------------------------------------------------------------------
@@ -23,10 +21,13 @@ namespace selene
                 return location_;
         }
 
-        GlesGlslProgram::GlesGlslProgram()
+        //-------------------------------------------------------------------------------------------------------------
+        const char* GlesGlslProgram::VertexAttribute::getName() const
         {
-                program_ = 0;
+                return name_.c_str();
         }
+
+        GlesGlslProgram::GlesGlslProgram(): program_(0) {}
         GlesGlslProgram::~GlesGlslProgram()
         {
                 destroy();

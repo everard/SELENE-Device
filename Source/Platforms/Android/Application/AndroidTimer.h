@@ -24,7 +24,9 @@ namespace selene
         {
         public:
                 AndroidTimer();
+                AndroidTimer(const AndroidTimer&) = delete;
                 ~AndroidTimer();
+                AndroidTimer& operator =(const AndroidTimer&) = delete;
 
                 // Timer interface implementation
                 void reset();

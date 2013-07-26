@@ -27,7 +27,9 @@ namespace selene
         {
         public:
                 GlesBloomRenderer();
+                GlesBloomRenderer(const GlesBloomRenderer&) = delete;
                 ~GlesBloomRenderer();
+                GlesBloomRenderer& operator =(const GlesBloomRenderer&) = delete;
 
                 /**
                  * \brief Initializes bloom renderer.
@@ -81,7 +83,9 @@ namespace selene
                         GLint locationImageScale;
 
                         Variables();
+                        Variables(const Variables&) = default;
                         ~Variables();
+                        Variables& operator =(const Variables&) = default;
 
                         /**
                          * \brief Obtains locations of variables.

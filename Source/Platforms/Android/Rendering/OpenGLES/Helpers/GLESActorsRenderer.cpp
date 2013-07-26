@@ -11,12 +11,8 @@
 namespace selene
 {
 
-        GlesActorsRenderer::GlesActorsRenderer()
-        {
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                textureHandler_ = nullptr;
-        }
+        GlesActorsRenderer::GlesActorsRenderer():
+                renderTargetContainer_(nullptr), frameParameters_(nullptr), textureHandler_(nullptr) {}
         GlesActorsRenderer::~GlesActorsRenderer()
         {
                 destroy();
@@ -412,27 +408,19 @@ namespace selene
                 renderActors(actorNode, RENDERING_PASS_SHADING);
         }
 
-        GlesActorsRenderer::Variables::Variables()
-        {
-                locationWorldViewProjectionMatrix = -1;
-                locationNormalsMatrix = -1;
-                locationBoneRotations = -1;
-                locationBonePositions = -1;
-
-                locationTextureCoordinatesAdjustment = -1;
-                locationSpecularParameters = -1;
-
-                locationAmbientMap = -1;
-                locationDiffuseMap = -1;
-                locationSpecularMap = -1;
-                locationNormalMap = -1;
-
-                locationLightBuffer = -1;
-
-                locationAmbientColor = -1;
-                locationDiffuseColor = -1;
-                locationSpecularColor = -1;
-        }
+        GlesActorsRenderer::Variables::Variables():
+                locationWorldViewProjectionMatrix(-1), locationNormalsMatrix(-1),
+                locationBoneRotations(-1), locationBonePositions(-1),
+                locationTextureCoordinatesAdjustment(-1),
+                locationSpecularParameters(-1),
+                locationAmbientMap(-1),
+                locationDiffuseMap(-1),
+                locationSpecularMap(-1),
+                locationNormalMap(-1),
+                locationLightBuffer(-1),
+                locationAmbientColor(-1),
+                locationDiffuseColor(-1),
+                locationSpecularColor(-1) {}
         GlesActorsRenderer::Variables::~Variables() {}
 
         //------------------------------------------------------------------------------------------------------------

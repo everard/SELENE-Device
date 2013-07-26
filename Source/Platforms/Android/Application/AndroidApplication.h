@@ -31,7 +31,9 @@ namespace selene
                  * \param[in] height height of the rendering area in pixels
                  */
                 AndroidApplication(const char* name, uint32_t width, uint32_t height);
+                AndroidApplication(const AndroidApplication&) = delete;
                 ~AndroidApplication();
+                AndroidApplication& operator =(const AndroidApplication&) = delete;
 
                 // Application interface implementation
                 bool initialize();

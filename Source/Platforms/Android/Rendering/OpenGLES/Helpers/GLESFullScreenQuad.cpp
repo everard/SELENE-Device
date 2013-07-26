@@ -8,10 +8,7 @@
 namespace selene
 {
 
-        GlesFullScreenQuad::GlesFullScreenQuad()
-        {
-                vertexBuffer_ = 0;
-        }
+        GlesFullScreenQuad::GlesFullScreenQuad(): vertexBuffer_(0) {}
         GlesFullScreenQuad::~GlesFullScreenQuad()
         {
                 destroy();

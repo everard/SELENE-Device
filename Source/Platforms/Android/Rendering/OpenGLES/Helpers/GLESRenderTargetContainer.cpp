@@ -4,30 +4,17 @@
 #include "GLESRenderTargetContainer.h"
 #include "../GLESRenderer.h"
 
+#include "../../../../../Engine/Core/Helpers/Utility.h"
 #include "../../../Platform.h"
 
 namespace selene
 {
 
-        // Returns nearest power of two
-        uint32_t getNearestPowerOfTwo(uint32_t x)
+        GlesRenderTargetContainer::GlesRenderTargetContainer():
+                dummyRenderTarget_(), frameBuffer_(0), shadowMapFrameBuffer_(0), isFrameBufferBound_(false)
         {
-                --x;
-                x |= x >> 1;
-                x |= x >> 2;
-                x |= x >> 4;
-                x |= x >> 8;
-                x |= x >> 16;
-                return ++x;
-        }
-
-        GlesRenderTargetContainer::GlesRenderTargetContainer()
-        {
-                frameBuffer_ = 0;
                 for(uint8_t i = 0; i < NUM_OF_DEPTH_BUFFERS; ++i)
                         depthBuffers_[i] = 0;
-
-                isFrameBufferBound_ = false;
         }
         GlesRenderTargetContainer::~GlesRenderTargetContainer()
         {
@@ -46,7 +33,7 @@ namespace selene
                 uint32_t nearestPowerOfTwo = parameters.getWidth() > parameters.getHeight() ?
                                              parameters.getWidth() : parameters.getHeight();
 
-                nearestPowerOfTwo = getNearestPowerOfTwo(nearestPowerOfTwo);
+                nearestPowerOfTwo = Utility::getNearestPowerOfTwo(nearestPowerOfTwo);
                 if(nearestPowerOfTwo < parameters.getWidth() ||
                    nearestPowerOfTwo < parameters.getHeight())
                         nearestPowerOfTwo += nearestPowerOfTwo;

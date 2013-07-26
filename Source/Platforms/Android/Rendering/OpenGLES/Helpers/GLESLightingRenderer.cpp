@@ -152,15 +152,12 @@ namespace selene
                 GlesLightingRenderer::BATCH_SIZE
         };
 
-        GlesLightingRenderer::GlesLightingRenderer()
+        GlesLightingRenderer::GlesLightingRenderer():
+                renderTargetContainer_(nullptr), frameParameters_(nullptr),
+                actorsRenderer_(nullptr), textureHandler_(nullptr)
         {
                 for(uint8_t i = 0; i < NUM_OF_LIGHT_TYPES; ++i)
                         vertexBuffers_[i] = 0;
-
-                renderTargetContainer_ = nullptr;
-                frameParameters_ = nullptr;
-                actorsRenderer_ = nullptr;
-                textureHandler_ = nullptr;
         }
         GlesLightingRenderer::~GlesLightingRenderer()
         {
@@ -662,30 +659,20 @@ namespace selene
                 textureHandler_->setTexture(0, 2);
         }
 
-        GlesLightingRenderer::Variables::Variables()
-        {
-                locationViewProjectionMatrix = -1;
-                locationNormalsMatrix = -1;
-                locationViewMatrix = -1;
-
-                locationLightTextureMatrix = -1;
-                locationLightViewMatrix    = -1;
-
-                locationLightColors = -1;
-                locationLightPositions = -1;
-                locationLightDirections = -1;
-
-                locationShadowMapConversionParameters = -1;
-                locationTextureCoordinatesAdjustment = -1;
-                locationConversionParameters = -1;
-                locationUnprojectionVector = -1;
-                locationBias = -1;
-
-                locationDepthBuffer = -1;
-                locationNormalsBuffer = -1;
-                locationShadowsBuffer = -1;
-                locationShadowMap = -1;
-        }
+        GlesLightingRenderer::Variables::Variables():
+                locationViewProjectionMatrix(-1), locationNormalsMatrix(-1),
+                locationViewMatrix(-1), locationLightTextureMatrix(-1),
+                locationLightViewMatrix(-1), locationLightColors(-1),
+                locationLightPositions(-1), locationLightDirections(-1),
+                locationShadowMapConversionParameters(-1),
+                locationTextureCoordinatesAdjustment(-1),
+                locationConversionParameters(-1),
+                locationUnprojectionVector(-1),
+                locationBias(-1),
+                locationDepthBuffer(-1),
+                locationNormalsBuffer(-1),
+                locationShadowsBuffer(-1),
+                locationShadowMap(-1) {}
         GlesLightingRenderer::Variables::~Variables() {}
 
         //-------------------------------------------------------------------------------------------------------------

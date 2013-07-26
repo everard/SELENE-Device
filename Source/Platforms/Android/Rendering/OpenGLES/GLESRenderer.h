@@ -57,8 +57,9 @@ namespace selene
                 Parameters parameters_;
 
                 GlesRenderer();
-                GlesRenderer(const GlesRenderer& renderer);
+                GlesRenderer(const GlesRenderer&) = delete;
                 ~GlesRenderer();
+                GlesRenderer& operator =(const GlesRenderer&) = delete;
 
                 /**
                  * \brief Writes log entry.

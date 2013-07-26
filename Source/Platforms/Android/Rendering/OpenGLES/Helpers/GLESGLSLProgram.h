@@ -6,6 +6,7 @@
 
 #include "../../../../../Engine/Core/Entity/Entity.h"
 #include <GLES2/gl2.h>
+#include <string>
 
 namespace selene
 {
@@ -24,7 +25,7 @@ namespace selene
                 /**
                  * Represents vertex attribute of GLSL program.
                  */
-                class VertexAttribute: public Entity
+                class VertexAttribute
                 {
                 public:
                         /**
@@ -33,7 +34,9 @@ namespace selene
                          * \param[in] location location of the attribute
                          */
                         VertexAttribute(const char* name, GLuint location);
+                        VertexAttribute(const VertexAttribute&) = default;
                         ~VertexAttribute();
+                        VertexAttribute& operator =(const VertexAttribute&) = default;
 
                         /**
                          * \brief Returns location of the vertex attribute in GLSL program.
@@ -41,13 +44,22 @@ namespace selene
                          */
                         GLuint getLocation() const;
 
+                        /**
+                         * \brief Returns name of the vertex attribute.
+                         * \return name of the vertex attribute
+                         */
+                        const char* getName() const;
+
                 private:
+                        std::string name_;
                         GLuint location_;
 
                 };
 
                 GlesGlslProgram();
+                GlesGlslProgram(const GlesGlslProgram&) = delete;
                 ~GlesGlslProgram();
+                GlesGlslProgram& operator =(const GlesGlslProgram&) = delete;
 
                 /**
                  * \brief Initializes program.

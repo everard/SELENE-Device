@@ -26,7 +26,8 @@ To compile and run everything out-of-box your directory tree should be like this
     |   | Assets\                <- ASSETS NEEDED TO RUN APPLICATIONS
     |   | Android\               <- ANDROID BUILD SCRIPTS
     |   | Linux\                 <- LINUX MAKEFILE
-    |   | Windows\               <- VISUAL C++ PROJECTS
+    |   | Projects CB\           <- CODE::BLOCKS PROJECTS
+    |   | Projects VS\           <- VISUAL C++ PROJECTS
 
 ANDROID
 -------
@@ -54,7 +55,9 @@ This applications will run on your android device, but will not render, because 
 WINDOWS
 -------
 
-To compile existing code under Windows, you should cd to the Build/Windows and compile projects inside the solution SELENE-Device.sln in your Visual C++ 2012.
+To compile existing code under Windows, you should cd to the "Build/Projects CB" and compile projects inside the workspace SELENE-Device.workspace in your Code::Blocks IDE.
+Note, that neither Visual Studio 2012, nor Visual Studio 2013 Preview are able to compile this (because they lack C++11 support). But in the near future (as M$ states),
+when Visual Studio 2013 RTM comes out, you will be able to compile it with VS. Projects for VS are in "Build/Projects VS" folder.
 
 LINUX
 -----
@@ -63,15 +66,15 @@ To compile existing code under Linux you should cd to the Build/Linux directory 
 
     make all
 
-Requirements: GCC ver. >= 4.6.3 and GNU Make ver. >= 3.81
+Requirements: GCC ver. >= 4.7.3 and GNU Make ver. >= 3.81
 
 LINKS TO DOWNLOADS
 ==================
 Download Visual Studio 2012 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
-* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUcFM3QVAwUlVhQm8/edit)
+* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUREd1MmRoUVpfZTA/edit?usp=sharing)
 
 LICENSE
 =======
-Copyright (c) 2012 Nezametdinov E. Ildus
+Copyright (c) 2012-2013 Nezametdinov E. Ildus
 
-This software is licensed under the MIT License (see LICENSE.txt). I hold the copyright, but this work can be used in any commercial and/or open-source project.
+This software is licensed under the MIT License (see LICENSE.txt). This work can be used in any commercial and/or open-source project.

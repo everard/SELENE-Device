@@ -9,10 +9,7 @@
 namespace selene
 {
 
-        GlesTexture::GlesTexture(const char* name): Texture(name)
-        {
-                texture_ = 0;
-        }
+        GlesTexture::GlesTexture(const char* name): Texture(name), texture_(0) {}
         GlesTexture::~GlesTexture()
         {
                 destroy();

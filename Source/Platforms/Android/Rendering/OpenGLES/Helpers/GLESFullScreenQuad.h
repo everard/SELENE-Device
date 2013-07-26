@@ -22,7 +22,9 @@ namespace selene
         {
         public:
                 GlesFullScreenQuad();
+                GlesFullScreenQuad(const GlesFullScreenQuad&) = delete;
                 ~GlesFullScreenQuad();
+                GlesFullScreenQuad& operator =(const GlesFullScreenQuad&) = delete;
 
                 /**
                  * \brief Initializes full-screen quad.

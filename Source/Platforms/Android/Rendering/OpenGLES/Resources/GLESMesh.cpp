@@ -9,10 +9,9 @@
 namespace selene
 {
 
-        GlesMesh::GlesMesh(const char* name): Mesh(name)
+        GlesMesh::GlesMesh(const char* name): Mesh(name), indexBuffer_(0)
         {
-                memset(vertexBuffers_, 0, sizeof(vertexBuffers_));
-                indexBuffer_ = 0;
+                std::memset(vertexBuffers_, 0, sizeof(vertexBuffers_));
         }
         GlesMesh::~GlesMesh()
         {

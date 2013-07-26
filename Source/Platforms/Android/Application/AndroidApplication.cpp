@@ -8,13 +8,8 @@ namespace selene
 {
 
         AndroidApplication::AndroidApplication(const char* name, uint32_t width, uint32_t height):
-                Application(name, width, height)
-        {
-                state_ = nullptr;
-                shouldRun_ = true;
-                isPaused_  = false;
-                isInitialized_ = false;
-        }
+                Application(name, width, height), renderer_(), state_(nullptr), timer_(),
+                shouldRun_(true), isPaused_(false), isInitialized_(false) {}
         AndroidApplication::~AndroidApplication() {}
 
         //-------------------------------------------------------------------------------------------------------

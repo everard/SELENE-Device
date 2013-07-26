@@ -6,7 +6,7 @@
 namespace selene
 {
 
-        AndroidTimer::AndroidTimer()
+        AndroidTimer::AndroidTimer(): currentTime_()
         {
                 clock_gettime(CLOCK_MONOTONIC, &currentTime_);
         }

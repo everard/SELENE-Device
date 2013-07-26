@@ -24,7 +24,9 @@ namespace selene
         {
         public:
                 GlesCapabilities();
+                GlesCapabilities(const GlesCapabilities&) = delete;
                 ~GlesCapabilities();
+                GlesCapabilities& operator =(const GlesCapabilities&) = delete;
 
                 /**
                  * \brief Checks capabilities and creates OpenGL ES context.

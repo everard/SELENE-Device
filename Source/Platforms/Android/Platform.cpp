@@ -17,10 +17,9 @@ namespace selene
         uint32_t Platform::defaultScreenWidth_  = 1;
         uint32_t Platform::defaultScreenHeight_ = 1;
 
-        Platform::FileManager::FileManager(): selene::FileManager(Platform::fileExists)
-        {
-                assetManager_ = Platform::state_->activity->assetManager;
-        }
+        Platform::FileManager::FileManager():
+                selene::FileManager(Platform::fileExists),
+                assetManager_(Platform::state_->activity->assetManager) {}
         Platform::FileManager::~FileManager() {}
 
         //----------------------------------------------------------------------------------------------------------

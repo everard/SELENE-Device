@@ -42,7 +42,9 @@ namespace selene
                 uint8_t renderingFlags;
 
                 GlesFrameParameters();
+                GlesFrameParameters(const GlesFrameParameters&) = default;
                 ~GlesFrameParameters();
+                GlesFrameParameters& operator =(const GlesFrameParameters&) = default;
 
         };
 
