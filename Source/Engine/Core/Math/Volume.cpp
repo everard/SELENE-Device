@@ -24,7 +24,7 @@ namespace selene
                 }
 
                 numPlanes_ = numPlanes;
-                for(register uint8_t i = 0; i < numPlanes_; ++i)
+                for(uint8_t i = 0; i < numPlanes_; ++i)
                         planes_[i] = planes[i];
         }
 

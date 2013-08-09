@@ -49,7 +49,7 @@ namespace selene
                 RELATION result = INSIDE;
 
                 // check all planes
-                for(register uint8_t i = 0; i < numPlanes; ++i)
+                for(uint8_t i = 0; i < numPlanes; ++i)
                 {
                         // compute distance to the plane from sphere origin
                         float distance = planes[i].distance(center_);

@@ -129,7 +129,7 @@ namespace selene
                 material.setOpacity(opacity);
 
                 // read texture maps
-                for(register uint8_t j = 0; j < NUM_OF_TEXTURE_MAP_TYPES; ++j)
+                for(uint8_t j = 0; j < NUM_OF_TEXTURE_MAP_TYPES; ++j)
                 {
                         if(Utility::readString(stream, fileName) && textureManager_ != nullptr)
                         {
@@ -238,7 +238,7 @@ namespace selene
                 if(meshData.faces.getStride() == 2)
                 {
                         uint16_t* faces = reinterpret_cast<uint16_t*>(&meshData.faces[0]);
-                        for(register uint32_t i = 0; i < 3 * meshData.faces.getSize(); ++i)
+                        for(uint32_t i = 0; i < 3 * meshData.faces.getSize(); ++i)
                         {
                                 if(faces[i] >= numVertices)
                                         return false;
@@ -247,7 +247,7 @@ namespace selene
                 else
                 {
                         uint32_t* faces = reinterpret_cast<uint32_t*>(&meshData.faces[0]);
-                        for(register uint32_t i = 0; i < 3 * meshData.faces.getSize(); ++i)
+                        for(uint32_t i = 0; i < 3 * meshData.faces.getSize(); ++i)
                         {
                                 if(faces[i] >= numVertices)
                                         return false;
@@ -276,7 +276,7 @@ namespace selene
                         return false;
 
                 // read subsets
-                for(register uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
+                for(uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
                 {
                         // create material
                         meshData.subsets[i].material.reset(new(std::nothrow) Material);
@@ -323,7 +323,7 @@ namespace selene
                 // read bones
                 try
                 {
-                        for(register uint16_t i = 0; i < bones.getSize(); ++i)
+                        for(uint16_t i = 0; i < bones.getSize(); ++i)
                         {
                                 Skeleton::Bone& bone = bones[i];
 
@@ -381,7 +381,7 @@ namespace selene
                 stream.write(reinterpret_cast<char*>(&opacity), sizeof(float));
 
                 // write texture maps
-                for(register uint8_t j = 0; j < NUM_OF_TEXTURE_MAP_TYPES; ++j)
+                for(uint8_t j = 0; j < NUM_OF_TEXTURE_MAP_TYPES; ++j)
                 {
                         Texture* texture = *material.getTextureMap(j);
                         if(texture != nullptr)
@@ -493,7 +493,7 @@ namespace selene
                         stream.write(reinterpret_cast<char*>(&numSubsets), sizeof(uint16_t));
 
                         // write subsets
-                        for(register uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
+                        for(uint16_t i = 0; i < meshData.subsets.getSize(); ++i)
                         {
                                 // check material
                                 if(!meshData.subsets[i].material)
@@ -533,7 +533,7 @@ namespace selene
                         stream.write(reinterpret_cast<char*>(&numBones), sizeof(uint16_t));
 
                         // write bones
-                        for(register uint16_t i = 0; i < bones.getSize(); ++i)
+                        for(uint16_t i = 0; i < bones.getSize(); ++i)
                         {
                                 const Skeleton::Bone& bone = bones[i];
 

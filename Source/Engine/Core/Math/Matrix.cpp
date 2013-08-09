@@ -370,9 +370,9 @@ namespace selene
         {
                 float tmp;
 
-                for(register uint8_t i = 0; i < 3; ++i)
+                for(uint8_t i = 0; i < 3; ++i)
                 {
-                        for(register uint8_t j = i + 1; j < 4; ++j)
+                        for(uint8_t j = i + 1; j < 4; ++j)
                         {
                                 tmp = a[i][j];
                                 a[i][j] = a[j][i];
@@ -465,8 +465,8 @@ namespace selene
         {
                 Matrix result;
 
-                for(register uint8_t i = 0; i < 4; ++i)
-                        for(register uint8_t j = 0; j < 4; ++j)
+                for(uint8_t i = 0; i < 4; ++i)
+                        for(uint8_t j = 0; j < 4; ++j)
                                 result.a[i][j] = matrix0.a[i][0] * matrix1.a[0][j] +
                                                  matrix0.a[i][1] * matrix1.a[1][j] +
                                                  matrix0.a[i][2] * matrix1.a[2][j] +

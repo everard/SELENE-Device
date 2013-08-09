@@ -106,9 +106,9 @@ namespace selene
                 // go through all faces and create duplicates
                 uint32_t vertexIndex = 0;
 
-                for(register uint32_t faceNo = 0; faceNo < numFaces; ++faceNo)
+                for(uint32_t faceNo = 0; faceNo < numFaces; ++faceNo)
                 {
-                        for(register uint8_t i = 0; i < 3; ++i)
+                        for(uint8_t i = 0; i < 3; ++i)
                         {
                                 MultiVertex* multiVertex = &vertices[faces[faceNo].indices[i]];
 
@@ -127,7 +127,7 @@ namespace selene
                 }
 
                 // update faces
-                for(register uint32_t i = 0; i < numVertices; ++i)
+                for(uint32_t i = 0; i < numVertices; ++i)
                         vertices[i].updateFaces(newFaces);
 
                 // free memory
@@ -521,9 +521,9 @@ namespace selene
                 {
                         uint16_t* faces = reinterpret_cast<uint16_t*>(&meshData.faces[0]);
 
-                        for(register uint32_t i = 0; i < meshData.faces.getSize(); ++i)
+                        for(uint32_t i = 0; i < meshData.faces.getSize(); ++i)
                         {
-                                for(register uint8_t j = 0; j < 3; ++j)
+                                for(uint8_t j = 0; j < 3; ++j)
                                         faces[3 * i + j] = static_cast<uint16_t>(faces_[i].indices[j]);
                         }
                 }
@@ -531,9 +531,9 @@ namespace selene
                 {
                         uint32_t* faces = reinterpret_cast<uint32_t*>(&meshData.faces[0]);
 
-                        for(register uint32_t i = 0; i < meshData.faces.getSize(); ++i)
+                        for(uint32_t i = 0; i < meshData.faces.getSize(); ++i)
                         {
-                                for(register uint8_t j = 0; j < 3; ++j)
+                                for(uint8_t j = 0; j < 3; ++j)
                                         faces[3 * i + j] = faces_[i].indices[j];
                         }
                 }

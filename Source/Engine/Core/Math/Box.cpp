@@ -44,7 +44,7 @@ namespace selene
         //---------------------------------------------------------------------------------
         void Box::define(const Vector3d* vertices)
         {
-                for(register uint8_t i = 0; i < 8; ++i)
+                for(uint8_t i = 0; i < 8; ++i)
                         vertices_[i] = vertices[i];
         }
 
@@ -61,7 +61,7 @@ namespace selene
                 uint8_t numPlanes = volume.getNumPlanes();
 
                 // check all planes
-                for(register uint8_t i = 0; i < numPlanes; ++i)
+                for(uint8_t i = 0; i < numPlanes; ++i)
                 {
                         // check vertices
                         if(planes[i].distance(vertices_[0]) >= 0.0f) continue;

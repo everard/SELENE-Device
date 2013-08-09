@@ -131,9 +131,9 @@ namespace selene
                 {
                 public:
                         Timer() = default;
-                        Timer(const Timer&) = default;
+                        Timer(const Timer&) = delete;
                         ~Timer() = default;
-                        Timer& operator =(const Timer&) = default;
+                        Timer& operator =(const Timer&) = delete;
 
                         // Timer interface implementation
                         void reset();

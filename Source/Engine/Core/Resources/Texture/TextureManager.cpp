@@ -139,7 +139,7 @@ namespace selene
 
                         totalSize_ = 0;
 
-                        for(register uint32_t i = 0; i < textureData.numMipMaps; ++i)
+                        for(uint32_t i = 0; i < textureData.numMipMaps; ++i)
                         {
                                 totalSize_ += mipWidth * mipHeight * textureData.bpp;
 
@@ -187,7 +187,7 @@ namespace selene
 
                         uint8_t* pixels = &textureData.pixels[0];
 
-                        for(register uint32_t i = 0; i < textureData.numMipMaps; ++i)
+                        for(uint32_t i = 0; i < textureData.numMipMaps; ++i)
                         {
                                 uint32_t lineSize = mipWidth * textureData.bpp;
 
@@ -196,7 +196,7 @@ namespace selene
                                         return false;
 
                                 // read mip map data
-                                for(register uint32_t j = 0; j < mipHeight; ++j)
+                                for(uint32_t j = 0; j < mipHeight; ++j)
                                 {
                                         stream.read(reinterpret_cast<char*>(&line[0]), pitch);
                                         memcpy(pixels, &line[0], lineSize);

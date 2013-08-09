@@ -65,7 +65,7 @@ namespace selene
                 uint8_t numPlanes = volume.getNumPlanes();
                 Vector3d point = apex_ + direction_;
 
-                for(register uint8_t i = 0; i < numPlanes; ++i)
+                for(uint8_t i = 0; i < numPlanes; ++i)
                 {
                         // check vertices
                         if(planes[i].distance(apex_) >= 0.0f) continue;

@@ -86,7 +86,7 @@ namespace selene
                 uint32_t offset = 0;
 
                 // fill texture
-                for(register uint32_t i = 0; i < data_.numMipMaps; ++i)
+                for(uint32_t i = 0; i < data_.numMipMaps; ++i)
                 {
                         // lock mip map
                         if(FAILED(d3dHelperTexture->LockRect(i, &lockedRect, nullptr, 0)))
@@ -125,7 +125,7 @@ namespace selene
                                 }
 
                                 // fill texture using pitch value
-                                for(register uint32_t j = 0; j < height; ++j)
+                                for(uint32_t j = 0; j < height; ++j)
                                 {
                                         memcpy(pixels, &data_.pixels[offset], size);
                                         pixels += lockedRect.Pitch;

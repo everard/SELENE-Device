@@ -30,7 +30,9 @@ namespace selene
         {
         public:
                 Timer();
+                Timer(const Timer&) = delete;
                 virtual ~Timer();
+                Timer& operator =(const Timer&) = delete;
 
                 /**
                  * \brief Resets timer.
