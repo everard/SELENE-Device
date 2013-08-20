@@ -5,7 +5,7 @@
 #define EXPORTER_H
 
 #include "NVMeshMender.h"
-#include "RawMeshData.h"
+#include "RawMesh.h"
 
 namespace selene
 {
@@ -23,10 +23,10 @@ namespace selene
         {
         public:
                 /**
-                 * \brief Constructs exporter with given raw mesh data.
-                 * \param[in] rawMeshData raw mesh data
+                 * \brief Constructs exporter with given raw mesh.
+                 * \param[in] rawMesh raw mesh
                  */
-                Exporter(RawMeshData* rawMeshData);
+                Exporter(RawMesh& rawMesh);
                 Exporter(const Exporter&) = delete;
                 ~Exporter();
                 Exporter& operator =(const Exporter&) = delete;
@@ -56,33 +56,16 @@ namespace selene
 
                 };
 
-                /**
-                 * Represents dummy texture.
-                 */
-                class DummyTexture: public Texture
-                {
-                public:
-                        DummyTexture(const char* name);
-                        DummyTexture(const DummyTexture&) = delete;
-                        ~DummyTexture();
-                        DummyTexture& operator =(const DummyTexture&) = delete;
-
-                        // selene::Resource interface implementation
-                        bool retain();
-                        void discard();
-
-                };
-
                 ResourceManager resourceManager_;
                 DummyMesh mesh_;
 
-                RawMeshData* rawMeshData_;
-                RawMeshData::Face* faces_;
+                RawMesh& rawMesh_;
+                RawMesh::Face* faces_;
 
                 std::vector<MeshMender::Vertex> meshMenderVertices_;
                 std::vector<unsigned int> newToOldVertexMapping_;
 
-                Array<RawMeshData::SkinVertex, uint32_t> skinVertices_;
+                //Array<RawMeshData::SkinVertex, uint32_t> skinVertices_;
                 uint32_t numVertices_;
                 uint32_t numFaces_;
 

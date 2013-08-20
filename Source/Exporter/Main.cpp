@@ -6,9 +6,11 @@
 #include <iostream>
 #include <string>
 
+using namespace selene;
+
 int main(int argc, char* args[])
 {
-        std::cout << "SELENE Exporter." << std::endl;
+        std::cout << "SELENE Device mesh exporter" << std::endl;
         std::cout << argc;
 
         if(argc > 1)
@@ -21,21 +23,21 @@ int main(int argc, char* args[])
         for(int i = 0; i < argc; ++i)
                 std::cout << "   <" << args[i] << ">" << std::endl;
 
-        selene::RawMeshData rawMeshData;
+        RawMesh rawMesh;
 
         if(argc >= 3)
         {
-                std::string rawMeshDataFileName = args[1];
-                std::replace(rawMeshDataFileName.begin(),
-                             rawMeshDataFileName.end(), '?', ' ');
+                std::string rawMeshFileName = args[1];
+                std::replace(rawMeshFileName.begin(),
+                             rawMeshFileName.end(), '?', ' ');
 
                 std::string fileName = args[2];
                 std::replace(fileName.begin(), fileName.end(), '?', ' ');
 
-                if(rawMeshData.read(rawMeshDataFileName.c_str()))
+                if(rawMesh.read(rawMeshFileName.c_str()))
                 {
-                        selene::Exporter exporter(&rawMeshData);
-                        exporter.doExport(fileName.c_str());
+                        //Exporter exporter(rawMesh);
+                        //exporter.doExport(fileName.c_str());
                 }
         }
 

@@ -1,6 +1,6 @@
 // Copyright (c) 2012 Nezametdinov E. Ildus
 // Licensed under the MIT License (see LICENSE.txt for details)
-
+/*
 #include "DummyTextureFactory.h"
 #include "Exporter.h"
 #include <iostream>
@@ -641,4 +641,4 @@ namespace selene
                 return true;
         }
 
-}
+}*/
