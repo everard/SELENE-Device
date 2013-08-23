@@ -64,7 +64,7 @@ namespace selene
                         ~DummyTexture() = default;
                         DummyTexture& operator =(const DummyTexture&) = delete;
 
-                        // selene::Resource interface implementation
+                        // Texture interface implementation
                         bool retain();
                         void discard();
 
@@ -97,16 +97,16 @@ namespace selene
 
                 };
 
-                Array<Vector3d, uint32_t> positions_;
+                Array<Vector3d, uint32_t> positions_, normals_;
+                Array<Vector2d, uint32_t> textureCoordinates_;
                 Array<Vector4d, uint32_t> boneWeights_;
                 Array<Vector4d, uint32_t> boneIndices_;
-                Array<Vector2d, uint32_t> textureCoordinates_;
 
-                Array<Face, uint32_t> faces_, textureFaces_;
+                Array<Face, uint32_t> faces_, normalFaces_, textureFaces_;
 
-                Array<std::pair<std::shared_ptr<Material>, uint32_t>, uint32_t> materials_;
+                Array<std::pair<std::shared_ptr<Material>, uint32_t>, uint16_t> materials_;
                 Array<Skeleton::Bone, uint16_t> bones_;
-                Vector3d bounds_[2];
+                Box boundingBox_;
 
                 ResourceManager resourceManager_;
 

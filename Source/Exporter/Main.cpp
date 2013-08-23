@@ -10,7 +10,7 @@ using namespace selene;
 
 int main(int argc, char* args[])
 {
-        std::cout << "SELENE Device mesh exporter" << std::endl;
+        std::cout << "SELENE Device exporter" << std::endl;
         std::cout << argc;
 
         if(argc > 1)
@@ -36,8 +36,8 @@ int main(int argc, char* args[])
 
                 if(rawMesh.read(rawMeshFileName.c_str()))
                 {
-                        //Exporter exporter(rawMesh);
-                        //exporter.doExport(fileName.c_str());
+                        Exporter exporter;
+                        exporter.processMesh(rawMesh, fileName.c_str());
                 }
         }
 

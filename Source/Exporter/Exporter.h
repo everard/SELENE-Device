@@ -7,6 +7,9 @@
 #include "NVMeshMender.h"
 #include "RawMesh.h"
 
+#include <memory>
+#include <map>
+
 namespace selene
 {
 
@@ -16,83 +19,79 @@ namespace selene
          */
 
         /**
-         * Represents exporter. Processes RawMeshData and saves the result as SLE model.
-         * Uses NVMeshMender to compute tangent-bitangent-normal basis for vertices.
+         * Represents exporter. Processes RawMesh and saves the result in engine's mesh format.
+         * Uses NVMeshMender to compute TBN basis for vertices.
          */
         class Exporter
         {
         public:
-                /**
-                 * \brief Constructs exporter with given raw mesh.
-                 * \param[in] rawMesh raw mesh
-                 */
-                Exporter(RawMesh& rawMesh);
+                Exporter();
                 Exporter(const Exporter&) = delete;
                 ~Exporter();
                 Exporter& operator =(const Exporter&) = delete;
 
                 /**
-                 * \brief Exports mesh.
-                 * \param[in] fileName name of the file which will hold exported mesh
-                 * \return true if mesh has been successfully exported
+                 * \brief Processes mesh and writes result to the file.
+                 * \param[in] rawMesh raw mesh, which shall be processed
+                 * \param[in] fileName name of the file, which will hold exported mesh
+                 * \return true on success
                  */
-                bool doExport(const char* fileName);
+                bool processMesh(RawMesh& rawMesh, const char* fileName);
 
         private:
                 /**
-                 * Represents dummy mesh.
+                 * Represents vertex with duplicates.
                  */
-                class DummyMesh: public Mesh
-                {
-                public:
-                        DummyMesh(const char* name);
-                        DummyMesh(const DummyMesh&) = delete;
-                        ~DummyMesh();
-                        DummyMesh& operator =(const DummyMesh&) = delete;
+                typedef std::map<uint32_t, uint32_t> MultiVertex;
 
-                        // selene::Resource interface implementation
-                        bool retain();
-                        void discard();
+                RawMesh* rawMesh_;
+                std::unique_ptr<Mesh::Data> meshData_;
+                Array<RawMesh::Face, uint32_t> faces_;
 
-                };
+                Array<Vector4d, uint32_t> boneIndices_;
+                Array<Vector4d, uint32_t> boneWeights_;
 
-                ResourceManager resourceManager_;
-                DummyMesh mesh_;
+                uint32_t numVertices_;
 
-                RawMesh& rawMesh_;
-                RawMesh::Face* faces_;
-
-                std::vector<MeshMender::Vertex> meshMenderVertices_;
+                std::vector<MeshMender::Vertex> vertices_;
                 std::vector<unsigned int> newToOldVertexMapping_;
 
-                //Array<RawMeshData::SkinVertex, uint32_t> skinVertices_;
-                uint32_t numVertices_;
-                uint32_t numFaces_;
+                /**
+                 * \brief Merges two sets of faces into one.
+                 * \param[in] faces0 the first set of faces
+                 * \param[in] faces1 the second set of faces
+                 * \param[out] result new set of faces, which is the result of merge operation
+                 * \param[in] numVertices number of vertices
+                 * \return new number of vertices on success, zero on failure
+                 */
+                uint32_t mergeFaces(const Array<RawMesh::Face, uint32_t>& faces0,
+                                    const Array<RawMesh::Face, uint32_t>& faces1,
+                                    Array<RawMesh::Face, uint32_t>& result,
+                                    uint32_t numVertices);
 
                 /**
-                 * \brief Clears all temporary data.
+                 * \brief Computes tangent space.
+                 * \return true on success
                  */
-                void clear();
+                bool computeTangentSpace();
 
                 /**
-                 * \brief Reads faces from raw mesh data.
-                 * \return true if faces have been successfully read
+                 * \brief Prepares vertex streams.
+                 * \return true on success
                  */
-                bool readFaces();
+                bool prepareVertexStreams();
 
                 /**
-                 * \brief Creates vertices and faces.
-                 * \param[out] meshData mesh data
-                 * \return true if vertices and faces have been successfully created
+                 * \brief Prepares faces.
+                 * \return true on success
                  */
-                bool createVerticesAndFaces(Mesh::Data& meshData);
+                bool prepareFaces();
 
                 /**
-                 * \brief Creates subsets.
-                 * \param[out] meshData mesh data
-                 * \return true if subsets have been successfully created
+                 * \brief Prepares mesh subsets.
+                 * \return true on success
                  */
-                bool createSubsets(Mesh::Data& meshData);
+                bool prepareSubsets();
 
         };
 

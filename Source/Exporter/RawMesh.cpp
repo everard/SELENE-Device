@@ -8,8 +8,8 @@ namespace selene
 {
 
         RawMesh::RawMesh():
-                positions_(), boneWeights_(), boneIndices_(), textureCoordinates_(),
-                faces_(), textureFaces_(), materials_(), bones_(), resourceManager_() {}
+                positions_(), normals_(), textureCoordinates_(), boneWeights_(), boneIndices_(), faces_(),
+                normalFaces_(), textureFaces_(), materials_(), bones_(), boundingBox_(), resourceManager_() {}
         RawMesh::~RawMesh() {}
 
         //-----------------------------------------------------------------------------------------------------------
@@ -69,8 +69,8 @@ namespace selene
                         return false;
                 }
 
-                uint32_t numPositions, numTextureCoordinates, numFaces, numMaterials;
-                uint16_t numBones;
+                uint32_t numPositions, numNormals, numTextureCoordinates, numFaces;
+                uint16_t numMaterials, numBones;
                 char header[4];
 
                 stream.read(header, sizeof(header));
@@ -81,18 +81,21 @@ namespace selene
                         return false;
                 }
 
-                stream.read(reinterpret_cast<char*>(&numPositions),          sizeof(uint32_t));
+                stream.read(reinterpret_cast<char*>(&numPositions), sizeof(uint32_t));
+                stream.read(reinterpret_cast<char*>(&numNormals),   sizeof(uint32_t));
+
                 stream.read(reinterpret_cast<char*>(&numTextureCoordinates), sizeof(uint32_t));
+                stream.read(reinterpret_cast<char*>(&numFaces),              sizeof(uint32_t));
 
-                stream.read(reinterpret_cast<char*>(&numFaces), sizeof(uint32_t));
-
-                stream.read(reinterpret_cast<char*>(&numMaterials), sizeof(uint32_t));
+                stream.read(reinterpret_cast<char*>(&numMaterials), sizeof(uint16_t));
                 stream.read(reinterpret_cast<char*>(&numBones),     sizeof(uint16_t));
 
                 bool isAllocationSuccessful = positions_.create(numPositions);
+                isAllocationSuccessful = isAllocationSuccessful && normals_.create(numNormals);
                 isAllocationSuccessful = isAllocationSuccessful && textureCoordinates_.create(numTextureCoordinates);
 
                 isAllocationSuccessful = isAllocationSuccessful && faces_.create(numFaces);
+                isAllocationSuccessful = isAllocationSuccessful && normalFaces_.create(numFaces);
                 isAllocationSuccessful = isAllocationSuccessful && textureFaces_.create(numFaces);
 
                 isAllocationSuccessful = isAllocationSuccessful && materials_.create(numMaterials);
@@ -124,6 +127,7 @@ namespace selene
                 }
 
                 stream.read(reinterpret_cast<char*>(&positions_[0]), positions_.getSize() * sizeof(Vector3d));
+                stream.read(reinterpret_cast<char*>(&normals_[0]), normals_.getSize() * sizeof(Vector3d));
 
                 if(!bones_.isEmpty())
                 {
@@ -136,25 +140,32 @@ namespace selene
                 stream.read(reinterpret_cast<char*>(&textureCoordinates_[0]),
                             textureCoordinates_.getSize() * sizeof(Vector2d));
 
-                bounds_[0] = bounds_[1] = positions_[0];
+                Vector3d bounds[2];
+                bounds[0] = bounds[1] = positions_[0];
                 for(uint32_t i = 1; i < positions_.getSize(); ++i)
                 {
                         const Vector3d& position = positions_[i];
 
-                        if(position.x < bounds_[0].x)
-                                bounds_[0].x = position.x;
-                        if(position.y < bounds_[0].y)
-                                bounds_[0].y = position.y;
-                        if(position.z < bounds_[0].z)
-                                bounds_[0].z = position.z;
+                        if(position.x < bounds[0].x)
+                                bounds[0].x = position.x;
+                        if(position.y < bounds[0].y)
+                                bounds[0].y = position.y;
+                        if(position.z < bounds[0].z)
+                                bounds[0].z = position.z;
 
-                        if(position.x > bounds_[1].x)
-                                bounds_[1].x = position.x;
-                        if(position.y > bounds_[1].y)
-                                bounds_[1].y = position.y;
-                        if(position.z > bounds_[1].z)
-                                bounds_[1].z = position.z;
+                        if(position.x > bounds[1].x)
+                                bounds[1].x = position.x;
+                        if(position.y > bounds[1].y)
+                                bounds[1].y = position.y;
+                        if(position.z > bounds[1].z)
+                                bounds[1].z = position.z;
                 }
+
+                Vector3d center = (bounds[0] + bounds[1]) * 0.5f;
+                float width  = bounds[1].x - bounds[0].x;
+                float height = bounds[1].y - bounds[0].y;
+                float depth  = bounds[1].z - bounds[0].z;
+                boundingBox_.define(center, width, height, depth);
 
                 return true;
         }
@@ -169,10 +180,14 @@ namespace selene
                 }
 
                 auto numFaces = faces_.getSize();
+
                 auto numPositions = positions_.getSize();
+                auto numNormals   = normals_.getSize();
+
                 auto numTextureCoordinates = textureCoordinates_.getSize();
 
                 stream.read(reinterpret_cast<char*>(faces_[0].indices), numFaces * sizeof(Face));
+                stream.read(reinterpret_cast<char*>(normalFaces_[0].indices), numFaces * sizeof(Face));
                 stream.read(reinterpret_cast<char*>(textureFaces_[0].indices), numFaces * sizeof(Face));
 
                 for(uint32_t i = 0; i < numFaces; ++i)
@@ -181,6 +196,13 @@ namespace selene
                         if(face[2] >= numPositions || face[0] >= numPositions || face[1] >= numPositions)
                         {
                                 std::cout << "error: face " << i << " contains bad reference" << std::endl;
+                                return false;
+                        }
+
+                        face = normalFaces_[i].indices;
+                        if(face[2] >= numNormals || face[0] >= numNormals || face[1] >= numNormals)
+                        {
+                                std::cout << "error: normal face " << i << " contains bad reference" << std::endl;
                                 return false;
                         }
 
@@ -206,7 +228,7 @@ namespace selene
                         return false;
                 }
 
-                for(uint32_t i = 0; i < materials_.getSize(); ++i)
+                for(uint16_t i = 0; i < materials_.getSize(); ++i)
                 {
                         auto& material = materials_[i].first;
                         material.reset(new(std::nothrow) Material);
@@ -290,7 +312,7 @@ namespace selene
                 }
 
                 char boneName[Utility::MAX_STRING_LENGTH];
-                for(uint32_t i = 0; i < bones_.getSize(); ++i)
+                for(uint16_t i = 0; i < bones_.getSize(); ++i)
                 {
                         if(!Utility::readString(stream, boneName))
                         {

@@ -79,9 +79,9 @@ the verts should be of the format
 
 #include "../Engine/Framework.h"
 
+#include <vector>
 #include <map>
 #include <set>
-#include <vector>
 
 namespace selene
 {
