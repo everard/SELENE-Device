@@ -58,7 +58,7 @@ namespace selene
         }
         SimpleAnimation::~SimpleAnimation() {}
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         bool SimpleAnimation::onInitialize()
         {
                 // initialize memory buffer of the renderer
@@ -221,7 +221,7 @@ namespace selene
 
                 const char* meshes[] =
                 {
-                        "girl.sle", "floor.sle"
+                        "girl.sdmf", "floor.sdmf"
                 };
                 const uint32_t numMeshes = sizeof(meshes) / sizeof(meshes[0]);
 
@@ -236,7 +236,7 @@ namespace selene
 
                 const char* meshAnimations[] =
                 {
-                        "stand.sla", "walk.sla", "shoot.sla", "lookleft.sla", "lookright.sla"
+                        "stand.sdaf", "walk.sdaf", "shoot.sdaf", "lookleft.sdaf", "lookright.sdaf"
                 };
                 const uint32_t numMeshAnimations = sizeof(meshAnimations) / sizeof(meshAnimations[0]);
 
@@ -251,13 +251,13 @@ namespace selene
 
                 // create scene objects
                 scene_.addNode(new(std::nothrow) Actor("object",
-                                                       meshManager_.requestResource<Mesh>("girl.sle"),
+                                                       meshManager_.requestResource<Mesh>("girl.sdmf"),
                                                        Vector3d(0.0f, 0.0f),
                                                        Quaternion(),
                                                        Vector3d(0.08f, 0.08f, 0.08f)));
 
                 scene_.addNode(new(std::nothrow) Actor("floor",
-                                                       meshManager_.requestResource<Mesh>("floor.sle"),
+                                                       meshManager_.requestResource<Mesh>("floor.sdmf"),
                                                        Vector3d(0.0f, 0.0f),
                                                        Quaternion(Vector3d(-1.0f, 0.0f, 0.0f) *
                                                                   std::sin(SELENE_PI * 0.25f),
@@ -308,21 +308,21 @@ namespace selene
                         // animations must be added to the actor
 
                         // first animation (index is zero)
-                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("stand.sla"),
+                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("stand.sdaf"),
                                                  0.0f, 0.5f, 0.5f, 15.0f, 1.0f);
 
                         // second animation (index is one)
-                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("walk.sla"),
+                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("walk.sdaf"),
                                                  0.0f, 0.5f, 0.5f, 1.0f, 1.0f);
 
                         // third animation (index is two)
-                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("shoot.sla"),
+                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("shoot.sdaf"),
                                                  0.0f, 0.1f, 0.25f, 0.5f, 1.0f);
 
                         // etc...
-                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("lookleft.sla"),
+                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("lookleft.sdaf"),
                                                  0.0f, 0.5f, 0.5f, 1.0f, 1.0f);
-                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("lookright.sla"),
+                        object->addMeshAnimation(meshAnimationManager_.requestResource<MeshAnimation>("lookright.sdaf"),
                                                  0.0f, 0.5f, 0.5f, 1.0f, 1.0f);
 
                         // play the first animation (stand)
@@ -332,7 +332,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onDestroy()
         {
                 Renderer::destroyMemoryBuffer();
@@ -342,27 +342,27 @@ namespace selene
                 meshManager_.destroyResources(true);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onKeyPress(uint8_t key)
         {
                 gui_.process(cursorPosition_, pressedControlButtons_, key);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onControlButtonPress(uint8_t button)
         {
                 if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = true;
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onControlButtonRelease(uint8_t button)
         {
                 if(IS_SET(button, CONTROL_BUTTON_0))
                         isCameraRotationEnabled_ = false;
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onUpdate(float)
         {
                 // rotate camera
@@ -381,14 +381,14 @@ namespace selene
                 gui_.process(cursorPosition_, pressedControlButtons_, 0);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onRender(float elapsedTime)
         {
                 // render scene
                 scene_.updateAndRender(elapsedTime, renderer_);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::toggleEffect(uint8_t type)
         {
                 auto camera = camera_.lock();
@@ -401,7 +401,7 @@ namespace selene
                         camera->enableEffect(type);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::toggleGuiElementVisibility(std::weak_ptr<Gui::Element>& element)
         {
                 auto lockedElement = element.lock();
@@ -414,14 +414,14 @@ namespace selene
                         lockedElement->setFlags(GUI_ELEMENT_HIDDEN);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageExit()
         {
                 // halt application
                 halt();
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageWalk()
         {
                 auto weakObject = scene_.getActor("object");
@@ -432,7 +432,7 @@ namespace selene
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageShoot()
         {
                 auto weakObject = scene_.getActor("object");
@@ -443,7 +443,7 @@ namespace selene
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageLookLeft()
         {
                 auto weakObject = scene_.getActor("object");
@@ -455,7 +455,7 @@ namespace selene
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageLookRight()
         {
                 auto weakObject = scene_.getActor("object");
@@ -467,25 +467,25 @@ namespace selene
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleSsao()
         {
                 toggleEffect(Renderer::Effects::SSAO);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleBloom()
         {
                 toggleEffect(Renderer::Effects::BLOOM);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleShadows()
         {
                 toggleEffect(Renderer::Effects::SHADOWS);
         }
 
-        //-------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------
         void SimpleAnimation::onButtonMessageToggleSettings()
         {
                 toggleGuiElementVisibility(buttonToggleSsao_);

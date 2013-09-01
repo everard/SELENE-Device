@@ -14,22 +14,17 @@ namespace selene
         bool MeshAnimationManager::readMeshAnimation(std::istream& stream,
                                                      MeshAnimation::Data& meshAnimationData)
         {
-                // read header
-                char header[3];
+                char header[4];
                 stream.read(header, sizeof(header));
 
-                // validate header
-                if(strncmp(header, "SLA", 3) != 0)
+                if(std::memcmp(header, "SDAF", 4) != 0)
                         return false;
 
-                Array<MeshAnimation::Key, uint32_t>& meshAnimationKeys =
-                        meshAnimationData.keys;
+                Array<MeshAnimation::Key, uint32_t>& meshAnimationKeys = meshAnimationData.keys;
 
-                // read number of mesh animation keys
                 uint32_t numMeshAnimationKeys = 0;
                 stream.read(reinterpret_cast<char*>(&numMeshAnimationKeys), sizeof(uint32_t));
 
-                // allocate memory for mesh animation keys
                 if(!meshAnimationKeys.create(numMeshAnimationKeys))
                         return false;
 
@@ -41,7 +36,6 @@ namespace selene
                         {
                                 MeshAnimation::Key& meshAnimationKey = meshAnimationKeys[i];
 
-                                // read bone transforms
                                 uint16_t numBoneTransforms = 0;
                                 stream.read(reinterpret_cast<char*>(&numBoneTransforms), sizeof(uint16_t));
 

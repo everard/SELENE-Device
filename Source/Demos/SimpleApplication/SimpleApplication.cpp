@@ -148,17 +148,17 @@ namespace selene
                 meshFactory.setResourceManager(&textureManager_);
 
                 std::cout << "Loading mesh...";
-                if(meshManager_.createResource("object.sle", meshFactory) != SUCCESS)
+                if(meshManager_.createResource("object.sdmf", meshFactory) != SUCCESS)
                         std::cout << "FAILED" << std::endl;
                 else
                         std::cout << "SUCCEEDED" << std::endl;
 
                 // create scene objects
                 scene_.addNode(new(std::nothrow) Actor("object",
-                                                       meshManager_.requestResource<Mesh>("object.sle"),
-                                                       Vector3d(0.0f, 0.0f, 0.0f),
+                                                       meshManager_.requestResource<Mesh>("object.sdmf"),
+                                                       Vector3d(0.0f, -2.0f, 0.0f),
                                                        Quaternion(),
-                                                       Vector3d(1.0f, 1.0f, 1.0f)));
+                                                       Vector3d(3.5f, 3.5f, 3.5f)));
 
                 scene_.addNode(new(std::nothrow) SpotLight("spot light",
                                                            Vector3d(10.0f, 10.0f, 0.0f),
