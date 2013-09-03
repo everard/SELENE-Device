@@ -14,7 +14,7 @@ namespace selene
                 boneWeights_(), numVertices_(0), vertices_(), newToOldVertexMapping_() {}
         Exporter::~Exporter() {}
 
-        //--------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool Exporter::processMesh(RawMesh& rawMesh, const char* fileName)
         {
                 rawMesh_ = &rawMesh;
@@ -147,7 +147,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         uint32_t Exporter::mergeFaces(const Array<RawMesh::Face, uint32_t>& faces0,
                                       const Array<RawMesh::Face, uint32_t>& faces1,
                                       Array<RawMesh::Face, uint32_t>& result,
@@ -200,7 +200,7 @@ namespace selene
                 return newVertexIndex;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool Exporter::computeTangentSpace()
         {
                 uint32_t numFaces = faces_.getSize();
@@ -252,7 +252,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool Exporter::prepareVertexStreams()
         {
                 auto& textureCoordinates = meshData_->vertices[Mesh::VERTEX_STREAM_TEXTURE_COORDINATES];
@@ -339,7 +339,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool Exporter::prepareFaces()
         {
                 uint32_t numFaces = faces_.getSize();
@@ -375,7 +375,7 @@ namespace selene
                 return true;
         }
 
-        //--------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------
         bool Exporter::prepareSubsets()
         {
                 auto& subsets = meshData_->subsets;
