@@ -13,8 +13,8 @@ namespace selene
 
         SimpleApplication::SimpleApplication(const char* name, uint32_t width, uint32_t height):
                 Platform::Application(name, width, height), textureManager_(), meshManager_(),
-                fileManager_(), scene_(), gui_(), labelId_(-1), textBoxId_(-1),
-                camera_(), isCameraRotationEnabled_(false)
+                meshAnimationManager_(), fileManager_(), scene_(), gui_(), labelId_(-1),
+                textBoxId_(-1), camera_(), isCameraRotationEnabled_(false)
         {
                 // specify search folders for file manager
                 const char* folders[] =
@@ -22,26 +22,32 @@ namespace selene
                         "Assets/",
                         "Assets/Meshes/",
                         "Assets/Textures/",
+                        "Assets/Animations/",
 
                         "../Assets/",
                         "../Assets/Meshes/",
                         "../Assets/Textures/",
+                        "../Assets/Animations/",
 
                         "../../Assets/",
                         "../../Assets/Meshes/",
                         "../../Assets/Textures/",
+                        "../../Assets/Animations/",
 
                         "../../../Assets/",
                         "../../../Assets/Meshes/",
                         "../../../Assets/Textures/",
+                        "../../../Assets/Animations/",
 
                         "../../../../Assets/",
                         "../../../../Assets/Meshes/",
                         "../../../../Assets/Textures/",
+                        "../../../../Assets/Animations/",
 
                         "../../../../../Assets/",
                         "../../../../../Assets/Meshes/",
-                        "../../../../../Assets/Textures/"
+                        "../../../../../Assets/Textures/",
+                        "../../../../../Assets/Animations/"
                 };
                 const uint32_t numFolders = sizeof(folders) / sizeof(folders[0]);
 
@@ -143,6 +149,7 @@ namespace selene
                 // load mesh
                 MeshFactory<Platform::Mesh> meshFactory(&fileManager_);
                 TextureFactory<Platform::Texture> textureFactory(&fileManager_);
+                MeshAnimationFactory<MeshAnimation> meshAnimationFactory(&fileManager_);
 
                 meshFactory.setResourceFactory(&textureFactory);
                 meshFactory.setResourceManager(&textureManager_);
@@ -153,25 +160,25 @@ namespace selene
                 else
                         std::cout << "SUCCEEDED" << std::endl;
 
+                std::cout << "Loading mesh animation...";
+                if(meshAnimationManager_.createResource("animation.sdaf", meshAnimationFactory) != SUCCESS)
+                        std::cout << "FAILED" << std::endl;
+                else
+                        std::cout << "SUCCEEDED" << std::endl;
+
                 // create scene objects
                 scene_.addNode(new(std::nothrow) Actor("object",
                                                        meshManager_.requestResource<Mesh>("object.sdmf"),
                                                        Vector3d(0.0f, -2.0f, 0.0f),
                                                        Quaternion(),
-                                                       Vector3d(3.5f, 3.5f, 3.5f)));
+                                                       Vector3d(1.0f, 1.0f, 1.0f)));
 
-                scene_.addNode(new(std::nothrow) SpotLight("spot light",
-                                                           Vector3d(10.0f, 10.0f, 0.0f),
-                                                           Vector3d(-30.0f, -30.0f, 0.0f),
-                                                           Vector3d(1.0f, 1.0f, 1.0f),
-                                                           1.0f, 50.0f));
-
-                scene_.addNode(new(std::nothrow) PointLight("point light 0", Vector3d(-10.0f, 0.0f, 10.0f),
-                                                            Vector3d(0.4f, 0.4f, 1.0f),
+                scene_.addNode(new(std::nothrow) PointLight("point light 0", Vector3d(-2.0f, -5.0f, 10.0f),
+                                                            Vector3d(1.0f, 1.0f, 1.0f),
                                                             1.0f, 30.0f));
 
-                scene_.addNode(new(std::nothrow) PointLight("point light 1", Vector3d(0.0f, 0.0f, -10.0f),
-                                                            Vector3d(1.0f, 1.0f, 0.7f),
+                scene_.addNode(new(std::nothrow) PointLight("point light 1", Vector3d(3.0f, 10.0f, -10.0f),
+                                                            Vector3d(1.0f, 1.0f, 1.0f),
                                                             1.0f, 30.0f));
 
                 scene_.addNode(new(std::nothrow) Camera("Camera",
@@ -186,6 +193,14 @@ namespace selene
                                                         15.0f,
                                                         &gui_));
                 camera_ = scene_.getCamera("Camera");
+
+                auto animation = meshAnimationManager_.requestResource<MeshAnimation>("animation.sdaf");
+                auto object = scene_.getActor("object").lock();
+                if(object)
+                {
+                        object->addMeshAnimation(animation, 0.0f, 1.0f, 1.0f, 7.0f, 1.0f);
+                        object->getMeshAnimation(0).play();
+                }
 
                 return true;
         }

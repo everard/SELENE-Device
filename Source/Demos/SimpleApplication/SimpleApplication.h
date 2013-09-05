@@ -20,7 +20,7 @@ namespace selene
                 SimpleApplication& operator =(const SimpleApplication&) = delete;
 
         private:
-                ResourceManager textureManager_, meshManager_;
+                ResourceManager textureManager_, meshManager_, meshAnimationManager_;
                 Platform::FileManager fileManager_;
 
                 Scene scene_;

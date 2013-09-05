@@ -32,7 +32,7 @@ To compile and run everything out-of-box your directory tree should be like this
 ANDROID
 -------
 Requirements:
-* latest Android SDK and NDK (r8d)
+* latest Android SDK and NDK (r9)
 * GNU Make ver. >= 3.81
 * apache ant ver. >= 1.8.4
 
@@ -66,12 +66,12 @@ To compile existing code under Linux you should cd to the Build/Linux directory 
 
     make all
 
-Requirements: GCC ver. >= 4.7.3 and GNU Make ver. >= 3.81
+Requirements: GCC ver. >= 4.8.1 and GNU Make ver. >= 3.81
 
 LINKS TO DOWNLOADS
 ==================
-Download Visual Studio 2012 Express Edition projects, Linux makefiles, Android build scripts and assets from google drive:
-* [Build system and assets](https://docs.google.com/file/d/0Byy41LxMuTKUREd1MmRoUVpfZTA/edit?usp=sharing)
+Download Visual Studio 2013 Express Edition projects, Code::Blocks projects, Linux makefiles, Android build scripts, assets and plug-ins for Blender from google drive:
+* [Build system, assets and plug-ins for Blender](https://drive.google.com/folderview?id=0Byy41LxMuTKUY0Y2aDNzOVZlTnM&usp=sharing)
 
 LICENSE
 =======
