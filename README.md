@@ -26,8 +26,8 @@ To compile and run everything out-of-box your directory tree should be like this
     |   | Assets\                <- ASSETS NEEDED TO RUN APPLICATIONS
     |   | Android\               <- ANDROID BUILD SCRIPTS
     |   | Linux\                 <- LINUX MAKEFILE
-    |   | Projects CB\           <- CODE::BLOCKS PROJECTS
-    |   | Projects VS\           <- VISUAL C++ PROJECTS
+    |   | Projects-CB\           <- CODE::BLOCKS PROJECTS
+    |   | Projects-VS\           <- VISUAL C++ PROJECTS
 
 ANDROID
 -------
@@ -44,20 +44,18 @@ It will build static library for x86 platform. If you wish to build libraries fo
 
     APP_ABI := all
 
-Now applications can be built. To do this, cd to the Build/Android/Demos/SimpleApplication or Build/Android/Demos/SimpleAnimation folder and run:
+Now demo can be built. To do this, cd to the Build/Android/Demo folder and run:
 
+    android - update project -p ./ -t android-10
     ndk-build
     ant debug
     ant installd
 
-This applications will run on your android device, but will not render, because currently there is no OpenGL ES renderer implemented.
-
 WINDOWS
 -------
 
-To compile existing code under Windows, you should cd to the "Build/Projects CB" and compile projects inside the workspace SELENE-Device.workspace in your Code::Blocks IDE.
-Note, that neither Visual Studio 2012, nor Visual Studio 2013 Preview are able to compile this (because they lack C++11 support). But in the near future (as M$ states),
-when Visual Studio 2013 RTM comes out, you will be able to compile it with VS. Projects for VS are in "Build/Projects VS" folder.
+To compile existing code under Windows, you can cd to the "Build/Projects-CB" and compile projects inside the workspace SELENE-Device.workspace in your Code::Blocks IDE.
+Or you can cd to the "Build/Projects-VS" and compile Visual Studio solution. Note, that only Visual Studio 2013 and later is suitable for compilation.
 
 LINUX
 -----
