@@ -173,7 +173,7 @@ namespace selene
                 destroy();
         }
 
-        //---------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------
         bool D3d9SsaoRenderer::initialize(D3d9RenderTargetContainer& renderTargetContainer,
                                           D3d9FrameParameters& frameParameters,
                                           D3d9FullScreenQuad& fullScreenQuad,
@@ -286,7 +286,7 @@ namespace selene
                 return true;
         }
 
-        //---------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------
         void D3d9SsaoRenderer::destroy()
         {
                 for(uint32_t i = 0; i < NUM_OF_OPTIONAL_VERTEX_SHADERS; ++i)
@@ -314,7 +314,7 @@ namespace selene
                 capabilities_ = nullptr;
         }
 
-        //---------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------
         void D3d9SsaoRenderer::renderSsao()
         {
                 if(d3dDevice_ == nullptr)
@@ -400,7 +400,7 @@ namespace selene
                 blurSsao(edgeDetectionParameters);
         }
 
-        //---------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------
         void D3d9SsaoRenderer::blurSsao(const Vector4d& edgeDetectionParameters,
                                         bool shouldUpscale)
         {
