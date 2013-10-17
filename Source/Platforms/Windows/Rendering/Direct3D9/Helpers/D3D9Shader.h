@@ -21,7 +21,7 @@ namespace selene
         class D3d9Capabilities;
 
         /**
-         * Represents D3D9 shader. This class compiles shader from resource.
+         * Represents D3D9 shader.
          */
         class D3d9Shader
         {
@@ -37,19 +37,18 @@ namespace selene
                 /**
                  * \brief Constructs shader.
                  *
-                 * Loads shader source code from resource with given name, then
-                 * compiles it with given compilation flags, library type and version.
-                 * \param[in] name name of the resource, which holds source code of the shader
+                 * Compiles shader with given compilation flags, library type and version.
+                 * \param[in] sourceCode source code of the shader
                  * \param[in] version version of the shader
                  * \param[in] flags compilation flags
                  * \param[in] libraryType type of the shader library
                  * \param[in] capabilities D3D capabilities
                  */
-                D3d9Shader(const char* name, const char* version, DWORD flags, uint8_t libraryType,
+                D3d9Shader(const char* sourceCode, const char* version, DWORD flags, uint8_t libraryType,
                            const D3d9Capabilities& capabilities);
-                D3d9Shader(const D3d9Shader&) = default;
+                D3d9Shader(const D3d9Shader& other);
                 ~D3d9Shader();
-                D3d9Shader& operator =(const D3d9Shader&) = default;
+                D3d9Shader& operator =(const D3d9Shader& other);
 
                 /**
                  * \brief Returns binary code of the shader.

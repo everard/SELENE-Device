@@ -64,13 +64,12 @@ namespace selene
                 enum
                 {
                         VERTEX_SHADER_SSAO_PASS = 0,
-                        VERTEX_SHADER_SSAO_BLUR_X_PASS,
-                        VERTEX_SHADER_SSAO_BLUR_Y_PASS,
+                        VERTEX_SHADER_BLUR_PASS,
                         NUM_OF_VERTEX_SHADERS,
 
                         PIXEL_SHADER_SSAO_PASS = 0,
-                        PIXEL_SHADER_SSAO_BLUR_X_PASS,
-                        PIXEL_SHADER_SSAO_BLUR_Y_PASS,
+                        PIXEL_SHADER_HORIZONTAL_BLUR_PASS,
+                        PIXEL_SHADER_VERTICAL_BLUR_PASS,
                         NUM_OF_PIXEL_SHADERS,
 
                         OPTIONAL_VERTEX_SHADER_SSAO_PASS = 0,

@@ -1,9 +1,0 @@
-struct PS_INPUT
-{
-        float4 Color: TEXCOORD0;
-};
-
-float4 main(PS_INPUT In): COLOR0
-{
-        return In.Color;
-}

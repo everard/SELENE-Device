@@ -34,19 +34,170 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
+                static const char* vertexShaderBrightPass =
+                        "float4 imageScale: register(c0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:           POSITION;"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        float offset = 1.0 - imageScale.x;"
+                        "        output.position = float4(input.position.xy * imageScale.x -"
+                        "                                 float2(offset, offset), 0.0, 1.0);"
+                        "        output.textureCoordinates = input.position.zw;"
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderBrightPass =
+                        "float4 textureCoordinatesAdjustment: register(c0);"
+                        "float4 bloomParameters: register(c1);"
+                        ""
+                        "sampler2D sourceTexture: register(s0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        input.textureCoordinates.xy += textureCoordinatesAdjustment.zw;"
+                        "        float3 result = tex2D(sourceTexture, input.textureCoordinates);"
+                        ""
+                        "        result *= bloomParameters.z / (bloomParameters.x + 0.001);"
+                        "        result *= (1.0 + (result / bloomParameters.w));"
+                        "        result -= 5.0;"
+                        "        result  = max(result, 0.0);"
+                        "        result /= (10.0 + result);"
+                        ""
+                        "        return float4(result, 1.0);"
+                        "}";
+
+                static const char* vertexShaderBloomPass =
+                        "float4 imageScale: register(c0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:           POSITION;"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        float offset = 1.0 - imageScale.x;"
+                        "        output.position = float4(input.position.xy * imageScale.x -"
+                        "                                 float2(offset, offset), 0.0, 1.0);"
+                        "        output.textureCoordinates = input.position.zw * imageScale.x +"
+                        "                                    float2(0.0, 1.0 - imageScale.x);"
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderBloomPass =
+                        "float4 textureCoordinatesAdjustment: register(c0);"
+                        "float4 bloomParameters: register(c1);"
+                        "float4 blurOffsets[9]:  register(c2);"
+                        ""
+                        "sampler2D sourceTexture: register(s0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        const float weights[9] = {0.05, 0.09, 0.13, 0.15, 0.16, 0.15, 0.13, 0.09, 0.05};"
+                        ""
+                        "        input.textureCoordinates.xy += textureCoordinatesAdjustment.zw;"
+                        "        float2 textureCoordinates = input.textureCoordinates;"
+                        "        float4 result = float4(0.0, 0.0, 0.0, 1.0);"
+                        "        for(int i = 0; i < 9; ++i)"
+                        "                result += weights[i] * tex2D(sourceTexture,"
+                        "                                             textureCoordinates + blurOffsets[i].xy);"
+                        ""
+                        "        return result * bloomParameters.y;"
+                        "}";
+
+                static const char* vertexShaderCombinePass =
+                        "float4 imageScale: register(c0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:                   POSITION;"
+                        "        float2 textureCoordinates:         TEXCOORD0;"
+                        "        float2 originalTextureCoordinates: TEXCOORD1;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        output.position = float4(input.position.xy, 0.0, 1.0);"
+                        "        output.textureCoordinates = input.position.zw * imageScale.x +"
+                        "                                    float2(0.0, 1.0 - imageScale.x);"
+                        "        output.originalTextureCoordinates = input.position.zw;"
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderCombinePass =
+                        "float4 textureCoordinatesAdjustment: register(c0);"
+                        ""
+                        "sampler2D sourceTexture0: register(s0);"
+                        "sampler2D sourceTexture1: register(s1);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float2 textureCoordinates:         TEXCOORD0;"
+                        "        float2 originalTextureCoordinates: TEXCOORD1;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        input.textureCoordinates += textureCoordinatesAdjustment.zw;"
+                        "        input.originalTextureCoordinates += textureCoordinatesAdjustment.zw;"
+                        "        return tex2D(sourceTexture0, input.textureCoordinates) +"
+                        "               tex2D(sourceTexture1, input.originalTextureCoordinates);"
+                        "}";
+
                 // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("BrightPass.vsh",  "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("Bloom.vsh",       "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("CombinePass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
+                        D3d9Shader(vertexShaderBrightPass,  "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader(vertexShaderBloomPass,   "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader(vertexShaderCombinePass, "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("BrightPass.psh",  "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("Bloom.psh",       "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("CombinePass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader(pixelShaderBrightPass,  "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader(pixelShaderBloomPass,   "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader(pixelShaderCombinePass, "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)

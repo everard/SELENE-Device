@@ -46,21 +46,134 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
+                static const char* vertexShaderGuiFramesPass =
+                        "struct Input"
+                        "{"
+                        "        float4 position:   POSITION0;"
+                        "        float4 frameColor: TEXCOORD0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:   POSITION;"
+                        "        float4 frameColor: TEXCOORD0;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        output.position = float4(float2(input.position.x, 2.0 - input.position.y) -"
+                        "                                 float2(1.0, 1.0), 0.0, 1.0);"
+                        "        output.frameColor = input.frameColor;"
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderGuiFramesPass =
+                        "struct Input"
+                        "{"
+                        "        float4 frameColor: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        return input.frameColor;"
+                        "}";
+
+                static const char* vertexShaderGuiTextPass =
+                        "struct Input"
+                        "{"
+                        "        float4 position:  POSITION0;"
+                        "        float4 textColor: TEXCOORD0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:           POSITION;"
+                        "        float4 textColor:          TEXCOORD0;"
+                        "        float2 textureCoordinates: TEXCOORD1;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        output.position = float4(float2(input.position.x, 2.0 - input.position.y) -"
+                        "                                 float2(1.0, 1.0), 0.0, 1.0);"
+                        "        output.textColor = input.textColor;"
+                        "        output.textureCoordinates = input.position.zw;"
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderGuiTextPass =
+                        "sampler2D fontTexture: register(s0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 textColor:          TEXCOORD0;"
+                        "        float2 textureCoordinates: TEXCOORD1;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        return input.textColor * tex2D(fontTexture,"
+                        "                                       input.textureCoordinates).xxxx;"
+                        "}";
+
+                static const char* vertexShaderGuiCursorPass =
+                        "float4 cursorPositionAndSize: register(c0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:           POSITION;"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        float2 offset = float2( cursorPositionAndSize.z,"
+                        "                               -cursorPositionAndSize.z);"
+                        "        output.position = float4(input.position.xy * cursorPositionAndSize.z +"
+                        "                                 cursorPositionAndSize.xy + offset, 0.0, 1.0);"
+                        "        output.textureCoordinates = input.position.zw;"
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderGuiCursorPass =
+                        "sampler2D cursorTexture: register(s0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        return tex2D(cursorTexture, input.textureCoordinates);"
+                        "}";
+
                 // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("GUIFramesPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("GUITextPass.vsh",   "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("GUICursorPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
+                        D3d9Shader(vertexShaderGuiFramesPass, "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader(vertexShaderGuiTextPass,   "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader(vertexShaderGuiCursorPass, "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("GUIFramesPass.psh", "ps_2_0", 0,
+                        D3d9Shader(pixelShaderGuiFramesPass, "ps_2_0", 0,
                                    D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("GUITextPass.psh",   "ps_2_0", 0,
+                        D3d9Shader(pixelShaderGuiTextPass,   "ps_2_0", 0,
                                    D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("GUICursorPass.psh", "ps_2_0", 0,
+                        D3d9Shader(pixelShaderGuiCursorPass, "ps_2_0", 0,
                                    D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 

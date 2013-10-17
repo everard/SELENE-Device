@@ -183,19 +183,223 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
+                static const char* vertexShaderSsaoPass =
+                        "float4 screenSize: register(c0);"
+                        ""
+                        "struct VS_INPUT"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "        float4 TraceDirection: TEXCOORD0;"
+                        "};"
+                        ""
+                        "struct VS_OUTPUT"
+                        "{"
+                        "        float4 P: POSITION;"
+                        "        float4 textureCoords: TEXCOORD0;"
+                        "        float4 TraceDirection: TEXCOORD1;"
+                        "        float2 RTexCoords: TEXCOORD2;"
+                        "};"
+                        ""
+                        "VS_OUTPUT main(VS_INPUT In)"
+                        "{"
+                        "        VS_OUTPUT Out;"
+                        "        Out.P = float4(In.position.xy, 0.0, 1.0);"
+                        "        Out.textureCoords = In.position.zwxy;"
+                        "        Out.TraceDirection = In.TraceDirection;"
+                        "        Out.RTexCoords = Out.textureCoords.xy * screenSize.xy / 64.0;"
+                        "        return Out;"
+                        "}";
+
+                static const char* pixelShaderSsaoPass =
+                        "sampler2D GBufferPosition: register(s0);"
+                        "sampler2D GBufferNormals: register(s1);"
+                        "sampler2D RandomDirections: register(s2);"
+                        "float4 unprojectionVector: register(c0);"
+                        "float4 projectionParameters: register(c1);"
+                        "float4 ssaoParams: register(c2);"
+                        ""
+                        "struct PS_INPUT"
+                        "{"
+                        "        float4 textureCoords: TEXCOORD0;"
+                        "        float4 TraceDirection: TEXCOORD1;"
+                        "        float2 RTexCoords: TEXCOORD2;"
+                        "};"
+                        ""
+                        "float4 main(PS_INPUT In): COLOR0"
+                        "{"
+                        "        float3 p = decodePosition(tex2D(GBufferPosition, In.textureCoords.xy),"
+                        "                                  In.textureCoords.zw,"
+                        "                                  projectionParameters,"
+                        "                                  unprojectionVector);"
+                        "        float3 n = decodeNormal(tex2D(GBufferNormals, In.textureCoords.xy).xyz);"
+                        "        float3 plane = normalize(2.0 * tex2D(RandomDirections, In.RTexCoords).xyz -"
+                        "                                 float3(1.0, 1.0, 1.0));"
+                        "        float3 sample = reflect(In.TraceDirection, plane);"
+                        ""
+                        "        float4 textureCoords;"
+                        "        textureCoords.xy = In.textureCoords.xy +"
+                        "                           (In.TraceDirection.w * ssaoParams.x * sample.xy / p.z);"
+                        "        textureCoords.zw = 2.0 * float2( textureCoords.x,"
+                        "                                        -textureCoords.y) - float2(1.0, -1.0);"
+                        ""
+                        "        float3 p1 = decodePosition(tex2D(GBufferPosition, textureCoords.xy),"
+                        "                                   textureCoords.zw,"
+                        "                                   projectionParameters,"
+                        "                                   unprojectionVector);"
+                        "        float3 dir = p1 - p;"
+                        "        float DirLen = length(dir);"
+                        "        dir /= DirLen;"
+                        ""
+                        "        float norm = clamp(dot(dir, n) + ssaoParams.y, 0.0, 1.0);"
+                        "        float range = 1.0 - clamp(DirLen / ssaoParams.x, 0.0, 1.0);"
+                        ""
+                        "        float ATT = norm * range * 0.06875;"
+                        "        return ATT.xxxx;"
+                        "}";
+
+                static const char* vertexShaderBlurPass =
+                        "struct VS_INPUT"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct VS_OUTPUT"
+                        "{"
+                        "        float4 P: POSITION;"
+                        "        float4 textureCoords: TEXCOORD0;"
+                        "};"
+                        ""
+                        "VS_OUTPUT main(VS_INPUT In)"
+                        "{"
+                        "        VS_OUTPUT Out;"
+                        "        Out.P = float4(In.position.xy, 0.0, 1.0);"
+                        "        Out.textureCoords = In.position.zwxy;"
+                        "        return Out;"
+                        "}";
+
+                static const char* pixelShaderHorizontalBlurPass =
+                        "sampler2D GBufferPosition: register(s0);"
+                        "sampler2D GBufferNormals: register(s1);"
+                        "sampler2D Texture: register(s2);"
+                        "float4 unprojectionVector: register(c0);"
+                        "float4 projectionParameters: register(c1);"
+                        "float4 edgeDetectionParams: register(c2);"
+                        "float4 screenSize: register(c3);"
+                        "float4 texCoordsAdjustment: register(c4);"
+                        ""
+                        "struct PS_INPUT"
+                        "{"
+                        "        float4 textureCoords: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(PS_INPUT In):COLOR0"
+                        "{"
+                        "        In.textureCoords.xy += texCoordsAdjustment.zw;"
+                        "        float2 k = float2(edgeDetectionParams.z, 0.0);"
+                        "        float4 sum = tex2D(Texture, In.textureCoords.xy);"
+                        "        float p = decodeEyeZ(tex2D(GBufferPosition, In.textureCoords.xy),"
+                        "                             projectionParameters);"
+                        "        float3 n = decodeNormal(tex2D(GBufferNormals, In.textureCoords.xy).xyz);"
+                        "        float num = 1.0;"
+                        ""
+                        "        float2 textureCoords;"
+                        "        textureCoords.xy = In.textureCoords.xy;"
+                        "        textureCoords.xy += k;"
+                        "        float p1 = decodeEyeZ(tex2D(GBufferPosition, textureCoords.xy),"
+                        "                              projectionParameters);"
+                        "        float3 n1 = decodeNormal(tex2D(GBufferNormals, textureCoords.xy).xyz);"
+                        ""
+                        "        if(abs(p - p1) <= edgeDetectionParams.x && dot(n, n1) >= edgeDetectionParams.y)"
+                        "        {"
+                        "                num += 1.0;"
+                        "                sum += tex2D(Texture, textureCoords.xy);"
+                        "        }"
+                        ""
+                        "        textureCoords.xy = In.textureCoords.xy;"
+                        "        textureCoords.xy -= k;"
+                        "        float p2 = decodeEyeZ(tex2D(GBufferPosition, textureCoords.xy),"
+                        "                              projectionParameters);"
+                        "        float3 n2 = decodeNormal(tex2D(GBufferNormals, textureCoords.xy).xyz);"
+                        ""
+                        "        if(abs(p - p2) <= edgeDetectionParams.x && dot(n, n2) >= edgeDetectionParams.y)"
+                        "        {"
+                        "                num += 1.0;"
+                        "                sum += tex2D(Texture, textureCoords.xy);"
+                        "        }"
+                        "        sum /= num;"
+                        "        return sum;"
+                        "}";
+
+                static const char* pixelShaderVerticalBlurPass =
+                        "sampler2D GBufferPosition: register(s0);"
+                        "sampler2D GBufferNormals: register(s1);"
+                        "sampler2D Texture: register(s2);"
+                        "float4 unprojectionVector: register(c0);"
+                        "float4 projectionParameters: register(c1);"
+                        "float4 edgeDetectionParams: register(c2);"
+                        "float4 screenSize: register(c3);"
+                        "float4 texCoordsAdjustment: register(c4);"
+                        ""
+                        "struct PS_INPUT"
+                        "{"
+                        "        float4 textureCoords: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(PS_INPUT In):COLOR0"
+                        "{"
+                        "        In.textureCoords.xy += texCoordsAdjustment.zw;"
+                        "        float2 k = float2(0.0, edgeDetectionParams.w);"
+                        "        float4 sum = tex2D(Texture, In.textureCoords.xy);"
+                        "        float p = decodeEyeZ(tex2D(GBufferPosition, In.textureCoords.xy),"
+                        "                             projectionParameters);"
+                        "        float3 n = decodeNormal(tex2D(GBufferNormals, In.textureCoords.xy).xyz);"
+                        "        float num = 1.0;"
+                        ""
+                        "        float4 textureCoords;"
+                        "        textureCoords.xy = In.textureCoords.xy;"
+                        "        textureCoords.xy += k;"
+                        "        float p1 = decodeEyeZ(tex2D(GBufferPosition, textureCoords.xy),"
+                        "                              projectionParameters);"
+                        "        float3 n1 = decodeNormal(tex2D(GBufferNormals, textureCoords.xy).xyz);"
+                        ""
+                        "        if(abs(p - p1) <= edgeDetectionParams.x && dot(n, n1) >= edgeDetectionParams.y)"
+                        "        {"
+                        "                num += 1.0;"
+                        "                sum += tex2D(Texture, textureCoords.xy);"
+                        "        }"
+                        ""
+                        "        textureCoords.xy = In.textureCoords.xy;"
+                        "        textureCoords.xy -= k;"
+                        "        float p2 = decodeEyeZ(tex2D(GBufferPosition, textureCoords.xy),"
+                        "                              projectionParameters);"
+                        "        float3 n2 = decodeNormal(tex2D(GBufferNormals, textureCoords.xy).xyz);"
+                        ""
+                        "        if(abs(p - p2) <= edgeDetectionParams.x && dot(n, n2) >= edgeDetectionParams.y)"
+                        "        {"
+                        "                num += 1.0;"
+                        "                sum += tex2D(Texture, textureCoords.xy);"
+                        "        }"
+                        "        sum /= num;"
+                        "        return sum;"
+                        "}";
+
                 // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("SSAOPass.vsh",  "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SSAOBlurX.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_),
-                        D3d9Shader("SSAOBlurY.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
+                        D3d9Shader(vertexShaderSsaoPass, "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_),
+                        D3d9Shader(vertexShaderBlurPass, "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("SSAOPass.psh",  "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SSAOBlurX.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
-                        D3d9Shader("SSAOBlurY.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader(pixelShaderSsaoPass,           "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader(pixelShaderHorizontalBlurPass, "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_),
+                        D3d9Shader(pixelShaderVerticalBlurPass,   "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)
@@ -216,11 +420,126 @@ namespace selene
                         }
                 }
 
+                static const char* optionalVertexShaderSsaoPass =
+                        "float4 screenSize: register(c0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:            POSITION;"
+                        "        float4 textureCoordinates0: TEXCOORD0;"
+                        "        float2 textureCoordinates1: TEXCOORD1;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        ""
+                        "        output.position = float4(input.position.xy, 0.0, 1.0);"
+                        "        output.textureCoordinates0 = input.position.zwxy;"
+                        "        output.textureCoordinates1 = output.textureCoordinates0.xy *"
+                        "                                     screenSize.xy / 64.0;"
+                        ""
+                        "        return output;"
+                        "}";
+
+                static const char* optionalPixelShaderSsaoPass =
+                        "float4 unprojectionVector:   register(c0);"
+                        "float4 projectionParameters: register(c1);"
+                        ""
+                        "float4 ssaoParameters: register(c2);"
+                        ""
+                        "sampler2D positionsBuffer: register(s0);"
+                        "sampler2D normalsBuffer:   register(s1);"
+                        ""
+                        "sampler2D randomDirectionsMap: register(s2);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 textureCoordinates0: TEXCOORD0;"
+                        "        float2 textureCoordinates1: TEXCOORD1;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        float4 traceDirections[] ="
+                        "        {"
+                        "                float4(-0.5, -0.5, -0.5, 1.0),"
+                        "                float4( 0.5, -0.5, -0.5, 1.0),"
+                        "                float4(-0.5,  0.5, -0.5, 1.0),"
+                        "                float4( 0.5,  0.5, -0.5, 1.0),"
+                        "                float4(-0.5, -0.5,  0.5, 1.0),"
+                        "                float4( 0.5, -0.5,  0.5, 1.0),"
+                        "                float4(-0.5,  0.5,  0.5, 1.0),"
+                        "                float4( 0.5,  0.5,  0.5, 1.0),"
+                        ""
+                        "                float4(-0.5, -0.5, -0.5, 0.5),"
+                        "                float4( 0.5, -0.5, -0.5, 0.5),"
+                        "                float4(-0.5,  0.5, -0.5, 0.5),"
+                        "                float4( 0.5,  0.5, -0.5, 0.5),"
+                        "                float4(-0.5, -0.5,  0.5, 0.5),"
+                        "                float4( 0.5, -0.5,  0.5, 0.5),"
+                        "                float4(-0.5,  0.5,  0.5, 0.5),"
+                        "                float4( 0.5,  0.5,  0.5, 0.5)"
+                        "        };"
+                        ""
+                        "        float attenuation = 0.0;"
+                        ""
+                        "        float3 position = decodePosition(tex2D(positionsBuffer,"
+                        "                                               input.textureCoordinates0.xy),"
+                        "                                         input.textureCoordinates0.zw,"
+                        "                                         projectionParameters,"
+                        "                                         unprojectionVector);"
+                        "        float3 normal = decodeNormal(tex2D(normalsBuffer,"
+                        "                                           input.textureCoordinates0.xy).xyz);"
+                        "        float3 plane = normalize(2.0 * tex2D(randomDirectionsMap,"
+                        "                                             input.textureCoordinates1).xyz -"
+                        "                                 float3(1.0, 1.0, 1.0));"
+                        ""
+                        "        float ssaoRadiusInv = 1.0 / ssaoParameters.x;"
+                        "        float traceDirectionScaling = ssaoParameters.x / position.z;"
+                        ""
+                        "        for(int i = 0; i < 16; ++i)"
+                        "        {"
+                        "                float4 traceDirection  = traceDirections[i];"
+                        "                float3 sampleDirection = reflect(traceDirection, plane);"
+                        ""
+                        "                float4 textureCoordinates;"
+                        "                textureCoordinates.xy = input.textureCoordinates0.xy +"
+                        "                                        (traceDirection.w * sampleDirection.xy *"
+                        "                                         traceDirectionScaling);"
+                        "                textureCoordinates.zw = 2.0 * float2( textureCoordinates.x,"
+                        "                                                     -textureCoordinates.y) -"
+                        "                                        float2(1.0, -1.0);"
+                        ""
+                        "                float3 newPosition = decodePosition(tex2D(positionsBuffer,"
+                        "                                                          textureCoordinates.xy),"
+                        "                                                    textureCoordinates.zw,"
+                        "                                                    projectionParameters,"
+                        "                                                    unprojectionVector);"
+                        ""
+                        "                float3 direction = newPosition - position;"
+                        "                float distance = length(direction);"
+                        "                direction /= distance;"
+                        ""
+                        "                float factor0 = 1.0 - clamp(distance * ssaoRadiusInv, 0.0, 1.0);"
+                        "                float factor1 = clamp(dot(direction, normal) + ssaoParameters.y, 0.0, 1.0);"
+                        ""
+                        "                attenuation += factor0 * factor1;"
+                        "        }"
+                        ""
+                        "        return attenuation.xxxx * 0.06875;"
+                        "}";
+
                 if(capabilities_->isThirdShaderModelSupported())
                 {
-                        D3d9Shader d3dOptionalVertexShader("SSAO30Pass.vsh", "vs_1_1", 0,
+                        D3d9Shader d3dOptionalVertexShader(optionalVertexShaderSsaoPass, "vs_1_1", 0,
                                                            D3d9Shader::LIBRARY_VERTEX_SHADER, *capabilities_);
-                        D3d9Shader d3dOptionalPixelShader("SSAO30Pass.psh",  "ps_3_0", 0,
+                        D3d9Shader d3dOptionalPixelShader(optionalPixelShaderSsaoPass,   "ps_3_0", 0,
                                                           D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_);
 
                         if(!optionalVertexShaders_[OPTIONAL_VERTEX_SHADER_SSAO_PASS].create(d3dOptionalVertexShader) ||
@@ -421,8 +740,8 @@ namespace selene
                         d3dDevice_->SetRenderTarget(0, renderTargets[i]);
                         d3dDevice_->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
-                        vertexShaders_[VERTEX_SHADER_SSAO_BLUR_X_PASS + i].set();
-                        pixelShaders_[PIXEL_SHADER_SSAO_BLUR_X_PASS + i].set();
+                        vertexShaders_[VERTEX_SHADER_BLUR_PASS].set();
+                        pixelShaders_[PIXEL_SHADER_HORIZONTAL_BLUR_PASS + i].set();
 
                         d3dDevice_->SetPixelShaderConstantF(LOCATION_UNPROJECTION_VECTOR,
                                                             frameParameters_->unprojectionVector,

@@ -69,15 +69,88 @@ namespace selene
                 if(d3dDevice_ == nullptr)
                         return false;
 
+                static const char* vertexShaderParticlesPass =
+                        "float4x4 projectionMatrix: register(c0);"
+                        "float4x4 viewMatrix:       register(c4);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 position:      POSITION0;"
+                        "        float4 particleColor: TEXCOORD0;"
+                        "        float4 offsets:       TEXCOORD1;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:           POSITION;"
+                        "        float4 textureCoordinates: TEXCOORD0;"
+                        "        float4 particleParameters: TEXCOORD1;"
+                        "        float4 particleColor:      TEXCOORD2;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        "        float4 viewSpacePosition = mul(viewMatrix, float4(input.position.xyz, 1.0));"
+                        "        viewSpacePosition.xyz /= viewSpacePosition.w;"
+                        "        viewSpacePosition.xy += input.offsets.zw * input.position.w;"
+                        ""
+                        "        output.position = mul(projectionMatrix, float4(viewSpacePosition.xyz, 1.0));"
+                        "        output.textureCoordinates = input.offsets;"
+                        ""
+                        "        output.particleParameters = float4(output.position.xy,"
+                        "                                           viewSpacePosition.z,"
+                        "                                           output.position.w);"
+                        "        output.particleColor = input.particleColor;"
+                        ""
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderParticlesPass =
+                        "float4 textureCoordinatesAdjustment: register(c0);"
+                        ""
+                        "float4 unprojectionVector:   register(c1);"
+                        "float4 projectionParameters: register(c2);"
+                        ""
+                        "sampler2D positionsBuffer: register(s0);"
+                        "sampler2D particleTexture: register(s1);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float4 textureCoordinates: TEXCOORD0;"
+                        "        float4 particleParameters: TEXCOORD1;"
+                        "        float4 particleColor:      TEXCOORD2;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        input.particleParameters.xy /= input.particleParameters.w;"
+                        "        input.particleParameters.xy += textureCoordinatesAdjustment.xy;"
+                        ""
+                        "        float2 textureCoordinates = 0.5f * (float2( input.particleParameters.x,"
+                        "                                                   -input.particleParameters.y) + 1.0);"
+                        ""
+                        "        float eyeZ = decodeEyeZ(tex2D(positionsBuffer, textureCoordinates),"
+                        "                                projectionParameters);"
+                        ""
+                        "        float distance = abs(input.particleParameters.z - eyeZ);"
+                        "        float opacity = clamp(-1.0 / (distance + 0.5) + 1.0, 0.0, 1.0);"
+                        ""
+                        "        return float4(1.0.xxx, opacity) * input.particleColor *"
+                        "               tex2D(particleTexture, input.textureCoordinates.xy);"
+                        "}";
+
                 // load shaders
                 D3d9Shader d3dVertexShaders[NUM_OF_VERTEX_SHADERS] =
                 {
-                        D3d9Shader("ParticlesPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, *capabilities_)
+                        D3d9Shader(vertexShaderParticlesPass, "vs_1_1", 0,
+                                   D3d9Shader::LIBRARY_EMPTY, *capabilities_)
                 };
 
                 D3d9Shader d3dPixelShaders[NUM_OF_PIXEL_SHADERS] =
                 {
-                        D3d9Shader("ParticlesPass.psh", "ps_2_0", 0, D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
+                        D3d9Shader(pixelShaderParticlesPass, "ps_2_0", 0,
+                                   D3d9Shader::LIBRARY_PIXEL_SHADER, *capabilities_)
                 };
 
                 for(uint32_t i = 0; i < NUM_OF_VERTEX_SHADERS; ++i)

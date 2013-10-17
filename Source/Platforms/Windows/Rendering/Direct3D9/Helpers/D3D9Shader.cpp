@@ -10,127 +10,119 @@
 namespace selene
 {
 
-        D3d9Shader::D3d9Shader(const char* name, const char* version, DWORD flags, uint8_t libraryType,
+        D3d9Shader::D3d9Shader(const char* sourceCode, const char* version, DWORD flags, uint8_t libraryType,
                                const D3d9Capabilities& capabilities): code_(nullptr)
         {
                 static const char* pixelShaderPositionDecodingFromR32f =
-                        "float4 EncodePos(float4 pos, float4 proj)"
+                        "float4 encodePosition(float4 position, float4 projectionParameters)"
                         "{"
-                        "        return (pos.z / proj.w).xxxx;"
+                        "        return (position.z / projectionParameters.w).xxxx;"
                         "}"
-                        "float DecodeZEye(float4 ZEnc, float4 proj)"
+                        "float decodeEyeZ(float4 encodedEyeZ, float4 projectionParameters)"
                         "{"
-                        "        return ZEnc.r * proj.w;"
-                        "}"
-                        "float3 DecodePos(float4 ZEnc, float2 XY, float4 proj, float4 unproj)"
-                        "{"
-                        "        float zv = DecodeZEye(ZEnc, proj);"
-                        "        float4 p = float4(XY, 1.0, 0.0);"
-                        "        float4 orig = p * unproj * zv.xxxx;"
-                        "        return orig.xyz;"
+                        "        return encodedEyeZ.r * projectionParameters.w;"
                         "}";
 
                 static const char* pixelShaderPositionDecodingFromRGBA8 =
-                        "float4 EncodePos(float4 pos, float4 proj)"
+                        "float4 encodePosition(float4 position, float4 projectionParameters)"
                         "{"
-                        "        float4 enc = float4(16777216.0, 65536.0, 256.0, 1.0) * (pos.z / proj.w);"
-                        "        enc  = frac(enc);"
-                        "        enc -= enc.xxyz * float4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);"
-                        "        return enc;"
+                        "        float4 result = float4(16777216.0, 65536.0, 256.0, 1.0) *"
+                        "                        position.z / projectionParameters.w;"
+                        "        result  = frac(result);"
+                        "        result -= result.xxyz * float4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);"
+                        "        return result;"
                         "}"
-                        "float DecodeZEye(float4 ZEnc, float4 proj)"
+                        "float decodeEyeZ(float4 encodedEyeZ, float4 projectionParameters)"
                         "{"
-                        "        return dot(ZEnc, float4(1.0 / (256.0 * 256.0 * 256.0),"
-                        "                                1.0 / (256.0 * 256.0),"
-                        "                                1.0 /  256.0, 1.0)) * proj.w;"
-                        "}"
-                        "float3 DecodePos(float4 ZEnc, float2 XY, float4 proj, float4 unproj)"
-                        "{"
-                        "        float zv = DecodeZEye(ZEnc, proj);"
-                        "        float4 p = float4(XY, 1.0, 0.0);"
-                        "        float4 orig = p * unproj * zv.xxxx;"
-                        "        return orig.xyz;"
+                        "        return dot(encodedEyeZ, float4(1.0 / (256.0 * 256.0 * 256.0),"
+                        "                                       1.0 / (256.0 * 256.0),"
+                        "                                       1.0 /  256.0, 1.0)) * projectionParameters.w;"
                         "}";
-
-                HRSRC hResource = ::FindResource(GetModuleHandle(nullptr), name, RT_RCDATA);
-                if(hResource == nullptr)
-                        return;
-
-                DWORD size = ::SizeofResource(GetModuleHandle(nullptr), hResource);
-                if(size == 0)
-                        return;
-
-                HGLOBAL hResourceData = ::LoadResource(GetModuleHandle(nullptr), hResource);
-                if(hResourceData == nullptr)
-                        return;
-
-                LPVOID buffer = ::LockResource(hResourceData);
-                if(buffer == nullptr)
-                        return;
-
-                Array<uint8_t, uint32_t> fileContent;
-                uint32_t length = static_cast<uint32_t>(size + 1);
-                if(!fileContent.create(length))
-                        return;
-
-                memcpy(reinterpret_cast<char*>(&fileContent[0]), buffer, size);
-                fileContent[length - 1] = 0;
-
-                std::string sourceCode = reinterpret_cast<char*>(&fileContent[0]);
 
                 std::string library;
                 switch(libraryType)
                 {
                         case LIBRARY_VERTEX_SHADER:
                                 library =
-                                        "float4 QuatMul(float4 q1, float4 q2)"
+                                        "float4 multiplyQuaternions(float4 quaternion0, float4 quaternion1)"
                                         "{"
-                                        "        float3 im = q1.w * q2.xyz + q1.xyz * q2.w + cross(q1.xyz, q2.xyz);"
-                                        "        float4 dt = q1 * q2;"
-                                        "        float re = dot(dt, float4(-1.0, -1.0, -1.0, 1.0));"
-                                        "        return float4(im, re);"
+                                        "        float3 v = quaternion0.w   * quaternion1.xyz +"
+                                        "                   quaternion0.xyz * quaternion1.w   +"
+                                        "                   cross(quaternion0.xyz, quaternion1.xyz);"
+                                        "        float4 b = quaternion0 * quaternion1;"
+                                        "        float  w = dot(b, float4(-1.0, -1.0, -1.0, 1.0));"
+                                        "        return float4(v, w);"
                                         "}"
-                                        "float4 QuatRotate(float3 p, float4 q)"
+                                        "float4 rotateVector(float3 targetVector, float4 quaternion)"
                                         "{"
-                                        "        float4 temp = QuatMul(q, float4(p, 0.0));"
-                                        "        return QuatMul(temp, float4(-q.x, -q.y, -q.z, q.w));"
+                                        "        float4 q = multiplyQuaternions(quaternion,"
+                                        "                                       float4(targetVector, 0.0));"
+                                        "        return multiplyQuaternions(q, float4(-quaternion.x, -quaternion.y,"
+                                        "                                             -quaternion.z,  quaternion.w));"
                                         "}"
-                                        "float3 Transform(float4 offset, float4 rot, float3 pos)"
+                                        "float3 transformPosition(float4 offset, float4 rotation, float3 position)"
                                         "{"
-                                        "        return offset.xyz + QuatRotate(pos, rot).xyz;"
+                                        "        return offset.xyz + rotateVector(position, rotation).xyz;"
                                         "}";
                                 break;
 
                         case LIBRARY_PIXEL_SHADER:
-                                library =
-                                        "float3 EncodeNormal(float3 n)"
-                                        "{"
-                                        "        return 0.5 * n + 0.5;"
-                                        "}"
-                                        "half3 DecodeNormal(half3 enc)"
-                                        "{"
-                                        "        return 2.0 * enc - 1.0;"
-                                        "}";
                                 if(capabilities.isR32fRenderTargetFormatSupported())
-                                        library += pixelShaderPositionDecodingFromR32f;
+                                        library = pixelShaderPositionDecodingFromR32f;
                                 else
-                                        library += pixelShaderPositionDecodingFromRGBA8;
+                                        library = pixelShaderPositionDecodingFromRGBA8;
+
+                                library +=
+                                        "float3 decodePosition(float4 z, float2 xy, float4 projectionParameters,"
+                                        "                      float4 unprojectionVector)"
+                                        "{"
+                                        "        float decodedEyeZ = decodeEyeZ(z, projectionParameters);"
+                                        "        float4 p = float4(xy, 1.0, 0.0);"
+                                        "        float4 result = p * unprojectionVector * decodedEyeZ.xxxx;"
+                                        "        return result.xyz;"
+                                        "}"
+                                        "float3 encodeNormal(float3 normal)"
+                                        "{"
+                                        "        return 0.5 * normal + 0.5;"
+                                        "}"
+                                        "half3 decodeNormal(half3 encodedNormal)"
+                                        "{"
+                                        "        return 2.0 * encodedNormal - 1.0;"
+                                        "}";
                                 break;
                 }
 
-                sourceCode = library + sourceCode;
+                std::string sourceCodeWithLibrary = library + sourceCode;
 
-                if(FAILED(D3DXCompileShader(sourceCode.c_str(), sourceCode.length(),
+                if(FAILED(D3DXCompileShader(sourceCodeWithLibrary.c_str(),
+                                            sourceCodeWithLibrary.length(),
                                             nullptr, nullptr, "main", version,
                                             flags, &code_, nullptr, nullptr)))
                         code_ = nullptr;
+        }
+        D3d9Shader::D3d9Shader(const D3d9Shader& other)
+        {
+                code_ = other.code_;
+
+                if(code_ != nullptr)
+                        code_->AddRef();
         }
         D3d9Shader::~D3d9Shader()
         {
                 SAFE_RELEASE(code_);
         }
+        D3d9Shader& D3d9Shader::operator =(const D3d9Shader& other)
+        {
+                SAFE_RELEASE(code_);
+                code_ = other.code_;
 
-        //----------------------------------------------------------------------------------------------------------
+                if(code_ != nullptr)
+                        code_->AddRef();
+
+                return *this;
+        }
+
+        //------------------------------------------------------------------------------------------------------------
         LPD3DXBUFFER D3d9Shader::getCode() const
         {
                 return code_;
@@ -142,7 +134,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9VertexShader::create(const D3d9Shader& shader)
         {
                 d3dDevice_ = D3d9Renderer::getDevice();
@@ -164,14 +156,14 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9VertexShader::destroy()
         {
                 SAFE_RELEASE(d3dShader_);
                 d3dDevice_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9VertexShader::set()
         {
                 if(d3dDevice_ != nullptr)
@@ -184,7 +176,7 @@ namespace selene
                 destroy();
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         bool D3d9PixelShader::create(const D3d9Shader& shader)
         {
                 d3dDevice_ = D3d9Renderer::getDevice();
@@ -206,14 +198,14 @@ namespace selene
                 return true;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9PixelShader::destroy()
         {
                 SAFE_RELEASE(d3dShader_);
                 d3dDevice_ = nullptr;
         }
 
-        //----------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------------------------
         void D3d9PixelShader::set()
         {
                 if(d3dDevice_ != nullptr)

@@ -214,9 +214,48 @@ namespace selene
         //----------------------------------------------------------------------------------------------------------
         bool D3d9Renderer::initializeHelpers()
         {
-                // load shaders
-                D3d9Shader d3dVertexShader("ResultPass.vsh", "vs_1_1", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_);
-                D3d9Shader d3dPixelShader("ResultPass.psh",  "ps_2_0", 0, D3d9Shader::LIBRARY_EMPTY, capabilities_);
+                static const char* vertexShaderResultPass =
+                        "struct Input"
+                        "{"
+                        "        float4 position: POSITION0;"
+                        "};"
+                        ""
+                        "struct Output"
+                        "{"
+                        "        float4 position:           POSITION;"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "Output main(Input input)"
+                        "{"
+                        "        Output output;"
+                        ""
+                        "        output.position = float4(input.position.xy, 0.0, 1.0);"
+                        "        output.textureCoordinates = input.position.zw;"
+                        ""
+                        "        return output;"
+                        "}";
+
+                static const char* pixelShaderResultPass =
+                        "float4 textureCoordinatesAdjustment: register(c0);"
+                        ""
+                        "sampler2D sourceTexture: register(s0);"
+                        ""
+                        "struct Input"
+                        "{"
+                        "        float2 textureCoordinates: TEXCOORD0;"
+                        "};"
+                        ""
+                        "float4 main(Input input): COLOR0"
+                        "{"
+                        "        input.textureCoordinates += textureCoordinatesAdjustment.zw;"
+                        "        return tex2D(sourceTexture, input.textureCoordinates);"
+                        "}";
+
+                D3d9Shader d3dVertexShader(vertexShaderResultPass, "vs_1_1", 0,
+                                           D3d9Shader::LIBRARY_EMPTY, capabilities_);
+                D3d9Shader d3dPixelShader(pixelShaderResultPass,   "ps_2_0", 0,
+                                          D3d9Shader::LIBRARY_EMPTY, capabilities_);
 
                 if(!resultVertexShader_.create(d3dVertexShader))
                 {
