@@ -100,7 +100,7 @@ namespace selene
                                             flags, &code_, nullptr, nullptr)))
                         code_ = nullptr;
         }
-        D3d9Shader::D3d9Shader(const D3d9Shader& other)
+        D3d9Shader::D3d9Shader(const D3d9Shader& other): code_(nullptr)
         {
                 code_ = other.code_;
 
