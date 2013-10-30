@@ -6,10 +6,16 @@
 namespace selene
 {
 
+        //-----------------------------------------------------------------------------------------
+        bool Utility::StringComparator::operator ()(const char* string0, const char* string1) const
+        {
+                return (std::strcmp(string0, string1) < 0);
+        }
+
         Utility::Utility() {}
         Utility::~Utility() {}
 
-        //-------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
         bool Utility::readString(std::istream& stream, char* string)
         {
                 if(!stream.good())
@@ -33,7 +39,7 @@ namespace selene
                 return false;
         }
 
-        //-------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
         bool Utility::writeString(std::ostream& stream, const char* string)
         {
                 if(!stream.good())
@@ -63,7 +69,7 @@ namespace selene
                 return true;
         }
 
-        //-------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
         uint32_t Utility::getNearestPowerOfTwo(uint32_t x)
         {
                 --x;

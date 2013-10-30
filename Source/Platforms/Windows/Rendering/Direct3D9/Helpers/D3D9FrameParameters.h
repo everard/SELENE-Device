@@ -37,8 +37,6 @@ namespace selene
                 Vector4d ssaoParameters;
                 Vector4d screenSize;
 
-                uint8_t renderingFlags;
-
                 D3d9FrameParameters();
                 D3d9FrameParameters(const D3d9FrameParameters&) = default;
                 ~D3d9FrameParameters();

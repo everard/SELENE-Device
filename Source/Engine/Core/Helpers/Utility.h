@@ -27,6 +27,27 @@ namespace selene
                         MAX_STRING_LENGTH = 1024
                 };
 
+                /**
+                 * Represents comparator of strings.
+                 */
+                class StringComparator
+                {
+                public:
+                        StringComparator() = default;
+                        StringComparator(const StringComparator&) = default;
+                        ~StringComparator() = default;
+                        StringComparator& operator =(const StringComparator&) = default;
+
+                        /**
+                         * \brief Compares two null-terminated strings.
+                         * \param[in] string0 the first string
+                         * \param[in] string1 the second string
+                         * \return true if std::strcmp(string0, string1) is less than zero
+                         */
+                        bool operator ()(const char* string0, const char* string1) const;
+
+                };
+
                 Utility();
                 Utility(const Utility&) = default;
                 ~Utility();

@@ -453,12 +453,12 @@ namespace selene
         //---------------------------------------------------------------------------------------------------------
         bool Scene::updateAndRender(float elapsedTime, Renderer& renderer)
         {
-                if(activeCamera_.expired())
+                auto camera = activeCamera_.lock();
+                if(!camera)
                         return false;
 
-                auto camera = activeCamera_.lock();
-
                 auto& renderingData = camera->getRenderingData();
+                bool shouldRenderShadows = camera->getEffect("Shadows").getQuality() != 0;
 
                 renderingData.clear();
                 renderer.getMemoryBuffer().clear();
@@ -492,8 +492,7 @@ namespace selene
                                 if(!renderingData.addLight(light))
                                         break;
 
-                                if(!camera->isEffectEnabled(Renderer::Effects::SHADOWS) ||
-                                   !renderer.is(RENDERING_SHADOWS_ENABLED))
+                                if(!shouldRenderShadows)
                                         continue;
 
                                 if(!light.is(Node::SHADOW_CASTER))

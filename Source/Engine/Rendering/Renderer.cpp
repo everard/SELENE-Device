@@ -231,70 +231,11 @@ namespace selene
                 return particleSystemNode_.add(particleSystem);
         }
 
-        Renderer::Effects::Effects()
-        {
-                for(uint8_t i = 0; i < NUM_OF_EFFECT_TYPES; ++i)
-                        isEnabled_[i] = false;
-
-                setSsaoParameters();
-                setBloomParameters();
-        }
-        Renderer::Effects::~Effects() {}
-
-        //-----------------------------------------------------------------------------------------------------------
-        void Renderer::Effects::enableEffect(uint8_t type)
-        {
-                if(type >= NUM_OF_EFFECT_TYPES)
-                        return;
-
-                isEnabled_[type] = true;
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        void Renderer::Effects::disableEffect(uint8_t type)
-        {
-                if(type >= NUM_OF_EFFECT_TYPES)
-                        return;
-
-                isEnabled_[type] = false;
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        bool Renderer::Effects::isEffectEnabled(uint8_t type) const
-        {
-                if(type >= NUM_OF_EFFECT_TYPES)
-                        return false;
-
-                return isEnabled_[type];
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        void Renderer::Effects::setSsaoParameters(float radius, float normalInfluenceBias,
-                                                  float minCosAlpha)
-        {
-                parameters_[SSAO].define(radius, normalInfluenceBias, minCosAlpha, 0.0f);
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        void Renderer::Effects::setBloomParameters(float luminance, float scale)
-        {
-                parameters_[BLOOM].define(luminance, scale, 0.18f, 0.64f);
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        const Vector4d& Renderer::Effects::getEffectParameters(uint8_t type) const
-        {
-                if(type >= NUM_OF_EFFECT_TYPES)
-                        return parameters_[NUM_OF_EFFECT_TYPES - 1];
-
-                return parameters_[type];
-        }
-
         Renderer::Parameters::Parameters(Application* application, FileManager* fileManager,
                                          uint32_t width, uint32_t height, std::ostream* log,
-                                         uint8_t flags):
+                                         bool isFullScreenEnabledFlag):
                 application_(application), fileManager_(fileManager), width_(width),
-                height_(height), log_(log), flags_(flags) {}
+                height_(height), log_(log), isFullScreenEnabledFlag_(isFullScreenEnabledFlag) {}
         Renderer::Parameters::~Parameters() {}
 
         //-----------------------------------------------------------------------------------------------------------
@@ -328,13 +269,19 @@ namespace selene
         }
 
         //-----------------------------------------------------------------------------------------------------------
-        uint8_t Renderer::Parameters::getFlags() const
+        bool Renderer::Parameters::isFullScreenEnabled() const
         {
-                return flags_;
+                return isFullScreenEnabledFlag_;
         }
 
-        Renderer::Renderer() {}
+        Renderer::Renderer(): parameters_(nullptr, nullptr, 0, 0, nullptr, false), effectsList_() {}
         Renderer::~Renderer() {}
+
+        //-----------------------------------------------------------------------------------------------------------
+        const Renderer::EffectsList& Renderer::getEffects() const
+        {
+                return effectsList_;
+        }
 
         //-----------------------------------------------------------------------------------------------------------
         bool Renderer::initializeMemoryBuffer(std::size_t size)

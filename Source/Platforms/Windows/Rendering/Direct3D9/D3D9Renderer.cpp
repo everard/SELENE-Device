@@ -24,14 +24,13 @@ namespace selene
 
                 parameters_ = parameters;
 
-                writeLogEntry("--- Initializing Direct3D 9 renderer ---");
-                setFlags(parameters_.getFlags());
+                writeLogEntry("initializing Direct3D 9 renderer");
 
                 // check parameters
                 if(parameters_.getWidth()  < 128 || parameters_.getWidth()  > 4096 ||
                    parameters_.getHeight() < 128 || parameters_.getHeight() > 4096)
                 {
-                        writeLogEntry("ERROR: Width and height of the rendering area must be in range [128; 4096]");
+                        writeLogEntry("error: width and height of the rendering area must be in range [128; 4096]");
                         return false;
                 }
 
@@ -39,22 +38,22 @@ namespace selene
                 d3d_ = Direct3DCreate9(D3D_SDK_VERSION);
                 if(d3d_ == nullptr)
                 {
-                        writeLogEntry("ERROR: Could not initialize Direct3D");
+                        writeLogEntry("error: could not initialize Direct3D");
                         return false;
                 }
 
                 if(!capabilities_.createCompatibleDevice(d3d_, parameters_, d3dPresentParameters_, d3dDevice_))
                 {
                         destroy();
-                        writeLogEntry("ERROR: Could not create compatible device");
+                        writeLogEntry("error: could not create compatible device");
                         return false;
                 }
 
                 if(capabilities_.isThirdShaderModelSupported())
-                        writeLogEntry("SM 3.0 is supported");
+                        writeLogEntry("shader model 3.0 is supported");
 
                 if(capabilities_.isMultipleRenderTargetSupported())
-                        writeLogEntry("MRT is supported");
+                        writeLogEntry("multiple render targets are supported");
 
                 if(capabilities_.isR32fRenderTargetFormatSupported())
                         writeLogEntry("R32F texture format is supported");
@@ -109,8 +108,16 @@ namespace selene
                                                            projectionInvMatrix.a[1][1],
                                                            1.0, 0.0);
 
-                frameParameters_.bloomParameters = camera.getEffectParameters(Renderer::Effects::BLOOM);
-                frameParameters_.ssaoParameters  = camera.getEffectParameters(Renderer::Effects::SSAO);
+                const auto& ssao  = camera.getEffect(Renderer::Effect::SSAO);
+                const auto& bloom = camera.getEffect(Renderer::Effect::BLOOM);
+
+                frameParameters_.ssaoParameters.x = ssao.getParameter(Renderer::Effect::SSAO_RADIUS);
+                frameParameters_.ssaoParameters.y = ssao.getParameter(Renderer::Effect::SSAO_NORMAL_INFLUENCE_BIAS);
+                frameParameters_.ssaoParameters.z = ssao.getParameter(Renderer::Effect::SSAO_MINIMUM_COSINE_ALPHA);
+
+                frameParameters_.bloomParameters.define(bloom.getParameter(Renderer::Effect::BLOOM_LUMINANCE),
+                                                        bloom.getParameter(Renderer::Effect::BLOOM_SCALE),
+                                                        0.18f, 0.64f);
 
                 frameParameters_.renderingFlags = getFlags();
                 if(!camera.isEffectEnabled(Renderer::Effects::SHADOWS))
@@ -200,7 +207,6 @@ namespace selene
                 particlesRenderer_(), lightingRenderer_(), actorsRenderer_(), textureHandler_(),
                 fullScreenQuad_(), bloomRenderer_(), ssaoRenderer_(), guiRenderer_(),
                 d3dPresentParameters_(), frameParameters_(), capabilities_(),
-                parameters_(nullptr, nullptr, 0, 0, nullptr, 0),
                 isDeviceLost_(false)
         {
                 d3dDevice_ = nullptr;
@@ -259,13 +265,13 @@ namespace selene
 
                 if(!resultVertexShader_.create(d3dVertexShader))
                 {
-                        writeLogEntry("ERROR: Could not create vertex shader");
+                        writeLogEntry("error: could not create vertex shader");
                         return false;
                 }
 
                 if(!resultPixelShader_.create(d3dPixelShader))
                 {
-                        writeLogEntry("ERROR: Could not create pixel shader");
+                        writeLogEntry("error: could not create pixel shader");
                         return false;
                 }
 
@@ -274,7 +280,7 @@ namespace selene
 
                 if(!renderTargetContainer_.initialize(frameParameters_, parameters_, capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize render target container");
+                        writeLogEntry("error: could not initialize render target container");
                         return false;
                 }
 
@@ -283,7 +289,7 @@ namespace selene
                                                   textureHandler_,
                                                   capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize particles renderer");
+                        writeLogEntry("error: could not initialize particles renderer");
                         return false;
                 }
 
@@ -293,7 +299,7 @@ namespace selene
                                                  textureHandler_,
                                                  capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize lighting renderer");
+                        writeLogEntry("error: could not initialize lighting renderer");
                         return false;
                 }
 
@@ -302,19 +308,19 @@ namespace selene
                                                textureHandler_,
                                                capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize actors renderer");
+                        writeLogEntry("error: could not initialize actors renderer");
                         return false;
                 }
 
                 if(!textureHandler_.initialize())
                 {
-                        writeLogEntry("ERROR: Could not initialize texture handler");
+                        writeLogEntry("error: could not initialize texture handler");
                         return false;
                 }
 
                 if(!fullScreenQuad_.initialize())
                 {
-                        writeLogEntry("ERROR: Could not initialize full-screen quad");
+                        writeLogEntry("error: could not initialize full-screen quad");
                         return false;
                 }
 
@@ -324,7 +330,7 @@ namespace selene
                                               textureHandler_,
                                               capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize bloom renderer");
+                        writeLogEntry("error: could not initialize bloom renderer");
                         return false;
                 }
 
@@ -334,7 +340,7 @@ namespace selene
                                              textureHandler_,
                                              capabilities_))
                 {
-                        writeLogEntry("ERROR: Could not initialize SSAO renderer");
+                        writeLogEntry("error: could not initialize SSAO renderer");
                         return false;
                 }
 
@@ -343,7 +349,7 @@ namespace selene
                                             capabilities_,
                                             fileManager))
                 {
-                        writeLogEntry("ERROR: Could not initialize GUI renderer");
+                        writeLogEntry("error: could not initialize GUI renderer");
                         return false;
                 }
 

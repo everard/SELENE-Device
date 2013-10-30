@@ -31,7 +31,7 @@ namespace selene
 
                 d3dPresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
                 d3dPresentParameters.BackBufferFormat = d3dDisplayMode.Format;
-                if(IS_SET(parameters.getFlags(), RENDERING_FULL_SCREEN_ENABLED))
+                if(parameters.isFullScreenEnabled())
                         d3dPresentParameters.Windowed = FALSE;
                 else
                         d3dPresentParameters.Windowed = TRUE;

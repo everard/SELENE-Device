@@ -23,13 +23,13 @@ namespace selene
          * Represents scene camera. Contains rendering data, which can be passed to the renderer.
          * \see Renderer::Data
          */
-        class Camera: public Scene::Node, public Renderer::Effects
+        class Camera: public Scene::Node
         {
         public:
                 /**
-                 * \brief Constructs camera with given name, position, direction, up vector,
-                 * projection parameters, distance from target and GUI.
+                 * \brief Constructs camera.
                  * \param[in] name name of the camera
+                 * \param[in] renderer renderer which shall be used by the camera
                  * \param[in] position original position of the camera
                  * \param[in] direction original direction of the camera
                  * \param[in] upVector original up vector of the camera
@@ -39,6 +39,7 @@ namespace selene
                  * \param[in] gui GUI
                  */
                 Camera(const char* name,
+                       const Renderer& renderer,
                        const Vector3d& position  = Vector3d(),
                        const Vector3d& direction = Vector3d(1.0f),
                        const Vector3d& upVector  = Vector3d(0.0f, 1.0f),
@@ -60,6 +61,26 @@ namespace selene
                  * \return pointer to the GUI
                  */
                 Gui* getGui() const;
+
+                /**
+                 * \brief Returns effect.
+                 * \param[in] name name of the effect
+                 * \return reference to the effect
+                 */
+                Effect& getEffect(const char* name);
+
+                /**
+                 * \brief Returns effect.
+                 * \param[in] name name of the effect
+                 * \return const reference to the effect
+                 */
+                const Effect& getEffect(const char* name) const;
+
+                /**
+                 * \brief Returns list of the effects.
+                 * \return list of the effects
+                 */
+                const Renderer::EffectsList& getEffects() const;
 
                 /**
                  * \brief Returns rendering data.
@@ -210,6 +231,13 @@ namespace selene
                 RELATION determineRelation(const Volume& volume) const;
 
         protected:
+                /**
+                 * Represents map of the effects.
+                 */
+                typedef std::map<const char*,
+                                 std::reference_wrapper<Effect>,
+                                 Utility::StringComparator> EffectsMap;
+
                 mutable Matrix projectionMatrix_, projectionInvMatrix_;
                 mutable Matrix viewProjectionMatrix_, viewMatrix_;
                 Vector4d projectionParameters_;
@@ -218,6 +246,10 @@ namespace selene
                 float horizontalAngle_, verticalAngle_, distance_;
                 mutable Vector3d strafeDirection_, target_;
                 mutable Volume frustum_;
+
+                Renderer::EffectsList effectsList_;
+                EffectsMap effectsMap_;
+                Effect invalidEffect_;
 
                 Renderer::Data renderingData_;
                 Gui* gui_;

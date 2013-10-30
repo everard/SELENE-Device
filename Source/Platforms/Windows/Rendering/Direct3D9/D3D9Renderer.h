@@ -68,7 +68,6 @@ namespace selene
                 D3DPRESENT_PARAMETERS d3dPresentParameters_;
                 D3d9FrameParameters frameParameters_;
                 D3d9Capabilities capabilities_;
-                Parameters parameters_;
                 bool isDeviceLost_;
 
                 D3d9Renderer();
