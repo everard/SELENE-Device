@@ -103,7 +103,8 @@ namespace selene
                                 }
 
                                 Renderer::Parameters parameters(this, nullptr, 0, 0, nullptr, 0);
-                                if(!renderer_.capabilities_.createCompatibleContext(parameters))
+                                if(!renderer_.capabilities_.createCompatibleContext(parameters,
+                                                                                    renderer_.effectsList_))
                                 {
                                         LOGI("****************************** Error: Could not "
                                              "create OpenGL ES 2.0 context");

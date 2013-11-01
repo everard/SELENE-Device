@@ -70,9 +70,8 @@ namespace selene
                 void onUpdate(float elapsedTime);
                 void onRender(float elapsedTime);
 
-                // Toggles effect of given type.
-                // Type must be one of the Renderer::Effects enumeration.
-                void toggleEffect(uint8_t type);
+                // Toggles effect with given name.
+                void toggleEffect(const char* name);
 
                 // Toggles visibility of the given GUI element.
                 void toggleGuiElementVisibility(std::weak_ptr<Gui::Element>& element);

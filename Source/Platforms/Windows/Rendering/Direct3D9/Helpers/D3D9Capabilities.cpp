@@ -12,8 +12,10 @@ namespace selene
                 isThirdShaderModelSupported_(false), maxTextureAnisotropy_(1), maxTextureSize_(1) {}
         D3d9Capabilities::~D3d9Capabilities() {}
 
-        //------------------------------------------------------------------------------------------------------------
-        bool D3d9Capabilities::createCompatibleDevice(LPDIRECT3D9 d3d, const Renderer::Parameters& parameters,
+        //------------------------------------------------------------------------------------------
+        bool D3d9Capabilities::createCompatibleDevice(LPDIRECT3D9 d3d,
+                                                      const Renderer::Parameters& parameters,
+                                                      Renderer::EffectsList& effectsList,
                                                       D3DPRESENT_PARAMETERS& d3dPresentParameters,
                                                       LPDIRECT3DDEVICE9& d3dDevice)
         {
@@ -85,41 +87,77 @@ namespace selene
                         d3dFlags |= D3DCREATE_PUREDEVICE;
 
                 // create D3D9 device
-                if(FAILED(d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, windowsApplication->getWindowHandle(),
+                if(FAILED(d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+                                            windowsApplication->getWindowHandle(),
                                             d3dFlags, &d3dPresentParameters, &d3dDevice)))
                         return false;
 
                 if(d3dDevice == nullptr)
                         return false;
 
+                try
+                {
+                        Effect ssao =
+                        {
+                                "SSAO", 1,
+                                {
+                                        {"Radius", 0.0f, std::numeric_limits<float>::max(), 2.5f},
+                                        {"Normal influence bias", -1.0f, 1.0f, -0.2f},
+                                        {"Minimum cosine alpha", -1.0f, 1.0f, 0.99f}
+                                }
+                        };
+
+                        Effect bloom =
+                        {
+                                "Bloom", 1,
+                                {
+                                        {"Luminance", 0.0f, 1.0f, 0.08f},
+                                        {"Scale", 0.0f, std::numeric_limits<float>::max(), 1.5f}
+                                }
+                        };
+
+                        Effect shadows =
+                        {
+                                "Shadows", 1, {}
+                        };
+
+                        effectsList.push_back(ssao);
+                        effectsList.push_back(bloom);
+                        effectsList.push_back(shadows);
+                }
+                catch(...)
+                {
+                        return false;
+                }
+
                 return true;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------
         bool D3d9Capabilities::isR32fRenderTargetFormatSupported() const
         {
                 return isR32fRenderTargetFormatSupported_;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------
         bool D3d9Capabilities::isMultipleRenderTargetSupported() const
         {
                 return isMultipleRenderTargetSupported_;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------
         bool D3d9Capabilities::isThirdShaderModelSupported() const
         {
                 return isThirdShaderModelSupported_;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------
         DWORD D3d9Capabilities::getMaxTextureAnisotropy() const
         {
                 return maxTextureAnisotropy_;
         }
 
-        //------------------------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------
         DWORD D3d9Capabilities::getMaxTextureSize() const
         {
                 return maxTextureSize_;

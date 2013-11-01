@@ -6,6 +6,7 @@
 
 #include "../../../../../Engine/Core/Math/Matrix.h"
 #include "../../../../../Engine/Core/Math/Vector.h"
+#include "../../../../../Engine/Rendering/Effect.h"
 
 namespace selene
 {
@@ -35,11 +36,11 @@ namespace selene
                 Vector4d unprojectionVector;
                 Vector4d renderTargetSize;
                 Vector4d bloomParameters;
-                Vector4d ssaoParameters;
                 Vector4d shadowMapSize;
                 Vector4d screenSize;
 
-                uint8_t renderingFlags;
+                Effect::Quality bloomQuality;
+                Effect::Quality shadowsQuality;
 
                 GlesFrameParameters();
                 GlesFrameParameters(const GlesFrameParameters&) = default;

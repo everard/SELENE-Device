@@ -7,10 +7,21 @@ namespace selene
 {
 
         GlesFrameParameters::GlesFrameParameters():
-                viewProjectionMatrix(), projectionMatrix(), viewInvMatrix(), normalsMatrix(), viewMatrix(),
-                textureCoordinatesAdjustment(), conversionParameters(), projectionParameters(),
-                unprojectionVector(), renderTargetSize(), bloomParameters(), ssaoParameters(),
-                shadowMapSize(), screenSize(), renderingFlags(0) {}
+                viewProjectionMatrix(),
+                projectionMatrix(),
+                viewInvMatrix(),
+                normalsMatrix(),
+                viewMatrix(),
+                textureCoordinatesAdjustment(),
+                conversionParameters(),
+                projectionParameters(),
+                unprojectionVector(),
+                renderTargetSize(),
+                bloomParameters(),
+                shadowMapSize(),
+                screenSize(),
+                bloomQuality(0),
+                shadowsQuality(0) {}
         GlesFrameParameters::~GlesFrameParameters() {}
 
 }

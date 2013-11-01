@@ -570,7 +570,7 @@ namespace selene
 
                 renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL);
 
-                if(!IS_SET(frameParameters_->renderingFlags, RENDERING_SHADOWS_ENABLED))
+                if(frameParameters_->shadowsQuality == 0)
                 {
                         renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_DIRECTIONAL);
                         glDisable(GL_BLEND);

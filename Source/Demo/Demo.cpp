@@ -234,6 +234,7 @@ namespace selene
 
                 // create camera
                 scene_.addNode(new(std::nothrow) Camera("Camera",
+                                                        renderer_,
                                                         Vector3d(0.0f, 5.0f),
                                                         Vector3d(0.0f, 0.0f, 1.0f),
                                                         Vector3d(0.0f, 1.0f),
@@ -250,7 +251,7 @@ namespace selene
                         return;
 
                 // enable shadows (shadows are visible when current camera is used)
-                camera->enableEffect(Renderer::Effects::SHADOWS);
+                camera->getEffect("Shadows").setQuality(1);
 
                 auto actor = actor_.lock();
                 if(!actor)
@@ -289,8 +290,7 @@ namespace selene
                         return false;
 
                 // initialize renderer
-                uint8_t flags = RENDERING_BLOOM_ENABLED | RENDERING_SSAO_ENABLED | RENDERING_SHADOWS_ENABLED;
-                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, flags);
+                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, false);
 
                 if(!renderer_.initialize(parameters))
                         return false;
@@ -359,16 +359,17 @@ namespace selene
         }
 
         //-----------------------------------------------------------------------------------------------------------
-        void DemoApplication::toggleEffect(uint8_t type)
+        void DemoApplication::toggleEffect(const char* name)
         {
                 auto camera = camera_.lock();
                 if(!camera)
                         return;
 
-                if(camera->isEffectEnabled(type))
-                        camera->disableEffect(type);
+                auto& effect = camera->getEffect(name);
+                if(effect.getQuality() == 0)
+                        effect.setQuality(1);
                 else
-                        camera->enableEffect(type);
+                        effect.setQuality(0);
         }
 
         //-----------------------------------------------------------------------------------------------------------
@@ -435,19 +436,19 @@ namespace selene
         //-----------------------------------------------------------------------------------------------------------
         void DemoApplication::onButtonMessageToggleSsao()
         {
-                toggleEffect(Renderer::Effects::SSAO);
+                toggleEffect("SSAO");
         }
 
         //-----------------------------------------------------------------------------------------------------------
         void DemoApplication::onButtonMessageToggleBloom()
         {
-                toggleEffect(Renderer::Effects::BLOOM);
+                toggleEffect("Bloom");
         }
 
         //-----------------------------------------------------------------------------------------------------------
         void DemoApplication::onButtonMessageToggleShadows()
         {
-                toggleEffect(Renderer::Effects::SHADOWS);
+                toggleEffect("Shadows");
         }
 
         //-----------------------------------------------------------------------------------------------------------

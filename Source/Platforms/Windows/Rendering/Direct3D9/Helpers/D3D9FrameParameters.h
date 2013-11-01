@@ -6,6 +6,7 @@
 
 #include "../../../../../Engine/Core/Math/Matrix.h"
 #include "../../../../../Engine/Core/Math/Vector.h"
+#include "../../../../../Engine/Rendering/Effect.h"
 
 namespace selene
 {
@@ -36,6 +37,10 @@ namespace selene
                 Vector4d bloomParameters;
                 Vector4d ssaoParameters;
                 Vector4d screenSize;
+
+                Effect::Quality ssaoQuality;
+                Effect::Quality bloomQuality;
+                Effect::Quality shadowsQuality;
 
                 D3d9FrameParameters();
                 D3d9FrameParameters(const D3d9FrameParameters&) = default;

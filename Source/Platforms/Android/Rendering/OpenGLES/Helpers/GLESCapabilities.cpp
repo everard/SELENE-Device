@@ -18,7 +18,8 @@ namespace selene
         }
 
         //-------------------------------------------------------------------------------------------------------
-        bool GlesCapabilities::createCompatibleContext(const Renderer::Parameters& parameters)
+        bool GlesCapabilities::createCompatibleContext(const Renderer::Parameters& parameters,
+                                                       Renderer::EffectsList& effectsList)
         {
                 destroyContext();
 
@@ -79,6 +80,30 @@ namespace selene
 
                 eglQuerySurface(display_, surface_, EGL_WIDTH,  &surfaceWidth_);
                 eglQuerySurface(display_, surface_, EGL_HEIGHT, &surfaceHeight_);
+
+                try
+                {
+                        Effect bloom =
+                        {
+                                "Bloom", 1,
+                                {
+                                        {"Luminance", 0.0f, 1.0f, 0.08f},
+                                        {"Scale", 0.0f, std::numeric_limits<float>::max(), 1.5f}
+                                }
+                        };
+
+                        Effect shadows =
+                        {
+                                "Shadows", 1, {}
+                        };
+
+                        effectsList.push_back(bloom);
+                        effectsList.push_back(shadows);
+                }
+                catch(...)
+                {
+                        return false;
+                }
 
                 return true;
         }

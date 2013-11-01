@@ -42,7 +42,9 @@ namespace selene
                         return false;
                 }
 
-                if(!capabilities_.createCompatibleDevice(d3d_, parameters_, d3dPresentParameters_, d3dDevice_))
+                if(!capabilities_.createCompatibleDevice(d3d_, parameters_, effectsList_,
+                                                         d3dPresentParameters_,
+                                                         d3dDevice_))
                 {
                         destroy();
                         writeLogEntry("error: could not create compatible device");
@@ -50,13 +52,13 @@ namespace selene
                 }
 
                 if(capabilities_.isThirdShaderModelSupported())
-                        writeLogEntry("shader model 3.0 is supported");
+                        writeLogEntry("note: shader model 3.0 is supported");
 
                 if(capabilities_.isMultipleRenderTargetSupported())
-                        writeLogEntry("multiple render targets are supported");
+                        writeLogEntry("note: multiple render targets are supported");
 
                 if(capabilities_.isR32fRenderTargetFormatSupported())
-                        writeLogEntry("R32F texture format is supported");
+                        writeLogEntry("note: R32F texture format is supported");
 
                 return initializeHelpers();
         }
@@ -68,6 +70,8 @@ namespace selene
 
                 SAFE_RELEASE(d3dDevice_);
                 SAFE_RELEASE(d3d_);
+
+                effectsList_.clear();
         }
 
         //----------------------------------------------------------------------------------------------------------
@@ -108,22 +112,21 @@ namespace selene
                                                            projectionInvMatrix.a[1][1],
                                                            1.0, 0.0);
 
-                const auto& ssao  = camera.getEffect(Renderer::Effect::SSAO);
-                const auto& bloom = camera.getEffect(Renderer::Effect::BLOOM);
+                const auto& ssao    = camera.getEffect("SSAO");
+                const auto& bloom   = camera.getEffect("Bloom");
+                const auto& shadows = camera.getEffect("Shadows");
 
-                frameParameters_.ssaoParameters.x = ssao.getParameter(Renderer::Effect::SSAO_RADIUS);
-                frameParameters_.ssaoParameters.y = ssao.getParameter(Renderer::Effect::SSAO_NORMAL_INFLUENCE_BIAS);
-                frameParameters_.ssaoParameters.z = ssao.getParameter(Renderer::Effect::SSAO_MINIMUM_COSINE_ALPHA);
+                frameParameters_.ssaoParameters.x = ssao.getParameter("Radius").getValue();
+                frameParameters_.ssaoParameters.y = ssao.getParameter("Normal influence bias").getValue();
+                frameParameters_.ssaoParameters.z = ssao.getParameter("Minimum cosine alpha").getValue();
+                frameParameters_.ssaoQuality = ssao.getQuality();
 
-                frameParameters_.bloomParameters.define(bloom.getParameter(Renderer::Effect::BLOOM_LUMINANCE),
-                                                        bloom.getParameter(Renderer::Effect::BLOOM_SCALE),
+                frameParameters_.bloomParameters.define(bloom.getParameter("Luminance").getValue(),
+                                                        bloom.getParameter("Scale").getValue(),
                                                         0.18f, 0.64f);
+                frameParameters_.bloomQuality = bloom.getQuality();
 
-                frameParameters_.renderingFlags = getFlags();
-                if(!camera.isEffectEnabled(Renderer::Effects::SHADOWS))
-                {
-                        CLEAR(frameParameters_.renderingFlags, RENDERING_SHADOWS_ENABLED);
-                }
+                frameParameters_.shadowsQuality = shadows.getQuality();
 
                 // begin rendering
                 if(FAILED(d3dDevice_->BeginScene()))
@@ -133,17 +136,14 @@ namespace selene
                 actorsRenderer_.renderPositionsAndNormals(renderingData.getActorNode());
                 lightingRenderer_.renderLighting(renderingData.getLightNode());
 
-                bool isSsaoEnabled = false;
-                if(is(RENDERING_SSAO_ENABLED) && camera.isEffectEnabled(Renderer::Effects::SSAO))
-                {
+                bool isSsaoEnabled = (frameParameters_.ssaoQuality != 0);
+                if(isSsaoEnabled)
                         ssaoRenderer_.renderSsao();
-                        isSsaoEnabled = true;
-                }
 
                 actorsRenderer_.renderShading(renderingData.getActorNode(), isSsaoEnabled);
                 particlesRenderer_.renderParticleSystems(renderingData.getParticleSystemNode());
 
-                if(is(RENDERING_BLOOM_ENABLED) && camera.isEffectEnabled(Renderer::Effects::BLOOM))
+                if(frameParameters_.bloomQuality != 0)
                 {
                         bloomRenderer_.renderBloom();
                         resultRenderTarget = RENDER_TARGET_HELPER_1;

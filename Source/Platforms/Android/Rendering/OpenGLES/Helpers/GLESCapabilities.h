@@ -31,10 +31,12 @@ namespace selene
                 /**
                  * \brief Checks capabilities and creates OpenGL ES context.
                  * \param[in] parameters renderer parameters
+                 * \param[out] effectsList list of the supported effects
                  * \return true if current hardware meets minimum requirements and OpenGL ES context has
                  * been successfully created
                  */
-                bool createCompatibleContext(const Renderer::Parameters& parameters);
+                bool createCompatibleContext(const Renderer::Parameters& parameters,
+                                             Renderer::EffectsList& effectsList);
 
                 /**
                  * \brief Destroys context.

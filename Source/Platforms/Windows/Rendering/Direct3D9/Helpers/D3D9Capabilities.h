@@ -30,12 +30,15 @@ namespace selene
                  * \brief Checks capabilities and creates device.
                  * \param[in] d3d D3D interface
                  * \param[in] parameters renderer parameters
+                 * \param[out] effectsList list of the supported effects
                  * \param[out] d3dPresentParameters D3D present parameters
                  * \param[out] d3dDevice D3D device
                  * \return true if current hardware meets minimum requirements and device has
                  * been successfully created
                  */
-                bool createCompatibleDevice(LPDIRECT3D9 d3d, const Renderer::Parameters& parameters,
+                bool createCompatibleDevice(LPDIRECT3D9 d3d,
+                                            const Renderer::Parameters& parameters,
+                                            Renderer::EffectsList& effectsList,
                                             D3DPRESENT_PARAMETERS& d3dPresentParameters,
                                             LPDIRECT3DDEVICE9& d3dDevice);
 

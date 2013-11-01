@@ -21,8 +21,7 @@ namespace selene
         bool GlesRenderer::initialize(const Renderer::Parameters& parameters)
         {
                 parameters_ = parameters;
-                writeLogEntry("--- Initializing OpenGL ES renderer ---");
-                setFlags(parameters_.getFlags());
+                writeLogEntry("initializing OpenGL ES renderer");
 
                 // initialize helpers
                 if(!initializeHelpers())
@@ -41,6 +40,7 @@ namespace selene
         {
                 destroyHelpers();
                 capabilities_.destroyContext();
+                effectsList_.clear();
         }
 
         //-------------------------------------------------------------------------------------------------------
@@ -71,14 +71,15 @@ namespace selene
                                                              frameParameters_.projectionParameters.w,
                                                              frameParameters_.projectionParameters.w, 1.0f);
 
-                frameParameters_.bloomParameters = camera.getEffectParameters(Renderer::Effects::BLOOM);
-                frameParameters_.ssaoParameters  = camera.getEffectParameters(Renderer::Effects::SSAO);
+                const auto& bloom   = camera.getEffect("Bloom");
+                const auto& shadows = camera.getEffect("Shadows");
 
-                frameParameters_.renderingFlags = getFlags();
-                if(!camera.isEffectEnabled(Renderer::Effects::SHADOWS))
-                {
-                        CLEAR(frameParameters_.renderingFlags, RENDERING_SHADOWS_ENABLED);
-                }
+                frameParameters_.bloomParameters.define(bloom.getParameter("Luminance").getValue(),
+                                                        bloom.getParameter("Scale").getValue(),
+                                                        0.18f, 0.64f);
+                frameParameters_.bloomQuality = bloom.getQuality();
+
+                frameParameters_.shadowsQuality = shadows.getQuality();
 
                 uint8_t resultRenderTarget = RENDER_TARGET_RESULT;
 
@@ -90,7 +91,7 @@ namespace selene
                 lightingRenderer_.renderLighting(renderingData.getLightNode());
                 actorsRenderer_.renderShading(renderingData.getActorNode());
 
-                if(is(RENDERING_BLOOM_ENABLED) && camera.isEffectEnabled(Renderer::Effects::BLOOM))
+                if(frameParameters_.bloomQuality != 0)
                 {
                         bloomRenderer_.renderBloom();
                         resultRenderTarget = RENDER_TARGET_HELPER_1;
@@ -130,7 +131,7 @@ namespace selene
                 resultRenderingProgram_(), textureCoordinatesAdjustmentLocation_(-1), resultTextureLocation_(-1),
                 renderTargetContainer_(), lightingRenderer_(),actorsRenderer_(), fullScreenQuad_(),
                 textureHandler_(), bloomRenderer_(), guiRenderer_(), frameParameters_(),
-                capabilities_(), parameters_(nullptr, nullptr, 0, 0, nullptr, 0) {}
+                capabilities_() {}
         GlesRenderer::~GlesRenderer()
         {
                 destroy();
@@ -147,7 +148,7 @@ namespace selene
         //-------------------------------------------------------------------------------------------------------
         bool GlesRenderer::retain()
         {
-                if(!capabilities_.createCompatibleContext(parameters_))
+                if(!capabilities_.createCompatibleContext(parameters_, effectsList_))
                         return false;
 
                 if(!initialize(parameters_))
@@ -197,7 +198,7 @@ namespace selene
                 if(!resultRenderingProgram_.initialize(resultVertexShader, resultFragmentShader,
                                                        vertexAttributes, numVertexAttributes))
                 {
-                        writeLogEntry("ERROR: Could not initialize result GLSL program.");
+                        writeLogEntry("error: could not initialize result GLSL program");
                         return false;
                 }
 
@@ -207,45 +208,45 @@ namespace selene
 
                 if(!renderTargetContainer_.initialize(frameParameters_, parameters_))
                 {
-                        writeLogEntry("ERROR: Could not initialize render target container.");
+                        writeLogEntry("error: could not initialize render target container");
                         return false;
                 }
 
                 if(!actorsRenderer_.initialize(renderTargetContainer_, frameParameters_, textureHandler_))
                 {
-                        writeLogEntry("ERROR: Could not initialize actors renderer.");
+                        writeLogEntry("error: could not initialize actors renderer");
                         return false;
                 }
 
                 if(!lightingRenderer_.initialize(renderTargetContainer_, frameParameters_,
                                                  actorsRenderer_, textureHandler_))
                 {
-                        writeLogEntry("ERROR: Could not initialize lighting renderer.");
+                        writeLogEntry("error: could not initialize lighting renderer");
                         return false;
                 }
 
                 if(!fullScreenQuad_.initialize())
                 {
-                        writeLogEntry("ERROR: Could not initialize full-screen quad.");
+                        writeLogEntry("error: could not initialize full-screen quad");
                         return false;
                 }
 
                 if(!textureHandler_.initialize())
                 {
-                        writeLogEntry("ERROR: Could not initialize texture handler.");
+                        writeLogEntry("error: could not initialize texture handler");
                         return false;
                 }
 
                 if(!bloomRenderer_.initialize(renderTargetContainer_, frameParameters_,
                                               fullScreenQuad_, textureHandler_))
                 {
-                        writeLogEntry("ERROR: Could not initialize bloom renderer.");
+                        writeLogEntry("error: could not initialize bloom renderer");
                         return false;
                 }
 
                 if(!guiRenderer_.initialize(textureHandler_, parameters_.getFileManager()))
                 {
-                        writeLogEntry("ERROR: Could not initialize GUI renderer.");
+                        writeLogEntry("error: could not initialize GUI renderer");
                         return false;
                 }
 

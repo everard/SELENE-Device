@@ -755,7 +755,7 @@ namespace selene
                 // render without shadows
                 renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_NO_SHADOWS_DIRECTIONAL);
 
-                if(!IS_SET(frameParameters_->renderingFlags, RENDERING_SHADOWS_ENABLED))
+                if(frameParameters_->shadowsQuality == 0)
                 {
                         renderLightingWithoutShadows(lightNode, Renderer::Data::UNIT_LIGHT_DIRECTIONAL);
                         d3dDevice_->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);

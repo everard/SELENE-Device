@@ -54,7 +54,6 @@ namespace selene
 
                 GlesFrameParameters frameParameters_;
                 GlesCapabilities capabilities_;
-                Parameters parameters_;
 
                 GlesRenderer();
                 GlesRenderer(const GlesRenderer&) = delete;
