@@ -53,23 +53,47 @@ namespace selene
         void Platform::Application::halt() {}
 
         //------------------------------------------------------------------------------------
-        bool Platform::Application::Renderer::initialize(const Parameters&)
+        Renderer& Platform::Application::getRenderer()
         {
-                std::cout << "--- Initializing renderer ---" << std::endl;
+                return renderer_;
+        }
+
+        //------------------------------------------------------------------------------------
+        float Platform::Application::getKeyState(uint8_t) const
+        {
+                return 0.0f;
+        }
+
+        //------------------------------------------------------------------------------------
+        Vector2d Platform::Application::getCursorPosition(uint8_t) const
+        {
+                return Vector2d();
+        }
+
+        //------------------------------------------------------------------------------------
+        Vector2d Platform::Application::getCursorShift(uint8_t) const
+        {
+                return Vector2d();
+        }
+
+        //------------------------------------------------------------------------------------
+        uint8_t Platform::Application::getNumCursors() const
+        {
+                return 1;
+        }
+
+        //------------------------------------------------------------------------------------
+        bool Platform::Application::NullRenderer::initialize(const Parameters&)
+        {
+                std::cout << "initializing renderer" << std::endl;
                 return true;
         }
 
         //------------------------------------------------------------------------------------
-        void Platform::Application::Renderer::destroy() {}
+        void Platform::Application::NullRenderer::destroy() {}
 
         //------------------------------------------------------------------------------------
-        void Platform::Application::Renderer::render(const Camera&) {}
-
-        //------------------------------------------------------------------------------------
-        float Platform::Application::getKeyState(uint8_t)
-        {
-                return 0.0f;
-        }
+        void Platform::Application::NullRenderer::render(const Camera&) {}
 
         //------------------------------------------------------------------------------------
         void Platform::Timer::reset() {}

@@ -94,12 +94,17 @@ namespace selene
                         bool initialize();
                         bool run();
                         void halt();
+                        Renderer& getRenderer();
+                        float getKeyState(uint8_t) const;
+                        Vector2d getCursorPosition(uint8_t) const;
+                        Vector2d getCursorShift(uint8_t) const;
+                        uint8_t getNumCursors() const;
 
                 protected:
                         /**
-                         * Represents renderer.
+                         * Represents null renderer.
                          */
-                        class Renderer: public selene::Renderer
+                        class NullRenderer: public selene::Renderer
                         {
                         public:
                                 // Renderer interface implementation
@@ -110,17 +115,15 @@ namespace selene
                         private:
                                 friend class Application;
 
-                                Renderer() = default;
-                                Renderer(const Renderer&) = delete;
-                                ~Renderer() = default;
-                                Renderer& operator =(const Renderer&) = delete;
+                                NullRenderer() = default;
+                                NullRenderer(const NullRenderer&) = delete;
+                                ~NullRenderer() = default;
+                                NullRenderer& operator =(const NullRenderer&) = delete;
 
                         };
 
-                        // Application interface implementation
-                        float getKeyState(uint8_t);
-
-                        Renderer renderer_;
+                private:
+                        NullRenderer renderer_;
 
                 };
 

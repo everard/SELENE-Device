@@ -27,10 +27,8 @@ namespace selene
                 /**
                  * \brief Constructs Android application with given name and size of the rendering area.
                  * \param[in] name name of the application
-                 * \param[in] width width of the rendering area in pixels
-                 * \param[in] height height of the rendering area in pixels
                  */
-                AndroidApplication(const char* name, uint32_t width, uint32_t height);
+                AndroidApplication(const char* name, uint32_t, uint32_t);
                 AndroidApplication(const AndroidApplication&) = delete;
                 ~AndroidApplication();
                 AndroidApplication& operator =(const AndroidApplication&) = delete;
@@ -39,6 +37,11 @@ namespace selene
                 bool initialize();
                 bool run();
                 void halt();
+                Renderer& getRenderer();
+                float getKeyState(uint8_t) const;
+                Vector2d getCursorPosition(uint8_t) const;
+                Vector2d getCursorShift(uint8_t) const;
+                uint8_t getNumCursors() const;
 
                 /**
                  * \brief Returns Android application handle.
@@ -46,13 +49,12 @@ namespace selene
                  */
                 android_app* getHandle();
 
-        protected:
+        private:
                 GlesRenderer renderer_;
 
-                // Application interface implementation
-                float getKeyState(uint8_t key);
+                Vector2d cursorPosition_;
+                Vector2d cursorShift_;
 
-        private:
                 android_app* state_;
                 AndroidTimer timer_;
                 bool shouldRun_, isPaused_, isInitialized_;

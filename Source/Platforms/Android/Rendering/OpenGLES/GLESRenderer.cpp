@@ -23,6 +23,12 @@ namespace selene
                 parameters_ = parameters;
                 writeLogEntry("initializing OpenGL ES renderer");
 
+                if(!capabilities_.createCompatibleContext(parameters_, effectsList_))
+                {
+                        writeLogEntry("error: could not create compatible OpenGL ES 2.0 context");
+                        return false;
+                }
+
                 // initialize helpers
                 if(!initializeHelpers())
                         return false;
@@ -148,9 +154,6 @@ namespace selene
         //-------------------------------------------------------------------------------------------------------
         bool GlesRenderer::retain()
         {
-                if(!capabilities_.createCompatibleContext(parameters_, effectsList_))
-                        return false;
-
                 if(!initialize(parameters_))
                         return false;
 

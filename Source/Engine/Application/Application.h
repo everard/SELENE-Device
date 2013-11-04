@@ -16,6 +16,9 @@ namespace selene
          * @{
          */
 
+        // Forward declaration of classes
+        class Renderer;
+
         /// Control button. For different platforms has different meanings.
         /// For example, on Windows and Linux platforms this enum represents
         /// states of the mouse buttons.
@@ -53,6 +56,30 @@ namespace selene
                 Application& operator =(const Application&) = delete;
 
                 /**
+                 * \brief Returns width of the rendering area.
+                 * \return width of the rendering area in pixels
+                 */
+                uint32_t getWidth() const;
+
+                /**
+                 * \brief Returns height of the rendering area.
+                 * \return height of the rendering area in pixels
+                 */
+                uint32_t getHeight() const;
+
+                /**
+                 * \brief Sets mask of pressed control buttons.
+                 * \param[in] mask mask of pressed control buttons
+                 */
+                void setPressedControlButtonsMask(uint8_t mask);
+
+                /**
+                 * \brief Returns mask of pressed control buttons.
+                 * \return mask of pressed control buttons
+                 */
+                uint8_t getPressedControlButtonsMask() const;
+
+                /**
                  * \brief Initializes application.
                  *
                  * Performs all needed operations e.g. rendering and window initialization, etc.
@@ -71,22 +98,48 @@ namespace selene
                  */
                 virtual void halt() = 0;
 
-        protected:
-                uint32_t width_, height_;
-                Vector2d cursorPosition_;
-                Vector2d cursorShift_;
-                uint8_t pressedControlButtons_;
+                /**
+                 * \brief Returns renderer.
+                 * \return reference to the renderer
+                 */
+                virtual Renderer& getRenderer() = 0;
 
                 /**
                  * \brief Returns state of the given key.
                  * \param[in] key key
                  * \return state of the key (zero if key is not pressed, one if key is fully pressed)
                  */
-                virtual float getKeyState(uint8_t key) = 0;
+                virtual float getKeyState(uint8_t key) const = 0;
 
                 /**
+                 * \brief Returns position of the cursor.
+                 *
+                 * Usually application has only one cursor, but it can have more. For example, some
+                 * platforms do not have hardware keyboard and use touchscreen for input. If multi-touch
+                 * is supported, then such platforms can have more than one cursor.
+                 * \param[in] index index of the cursor
+                 * \return position of the cursor
+                 */
+                virtual Vector2d getCursorPosition(uint8_t index) const = 0;
+
+                /**
+                 * \brief Returns shift of the cursor.
+                 * \see getCursorPosition
+                 * \param[in] index index of the cursor
+                 * \return shift of the cursor
+                 */
+                virtual Vector2d getCursorShift(uint8_t index) const = 0;
+
+                /**
+                 * \brief Returns number of cursors.
+                 * \return number of cursors
+                 */
+                virtual uint8_t getNumCursors() const = 0;
+
+        protected:
+                /**
                  * \brief Initialization event callback.
-                 * \return true if initialization succeded
+                 * \return true if initialization succeeded
                  */
                 virtual bool onInitialize() = 0;
 
@@ -124,6 +177,10 @@ namespace selene
                  * \param[in] elapsedTime elapsed time since last rendering
                  */
                 virtual void onRender(float elapsedTime) = 0;
+
+        private:
+                uint32_t width_, height_;
+                uint8_t pressedControlButtonsMask_;
 
         };
 

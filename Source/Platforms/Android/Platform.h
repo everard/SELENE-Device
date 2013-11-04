@@ -95,6 +95,39 @@ namespace selene
                  */
                 static uint32_t getDefaultScreenHeight();
 
+                /**
+                 * \brief Creates compatible context.
+                 * \param[out] surface EGL surface
+                 * \param[out] context OpenGL ES context
+                 * \param[out] display EGL display
+                 * \param[out] surfaceWidth EGL surface width
+                 * \param[out] surfaceHeight EGL surface height
+                 * \return true if current hardware meets minimum requirements and OpenGL ES context has
+                 * been successfully created
+                 */
+                static bool createCompatibleContext(EGLSurface& surface,
+                                                    EGLContext& context,
+                                                    EGLDisplay& display,
+                                                    EGLint& surfaceWidth,
+                                                    EGLint& surfaceHeight);
+
+                /**
+                 * \brief Destroys context.
+                 * \param[in] surface EGL surface
+                 * \param[in] context OpenGL ES context
+                 * \param[in] display EGL display
+                 */
+                static void destroyContext(EGLSurface& surface,
+                                           EGLContext& context,
+                                           EGLDisplay& display);
+
+                /**
+                 * \brief Initialization callback.
+                 * \param[in] app Android application handle
+                 * \param[in] cmd Android command
+                 */
+                static void initializationCallback(android_app* app, int32_t cmd);
+
         private:
                 friend void ::android_main(android_app* state);
                 friend class AndroidApplication;
@@ -103,6 +136,8 @@ namespace selene
                 static android_app* state_;
                 static uint32_t defaultScreenWidth_;
                 static uint32_t defaultScreenHeight_;
+                static bool isInitialized_;
+                static bool shouldHaltExecution_;
 
         };
 

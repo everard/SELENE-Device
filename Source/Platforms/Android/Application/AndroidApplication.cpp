@@ -7,12 +7,13 @@
 namespace selene
 {
 
-        AndroidApplication::AndroidApplication(const char* name, uint32_t width, uint32_t height):
-                Application(name, width, height), renderer_(), state_(nullptr), timer_(),
+        AndroidApplication::AndroidApplication(const char* name, uint32_t, uint32_t):
+                Application(name, Platform::defaultScreenWidth_, Platform::defaultScreenHeight_),
+                renderer_(), cursorPosition_(), cursorShift_(), state_(nullptr), timer_(),
                 shouldRun_(true), isPaused_(false), isInitialized_(false) {}
         AndroidApplication::~AndroidApplication() {}
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool AndroidApplication::initialize()
         {
                 state_ = Platform::state_;
@@ -24,10 +25,14 @@ namespace selene
                 state_->onAppCmd = commandProcessingCallback;
                 state_->onInputEvent = inputProcessingCallback;
 
+                if(!onInitialize())
+                        return false;
+
+                isInitialized_ = true;
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         bool AndroidApplication::run()
         {
                 float elapsedTime = 0.0f;
@@ -42,7 +47,6 @@ namespace selene
                         while((ident = ALooper_pollAll(isPaused_ ? -1 : 0, nullptr, &events,
                                                        reinterpret_cast<void**>(&source))) >= 0)
                         {
-
                                 if(source != nullptr)
                                         source->process(state_, source);
 
@@ -61,32 +65,56 @@ namespace selene
                                 onRender(elapsedTime);
 
                                 elapsedTime = timer_.getElapsedTime();
-                                pressedControlButtons_ = 0;
+                                setPressedControlButtonsMask(0);
                         }
                 }
 
                 return true;
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void AndroidApplication::halt()
         {
                 shouldRun_ = false;
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
+        Renderer& AndroidApplication::getRenderer()
+        {
+                return renderer_;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------
+        float AndroidApplication::getKeyState(uint8_t) const
+        {
+                return 0.0f;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------
+        Vector2d AndroidApplication::getCursorPosition(uint8_t) const
+        {
+                return cursorPosition_;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------
+        Vector2d AndroidApplication::getCursorShift(uint8_t) const
+        {
+                return cursorShift_;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------
+        uint8_t AndroidApplication::getNumCursors() const
+        {
+                return 1;
+        }
+
+        //-----------------------------------------------------------------------------------------------------------
         android_app* AndroidApplication::getHandle()
         {
                 return state_;
         }
 
-        //-------------------------------------------------------------------------------------------------------
-        float AndroidApplication::getKeyState(uint8_t)
-        {
-                return 0.0f;
-        }
-
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void AndroidApplication::processCommand(android_app* app, int32_t cmd)
         {
                 if(!shouldRun_)
@@ -96,36 +124,24 @@ namespace selene
                 {
                         case APP_CMD_INIT_WINDOW:
                         {
+                                LOGI("***************** ON INITIALIZE WINDOW");
+
                                 if(app->window == nullptr)
                                 {
                                         shouldRun_ = false;
                                         return;
                                 }
 
-                                Renderer::Parameters parameters(this, nullptr, 0, 0, nullptr, 0);
-                                if(!renderer_.capabilities_.createCompatibleContext(parameters,
-                                                                                    renderer_.effectsList_))
+                                if(isInitialized_)
                                 {
-                                        LOGI("****************************** Error: Could not "
-                                             "create OpenGL ES 2.0 context");
-                                        shouldRun_ = false;
+                                        if(isPaused_)
+                                        {
+                                                renderer_.retain();
+                                                timer_.reset();
+                                                isPaused_ = false;
+                                        }
                                         return;
                                 }
-
-                                EGLint nativeWindowWidth  = renderer_.capabilities_.getSurfaceWidth();
-                                EGLint nativeWindowHeight = renderer_.capabilities_.getSurfaceHeight();
-
-                                if(nativeWindowWidth <= 1 || nativeWindowHeight <= 1)
-                                {
-                                        shouldRun_ = false;
-                                        return;
-                                }
-
-                                Platform::defaultScreenWidth_  = static_cast<uint32_t>(nativeWindowWidth);
-                                Platform::defaultScreenHeight_ = static_cast<uint32_t>(nativeWindowHeight);
-
-                                width_  = Platform::defaultScreenWidth_;
-                                height_ = Platform::defaultScreenHeight_;
 
                                 if(!onInitialize())
                                 {
@@ -139,34 +155,61 @@ namespace selene
 
                         case APP_CMD_TERM_WINDOW:
                         {
+                                LOGI("***************** ON TERMINATE WINDOW");
+
+                                if(!isPaused_)
+                                {
+                                        isPaused_ = true;
+                                        renderer_.discard();
+                                }
+
+                                break;
+                        }
+
+                        case APP_CMD_PAUSE:
+                        {
+                                LOGI("***************** ON PAUSE");
+
+                                if(!isPaused_)
+                                {
+                                        isPaused_ = true;
+                                        renderer_.discard();
+                                }
+                                break;
+                        }
+
+                        case APP_CMD_RESUME:
+                        {
+                                LOGI("***************** ON RESUME");
+                                break;
+                        }
+
+                        case APP_CMD_STOP:
+                        {
+                                LOGI("***************** ON STOP");
+
                                 isInitialized_ = false;
                                 onDestroy();
                                 renderer_.destroy();
+
                                 break;
                         }
 
                         case APP_CMD_LOST_FOCUS:
                         {
-                                isPaused_ = true;
-                                renderer_.discard();
+                                LOGI("***************** ON LOST FOCUS");
                                 break;
                         }
 
                         case APP_CMD_GAINED_FOCUS:
                         {
-                                if(isPaused_)
-                                {
-                                        renderer_.retain();
-                                        timer_.reset();
-                                        isPaused_ = false;
-                                }
-
+                                LOGI("***************** ON GAINED FOCUS");
                                 break;
                         }
                 }
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         int32_t AndroidApplication::processInputEvent(android_app*, AInputEvent* event)
         {
                 static int32_t previousX = 0;
@@ -177,14 +220,14 @@ namespace selene
                         int32_t x = AMotionEvent_getX(event, 0);
                         int32_t y = AMotionEvent_getY(event, 0);
 
-                        cursorPosition_.x = 2.0f * static_cast<float>(x) / static_cast<float>(width_);
-                        cursorPosition_.y = 2.0f * static_cast<float>(y) / static_cast<float>(height_);
+                        cursorPosition_.x = 2.0f * static_cast<float>(x) / static_cast<float>(getWidth());
+                        cursorPosition_.y = 2.0f * static_cast<float>(y) / static_cast<float>(getHeight());
 
                         int32_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
                         if(action == AMOTION_EVENT_ACTION_UP)
                         {
                                 cursorShift_.define(0.0f);
-                                pressedControlButtons_ = CONTROL_BUTTON_0;
+                                setPressedControlButtonsMask(CONTROL_BUTTON_0);
                                 onControlButtonRelease(CONTROL_BUTTON_0);
                         }
                         else if(action == AMOTION_EVENT_ACTION_DOWN)
@@ -195,8 +238,8 @@ namespace selene
                         }
                         else
                         {
-                                cursorShift_.x = static_cast<float>(x - previousX) / static_cast<float>(width_);
-                                cursorShift_.y = static_cast<float>(y - previousY) / static_cast<float>(height_);
+                                cursorShift_.x = static_cast<float>(x - previousX) / static_cast<float>(getWidth());
+                                cursorShift_.y = static_cast<float>(y - previousY) / static_cast<float>(getHeight());
 
                                 previousX = x;
                                 previousY = y;
@@ -208,7 +251,7 @@ namespace selene
                 return 0;
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         void AndroidApplication::commandProcessingCallback(android_app* app, int32_t cmd)
         {
                 AndroidApplication* application = static_cast<AndroidApplication*>(app->userData);
@@ -219,7 +262,7 @@ namespace selene
                 application->processCommand(app, cmd);
         }
 
-        //-------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------
         int32_t AndroidApplication::inputProcessingCallback(android_app* app, AInputEvent* event)
         {
                 AndroidApplication* application = static_cast<AndroidApplication*>(app->userData);

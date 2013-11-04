@@ -234,13 +234,13 @@ namespace selene
 
                 // create camera
                 scene_.addNode(new(std::nothrow) Camera("Camera",
-                                                        renderer_,
+                                                        getRenderer(),
                                                         Vector3d(0.0f, 5.0f),
                                                         Vector3d(0.0f, 0.0f, 1.0f),
                                                         Vector3d(0.0f, 1.0f),
                                                         Vector4d(45.0f,
-                                                                 static_cast<float>(height_) /
-                                                                 static_cast<float>(width_),
+                                                                 static_cast<float>(getHeight()) /
+                                                                 static_cast<float>(getWidth()),
                                                                  1.0f,
                                                                  1000.0f),
                                                         15.0f,
@@ -290,9 +290,9 @@ namespace selene
                         return false;
 
                 // initialize renderer
-                Renderer::Parameters parameters(this, &fileManager_, width_, height_, &std::cout, false);
+                Renderer::Parameters parameters(this, &fileManager_, getWidth(), getHeight(), &std::cout, false);
 
-                if(!renderer_.initialize(parameters))
+                if(!getRenderer().initialize(parameters))
                         return false;
 
                 // initialize GUI, load resources and prepare scene
@@ -316,7 +316,7 @@ namespace selene
         //-----------------------------------------------------------------------------------------------------------
         void DemoApplication::onKeyPress(uint8_t key)
         {
-                gui_.process(cursorPosition_, pressedControlButtons_, key);
+                gui_.process(getCursorPosition(0), getPressedControlButtonsMask(), key);
         }
 
         //-----------------------------------------------------------------------------------------------------------
@@ -336,7 +336,7 @@ namespace selene
         //-----------------------------------------------------------------------------------------------------------
         void DemoApplication::onUpdate(float)
         {
-                gui_.process(cursorPosition_, pressedControlButtons_, 0);
+                gui_.process(getCursorPosition(0), getPressedControlButtonsMask(), 0);
 
                 // rotate camera if needed
                 if(isCameraRotationEnabled_)
@@ -345,8 +345,9 @@ namespace selene
 
                         if(camera)
                         {
-                                camera->rotateHorizontally(cursorShift_.x * -5.0f);
-                                camera->rotateVertically(cursorShift_.y * 5.0f);
+                                auto cursorShift = getCursorShift(0);
+                                camera->rotateHorizontally(cursorShift.x * -5.0f);
+                                camera->rotateVertically(cursorShift.y * 5.0f);
                         }
                 }
         }
@@ -355,7 +356,7 @@ namespace selene
         void DemoApplication::onRender(float elapsedTime)
         {
                 // render scene
-                scene_.updateAndRender(elapsedTime, renderer_);
+                scene_.updateAndRender(elapsedTime, getRenderer());
         }
 
         //-----------------------------------------------------------------------------------------------------------

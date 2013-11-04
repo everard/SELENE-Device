@@ -8,7 +8,8 @@ namespace selene
 
         WindowsApplication::WindowsApplication(const char* name, uint32_t width, uint32_t height):
                 Application(name, width, height), windowClassName_("SELENE Device window class"),
-                hInstance_(nullptr), hWnd_(nullptr), renderer_(), isActive_(true) {}
+                hInstance_(nullptr), hWnd_(nullptr), cursorPosition_(), cursorShift_(),
+                renderer_(), isActive_(true) {}
         WindowsApplication::~WindowsApplication()
         {
                 destroy();
@@ -23,14 +24,14 @@ namespace selene
                         return false;
 
                 if((hWnd_ = CreateWindowEx(0, windowClassName_.c_str(), getName(), WS_POPUP,
-                                           CW_USEDEFAULT, CW_USEDEFAULT, width_, height_,
-                                           0, 0, hInstance_, 0)) == 0)
+                                           CW_USEDEFAULT, CW_USEDEFAULT, getWidth(),
+                                           getHeight(), 0, 0, hInstance_, 0)) == 0)
                 {
                         UnregisterClass(windowClassName_.c_str(), hInstance_);
                         return false;
                 }
 
-                SetWindowLongPtr(hWnd_, GWL_USERDATA, reinterpret_cast<LONG>(this));
+                SetWindowLongPtr(hWnd_, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
                 if(!onInitialize())
                 {
@@ -56,11 +57,11 @@ namespace selene
                 MSG msg;
 
                 POINT point, centralPoint;
-                centralPoint.x = width_ >> 1;
-                centralPoint.y = height_ >> 1;
+                centralPoint.x = getWidth()  >> 1;
+                centralPoint.y = getHeight() >> 1;
 
-                float coefficientX = 2.0f / static_cast<float>(width_);
-                float coefficientY = 2.0f / static_cast<float>(height_);
+                float coefficientX = 2.0f / static_cast<float>(getWidth());
+                float coefficientY = 2.0f / static_cast<float>(getHeight());
 
                 ShowCursor(FALSE);
 
@@ -103,7 +104,7 @@ namespace selene
                                 cursorPosition_.x = cursorPosition_.x > 2.0f ? 2.0f : cursorPosition_.x;
                                 cursorPosition_.y = cursorPosition_.y > 2.0f ? 2.0f : cursorPosition_.y;
 
-                                pressedControlButtons_ = 0;
+                                setPressedControlButtonsMask(0);
                         }
                 }
 
@@ -120,18 +121,42 @@ namespace selene
         }
 
         //-------------------------------------------------------------------------------------------------------
-        HWND WindowsApplication::getWindowHandle()
+        Renderer& WindowsApplication::getRenderer()
         {
-                return hWnd_;
+                return renderer_;
         }
 
         //-------------------------------------------------------------------------------------------------------
-        float WindowsApplication::getKeyState(uint8_t key)
+        float WindowsApplication::getKeyState(uint8_t key) const
         {
                 if(::GetAsyncKeyState(key) != 0)
                         return 1.0f;
 
                 return 0.0f;
+        }
+
+        //-------------------------------------------------------------------------------------------------------
+        Vector2d WindowsApplication::getCursorPosition(uint8_t) const
+        {
+                return cursorPosition_;
+        }
+
+        //-------------------------------------------------------------------------------------------------------
+        Vector2d WindowsApplication::getCursorShift(uint8_t) const
+        {
+                return cursorShift_;
+        }
+
+        //-------------------------------------------------------------------------------------------------------
+        uint8_t WindowsApplication::getNumCursors() const
+        {
+                return 1;
+        }
+
+        //-------------------------------------------------------------------------------------------------------
+        HWND WindowsApplication::getWindowHandle()
+        {
+                return hWnd_;
         }
 
         //-------------------------------------------------------------------------------------------------------
@@ -209,7 +234,7 @@ namespace selene
                                 break;
 
                         case WM_LBUTTONUP:
-                                pressedControlButtons_ |= CONTROL_BUTTON_0;
+                                setPressedControlButtonsMask(getPressedControlButtonsMask() | CONTROL_BUTTON_0);
                                 onControlButtonRelease(CONTROL_BUTTON_0);
                                 break;
 
@@ -218,7 +243,7 @@ namespace selene
                                 break;
 
                         case WM_RBUTTONUP:
-                                pressedControlButtons_ |= CONTROL_BUTTON_1;
+                                setPressedControlButtonsMask(getPressedControlButtonsMask() | CONTROL_BUTTON_1);
                                 onControlButtonRelease(CONTROL_BUTTON_1);
                                 break;
 

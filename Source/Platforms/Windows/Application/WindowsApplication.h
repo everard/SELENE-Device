@@ -37,6 +37,11 @@ namespace selene
                 bool initialize();
                 bool run();
                 void halt();
+                Renderer& getRenderer();
+                float getKeyState(uint8_t key) const;
+                Vector2d getCursorPosition(uint8_t) const;
+                Vector2d getCursorShift(uint8_t) const;
+                uint8_t getNumCursors() const;
 
                 /**
                  * \brief Returns window handle.
@@ -45,16 +50,6 @@ namespace selene
                 HWND getWindowHandle();
 
         protected:
-                std::string windowClassName_;
-                HINSTANCE hInstance_;
-                HWND hWnd_;
-
-                D3d9Renderer renderer_;
-                bool isActive_;
-
-                // Application interface implementation
-                float getKeyState(uint8_t key);
-
                 /**
                  * \brief Windows message receive event callback.
                  *
@@ -68,6 +63,16 @@ namespace selene
                 virtual LRESULT onMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
         private:
+                std::string windowClassName_;
+                HINSTANCE hInstance_;
+                HWND hWnd_;
+
+                Vector2d cursorPosition_;
+                Vector2d cursorShift_;
+
+                D3d9Renderer renderer_;
+                bool isActive_;
+
                 /**
                  * \brief Window procedure. Calls WindowsApplication::processMessages.
                  * \param[in] hWnd window handle
