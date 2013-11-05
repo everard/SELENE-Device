@@ -14,8 +14,10 @@ namespace selene
 {
 
         android_app* Platform::state_ = nullptr;
+
         uint32_t Platform::defaultScreenWidth_  = 1;
         uint32_t Platform::defaultScreenHeight_ = 1;
+
         bool Platform::isInitialized_ = false;
         bool Platform::shouldHaltExecution_ = false;
 
@@ -62,7 +64,6 @@ namespace selene
         //----------------------------------------------------------------------------------------------------------
         std::istream* Platform::FileManager::open(const char* fileName) const
         {
-                LOGI("****************************** OPENING FILE %s", fileName);
                 const char* fullFileName = find(fileName);
                 if(fullFileName == nullptr || assetManager_ == nullptr)
                         return nullptr;
@@ -90,7 +91,6 @@ namespace selene
                 if(!stream->good())
                         return nullptr;
 
-                LOGI("****************************** SUCCESS");
                 return stream.release();
         }
 
@@ -113,11 +113,8 @@ namespace selene
         }
 
         //----------------------------------------------------------------------------------------------------------
-        bool Platform::createCompatibleContext(EGLSurface& surface,
-                                               EGLContext& context,
-                                               EGLDisplay& display,
-                                               EGLint& surfaceWidth,
-                                               EGLint& surfaceHeight)
+        bool Platform::createCompatibleContext(EGLSurface& surface, EGLContext& context, EGLDisplay& display,
+                                               EGLint& surfaceWidth, EGLint& surfaceHeight)
         {
                 const EGLint attributes[] =
                 {
@@ -177,9 +174,7 @@ namespace selene
         }
 
         //----------------------------------------------------------------------------------------------------------
-        void Platform::destroyContext(EGLSurface& surface,
-                                      EGLContext& context,
-                                      EGLDisplay& display)
+        void Platform::destroyContext(EGLSurface& surface, EGLContext& context, EGLDisplay& display)
         {
                 if(display != EGL_NO_DISPLAY)
                 {
@@ -283,10 +278,6 @@ void android_main(android_app* state)
                         }
                 }
         }
-
-        LOGI("screen width: %i, screen height: %i",
-             selene::Platform::defaultScreenWidth_,
-             selene::Platform::defaultScreenHeight_);
 
         if(selene::Platform::shouldHaltExecution_)
         {
