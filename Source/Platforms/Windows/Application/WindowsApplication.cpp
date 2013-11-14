@@ -31,7 +31,7 @@ namespace selene
                         return false;
                 }
 
-                SetWindowLongPtr(hWnd_, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
+                SetWindowLongPtr(hWnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
                 if(!onInitialize())
                 {
@@ -170,7 +170,7 @@ namespace selene
                                                              WPARAM wParam, LPARAM lParam)
         {
                 WindowsApplication* windowsApplication =
-                        reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWL_USERDATA));
+                        reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
                 if(windowsApplication != nullptr)
                         return windowsApplication->processMessages(message, wParam, lParam);
                 return DefWindowProc(hWnd, message, wParam, lParam);
