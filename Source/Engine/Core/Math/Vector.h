@@ -5,8 +5,6 @@
 #define VECTOR_H
 
 #include "../Macros/Macros.h"
-#include <cstdlib>
-#include <cmath>
 
 namespace selene
 {

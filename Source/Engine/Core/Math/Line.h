@@ -28,7 +28,7 @@ namespace selene
                 Line2d(const Vector2d& normal, const Vector2d& point);
                 /**
                  * \brief Constructs line from given vertices.
-                 * \param[in] vertices array of two vertices
+                 * \param[in] vertices two vertices which lie on the line
                  */
                 Line2d(const Vector2d* vertices);
                 Line2d(const Line2d&) = default;
@@ -45,7 +45,7 @@ namespace selene
 
                 /**
                  * \brief Defines line with given vertices.
-                 * \param[in] vertices array of two vertices
+                 * \param[in] vertices two vertices which lie on the line
                  */
                 void define(const Vector2d* vertices);
 
@@ -56,9 +56,9 @@ namespace selene
                 const Vector2d& getNormal() const;
 
                 /**
-                 * \brief Computes distance from the given point to the line.
+                 * \brief Computes distance from a point to the line.
                  * \param[in] point point
-                 * \return signed distance from the given point to the line
+                 * \return signed distance from a point to the line
                  */
                 float distance(const Vector2d& point) const;
 
@@ -74,6 +74,12 @@ namespace selene
         class LineSegment2d
         {
         public:
+                /// Helper constants
+                enum
+                {
+                        NUM_OF_VERTICES = 2
+                };
+
                 /**
                  * \brief Constructs line segment from given vertices.
                  * \param[in] vertices vertices of the line segment
@@ -98,33 +104,31 @@ namespace selene
 
                 /**
                  * \brief Returns line.
-                 * \return line which contains current line segment
+                 * \return line containing current segment
                  */
                 const Line2d& getLine() const;
 
                 /**
-                 * \brief Determines relation between point on the line, which contains current
-                 * line segment, and line segment itself.
-                 * \param[in] point point on the line, which contains line segment
-                 * \return INSIDE if given point is inside the line segment, OUTSIDE otherwise;
-                 * INTERSECTS is never returned
+                 * \brief Determines relation between the line segment and a point on the line
+                 * containing current segment.
+                 * \param[in] point point on the line containing current segment
+                 * \return INSIDE if given point is inside the line segment, OUTSIDE otherwise
+                 * (INTERSECTS is never returned)
                  */
                 RELATION determineRelation(const Vector2d& point) const;
 
                 /**
-                 * \brief Returns closest vertex of the line segment to the given point.
+                 * \brief Returns closest to the given point vertex of the line segment.
                  * \param[in] point point
-                 * \return closest vertex of the line segment to the given point
+                 * \return closest to the given point vertex of the line segment
                  */
                 const Vector2d& getClosestVertex(const Vector2d& point) const;
 
         private:
-                Vector2d vertices_[2];
+                Vector2d vertices_[NUM_OF_VERTICES];
                 Line2d line_;
 
         };
-
-        typedef LineSegment2d* PLineSegment2d;
 
         /**
          * @}

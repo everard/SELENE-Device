@@ -73,7 +73,7 @@ namespace selene
                 /**
                  * \brief Determines relation between sphere and volume.
                  * \param[in] volume volume
-                 * \return OUTSIDE if sphere is ouside the volume, INTERSECTS if
+                 * \return OUTSIDE if sphere is outside the volume, INTERSECTS if
                  * sphere intersects the volume and INSIDE if sphere is inside the volume
                  */
                 RELATION determineRelation(const Volume& volume) const;

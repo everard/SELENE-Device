@@ -6,10 +6,7 @@
 namespace selene
 {
 
-        Box::Box(const Vector3d& center,
-                 float width,
-                 float height,
-                 float depth)
+        Box::Box(const Vector3d& center, float width, float height, float depth)
         {
                 define(center, width, height, depth);
         }
@@ -20,17 +17,12 @@ namespace selene
         Box::~Box() {}
 
         //---------------------------------------------------------------------------------
-        void Box::define(const Vector3d& center,
-                         float width,
-                         float height,
-                         float depth)
+        void Box::define(const Vector3d& center, float width, float height, float depth)
         {
-                // compute half of width, height and depth
                 width  *= 0.5f;
                 height *= 0.5f;
                 depth  *= 0.5f;
 
-                // compute vertices
                 vertices_[0].define(center.x - width, center.y - height, center.z - depth);
                 vertices_[1].define(center.x + width, center.y - height, center.z - depth);
                 vertices_[2].define(center.x - width, center.y + height, center.z - depth);
@@ -44,7 +36,7 @@ namespace selene
         //---------------------------------------------------------------------------------
         void Box::define(const Vector3d* vertices)
         {
-                for(uint8_t i = 0; i < 8; ++i)
+                for(uint8_t i = 0; i < NUM_OF_VERTICES; ++i)
                         vertices_[i] = vertices[i];
         }
 

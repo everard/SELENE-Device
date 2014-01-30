@@ -48,7 +48,7 @@ namespace selene
         bool Ray2d::intersects(const Line2d& line, float& distanceToIntersection) const
         {
                 float denom = line.getNormal().dot(direction_);
-                if(fabs(denom) < SELENE_EPSILON)
+                if(std::fabs(denom) < SELENE_EPSILON)
                         return false;
 
                 float numer = line.distance(origin_);
@@ -81,7 +81,7 @@ namespace selene
                 if(d < 0.0f)
                         return false;
 
-                d = sqrt(d);
+                d = std::sqrt(d);
                 distanceToIntersection = (-b - d) * 0.5f;
                 if(distanceToIntersection > 0.0f)
                         return true;
@@ -136,7 +136,7 @@ namespace selene
                 if(d < 0.0f)
                         return false;
 
-                d = sqrt(d);
+                d = std::sqrt(d);
                 distanceToIntersection = (-b - d) * 0.5f;
                 if(distanceToIntersection > 0.0f)
                         return true;

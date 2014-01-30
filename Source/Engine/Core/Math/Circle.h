@@ -79,8 +79,7 @@ namespace selene
                  * \param[in] radius radius of the swept circle
                  * \param[in] direction sweep direction (length of this vector defines sweep distance)
                  */
-                SweptCircle(const Vector2d& center, float radius,
-                            const Vector2d& direction);
+                SweptCircle(const Vector2d& center, float radius, const Vector2d& direction);
                 SweptCircle(const SweptCircle&) = default;
                 SweptCircle();
                 ~SweptCircle();
@@ -92,8 +91,7 @@ namespace selene
                  * \param[in] radius radius of the swept circle
                  * \param[in] direction sweep direction (length of this vector defines sweep distance)
                  */
-                void define(const Vector2d& center, float radius,
-                            const Vector2d& direction);
+                void define(const Vector2d& center, float radius, const Vector2d& direction);
 
                 /**
                  * \brief Sets center.
@@ -142,8 +140,6 @@ namespace selene
                 float radius_, sweepDistance_;
 
         };
-
-        typedef SweptCircle* PSweptCircle;
 
         /**
          * @}

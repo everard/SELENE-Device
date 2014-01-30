@@ -2,7 +2,6 @@
 // Licensed under the MIT License (see LICENSE.txt for details)
 
 #include "Matrix.h"
-#include <cmath>
 
 namespace selene
 {
@@ -68,7 +67,7 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void Matrix::rotationX(float angle)
         {
-                float c = cos(angle), s = sin(angle);
+                float c = std::cos(angle), s = std::sin(angle);
                 a[0][0] = 1.0f; a[0][1] = 0.0f; a[0][2] = 0.0f; a[0][3] = 0.0f;
                 a[1][0] = 0.0f; a[1][1] =    c; a[1][2] =    s; a[1][3] = 0.0f;
                 a[2][0] = 0.0f; a[2][1] =   -s; a[2][2] =    c; a[2][3] = 0.0f;
@@ -78,7 +77,7 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void Matrix::rotationY(float angle)
         {
-                float c = cos(angle), s = sin(angle);
+                float c = std::cos(angle), s = std::sin(angle);
                 a[0][0] =    c; a[0][1] = 0.0f; a[0][2] =   -s; a[0][3] = 0.0f;
                 a[1][0] = 0.0f; a[1][1] = 1.0f; a[1][2] = 0.0f; a[1][3] = 0.0f;
                 a[2][0] =    s; a[2][1] = 0.0f; a[2][2] =    c; a[2][3] = 0.0f;
@@ -88,7 +87,7 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void Matrix::rotationZ(float angle)
         {
-                float c = cos(angle), s = sin(angle);
+                float c = std::cos(angle), s = std::sin(angle);
                 a[0][0] =    c; a[0][1] =    s; a[0][2] = 0.0f; a[0][3] = 0.0f;
                 a[1][0] =   -s; a[1][1] =    c; a[1][2] = 0.0f; a[1][3] = 0.0f;
                 a[2][0] = 0.0f; a[2][1] = 0.0f; a[2][2] = 1.0f; a[2][3] = 0.0f;
@@ -98,8 +97,12 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void Matrix::yawPitchRoll(const Vector3d& rotationVector)
         {
-                float ca = cos(rotationVector.x), cb = cos(rotationVector.y), cg = cos(rotationVector.z);
-                float sa = sin(rotationVector.x), sb = sin(rotationVector.y), sg = sin(rotationVector.z);
+                float ca = std::cos(rotationVector.x);
+                float cb = std::cos(rotationVector.y);
+                float cg = std::cos(rotationVector.z);
+                float sa = std::sin(rotationVector.x);
+                float sb = std::sin(rotationVector.y);
+                float sg = std::sin(rotationVector.z);
 
                 a[0][0] = ca * cb; a[0][1] = ca * sb * sg - sa * cg; a[0][2] = ca * sb * cg + sa * sg; a[0][3] = 0.0f;
                 a[1][0] = sa * cb; a[1][1] = sa * sb * sg + ca * cg; a[1][2] = sa * sb * cg - ca * sg; a[1][3] = 0.0f;
@@ -110,7 +113,7 @@ namespace selene
         //------------------------------------------------------------------------------------------------------------
         void Matrix::perspective(float fov, float aspect, float zn, float zf)
         {
-                float tg = tan(fov * SELENE_PI / 360.0f);
+                float tg = std::tan(fov * SELENE_PI / 360.0f);
                 float d  = zn - zf;
                 float ys = 1.0f / tg;
                 float xs = ys * aspect;

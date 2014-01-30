@@ -39,9 +39,7 @@ namespace selene
                  * \param[in] direction direction from the apex to the base
                  * \param[in] radius radius of the base
                  */
-                void define(const Vector3d& apex,
-                            const Vector3d& direction,
-                            float radius);
+                void define(const Vector3d& apex, const Vector3d& direction, float radius);
 
                 /**
                  * \brief Sets apex.

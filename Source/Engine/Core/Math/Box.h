@@ -13,7 +13,7 @@ namespace selene
 
         /**
          * \addtogroup Math
-         * \brief Vectors, quaternions, matrices, 3D and 2D objects, collision detection.
+         * \brief Linear algebra and vector geometry.
          * @{
          */
 
@@ -23,6 +23,12 @@ namespace selene
         class Box
         {
         public:
+                /// Helper constants
+                enum
+                {
+                        NUM_OF_VERTICES = 8
+                };
+
                 /**
                  * \brief Constructs box with given center, width, height and depth.
                  * \param[in] center center of the box
@@ -30,13 +36,11 @@ namespace selene
                  * \param[in] height height of the box
                  * \param[in] depth depth of the box
                  */
-                Box(const Vector3d& center = Vector3d(),
-                    float width  = 1.0f,
-                    float height = 1.0f,
-                    float depth  = 1.0f);
+                Box(const Vector3d& center = Vector3d(), float width = 1.0f,
+                    float height = 1.0f, float depth = 1.0f);
                 /**
                  * \brief Constructs box with given eight vertices.
-                 * \param[in] vertices array of vertices of the box
+                 * \param[in] vertices array of the vertices of the box
                  */
                 Box(const Vector3d* vertices);
                 Box(const Box&) = default;
@@ -50,20 +54,17 @@ namespace selene
                  * \param[in] height height of the box
                  * \param[in] depth depth of the box
                  */
-                void define(const Vector3d& center,
-                            float width,
-                            float height,
-                            float depth);
+                void define(const Vector3d& center, float width, float height, float depth);
 
                 /**
                  * \brief Defines box with given eight vertices.
-                 * \param[in] vertices array of vertices of the box
+                 * \param[in] vertices array of the vertices of the box
                  */
                 void define(const Vector3d* vertices);
 
                 /**
                  * \brief Returns vertices (box has eight vertices).
-                 * \return array of vertices of the box
+                 * \return array of the vertices of the box
                  */
                 const Vector3d* getVertices() const;
 
@@ -82,7 +83,7 @@ namespace selene
                 void transform(const Matrix& matrix);
 
         private:
-                Vector3d vertices_[8];
+                Vector3d vertices_[NUM_OF_VERTICES];
 
         };
 

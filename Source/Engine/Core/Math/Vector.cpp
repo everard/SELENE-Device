@@ -4,6 +4,8 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+#include <algorithm>
+
 namespace selene
 {
 
@@ -26,7 +28,7 @@ namespace selene
         //---------------------------------------------------------------------------------
         float Vector2d::length() const
         {
-                return sqrt((x * x) + (y * y));
+                return std::sqrt((x * x) + (y * y));
         }
 
         //---------------------------------------------------------------------------------
@@ -39,8 +41,7 @@ namespace selene
         void Vector2d::normalize()
         {
                 float l = 1.0f / length();
-                x *= l;
-                y *= l;
+                *this *= l;
         }
 
         //---------------------------------------------------------------------------------
@@ -156,7 +157,7 @@ namespace selene
         //---------------------------------------------------------------------------------
         float Vector3d::length() const
         {
-                return sqrt((x * x) + (y * y) + (z * z));
+                return std::sqrt((x * x) + (y * y) + (z * z));
         }
 
         //---------------------------------------------------------------------------------
@@ -177,19 +178,13 @@ namespace selene
         void Vector3d::normalize()
         {
                 float l = 1.0f / length();
-                x *= l;
-                y *= l;
-                z *= l;
+                *this *= l;
         }
 
         //---------------------------------------------------------------------------------
         Vector3d Vector3d::lerp(const Vector3d& vector, float scalar) const
         {
-                if(scalar < 0.0f)
-                        scalar = 0.0f;
-                if(scalar > 1.0f)
-                        scalar = 1.0f;
-
+                scalar = std::max(0.0f, std::min(1.0f, scalar));
                 return (*this - scalar * (*this - vector));
         }
 
@@ -516,7 +511,7 @@ namespace selene
         //---------------------------------------------------------------------------------
         void Quaternion::normalize()
         {
-                float l = 1.0f / sqrt(norm());
+                float l = 1.0f / std::sqrt(norm());
                 *this *= l;
         }
 
@@ -537,15 +532,13 @@ namespace selene
         //---------------------------------------------------------------------------------
         Quaternion Quaternion::lerp(const Quaternion& quaternion, float scalar) const
         {
-                if(scalar < 0.0f)
-                        scalar = 0.0f;
-                if(scalar > 1.0f)
-                        scalar = 1.0f;
-
+                scalar = std::max(0.0f, std::min(1.0f, scalar));
                 Quaternion q = quaternion;
                 float c = inner(q);
+
                 if(c < 0.0f)
                         q = -q;
+
                 q = q - *this;
                 q = *this + q * scalar;
                 q.normalize();
@@ -555,18 +548,15 @@ namespace selene
         //---------------------------------------------------------------------------------
         Matrix Quaternion::convert() const
         {
-                // matrix
                 Matrix matrix;
 
                 float x2 = x * x;
                 float y2 = y * y;
                 float z2 = z * z;
                 float w2 = w * w;
-
-                // compute inverse square length
                 float l2 = 1.0f / (x2 + y2 + z2 + w2);
 
-                matrix.a[0][0] = (x2 - y2 - z2 + w2) * l2;
+                matrix.a[0][0] = ( x2 - y2 - z2 + w2) * l2;
                 matrix.a[1][1] = (-x2 + y2 - z2 + w2) * l2;
                 matrix.a[2][2] = (-x2 - y2 + z2 + w2) * l2;
 

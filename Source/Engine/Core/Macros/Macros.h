@@ -4,9 +4,13 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#include <climits>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
+#include <utility>
+#include <cmath>
 
 namespace selene
 {
