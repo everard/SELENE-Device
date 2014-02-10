@@ -40,9 +40,7 @@ namespace selene
                  * \param[in] point1 the second point
                  * \param[in] point2 the third point
                  */
-                Plane(const Vector3d& point0,
-                      const Vector3d& point1,
-                      const Vector3d& point2);
+                Plane(const Vector3d& point0, const Vector3d& point1, const Vector3d& point2);
                 Plane(const Plane&) = default;
                 ~Plane();
                 Plane& operator =(const Plane&) = default;
@@ -69,9 +67,7 @@ namespace selene
                  * \param[in] point1 the second point
                  * \param[in] point2 the third point
                  */
-                void define(const Vector3d& point0,
-                            const Vector3d& point1,
-                            const Vector3d& point2);
+                void define(const Vector3d& point0, const Vector3d& point1, const Vector3d& point2);
 
                 /**
                  * \brief Computes distance to the given point.

@@ -41,10 +41,10 @@ namespace selene
                  * \param[in] a43 element of the matrix
                  * \param[in] a44 element of the matrix
                  */
-                Matrix(float a11 = 0.0f, float a12 = 0.0f, float a13 = 0.0f, float a14 = 0.0f,
-                       float a21 = 0.0f, float a22 = 0.0f, float a23 = 0.0f, float a24 = 0.0f,
-                       float a31 = 0.0f, float a32 = 0.0f, float a33 = 0.0f, float a34 = 0.0f,
-                       float a41 = 0.0f, float a42 = 0.0f, float a43 = 0.0f, float a44 = 0.0f);
+                explicit Matrix(float a11 = 0.0f, float a12 = 0.0f, float a13 = 0.0f, float a14 = 0.0f,
+                                float a21 = 0.0f, float a22 = 0.0f, float a23 = 0.0f, float a24 = 0.0f,
+                                float a31 = 0.0f, float a32 = 0.0f, float a33 = 0.0f, float a34 = 0.0f,
+                                float a41 = 0.0f, float a42 = 0.0f, float a43 = 0.0f, float a44 = 0.0f);
                 Matrix(const Matrix&) = default;
                 ~Matrix();
                 Matrix& operator =(const Matrix&) = default;
@@ -80,15 +80,15 @@ namespace selene
 
                 /**
                  * \brief Creates translation matrix.
-                 * \param[in] translationVector translation vector
+                 * \param[in] vector translation vector
                  */
-                void translation(const Vector3d& translationVector);
+                void translation(const Vector3d& vector);
 
                 /**
                  * \brief Creates scale matrix.
-                 * \param[in] scaleVector amount of scale for each axis
+                 * \param[in] amount amount of scale for each axis
                  */
-                void scale(const Vector3d& scaleVector);
+                void scale(const Vector3d& amount);
 
                 /**
                  * \brief Creates rotation matrix around X CCW.
@@ -109,19 +109,13 @@ namespace selene
                 void rotationZ(float angle);
 
                 /**
-                 * \brief Creates yaw, pitch, roll rotation matrix.
-                 * \param[in] rotationVector rotation angles in radians for each axis
-                 */
-                void yawPitchRoll(const Vector3d& rotationVector);
-
-                /**
                  * \brief Creates perspective matrix.
-                 * \param[in] fov field of view in grad
-                 * \param[in] aspect aspect ratio
-                 * \param[in] zn distance to the near clipping plane
-                 * \param[in] zf distance to the far clipping plane
+                 * \param[in] fieldOfView field of view in grad
+                 * \param[in] aspectRatio aspect ratio
+                 * \param[in] zNear distance to the near clipping plane
+                 * \param[in] zFar distance to the far clipping plane
                  */
-                void perspective(float fov, float aspect, float zn, float zf);
+                void perspective(float fieldOfView, float aspectRatio, float zNear, float zFar);
 
                 /**
                  * \brief Creates look at matrix.
@@ -129,13 +123,11 @@ namespace selene
                  * \param[in] targetPosition position of the target
                  * \param[in] upVector up vector
                  */
-                void lookAt(const Vector3d& eyePosition,
-                            const Vector3d& targetPosition,
-                            const Vector3d& upVector);
+                void lookAt(const Vector3d& eyePosition, const Vector3d& targetPosition, const Vector3d& upVector);
 
                 /**
                  * \brief Inverts matrix.
-                 * \return true if operation succeeded
+                 * \return true on success
                  */
                 bool invert();
 
@@ -148,6 +140,18 @@ namespace selene
                 operator float*();
                 operator const float*() const;
 
+                Matrix& operator +=(float scalar);
+                Matrix& operator +=(const Matrix& matrix);
+
+                Matrix& operator -=(float scalar);
+                Matrix& operator -=(const Matrix& matrix);
+
+                Matrix& operator *=(float scalar);
+                Matrix& operator *=(Matrix matrix);
+
+                Matrix& operator /=(float scalar);
+                Matrix& operator /=(const Matrix& matrix);
+
         };
 
         // Matrix operators
@@ -159,7 +163,12 @@ namespace selene
         Matrix operator -(const Matrix& matrix, float scalar);
         Matrix operator -(const Matrix& matrix0, const Matrix& matrix1);
 
+        Matrix operator *(const Matrix& matrix, float scalar);
+        Matrix operator *(float scalar, const Matrix& matrix);
         Matrix operator *(const Matrix& matrix0, const Matrix& matrix1);
+
+        Matrix operator /(const Matrix& matrix, float scalar);
+        Matrix operator /(const Matrix& matrix0, const Matrix& matrix1);
 
         /**
          * @}

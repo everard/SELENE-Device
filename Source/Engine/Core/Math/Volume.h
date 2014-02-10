@@ -18,7 +18,7 @@ namespace selene
         class Matrix;
 
         /**
-         * Represents volume in 3D space. Volume is described with bounding planes.
+         * Represents volume in 3D space.
          */
         class Volume
         {
@@ -64,6 +64,7 @@ namespace selene
                 const Plane* getPlanes() const;
 
         private:
+                /// Helper constants
                 enum
                 {
                         MAX_NUM_OF_PLANES = 16
