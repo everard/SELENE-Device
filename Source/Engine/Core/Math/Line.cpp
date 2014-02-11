@@ -30,9 +30,7 @@ namespace selene
                 normal_ = vertices[1] - vertices[0];
                 normal_.define(-normal_.y, normal_.x);
 
-                if(normal_.length() > SELENE_EPSILON)
-                        normal_.normalize();
-
+                normal_.normalize();
                 c_ = -normal_.dot(vertices[0]);
         }
 
@@ -82,7 +80,7 @@ namespace selene
                 Vector2d v0 = point - vertices_[0];
                 Vector2d v1 = point - vertices_[1];
                 float d = v0.dot(v1);
-                if(d > SELENE_EPSILON)
+                if(d > 0.0f)
                         return OUTSIDE;
 
                 return INSIDE;

@@ -6,6 +6,8 @@
 #include "Line.h"
 #include "Ray.h"
 
+#include <limits>
+
 namespace selene
 {
 
@@ -47,8 +49,10 @@ namespace selene
         //--------------------------------------------------------------------------------------------------
         bool Ray2d::intersects(const Line2d& line, float& distanceToIntersection) const
         {
+                const float epsilon = std::numeric_limits<float>::epsilon() * 10.0f;
+
                 float denom = line.getNormal().dot(direction_);
-                if(std::fabs(denom) < SELENE_EPSILON)
+                if(std::fabs(denom) < std::fabs(denom) * epsilon)
                         return false;
 
                 float numer = line.distance(origin_);

@@ -72,8 +72,8 @@ namespace selene
         {
                 direction_ = direction;
                 sweepDistance_ = direction_.length();
-                if(sweepDistance_ > SELENE_EPSILON)
-                        direction_.normalize();
+
+                direction_.normalize();
         }
 
         //------------------------------------------------------------------------------------------------------
