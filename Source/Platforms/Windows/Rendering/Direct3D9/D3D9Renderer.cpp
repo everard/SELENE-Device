@@ -3,7 +3,6 @@
 
 #include "D3D9Renderer.h"
 
-#include "../../../../Engine/Scene/Nodes/ParticleSystem.h"
 #include "../../../../Engine/Scene/Nodes/Camera.h"
 #include "../../../../Engine/Scene/Nodes/Actor.h"
 #include "../../Application/WindowsApplication.h"
@@ -141,7 +140,6 @@ namespace selene
                         ssaoRenderer_.renderSsao();
 
                 actorsRenderer_.renderShading(renderingData.getActorNode(), isSsaoEnabled);
-                particlesRenderer_.renderParticleSystems(renderingData.getParticleSystemNode());
 
                 if(frameParameters_.bloomQuality != 0)
                 {
@@ -204,10 +202,9 @@ namespace selene
 
         D3d9Renderer::D3d9Renderer():
                 d3d_(nullptr), resultVertexShader_(), resultPixelShader_(), renderTargetContainer_(),
-                particlesRenderer_(), lightingRenderer_(), actorsRenderer_(), textureHandler_(),
-                fullScreenQuad_(), bloomRenderer_(), ssaoRenderer_(), guiRenderer_(),
-                d3dPresentParameters_(), frameParameters_(), capabilities_(),
-                isDeviceLost_(false)
+                lightingRenderer_(), actorsRenderer_(), textureHandler_(), fullScreenQuad_(),
+                bloomRenderer_(), ssaoRenderer_(), guiRenderer_(), d3dPresentParameters_(),
+                frameParameters_(), capabilities_(), isDeviceLost_(false)
         {
                 d3dDevice_ = nullptr;
                 memset(&d3dPresentParameters_, 0, sizeof(d3dPresentParameters_));
@@ -281,15 +278,6 @@ namespace selene
                 if(!renderTargetContainer_.initialize(frameParameters_, parameters_, capabilities_))
                 {
                         writeLogEntry("error: could not initialize render target container");
-                        return false;
-                }
-
-                if(!particlesRenderer_.initialize(renderTargetContainer_,
-                                                  frameParameters_,
-                                                  textureHandler_,
-                                                  capabilities_))
-                {
-                        writeLogEntry("error: could not initialize particles renderer");
                         return false;
                 }
 
@@ -367,7 +355,6 @@ namespace selene
                 resultPixelShader_.destroy();
 
                 renderTargetContainer_.destroy();
-                particlesRenderer_.destroy();
                 lightingRenderer_.destroy();
                 actorsRenderer_.destroy();
                 textureHandler_.destroy();

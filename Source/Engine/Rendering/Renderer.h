@@ -29,7 +29,6 @@ namespace selene
          */
 
         // Forward declaration of classes
-        class ParticleSystem;
         class Application;
         class FileManager;
         class Material;
@@ -95,14 +94,6 @@ namespace selene
                  * Rendering element contains:
                  * - pointer to the selene::Mesh::Subset, which is sort key;
                  * - List of instances of the actors, which is data.
-                 *
-                 * ParticleSystemNode
-                 * ------------------
-                 * Rendering element contains:
-                 * - pointer to the selene::Texture, which is sort key;
-                 * - List of particle systems, which is data.
-                 *
-                 * Currently there is only one unit: Renderer::Data::UNIT_PARTICLE_SYSTEM.
                  */
                 class Data
                 {
@@ -124,10 +115,7 @@ namespace selene
                                 UNIT_LIGHT_DIRECTIONAL,
                                 UNIT_LIGHT_POINT,
                                 UNIT_LIGHT_SPOT,
-                                NUM_OF_LIGHT_UNITS,
-
-                                UNIT_PARTICLE_SYSTEM = 0,
-                                NUM_OF_PARTICLE_SYSTEM_UNITS
+                                NUM_OF_LIGHT_UNITS
                         };
 
                         /**
@@ -315,28 +303,6 @@ namespace selene
 
                         };
 
-                        /**
-                         * Represents particle system node. Contains arrays of particle systems,
-                         * sorted by textures and ordered by particle system units.
-                         */
-                        class ParticleSystemNode: public RenderingNode<Texture, List<ParticleSystem*>,
-                                                                       NUM_OF_PARTICLE_SYSTEM_UNITS>
-                        {
-                        public:
-                                ParticleSystemNode();
-                                ParticleSystemNode(const ParticleSystemNode&) = delete;
-                                ~ParticleSystemNode();
-                                ParticleSystemNode& operator =(const ParticleSystemNode&) = delete;
-
-                                /**
-                                 * \brief Adds particle system.
-                                 * \param[in] particleSystem particle system, which should be added to the node
-                                 * \return true if particle system has been successfully added
-                                 */
-                                bool add(const ParticleSystem& particleSystem);
-
-                        };
-
                         Data();
                         Data(const Data&) = delete;
                         ~Data();
@@ -366,12 +332,6 @@ namespace selene
                         LightNode& getLightNode();
 
                         /**
-                         * \brief Returns particle system node.
-                         * \return reference to the particle system node
-                         */
-                        ParticleSystemNode& getParticleSystemNode();
-
-                        /**
                          * \brief Adds actor.
                          * \param[in] actor actor, which should be rendered
                          * \return true if actor has been successfully added
@@ -393,17 +353,9 @@ namespace selene
                          */
                         bool addShadow(const Light& light, const Actor& shadowCaster);
 
-                        /**
-                         * \brief Adds particle system.
-                         * \param[in] particleSystem particle system, which should be rendered
-                         * \return true if particle system has been successfully added
-                         */
-                        bool addParticleSystem(const ParticleSystem& particleSystem);
-
                 private:
                         ActorNode actorNode_;
                         LightNode lightNode_;
-                        ParticleSystemNode particleSystemNode_;
                         Camera* camera_;
 
                 };

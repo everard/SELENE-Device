@@ -24,7 +24,6 @@ namespace selene
          */
 
         // Forward declaration of classes
-        class ParticleSystem;
         class Renderer;
         class Camera;
         class Light;
@@ -246,12 +245,6 @@ namespace selene
                 uint32_t getNumVisibleLights() const;
 
                 /**
-                 * \brief Returns number of visible particle systems.
-                 * \return number of visible particle systems
-                 */
-                uint32_t getNumVisibleParticleSystems() const;
-
-                /**
                  * \brief Returns number of actors.
                  * \return number of actors
                  */
@@ -305,13 +298,6 @@ namespace selene
                 bool removeCamera(const char* name);
 
                 /**
-                 * \brief Removes particle system.
-                 * \param[in] name name of the particle system
-                 * \return true if particle system has been successfully removed
-                 */
-                bool removeParticleSystem(const char* name);
-
-                /**
                  * \brief Returns actor.
                  * \param[in] name name of the actor
                  * \return std::weak_ptr to the actor
@@ -333,13 +319,6 @@ namespace selene
                 std::weak_ptr<Camera> getCamera(const char* name);
 
                 /**
-                 * \brief Returns particle system.
-                 * \param[in] name name of the particle system
-                 * \return std::weak_ptr to the particle system
-                 */
-                std::weak_ptr<ParticleSystem> getParticleSystem(const char* name);
-
-                /**
                  * \brief Updates and renders scene.
                  * \param[in] elapsedTime elapsed time since last render
                  * \param[in] renderer renderer, which renders scene
@@ -353,10 +332,8 @@ namespace selene
                 std::unordered_map<std::string, std::shared_ptr<Actor>> actors_;
                 std::unordered_map<std::string, std::shared_ptr<Light>> lights_;
                 std::unordered_map<std::string, std::shared_ptr<Camera>> cameras_;
-                std::unordered_map<std::string, std::shared_ptr<ParticleSystem>> particleSystems_;
 
                 uint32_t numVisibleActors_, numVisibleLights_;
-                uint32_t numVisibleParticleSystems_;
 
         };
 

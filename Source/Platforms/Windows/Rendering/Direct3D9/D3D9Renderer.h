@@ -9,7 +9,6 @@
 #include "../../../../Engine/Core/Status/Status.h"
 
 #include "Helpers/D3D9RenderTargetContainer.h"
-#include "Helpers/D3D9ParticlesRenderer.h"
 #include "Helpers/D3D9LightingRenderer.h"
 #include "Helpers/D3D9FrameParameters.h"
 #include "Helpers/D3D9ActorsRenderer.h"
@@ -56,7 +55,6 @@ namespace selene
                 D3d9PixelShader  resultPixelShader_;
 
                 D3d9RenderTargetContainer renderTargetContainer_;
-                D3d9ParticlesRenderer particlesRenderer_;
                 D3d9LightingRenderer lightingRenderer_;
                 D3d9ActorsRenderer actorsRenderer_;
                 D3d9TextureHandler textureHandler_;

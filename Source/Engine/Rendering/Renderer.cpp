@@ -6,7 +6,6 @@
 #include "../Core/FileManager/FileManager.h"
 #include "../Application/Application.h"
 
-#include "../Scene/Nodes/ParticleSystem.h"
 #include "../Scene/Nodes/Camera.h"
 #include "../Scene/Nodes/Light.h"
 #include "../Scene/Nodes/Actor.h"
@@ -146,26 +145,7 @@ namespace selene
                 return true;
         }
 
-        Renderer::Data::ParticleSystemNode::ParticleSystemNode(): RenderingNode(Renderer::memoryBuffer_) {}
-        Renderer::Data::ParticleSystemNode::~ParticleSystemNode() {}
-
-        //-----------------------------------------------------------------------------------------------------------
-        bool Renderer::Data::ParticleSystemNode::add(const ParticleSystem& particleSystem)
-        {
-                int16_t renderingUnit = particleSystem.getRenderingUnit();
-                if(renderingUnit < 0 || renderingUnit >= NUM_OF_PARTICLE_SYSTEM_UNITS)
-                        return false;
-
-                Element* element = requestElement(const_cast<Texture*>(*particleSystem.getTexture()));
-                if(element == nullptr)
-                        return false;
-
-                element->data.addElement(const_cast<ParticleSystem*>(&particleSystem));
-                addElement(element, static_cast<uint8_t>(renderingUnit));
-                return true;
-        }
-
-        Renderer::Data::Data(): actorNode_(), lightNode_(), particleSystemNode_(), camera_(nullptr) {}
+        Renderer::Data::Data(): actorNode_(), lightNode_(), camera_(nullptr) {}
         Renderer::Data::~Data() {}
 
         //-----------------------------------------------------------------------------------------------------------
@@ -179,7 +159,6 @@ namespace selene
         {
                 actorNode_.clear();
                 lightNode_.clear();
-                particleSystemNode_.clear();
         }
 
         //-----------------------------------------------------------------------------------------------------------
@@ -192,12 +171,6 @@ namespace selene
         Renderer::Data::LightNode& Renderer::Data::getLightNode()
         {
                 return lightNode_;
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        Renderer::Data::ParticleSystemNode& Renderer::Data::getParticleSystemNode()
-        {
-                return particleSystemNode_;
         }
 
         //-----------------------------------------------------------------------------------------------------------
@@ -223,12 +196,6 @@ namespace selene
         bool Renderer::Data::addShadow(const Light& light, const Actor& shadowCaster)
         {
                 return lightNode_.add(light, const_cast<Actor*>(&shadowCaster));
-        }
-
-        //-----------------------------------------------------------------------------------------------------------
-        bool Renderer::Data::addParticleSystem(const ParticleSystem& particleSystem)
-        {
-                return particleSystemNode_.add(particleSystem);
         }
 
         Renderer::Parameters::Parameters(Application* application, FileManager* fileManager,

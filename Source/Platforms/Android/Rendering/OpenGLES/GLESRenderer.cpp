@@ -3,7 +3,6 @@
 
 #include "GLESRenderer.h"
 
-#include "../../../../Engine/Scene/Nodes/ParticleSystem.h"
 #include "../../../../Engine/Scene/Nodes/Camera.h"
 #include "../../../../Engine/Scene/Nodes/Actor.h"
 #include "../../../../Engine/GUI/GUI.h"

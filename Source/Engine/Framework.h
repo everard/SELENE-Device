@@ -37,13 +37,10 @@
 #include "Core/Resources/Mesh/MeshFactory.h"
 #include "Core/Resources/Mesh/Mesh.h"
 
-#include "Scene/Nodes/ParticleSystem.h"
 #include "Scene/Nodes/Camera.h"
 #include "Scene/Nodes/Actor.h"
 #include "Scene/Nodes/Light.h"
 #include "Scene/Scene.h"
-
-#include "Network/Message.h"
 
 #include "GUI/TextBox.h"
 #include "GUI/Button.h"
